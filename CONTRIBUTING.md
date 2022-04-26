@@ -1,4 +1,4 @@
-# Contributing to OmniDB
+# Contributing to OmniDB-NG
 
 We love your input! We want to make contributing to this project as easy and
 transparent as possible, whether it's:
@@ -11,28 +11,26 @@ transparent as possible, whether it's:
 - Becoming a maintainer
 
 
-## OmniDB Database Support
+## OmniDB-NG Database Support
 
 Currently OmniDB supports `PostgreSQL`, `Oracle`, `MySQL` and `MariaDB`. We plan
-to support `Firebird`, `MSSQL Server`, `SQLite` and `IBM DB2` in the foreseeable
+to support `MSSQL Server`, `SQLite` and `IBM DB2` in the foreseeable
 future. Suggestions and even pull requests for other databases are welcome.
 
 
-## OmniDB Operating System Support
+## OmniDB-NG Operating System Support
 
-We currently build OmniDB for Debian, CentOS, Windows and OSX. Deployment for
-different Linux distributions such as openSUSE, Arch Linux, Gentoo and RaspBian
-is in our roadmap, but it requires time. You can suggest other operating systems
-or architectures and even perform pull requests, we will appreciate that.
+We currently build OmniDB for Debian/Ubuntu, CentOS/Rocky, Windows and OSX.
 
 
-## OmniDB Repositories
+## OmniDB-NG Repositories
 
-- [https://github.com/OmniDB/OmniDB](https://github.com/OmniDB/OmniDB): Main
+- [https://github.com/pgsql-io/OmniDB-NG](https://github.com/pgsql-io/OmniDB): Main
 application and server, deployment scripts and tests.
 - [https://github.com/OmniDB/doc](https://github.com/OmniDB/doc): OmniDB
 documentation.
-- [https://github.com/OmniDB/monitors](https://github.com/OmniDB/monitors)
+- [https://github.com/OmniDB/monitors](https://github.com//monitors)
+
 Monitors (charts, grids) for the Monitoring Dashboard.
 - [https://github.com/OmniDB/plugins](https://github.com/OmniDB/plugins): OmniDB
 official plugins.
@@ -73,7 +71,7 @@ easy!
 **Great Bug Reports** tend to have:
 
 - A quick summary and/or background
-- OmniDB flavor you are using (app or server) and version
+- OmniDB-NG flavor you are using (app or server) and version
 - Operating system and version
 - Steps to reproduce
   - Be specific!

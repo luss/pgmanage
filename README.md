@@ -57,8 +57,8 @@
 
 
 
-**Website**: https://omnidb.org
+**Website**: https://omnidb-ng.org
 
-**Full Documentation**: https://omnidb.readthedocs.io
+**Full Documentation**: https://omnidb-ng.readthedocs.io
 
 ![](https://raw.githubusercontent.com/OmniDB/doc/master/img/omnidb_3/dashboard.png)
