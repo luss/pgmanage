@@ -5,7 +5,7 @@
 ## Release Notes
 
 - New features:
-  - PostgreSQL 13 support
+  - PostgreSQL 9.6, 10, 11, 12, 13 & 14 support
   - Database structure tree and Properties/DDL tabs with support to additional PostgreSQL objects
   - Option to use Active Directory / LDAP to authenticate OmniDB's users
   - Option to use PostgreSQL as OmniDB's backend database
