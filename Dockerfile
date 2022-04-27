@@ -1,8 +1,8 @@
 FROM python:latest
 
-LABEL maintainer="OmniDB team"
+LABEL maintainer="OmniDB-NG team"
 
-ARG OMNIDB_VERSION=3.0.3b
+ARG OMNIDB_VERSION=3.0.4
 
 SHELL ["/bin/bash", "-c"]
 
@@ -17,7 +17,7 @@ USER omnidb:omnidb
 ENV HOME /home/omnidb
 WORKDIR ${HOME}
 
-RUN wget https://github.com/OmniDB/OmniDB/archive/${OMNIDB_VERSION}.tar.gz \
+RUN wget https://github.com/pgsql-io/OmniDB-NG/archive/${OMNIDB_VERSION}.tar.gz \
     && tar -xvzf ${OMNIDB_VERSION}.tar.gz \
     && mv OmniDB-${OMNIDB_VERSION} OmniDB
 

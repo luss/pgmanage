@@ -1,6 +1,6 @@
-# OmniDB 3.0.3 Beta
+# OmniDB-NG 3.0.4
 
-## Release Date: *December 17, 2020*
+## Release Date: *April, 26 2022*
 
 ## Release Notes
 
@@ -54,6 +54,12 @@
     - Outer Menu: Improved layout and behaviour, providing better awareness of the context
     - Result Grid: Improved resizing behaviours
     - Added password option on --createconnection
+
+- 3.0.4 Changes
+  - Rebrand to OmniDB-NG
+  - New repo is https://github.com/pgsql-io/omnidb-ng
+  - New website will be http://omnidb-ng.org
+  - PostgreSQL 14 Support
 
 
 
