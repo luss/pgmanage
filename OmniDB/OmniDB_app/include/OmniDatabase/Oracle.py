@@ -108,6 +108,7 @@ class Oracle:
         self.v_has_schema = True
         self.v_has_functions = True
         self.v_has_procedures = True
+        self.v_has_packages = True
         self.v_has_sequences = True
         self.v_has_primary_keys = True
         self.v_has_foreign_keys = True
@@ -647,6 +648,25 @@ class Oracle:
                 v_limit
             ), True
         )
+
+    @lock_required
+    def QueryPackages(self, p_all_schemas=False, p_schema=None):
+        v_filter = ''
+        if not p_all_schemas:
+            if p_schema:
+                v_filter = "and (case when upper(replace(owner, ' ', '')) <> owner then '"' || owner || '"' else owner end) = '{0}' ".format(p_schema)
+            else:
+                v_filter = "and (case when upper(replace(owner, ' ', '')) <> owner then '"' || owner || '"' else owner end) = '{0}' ".format(self.v_schema)
+        return self.v_connection.Query('''
+            select (case when upper(replace(owner, ' ', '')) <> owner then '"' || owner || '"' else owner end) as "schema_name",
+                   (case when upper(replace(object_name, ' ', '')) <> object_name then '"' || object_name || '"' else object_name end) as "id",
+                   (case when upper(replace(object_name, ' ', '')) <> object_name then '"' || object_name || '"' else object_name end) as "name"
+            from all_packages
+            where 1 = 1
+            {0}
+            order by 2
+        '''.format(v_filter), True)
+
 
     @lock_required
     def QueryFunctions(self, p_all_schemas=False, p_schema=None):

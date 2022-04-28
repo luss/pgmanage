@@ -68,6 +68,7 @@ class SQLite:
         self.v_has_schema = False
         self.v_has_functions = False
         self.v_has_procedures = False
+        self.v_has_packages = False
         self.v_has_sequences = False
         self.v_has_primary_keys = True
         self.v_has_foreign_keys = True

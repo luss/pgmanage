@@ -644,6 +644,48 @@ def get_roles(request, v_database):
 
     return JsonResponse(v_return)
 
+
+@user_authenticated
+@database_required(p_check_timeout = True, p_open_connection = True)
+def get_packages(request, v_database):
+
+    v_return = {}
+    v_return['v_data'] = ''
+    v_return['v_error'] = False
+    v_return['v_error_id'] = -1
+
+    #Invalid session
+    if not request.session.get('omnidb_session'):
+        v_return['v_error'] = True
+        v_return['v_error_id'] = 1
+        return JsonResponse(v_return)
+
+    v_session = request.session.get('omnidb_session')
+
+    json_object = json.loads(request.POST.get('data', None))
+    v_database_index = json_object['p_database_index']
+    v_schema = json_object['p_schema']
+
+    v_list_packages = []
+
+    try:
+        v_packages = v_database.QueryPackages(False,v_schema)
+        for v_package in v_packages.Rows:
+            v_package_data = {
+                'v_name': v_package['name'],
+                'v_id': v_package['id']
+            }
+            v_package_functions.append(v_package_data)
+    except Exception as exc:
+        v_return['v_data'] = {'password_timeout': True, 'message': str(exc) }
+        v_return['v_error'] = True
+        return JsonResponse(v_return)
+
+    v_return['v_data'] = v_list_packages 
+
+    return JsonResponse(v_return)
+
+
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
 def get_functions(request, v_database):

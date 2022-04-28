@@ -38,6 +38,7 @@ def get_tree_info(request):
             'v_has_schema': v_database.v_has_schema,
 			'v_has_functions': v_database.v_has_functions,
             'v_has_procedures': v_database.v_has_procedures,
+            'v_has_packages': v_database.v_has_packages,
 			'v_has_sequences': v_database.v_has_sequences,
             'v_schema': v_database.v_schema
         }
