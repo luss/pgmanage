@@ -10,9 +10,9 @@ cd omnidb-ng
 pip3 install -r requirments.txt
 ```
 
-# OmniDB-NG 3.0.4
+# OmniDB-NG 3.0.5
 
-## Release Date: *April, 26 2022*
+## Release Date: *May, 6 2022*
 
 ## Release Notes
 
@@ -72,6 +72,10 @@ pip3 install -r requirments.txt
   - New repo is https://github.com/pgsql-io/omnidb-ng
   - New website will be http://omnidb-ng.org
   - PostgreSQL 14 Support
+
+- 3.0.5 Changes
+  - Support latest django (v4)
+
 
 
 

@@ -2,7 +2,7 @@ FROM python:latest
 
 LABEL maintainer="OmniDB-NG team"
 
-ARG OMNIDB_VERSION=3.0.4
+ARG OMNIDB_VERSION=3.0.5
 
 SHELL ["/bin/bash", "-c"]
 
@@ -19,7 +19,7 @@ WORKDIR ${HOME}
 
 RUN wget https://github.com/pgsql-io/OmniDB-NG/archive/${OMNIDB_VERSION}.tar.gz \
     && tar -xvzf ${OMNIDB_VERSION}.tar.gz \
-    && mv OmniDB-${OMNIDB_VERSION} OmniDB
+    && mv omnidb-ng-${OMNIDB_VERSION} OmniDB
 
 WORKDIR ${HOME}/OmniDB
 
@@ -28,8 +28,7 @@ RUN pip install -r requirements.txt
 WORKDIR ${HOME}/OmniDB/OmniDB
 
 RUN sed -i "s/LISTENING_ADDRESS    = '127.0.0.1'/LISTENING_ADDRESS    = '0.0.0.0'/g" config.py \
-    && python omnidb-server.py --init \
-    && python omnidb-server.py --dropuser=admin
+    && python omnidb-server.py --init 
 
 EXPOSE 8000
 
