@@ -1,14 +1,14 @@
 
 
 # Build instructions on Ubuntu 20.04 & 22.04
-
+```
 sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
 python3 -m env omenv
 source omenv/bin/activate
 git clone https://github.com/pgsql-io/omnidb-ng
 cd omnidb-ng
 pip3 install -r requirments.txt
-
+```
 
 # OmniDB-NG 3.0.4
 
