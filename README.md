@@ -75,11 +75,13 @@ pip3 install -r requirments.txt
 
 - 3.0.5 Changes
   - Support latest django (v4)
+  - 1st pass at Packages support for Oracle
+  - Add build instructions to README
 
 
 
 
-**Website**: https://omnidb-ng.org
+**Website**: http://omnidb-ng.org
 
 **Full Documentation**: https://omnidb-ng.readthedocs.io
 
