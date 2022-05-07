@@ -78,6 +78,10 @@ pip3 install -r requirments.txt
   - 1st pass at Packages support for Oracle
   - Add build instructions to README
 
+- 3.0.6 Changes
+  - Freeze requirements file for prod stability
+  - OmniDB-NG branding sponsored by PGSQL.IO & Denis Lussier
+
 
 
 

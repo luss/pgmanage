@@ -34,7 +34,7 @@ var v_createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_n
     p_icon: '<i class="fas fa-hand-spock"></i>',
     p_name: 'Welcome',
     p_selectFunction: function() {
-      document.title = 'Welcome to OmniDB'
+      document.title = 'Welcome to OmniDB-NG'
       $('[data-toggle="tooltip"]').tooltip({animation:true});// Loads or Updates all tooltips
     },
     p_close: false,// Replacing default close icon with contextMenu.
@@ -64,7 +64,7 @@ var v_createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_n
         v_option_list,
         null);
     },
-    p_omnidb_tooltip_name: '<h5 class="my-1">Welcome to OmniDB</h5>'
+    p_omnidb_tooltip_name: '<h5 class="my-1">Welcome to OmniDB-NG</h5>'
   });
 
   v_connTabControl.selectTab(v_tab);
@@ -219,7 +219,7 @@ var v_createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_n
   '<div class="alert alert-success p-3 omnidb__welcome__useful-card">' +
     '<h2 class="text-center mb-4">Useful stuff</h2>' +
     '<ul>' +
-      '<li class="mb-2"><a class="btn btn-success text-white" target="_blank" href="https://omnidb-ng.org"><i class="fas fa-user"></i> <span>OmniDB-NG website</span></a></li>' +
+      '<li class="mb-2"><a class="btn btn-success text-white" target="_blank" href="http://omnidb-ng.org"><i class="fas fa-user"></i> <span>OmniDB-NG website</span></a></li>' +
       '<li class="mb-2"><a class="btn btn-success text-white" target="_blank" href="https://github.com/pgsql-io/OmniDB-NG"><i class="fab fa-github"></i> <span>Github repo</span></a></li>' +
       '<li><a class="btn btn-success text-white" target="_blank" href="https://omnidb.readthedocs.io/"><i class="fas fa-list"></i> <span>Read the docs</span></a></li>' +
     '</ul>' +
