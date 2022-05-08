@@ -965,6 +965,45 @@ function updateModalEditConnectionState(e) {
 		document.getElementById('conn_form_use_tunnel').removeAttribute('disabled');
 	}
 
+	// Set Meaningful Placeholders
+	if (v_technology === 'sqlite') {
+		document.getElementById('conn_form_server').setAttribute('placeholder', '');
+		document.getElementById('conn_form_port').setAttribute('placeholder', '');
+		document.getElementById('conn_form_database').setAttribute('placeholder', 'ex: /Users/myuser/sqlite_file.db');
+		document.getElementById('conn_form_user').setAttribute('placeholder', '');
+		document.getElementById('conn_form_user_pass').setAttribute('placeholder', '');
+		document.getElementById('conn_form_connstring').setAttribute('placeholder', '');
+	} else if (v_technology === 'terminal') {
+		document.getElementById('conn_form_server').setAttribute('placeholder', '');
+		document.getElementById('conn_form_port').setAttribute('placeholder', '');
+		document.getElementById('conn_form_database').setAttribute('placeholder', '');
+		document.getElementById('conn_form_user').setAttribute('placeholder', '');
+		document.getElementById('conn_form_user_pass').setAttribute('placeholder', '');
+		document.getElementById('conn_form_connstring').setAttribute('placeholder', '');
+	} else if (v_technology === 'postgresql') {
+		document.getElementById('conn_form_server').setAttribute('placeholder', 'ex: 127.0.0.1');
+		document.getElementById('conn_form_port').setAttribute('placeholder', 'ex: 5432');
+		document.getElementById('conn_form_database').setAttribute('placeholder', 'ex: postgres');
+		document.getElementById('conn_form_user').setAttribute('placeholder', 'ex: postgres');
+		document.getElementById('conn_form_user_pass').setAttribute('placeholder', 'ex: password');
+		document.getElementById('conn_form_connstring').setAttribute('placeholder', 'ex: postgresql://postgres@localhost:5432/postgres');
+	} else if (v_technology === 'oracle') {
+		document.getElementById('conn_form_server').setAttribute('placeholder', 'ex: 127.0.0.1');
+		document.getElementById('conn_form_port').setAttribute('placeholder', 'ex: 1521');
+		document.getElementById('conn_form_database').setAttribute('placeholder', 'ex: xe');
+		document.getElementById('conn_form_user').setAttribute('placeholder', 'ex: system');
+		document.getElementById('conn_form_user_pass').setAttribute('placeholder', 'ex: manager');
+		document.getElementById('conn_form_connstring').setAttribute('placeholder', 'ex: oracle://system@localhost:1521/xe');
+    } else {
+		//Mysql or MariaDB
+		document.getElementById('conn_form_server').setAttribute('placeholder', 'ex: 127.0.0.1');
+		document.getElementById('conn_form_port').setAttribute('placeholder', 'ex: 3306');
+		document.getElementById('conn_form_database').setAttribute('placeholder', 'ex: db');
+		document.getElementById('conn_form_user').setAttribute('placeholder', 'ex: root');
+		document.getElementById('conn_form_user_pass').setAttribute('placeholder', 'ex: password');
+		document.getElementById('conn_form_connstring').setAttribute('placeholder', 'ex: mysql://root@localhost:3306/db');
+    }
+    
 	// Checking connection string.
 	if (typeof v_use_connection_string === 'string') {
 		v_use_connection_string = v_use_connection_string.trim();
@@ -1112,18 +1151,18 @@ function updateModalEditConnectionState(e) {
  * @param  {array} p_form_cases   IDs of elements that should be required.
  */
 function updateModalEditConnectionFields(p_disable_list, p_enable_list, p_form_cases) {
-	// Disabling elements.
-	for (let i = 0; i < p_disable_list.length; i++) {
-    var v_item = document.getElementById(p_disable_list[i]);
-    v_item.setAttribute('readonly',true);
-		v_item.setAttribute('disabled', true);
-    v_item.value = null;
+  // Disabling elements.
+  for (let i = 0; i < p_disable_list.length; i++) {
+      var v_item = document.getElementById(p_disable_list[i]);
+      v_item.setAttribute('readonly',true);
+      v_item.setAttribute('disabled', true);
+      v_item.value = null;
   }
-	// Enabling elements.
+  // Enabling elements.
   for (let i = 0; i < p_enable_list.length; i++) {
     var v_item = document.getElementById(p_enable_list[i]);
     v_item.removeAttribute('readonly');
-		v_item.removeAttribute('disabled');
+	v_item.removeAttribute('disabled');
   }
 	// Removing 'required' class from elements inside the connection modal.
 	$('#modal_edit_connection .required').removeClass('required');
