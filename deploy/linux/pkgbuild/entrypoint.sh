@@ -51,12 +51,12 @@ Section: base
 Priority: optional
 Architecture: amd64
 Installed-Size: $(du -s)
-Maintainer: The OmniDB Team
-Homepage: http://omnidb.org
+Maintainer: The OmniDB-NG Team
+Homepage: http://omnidb-ng.org
 Description: OmniDB is a very flexible, secure and work-effective environment for multiple DBMS.
  Server package includes web server and requires a web browser to be used. Ideal for network and server usage.
  App package includes everything, even a simple web browser.
- OmniDB is supported by 2ndQuadrant (http://www.2ndquadrant.com)
+ OmniDB is supported by PGSQL.IO (http://pgsql.io)
 EOF
 cat > DEBIAN/preinst << EOF
 #!/bin/bash
@@ -143,12 +143,12 @@ Section: base
 Priority: optional
 Architecture: amd64
 Installed-Size: $(du -s)
-Maintainer: The OmniDB Team
-Homepage: http://omnidb.org
+Maintainer: The OmniDB-NG Team
+Homepage: http://omnidb-ng.org
 Description: OmniDB is a very flexible, secure and work-effective environment for multiple DBMS.
  Server package includes web server and requires a web browser to be used. Ideal for network and server usage.
  App package includes everything, even a simple web browser.
- OmniDB is supported by 2ndQuadrant (http://www.2ndquadrant.com)
+ OmniDB is supported by PGSQL.IO (http://pgsql.io)
 EOF
 cd ..
 

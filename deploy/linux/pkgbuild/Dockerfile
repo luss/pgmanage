@@ -11,7 +11,7 @@ RUN apt-get -y update \
  && apt-get -y install rubygems ruby-dev build-essential rpm \
  && gem install fpm
 
-ARG VERSION="3.0.0"
+ARG VERSION="3.0.6"
 
 ENV VERSION=$VERSION
 

@@ -5,9 +5,9 @@ ENV HOME /root
 WORKDIR /root
 SHELL ["/bin/bash", "-c"]
 
-ARG REPO="git://github.com/OmniDB/OmniDB"
+ARG REPO="git://github.com/pgsql-io/omnidb-ng"
 ARG BRANCH="dev"
-ARG VERSION="3.0.0"
+ARG VERSION="3.0.6"
 
 ENV REPO=$REPO
 ENV BRANCH=$BRANCH
