@@ -1,6 +1,6 @@
 
 
-# Build instructions on Ubuntu 20.04 & 22.04
+# Build instructions on Ubuntu 18.04+
 ```
 sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
 python3 -m venv omenv
@@ -10,9 +10,9 @@ cd omnidb-ng
 pip3 install -r requirments.txt
 ```
 
-# OmniDB-NG 3.0.5
+# OmniDB-NG 3.0.6
 
-## Release Date: *May, 6 2022*
+## Release Date: *May, 10 2022*
 
 ## Release Notes
 
@@ -81,6 +81,9 @@ pip3 install -r requirments.txt
 - 3.0.6 Changes
   - Freeze requirements file for prod stability
   - OmniDB-NG branding sponsored by PGSQL.IO & Denis Lussier
+  - fix error saving PG connections
+  - fix blowfish warning when starting up server
+  - improve the connections form with db specific placeholders
 
 
 
