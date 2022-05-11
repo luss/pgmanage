@@ -11,15 +11,18 @@ USER root
 RUN addgroup --system omnidb \
     && adduser --system omnidb --ingroup omnidb \
     && apt-get update \
-    && apt-get install -y curl wget libsasl2-dev python3-dev python3-pip libldap2-dev libssl-dev vim 
+    && apt-get install -y curl wget vim python3
 
 USER omnidb:omnidb
 ENV HOME /home/omnidb
 
 WORKDIR ${HOME}
+
+WORKDIR ${HOME}
 RUN python3 -c "$(curl -fsSL https://pgsql-io-download.s3.amazonaws.com/REPO/install.py)"
 WORKDIR ${HOME}/pgsql
 RUN ./io install instantclient
+RUN ./io install ora2pg
 
 WORKDIR ${HOME}
 RUN wget https://github.com/pgsql-io/OmniDB-NG/archive/${OMNIDB_VERSION}.tar.gz \
@@ -27,6 +30,7 @@ RUN wget https://github.com/pgsql-io/OmniDB-NG/archive/${OMNIDB_VERSION}.tar.gz 
     && mv omnidb-ng-${OMNIDB_VERSION} OmniDB
 
 WORKDIR ${HOME}/OmniDB
+RUN apt-get install -y libsasl2-dev python3-dev python3-pip libldap2-dev libssl-dev 
 RUN pip3 install -r requirements.txt
 
 WORKDIR ${HOME}/OmniDB/OmniDB
