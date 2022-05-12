@@ -1,6 +1,14 @@
+# OmniDB-NG 
+We proudly leverage all of the great work Open Source work done by the original
+(now dormant) project https://github.com/OmniDB/OmniDB 
+
+# Pre-req's for Debian/Ubuntu
+```
+sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
+```
 
 
-# Build instructions on Ubuntu 18.04+
+# Build instructions on Debian 18.04+
 ```
 sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
 python3 -m venv omenv
