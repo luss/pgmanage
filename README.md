@@ -2,13 +2,25 @@
 We proudly leverage all of the great work Open Source work done by the original
 (now dormant) project https://github.com/OmniDB/OmniDB 
 
-# Pre-req's for Debian/Ubuntu
+# Run it yourself from source
+If you want or need a new feature, submit a pull request for us to consider.
+
+## Pre-req's for Debian/Ubuntu
 ```
 sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
 ```
 
+## Pre-req's for Enterprise Linux flavors
+```
+sudo yum install xxx yyy zzz
+```
 
-# Build instructions on Debian 18.04+
+## Pre-req's for OSX using Homebrew
+```
+brew install python3 xxx yyy zzz
+```
+
+## Build instructions
 ```
 sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
 python3 -m venv omenv
@@ -16,6 +28,12 @@ source omenv/bin/activate
 git clone https://github.com/pgsql-io/omnidb-ng
 cd omnidb-ng
 pip3 install -r requirments.txt
+```
+
+## Start it up
+```
+cd omnidb-ng/OmniDB
+python3 omnidb-server.py
 ```
 
 # OmniDB-NG 3.0.6
