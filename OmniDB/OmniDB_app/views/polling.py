@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from datetime import datetime
 from math import ceil
 import json
+import os
 import time
 import threading
 import OmniDB_app.include.Spartacus as Spartacus
@@ -1410,7 +1411,7 @@ def thread_save_edit_data(self,args):
 
         if v_database.v_has_schema:
             v_schema         = args['v_schema']
-        
+
         v_data_rows      = args['v_data_rows']
         v_rows_info      = args['v_rows_info']
         v_pk_info        = args['v_pk_info']
