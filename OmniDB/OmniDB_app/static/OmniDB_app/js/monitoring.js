@@ -127,7 +127,7 @@ function buildMonitorUnit(p_unit, p_first) {
   '</div>';
 
   var div_header = document.createElement('div');
-  div_header.className = 'form-inline'
+  div_header.className = 'form-inline mb-1'
   var title = document.createElement('span');
   title.className = ' mr-1';
   title.innerHTML = v_return_unit.v_title;
@@ -185,7 +185,7 @@ function buildMonitorUnit(p_unit, p_first) {
   })(div);
   button_close.innerHTML = '<span aria-hidden="true">&times;</span>';
   var details = document.createElement('span');
-  details.classList.add('unit_header_element');
+  details.classList.add('unit_header_element', 'ml-2');
   details.innerHTML = '';
   var div_error = document.createElement('div');
   div_error.classList.add('error_text');
@@ -526,23 +526,14 @@ $('#modal_monitoring_unit_test').on('shown.bs.modal', function (e) {
 
             }
             else if (v_type === 'grid') {
-              let tableData = [];
-
-              for (var j = 0; j < p_return.v_data.v_object.datasets[0].data.length; j++) {
-                var col = {};
-                col.label =  p_return.v_data.v_object.labels[0];
-                col.value = p_return.v_data.v_object.datasets[0].data[j];
-                tableData.push(col);
-              }
+              let columns = p_return.v_data.v_object.columns.map(x => {return {title: x, readOnly: true }});
               v_div_result.className = 'dashboard_unit_grid';
               v_tab_tag.object = new Handsontable(v_div_result,
                 {
                   licenseKey: 'non-commercial-and-evaluation',
-                  data: tableData,
-                  columns: [
-                      {data: 'label'},
-                      {data: 'value'}],
-                  colHeaders : ['Labels', 'Value'],
+                  columns: columns,
+                  data: p_return.v_data.v_object.data,
+                  colHeaders : true,
                   rowHeaders : true,
                   stretchH: 'all',
                   copyPaste: {pasteMode: '', rowsLimit: 1000000000, columnsLimit: 1000000000},
@@ -550,7 +541,6 @@ $('#modal_monitoring_unit_test').on('shown.bs.modal', function (e) {
                   fillHandle:false,
                   readOnly: true,
                 });
-
             }
             else if (v_type=='graph') {
               v_div_result.className = 'unit_graph';
@@ -999,7 +989,7 @@ function refreshMonitorDashboard(p_loading,p_tab_tag,p_div) {
                   }
                 }
                 // Grid unit
-                else if (v_return_unit.v_type=='grid') {
+                else if (v_return_unit.v_type==='grid') {
 
                   v_unit.div_error.innerHTML = '';
                   v_unit.div_details.innerHTML = '';
@@ -1021,27 +1011,20 @@ function refreshMonitorDashboard(p_loading,p_tab_tag,p_div) {
                     v_unit.div_content.classList.add('unit_grid');
                     v_unit.div_content.innerHTML = '';
 
-                    var columnProperties = [];
+                    let columns = v_return_unit.v_object.columns.map(x => {return {title: x, readOnly: true }});
 
-        						for (var j = 0; j < v_return_unit.v_object.columns.length; j++) {
-      						    var col = new Object();
-      						    col.readOnly = true;
-      						    col.title =  v_return_unit.v_object.columns[j];
-        							columnProperties.push(col);
-        						}
-
-                    v_unit.div_details.innerHTML = v_return_unit.v_object.data.length + ' rows';
+                    v_unit.div_details.innerHTML = `${v_return_unit.v_object.data.length} rows`;
 
         						var v_grid = new Handsontable(v_unit.div_content,
         						{
-                                    licenseKey: 'non-commercial-and-evaluation',
-        							data: v_return_unit.v_object.data,
-        							columns : columnProperties,
+                      licenseKey: 'non-commercial-and-evaluation',
+                      columns : columns,
+                      data: v_return_unit.v_object.data,
         							colHeaders : true,
         							rowHeaders : true,
         							//copyRowsLimit : 1000000000,
         							//copyColsLimit : 1000000000,
-                                    copyPaste: {pasteMode: '', rowsLimit: 1000000000, columnsLimit: 1000000000},
+                      copyPaste: {pasteMode: '', rowsLimit: 1000000000, columnsLimit: 1000000000},
         							manualColumnResize: true,
         							fillHandle:false,
         							contextMenu: {
@@ -1069,11 +1052,8 @@ function refreshMonitorDashboard(p_loading,p_tab_tag,p_div) {
                   }
                   // Existing grid
                   else {
-
-                    v_unit.div_details.innerHTML = v_return_unit.v_object.data.length + ' rows';
-
+                    v_unit.div_details.innerHTML = `${v_return_unit.v_object.data.length} rows`;
                     v_unit.object.loadData(v_return_unit.v_object.data);
-
                   }
                 }
 
