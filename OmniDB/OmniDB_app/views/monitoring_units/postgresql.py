@@ -1640,4 +1640,127 @@ result = {
 }
 """
 },
+{
+'dbms': 'postgresql',
+'plugin_name': 'postgresql',
+'id': 20,
+'title': 'Database Size',
+'type': 'chart',
+'interval': 60,
+'default': True,
+'script_chart': """
+total_size = connection.ExecuteScalar('''
+    SELECT round(sum(pg_catalog.pg_database_size(datname)/1048576.0),2)
+    FROM pg_catalog.pg_database
+    WHERE NOT datistemplate
+''')
+
+result = {
+    "type": "pie",
+    "data": None,
+    "options": {
+        "responsive": True,
+        "title":{
+            "display":True,
+            "text":"Database Size (Total: " + str(total_size) + " MB)"
+        }
+    }
+}
+""",
+'script_data': """
+from datetime import datetime
+from random import randint
+
+databases = connection.Query('''
+    SELECT d.datname AS datname,
+           round(pg_catalog.pg_database_size(d.datname)/1048576.0,2) AS size
+    FROM pg_catalog.pg_database d
+    WHERE d.datname not in ('template0','template1')
+''')
+
+data = []
+color = []
+label = []
+
+for db in databases.Rows:
+    data.append(db["size"])
+    color.append("rgb(" + str(randint(125, 225)) + "," + str(randint(125, 225)) + "," + str(randint(125, 225)) + ")")
+    label.append(db["datname"])
+
+total_size = connection.ExecuteScalar('''
+    SELECT round(sum(pg_catalog.pg_database_size(datname)/1048576.0),2)
+    FROM pg_catalog.pg_database
+    WHERE NOT datistemplate
+''')
+
+result = {
+    "labels": label,
+    "datasets": [
+        {
+            "data": data,
+            "backgroundColor": color,
+            "label": "Dataset 1"
+        }
+    ],
+    "title": "Database Size (Total: " + str(total_size) + " MB)"
+}
+"""
+},
+{
+'dbms': 'postgresql',
+'plugin_name': 'postgresql',
+'id': 21,
+'title': 'Backends',
+'type': 'chart',
+'interval': 60,
+'default': True,
+'script_chart': """
+max_connections = connection.ExecuteScalar('SHOW max_connections')
+
+result = {
+    "type": "pie",
+    "data": None,
+    "options": {
+        "responsive": True,
+        "title":{
+            "display":True,
+            "text":"Backends (max_connections: " + str(max_connections) + ")"
+        }
+    }
+}
+""",
+'script_data': """
+from datetime import datetime
+from random import randint
+
+databases = connection.Query('''
+    SELECT d.datname,
+           s.numbackends
+    FROM pg_stat_database s
+    INNER JOIN pg_database d
+    ON d.oid = s.datid
+    WHERE NOT d.datistemplate
+''')
+
+data = []
+color = []
+label = []
+
+for db in databases.Rows:
+    data.append(db["numbackends"])
+    color.append("rgb(" + str(randint(125, 225)) + "," + str(randint(125, 225)) + "," + str(randint(125, 225)) + ")")
+    label.append(db["datname"])
+
+result = {
+    "labels": label,
+    "datasets": [
+        {
+            "data": data,
+            "backgroundColor": color,
+            "label": "Dataset 1"
+        }
+    ]
+}
+"""
+},
 ]
