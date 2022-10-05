@@ -176,7 +176,7 @@ var v_createConsoleTabFunction = function() {
       v_option_list.push(
         {
           text: 'Use snippet',
-          icon: 'fas cm-all fa-book',
+          icon: 'fas cm-all fa-file-code',
           submenu: {
             elements: buildSnippetContextMenuObjects('load', v_connTabControl.tag.globalSnippets, v_editor1)
           }

@@ -705,8 +705,8 @@ function resizeTreeVerticalEnd(event) {
 
   var v_tree_tabs_div = v_tag.divTreeTabs;
   var v_tree_tabs_height = v_tag.divLeft.clientHeight - 14 - event.pageY;
-  
-  v_tree_tabs_height = (v_tree_tabs_height < 26) ? 26 : v_tree_tabs_height 
+
+  v_tree_tabs_height = (v_tree_tabs_height < 26) ? 26 : v_tree_tabs_height
 
   v_tree_tabs_div.style.flexBasis = `${v_tree_tabs_height}px`;
 
@@ -1309,14 +1309,14 @@ function showMenuNewTabOuter(e) {
   	if (v_option_list.length>0) {
   		v_option_list.unshift({
   			text: 'New Connection',
-  			icon: 'fas fa-plus',
+  			icon: 'fas cm-all fa-plus',
   			action: function() {
           newConnection();
   			}
   		},
       {
         text: 'Manage Connections',
-        icon: 'fas cm-all fa-globe-americas',
+        icon: 'fas cm-all fa-gears',
         action: function() {
             setTimeout(function() { startConnectionManagement(); },0);
           }

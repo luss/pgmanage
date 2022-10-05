@@ -49,8 +49,8 @@ var v_createSnippetPanelFunction = function(p_index) {
   // v_connTabControl.removeLastTab();
 
   var v_tab = v_connTabControl.createTab({
-    p_icon: `<i class="fas fa-book"></i>`,
-    p_name: `Snippets`,
+    p_icon: '<i class="fas fa-file-code"></i>',
+    p_name: 'Snippets',
     p_close: false,
     p_selectable: false,
     p_clickFunction: function() {

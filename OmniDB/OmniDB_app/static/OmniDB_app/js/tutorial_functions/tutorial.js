@@ -333,7 +333,7 @@ function startTutorial(p_tutorial_name) {
         p_clone_target: true,
         p_message: `
         <p>The snippet panel is now accessible globally.</p>
-        <p>Please, click on the <i class="fas fa-book"></i> button.</p>
+        <p>Please, click on the <i class="fas fa-file-code"></i> button.</p>
         `,
         p_target: document.getElementsByClassName('omnidb__tab-menu omnidb__tab-menu--primary')[0],
         p_title: 'Global Snippet Panel'
@@ -503,7 +503,7 @@ function startTutorial(p_tutorial_name) {
         </li>
         <li class="mb-2">
           <button type="button" class="btn omnidb__theme__btn--primary d-flex align-items-center" onclick="startTutorial('snippets');">
-            <i class="fas fa-book mr-2"></i>Meet the snippets panel
+            <i class="fas fa-file-code mr-2"></i>Meet the snippets panel
           </button>
         </li>
         <li class="mb-2">

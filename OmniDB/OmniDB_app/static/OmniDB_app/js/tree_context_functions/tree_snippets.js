@@ -61,14 +61,14 @@ function getTreeSnippets(p_div) {
         },
         {
           text : 'New Folder',
-          icon: 'fas cm-all fa-folder',
+          icon: 'fas cm-all fa-folder-plus',
           action : function(node) {
             newNodeSnippet(node,'node');
           }
         },
         {
           text : 'New Snippet',
-          icon: 'fas cm-all fa-align-left',
+          icon: 'fas cm-all fa-file-circle-plus',
           action : function(node) {
             newNodeSnippet(node,'snippet');
           }
@@ -91,21 +91,21 @@ function getTreeSnippets(p_div) {
         },
         {
           text : 'New Folder',
-          icon: 'fas cm-all fa-folder',
+          icon: 'fas cm-all fa-folder-plus',
           action : function(node) {
             newNodeSnippet(node,'node');
           }
         },
         {
           text : 'New Snippet',
-          icon: 'fas cm-all fa-align-left',
+          icon: 'fas cm-all fa-file-circle-plus',
           action : function(node) {
             newNodeSnippet(node,'snippet');
           }
         },
         {
           text : 'Rename Folder',
-          icon: 'fas cm-all fa-edit',
+          icon: 'fas cm-all fa-i-cursor',
           action : function(node) {
             renameNodeSnippet(node);
           }
@@ -130,7 +130,7 @@ function getTreeSnippets(p_div) {
         },
         {
           text : 'Rename',
-          icon: 'fas cm-all fa-edit',
+          icon: 'fas cm-all fa-i-cursor',
           action : function(node) {
             renameNodeSnippet(node);
           }
@@ -197,7 +197,7 @@ function getChildSnippetNodes(node) {
         }
 
         for (i=0; i<p_return.v_data.v_list_texts.length; i++) {
-          var v_node = node.createChildNode(p_return.v_data.v_list_texts[i].v_name,false,'fas node-all fa-align-left node-snippet-snippet',{ type: 'snippet', id: p_return.v_data.v_list_texts[i].v_id, id_parent: node.tag.id, name: p_return.v_data.v_list_texts[i].v_name},'cm_snippet');
+          var v_node = node.createChildNode(p_return.v_data.v_list_texts[i].v_name,false,'far node-all fa-file-code node-snippet-snippet',{ type: 'snippet', id: p_return.v_data.v_list_texts[i].v_id, id_parent: node.tag.id, name: p_return.v_data.v_list_texts[i].v_name},'cm_snippet');
           v_node.doubleClickNodeEvent = function(p_node) {
             startEditSnippetText(p_node);
           }
