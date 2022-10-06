@@ -1935,6 +1935,30 @@ body {
 	}
 }
 
+a[href="https://github.com/dalibo/pev2"]{
+  position: relative;
+  display: block;
+  width: 100px;
+
+  &:before{
+    content: "Powered by PEV2";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #F8F9FA;
+    color:#585858;
+    text-align: right;
+  }
+
+  &:hover {
+    &:before {
+      text-decoration: underline;
+    }
+  }
+}
+
 @import 'interface-icon';
 @import 'node-icon';
 @import 'themes/dark';
