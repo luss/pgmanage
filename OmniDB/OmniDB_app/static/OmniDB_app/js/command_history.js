@@ -136,6 +136,7 @@ function showCommandList() {
 		{
 			licenseKey: 'non-commercial-and-evaluation',
 			data: [],
+			className: 'simple',
 			columns : v_columnProperties,
 			colHeaders : true,
 			rowHeaders : false,

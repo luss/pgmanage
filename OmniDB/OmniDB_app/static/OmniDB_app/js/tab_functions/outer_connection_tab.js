@@ -290,22 +290,23 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     // v_divProperties.style.overflow = 'hidden';
     var v_ddlProperties = v_ddl_tab.elementDiv;
 
-    var columnProperties = [];
+    var columnProperties = [
+      {
+        title: 'Property',
+        readOnly: true,
+      },
+      {
+        title: 'Value',
+        readOnly: true,
+      },
+    ];
 
-    var col = new Object();
-    col.title =  'Property';
-    col.readOnly = true;
-    columnProperties.push(col);
-
-    var col = new Object();
-    col.title =  'Value';
-    col.readOnly = true;
-    columnProperties.push(col);
 
     var ht = new Handsontable(v_divProperties,
     {
       licenseKey: 'non-commercial-and-evaluation',
       data: [],
+      className: 'simple',
       columns : columnProperties,
       colHeaders : true,
       stretchH: 'all',

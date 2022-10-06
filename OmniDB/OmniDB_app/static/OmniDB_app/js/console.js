@@ -110,13 +110,13 @@ function showConsoleHistory() {
 	var col = new Object();
 	col.readOnly = true;
 	col.title =  'Date';
-	col.width = '141px';
+	col.width = '160px';
 	columnProperties.push(col);
 
 	var col = new Object();
 	col.readOnly = true;
 	col.title =  'Command';
-	col.width = '435px';
+	col.width = '415px';
 	columnProperties.push(col);
 
 	v_tab_tag.consoleHistory.grid = new Handsontable(v_grid_div,
@@ -128,7 +128,7 @@ function showConsoleHistory() {
 			["2020-05-01 19:19:20", "\?"],
 			["2020-05-01 19:19:19", "\?"]
 		],
-
+		className: 'simple',
 		columns : columnProperties,
 		colHeaders : true,
 		rowHeaders : false,

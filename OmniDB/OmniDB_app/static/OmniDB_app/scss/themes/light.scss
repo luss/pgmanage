@@ -573,6 +573,21 @@ SOFTWARE.
     }
   }
 
+  .handsontable.simple {
+    thead th,
+    tr th,
+    td {
+      border: none;
+      border-bottom: 1px solid #e2e2e2 !important;
+    }
+
+    th,
+    thead th, {
+        color: #454545;
+        text-align: left;
+    }
+  }
+
   .omnidb__ht__first-col-actions td:first-child {
     color: #4A81D4;
   }
