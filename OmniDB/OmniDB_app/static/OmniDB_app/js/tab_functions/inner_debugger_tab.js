@@ -82,8 +82,8 @@ var v_createDebuggerTabFunction = function(p_function) {
   // Creating the template for the inner_debugger_tab.
   var v_html =
   '<div id="txt_func_body_' + v_tab.id + '" style="width: 100%; height: 200px; border: 1px solid #c3c3c3;"></div>' +
-  '<div class="omnidb__resize-line__container" onmousedown="resizeVertical(event)" style="width: 100%; height: 5px; cursor: ns-resize;">' +
-    '<div class="resize_line_horizontal" style="height: 0px; border-bottom: 1px dashed #acc4e8;"></div><div style="height:5px;"></div>' +
+  '<div class="omnidb__resize-line__container--horizontal" onmousedown="resizeVertical(event)">' +
+    '<div class="resize_line_horizontal"></div><div style="height:5px;"></div>' +
   '</div>' +
   "<div class='row mb-1'>" +
     "<div class='tab_actions omnidb__tab-actions col-12'>" +
