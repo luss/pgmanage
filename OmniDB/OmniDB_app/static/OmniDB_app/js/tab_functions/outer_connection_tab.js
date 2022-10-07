@@ -167,7 +167,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
             '<div class="omnidb__workspace__content-left">' +
               '<div id="' + v_tab.id + '_details" class="omnidb__workspace__connection-details"></div>' +
               '<div id="' + v_tab.id + '_tree" style="overflow: auto; flex-grow: 1; transition: scroll 0.3s;"></div>' +
-              '<div id="' + v_tab.id + '_left_resize_line_horizontal" class="omnidb__resize-line__container" onmousedown="resizeTreeVertical(event)" style="width: 100%; height: 5px; cursor: ns-resize;"><div class="resize_line_horizontal" style="height: 0px; border-bottom: 1px dashed #acc4e8;"></div><div style="height:5px;"></div></div>' +
+              '<div id="' + v_tab.id + '_left_resize_line_horizontal" class="omnidb__resize-line__container--horizontal" onmousedown="resizeTreeVertical(event)"><div class="resize_line_horizontal"></div><div style="height:5px;"></div></div>' +
               '<div id="tree_tabs_parent_' + v_tab.id + '" class="omnidb__tree-tabs--not-in-view omnidb__tree-tabs" style="position: relative;flex-shrink: 0;">' +
                 '<div id="' + v_tab.id + '_loading" class="div_loading" style="z-index: 1000;">' +
                   '<div class="div_loading_cover"></div>' +
@@ -182,7 +182,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="resize_line_vertical omnidb__resize-line__container" onmousedown="resizeConnectionHorizontal(event)" style="position:absolute;height: 100%;width: 10px;cursor: ew-resize;border-right: 1px dashed #acc4e8;top: 0px;right: 0px;"></div>' +
+          '<div class="omnidb__resize-line__container--vertical" onmousedown="resizeConnectionHorizontal(event)"><div class="resize_line_vertical"></div></div>' +
         '</div>' +//.div_left
         '<div id="' + v_tab.id + '_div_right" class="omnidb__workspace__div-right col" style="position: relative;">' +
           // "<div class='row'>" +

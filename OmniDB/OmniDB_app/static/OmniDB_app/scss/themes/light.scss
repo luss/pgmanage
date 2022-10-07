@@ -537,10 +537,10 @@ SOFTWARE.
 
   /* RESIZE LINES */
   .resize_line_horizontal {
-    border-bottom: 1px dashed #A2AFC1 !important;
+    border-bottom: 1px solid #eee !important;
   }
   .resize_line_vertical {
-    border-right: 1px dashed #A2AFC1 !important;
+    border-right: 1px solid #eee !important;
   }
   .omnidb__workspace-resize-grid__draggable .resize_line_vertical {
     border-right: 1px dashed #A2AFC1 !important;
