@@ -14,6 +14,6 @@ openpyxl==2.5.14
 RestrictedPython==4.0
 cx_Oracle==8.3.*
 PyMySQL==1.0.*
-pgspecial==1.11.5
+pgspecial==1.13.1
 sshtunnel==0.1.5
 pexpect==4.7.0
