@@ -557,15 +557,24 @@ SOFTWARE.
   }
 
   /* RESIZE LINES */
+
+  .resize_line_vertical,
   .resize_line_horizontal {
-    border-bottom: 1px dashed #6b7284 !important;
+    border: 1px solid #373944;
+    background-color: #2F3136;
+
+    &:before, &:after {
+      background-color: #4C5365;
+
+    }
+    &:hover:before, &:hover:after {
+      background-color: #6F7995;
+    }
   }
-  .resize_line_vertical {
-    border-right: 1px dashed #6b7284 !important;
-  }
-  .omnidb__workspace-resize-grid__draggable .resize_line_vertical {
-    border-right: 1px dashed #515E71 !important;
-  }
+
+  // .resize_line_horizontal {
+  //   border-bottom: 1px dashed #6b7284 !important;
+  // }
 
   /* Workspace Connection Info */
   .omnidb__workspace__connection-details b {

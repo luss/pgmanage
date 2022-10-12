@@ -124,7 +124,7 @@ a:not([href]):not([tabindex]){
   /* width: 80px; */
   white-space: nowrap;
   text-align: center;
-  font-size: 10px;
+  font-size: 0.9rem;
   width: 0px;
 }
 .omnidb__tab-menu--primary .omnidb__tab-menu__link:hover {
@@ -682,7 +682,7 @@ button.close {
 }
 .omnidb__resize-line__container--horizontal .resize_line_horizontal {
   box-sizing: border-box;
-  position: relative; 
+  position: relative;
   flex-shrink: 0;
   height: 7px;
   background-color: #fff;
@@ -1435,6 +1435,15 @@ label.omnidb__switch--label span {
 }
 .handsontable .htDimmed {
   color: inherit;
+}
+
+/* PEV2 */
+.plan-container {
+  font-family: inherit;
+  pre.small {
+    font-size: 0.9rem;
+  }
+
 }
 
 /* TOOLTIPS */
