@@ -546,18 +546,6 @@ SOFTWARE.
     border-right: 1px dashed #A2AFC1 !important;
   }
 
-
-  .omnidb__resize-line__container--vertical .resize_line_vertical {
-    &:before, &:after {
-      background-color: red !important;
-
-    }
-    &:before {margin-left: -2px;}
-    &:after {margin-left: 1px;}
-    &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
-
-  }
-
   /* Workspace Connection Info */
   .omnidb__workspace__connection-details b {
     color: #284AC6;
@@ -642,6 +630,18 @@ SOFTWARE.
   span.node_selected span {
     color: #284AC6;
   }
+
+  /* PEV2 */
+  .plan-container {
+    .nav-pills {
+      .active {
+        background-color: #4A81D4;
+      }
+    }
+    .text-primary {
+      color: #4A81D4 !important;
+    }
+  }
 }
 
 .cellNew {
@@ -670,16 +670,4 @@ SOFTWARE.
 
 #vertical-resize-line {
   border-top-color: black;
-}
-
-/* PEV2 */
-.plan-container {
-  .nav-pills {
-    .active {
-      background-color: #4A81D4;
-    }
-  }
-  .text-primary {
-    color: #4A81D4 !important;
-  }
 }
