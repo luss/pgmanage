@@ -1265,8 +1265,21 @@ SOFTWARE.
       color: #DCDDDE;
     }
 
-    .splitpanes.default-theme .splitpanes__pane {
-      background-color: #282A2F;
+    .splitpanes.default-theme {
+      .splitpanes__pane {
+        background-color: #282A2F;
+      }
+      .splitpanes__splitter {
+        background-color:#2F3136;
+        border: 1px solid #373944;
+        &:before, &:after {
+          background-color: #4C5365;
+
+        }
+        &:hover:before, &:hover:after {
+          background-color: #6F7995;
+        }
+      }
     }
 
     .plan-diagram {
