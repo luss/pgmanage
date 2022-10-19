@@ -10,7 +10,7 @@ git clone $REPO --depth 1 -b $BRANCH OmniDB
 
 # Installing dependencies
 cd OmniDB/
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # Building server
 cd OmniDB/
@@ -26,10 +26,15 @@ tar -czvf omnidb-server_$VERSION.tar.gz omnidb-server_$VERSION/
 mv omnidb-server_$VERSION.tar.gz /tmp/
 
 # Building app
-curl -LO https://dl.nwjs.io/v0.38.4/nwjs-v0.38.4-linux-x64.tar.gz
-tar -xzvf nwjs-v0.38.4-linux-x64.tar.gz
-mv nwjs-v0.38.4-linux-x64 omnidb-app_$VERSION
+curl -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz
+tar -xzvf nwjs-v0.69.1-linux-x64.tar.gz
+mv nwjs-v0.69.1-linux-x64 omnidb-app_$VERSION
 cd omnidb-app_$VERSION
+rm ./lib/libEGL.so
+rm ./lib/libGLESv2.so
+rm ./lib/libvulkan.so.1
+rm ./lib/libvk_swiftshader.so
+rm ./lib/*.json
 mkdir omnidb-server
 cp $HOME/omnidb-server ./omnidb-server/
 cp $HOME/OmniDB/deploy/app/* .
