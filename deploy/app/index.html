@@ -425,7 +425,14 @@
     let v_login_wrap_body = document.getElementById('login_wrap_body');
     let v_webview = document.getElementById('view');
 
-
+    // handle newwindow messages from the webview
+    // allows for opening of webapp links in the default system browser
+    v_webview.addEventListener('newwindow', async (e) => {
+      const protocol = (new URL(e.targetUrl)).protocol
+      if (protocol === 'http:' || protocol === 'https:') {
+        await gui.Shell.openExternal(e.targetUrl)
+      }
+    })
 
     const child_process = require('child_process')
     const path = require('path')
@@ -553,8 +560,6 @@
   catch(e) {
     document.write(e);
   }
-
-
 
 
   </script>
