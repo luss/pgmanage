@@ -1,8 +1,9 @@
 import os
 
+
 # OmniDB settings
-OMNIDB_VERSION = 'PgManage 1.0'
-OMNIDB_SHORT_VERSION = '1.0'
+OMNIDB_VERSION = 'Dev'
+OMNIDB_SHORT_VERSION = 'dev'
 DEV_MODE = True
 DESKTOP_MODE = False
 APP_TOKEN = None

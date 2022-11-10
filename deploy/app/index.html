@@ -297,7 +297,7 @@
 
 
             <div class="omnidb__login__version">
-              <small>v1.0.0-beta</small>
+              <small>version_placeholder</small>
             </div>
           </div>
 
@@ -484,7 +484,7 @@
 
     setTimeout(function() {
 
-      django = child_process.spawn(path.join(global.__dirname,'omnidb-server/omnidb-server'),['-A'],{detached: false});
+      django = child_process.spawn(path.join(global.__dirname,'pgmanage-server/omnidb-server'),['-A'],{detached: false});
 
       django.stderr.on('data', (data) => {
        v_loading_data_content.innerHTML += `${data}` + '<br/>';

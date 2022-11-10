@@ -8,7 +8,7 @@ SHELL ["/bin/bash", "-c"]
 
 ARG REPO="https://github.com/commandprompt/pgmanage"
 ARG BRANCH="dev"
-ARG VERSION="1.0.0-beta"
+ARG VERSION=""
 
 ENV REPO=$REPO
 ENV BRANCH=$BRANCH
