@@ -129,7 +129,7 @@ var v_createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_n
 
 
     '<div class="alert-info p-2 rounded mt-4" style="display: grid; grid-template: \'icon text\';">' +
-      '<i class="fas fa-2xl fa-exclamation-triangle p-4" style="grid-area: icon;"></i>' +
+      '<i class="mt-4 fas fa-2xl fa-exclamation-triangle p-4" style="grid-area: icon;"></i>' +
       '<div style="grid-area: text;">' +
         `
         Our focus is to provide a very flexible, secure and work-effective environment for multiple DBMS.<br>
