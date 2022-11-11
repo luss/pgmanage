@@ -170,7 +170,7 @@ function startTutorial(p_tutorial_name) {
           <path d="M52.0317 28.8833C52.0317 26.6734 50.2334 24.8834 48.0115 24.8834C45.7896 24.8834 43.9863 26.6734 43.9863 28.8833C43.9863 31.0932 45.7896 32.8804 48.0115 32.8804C50.2334 32.8804 52.0317 31.0932 52.0317 28.8833Z" fill="#525678"></path>
           <path d="M18.6008 9.68901C16.6757 10.7922 16.0177 13.2345 17.1283 15.1507C18.2375 17.0633 20.6995 17.7184 22.6225 16.6152C24.5476 15.5106 25.2041 13.0612 24.095 11.1522C22.9809 9.23957 20.5252 8.5809 18.6008 9.68901Z" fill="#525678"></path>
           <path d="M18.6043 48.0832C20.5308 49.1878 22.9864 48.5334 24.097 46.6208C25.2062 44.7082 24.5475 42.2609 22.6259 41.1577C20.6994 40.051 18.2409 40.7076 17.1353 42.6188C16.0226 44.5349 16.6792 46.9808 18.6043 48.0832Z" fill="#525678"></path>
-        </svg> 
+        </svg>
         button.</p>
         `,
         p_target: document.getElementsByClassName('omnidb__tab-menu omnidb__tab-menu--primary')[0],
@@ -440,7 +440,7 @@ function startTutorial(p_tutorial_name) {
         </ul>
         `,
         p_target: function(){var v_target = v_connTabControl.selectedTab.tag.divTree; return v_target;},
-        p_title: 'Aimara Tree'
+        p_title: 'Database Tree'
       },
       {
         p_message: `
@@ -512,7 +512,7 @@ function startTutorial(p_tutorial_name) {
   v_tutorials.getting_started = [
     {
       p_message:
-      '<ol style="padding-left: 1.5rem;">' +
+      '<ol class="ml-2" style="padding-left: 1.5rem;">' +
         v_tutorial_link_creating_user +
         `
         <li class="mb-2">
@@ -538,7 +538,7 @@ function startTutorial(p_tutorial_name) {
         ` +
         v_button_inner_query +
       '</ol>',
-      p_title: '<i class="fas fa-list mr-2"></i> Getting started'
+      p_title: 'Getting started'
     }
   ];
 

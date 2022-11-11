@@ -124,7 +124,6 @@ var v_createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_n
 
 
     '<button type="button" class="btn btn-lg btn-primary w-auto mx-auto my-4" onclick="startTutorial(' + "'getting_started'" + ');">' +
-      '<i class="fas fa-list mr-2"></i>' +
       'Getting started' +
     '</button>' +
 
