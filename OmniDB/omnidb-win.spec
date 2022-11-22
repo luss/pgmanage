@@ -3,7 +3,7 @@
 block_cipher = None
 
 data_files_server = [
-  ('omnidb.db','.'),
+  ('pgmanage.db','.'),
   ('config.py','.'),
   ('OmniDB_app/static','OmniDB_app/static'),
   ('OmniDB_app/include','OmniDB_app/include'),
@@ -13,7 +13,6 @@ data_files_server = [
 
 
 a = Analysis(['omnidb-server.py'],
-             pathex=['C:\\Users\\omnidb\\OmniDB\\OmniDB\\OmniDB'],
              binaries=[],
              datas=data_files_server,
              hiddenimports=['cheroot.ssl','cheroot.ssl.builtin','psycopg2','paramiko'],
@@ -30,7 +29,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='omnidb-server',
+          name='pgmanage-server',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -43,4 +42,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='omnidb-server')
+               name='pgmanage-server')
