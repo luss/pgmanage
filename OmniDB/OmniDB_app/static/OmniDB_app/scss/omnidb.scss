@@ -811,6 +811,20 @@ button.close {
   padding-top: 0px;
   white-space: nowrap;
 }
+
+.omnidb__utilities-menu .omnidb__menu__btn.nav-link,
+.omnidb__utilities-menu .badge-info {
+  i.fas {
+    font-size: 0;
+  }
+}
+
+.omnidb__utilities-menu.omnidb__utilities-menu--show .omnidb__menu__btn.nav-link {
+  i.fas {
+    font-size:inherit;
+  }
+}
+
 .omnidb__utilities-menu .omnidb__menu__btn-text span {
   transform: scaleX(0);
   transition: 0.35s;
@@ -864,6 +878,7 @@ button.close {
   overflow: hidden;
   text-align: center;
   width: 27px;
+  font-size: inherit;
 }
 
 /* PANELS */
