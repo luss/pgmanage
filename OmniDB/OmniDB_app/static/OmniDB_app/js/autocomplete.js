@@ -982,10 +982,9 @@ function autocomplete_keyup(p_event) {
 }
 
 function autocomplete_keydown(p_editor, p_event) {
-
-  if (event.ctrlKey==true ||
-  event.altKey==true ||
-  event.metaKey==true ) {
+  if (p_event.ctrlKey==true ||
+  p_event.altKey==true ||
+  p_event.metaKey==true ) {
     v_autocomplete_object.alt_shift_meta_pressed = true;
   }
   else {
@@ -1206,7 +1205,10 @@ function close_autocomplete(p_additional_text) {
       v_autocomplete_object.elements[k].container.innerHTML = '';
     v_autocomplete_object.elements[k].elements = [];
   }
-  v_autocomplete_object.div.style.display = 'none';
+  setTimeout(() => {
+    v_autocomplete_object.div.style.display = 'none';
+  }, 1000)
+
   v_autocomplete_object.close_div.parentNode.removeChild(v_autocomplete_object.close_div);
 
   var v_editor = v_autocomplete_object.editor;
@@ -1214,7 +1216,6 @@ function close_autocomplete(p_additional_text) {
     v_editor.session.replace(v_autocomplete_object.range, p_additional_text);
   }
   v_editor.focus();
-  v_autocomplete_object.no_results.style.display = 'none';
 }
 
 function autocomplete_start(editor, mode, event, force = null) {
