@@ -884,7 +884,7 @@ def thread_query(self,args):
 
                 v_response['v_data'] = {
                     'v_filename': settings.PATH + '/static/temp/{0}'.format(v_file_name),
-                    'v_downloadname': 'omnidb_exported.{0}'.format(v_extension),
+                    'v_downloadname': 'pgmanage_exported-{0}.{1}'.format(log_end_time ,v_extension),
                     'v_duration': v_duration,
                     'v_inserted_id': v_inserted_id,
                     'v_con_status': v_database.v_connection.GetConStatus(),

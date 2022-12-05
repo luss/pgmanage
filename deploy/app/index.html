@@ -458,6 +458,15 @@
       }
     })
 
+
+    // allow csv/xls download during data export
+    // https://developer.chrome.com/docs/extensions/reference/webviewTag/#event-permissionrequest
+    v_webview.addEventListener('permissionrequest', function(e) {
+      if (e.permission === 'download') {
+        e.request.allow();
+      }
+    });
+
     const child_process = require('child_process')
     const path = require('path')
     const url = require('url')
