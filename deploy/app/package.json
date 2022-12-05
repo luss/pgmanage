@@ -1,9 +1,9 @@
 {
- "name": "OmniDB",
+ "name": "PgManage",
  "main": "index.html",
 "window": {
     "frame": false,
     "transparent": false,
-    "icon": "omnidb_icon.png"
+    "icon": "pgmanage_icon.png"
   }
 }
