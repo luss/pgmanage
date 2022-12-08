@@ -36,7 +36,11 @@
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
 
-  !insertmacro MUI_UNPAGE_CONFIRM
+  !define MUI_FINISHPAGE_RUN "$InstDir\pgmanage-app.exe"
+  !define MUI_FINISHPAGE_RUN_TEXT "Run PgManage"
+  !insertmacro MUI_PAGE_FINISH
+
+  !insertmacro MUI_UNPAGE_COMPONENTS
   !insertmacro MUI_UNPAGE_INSTFILES
 
 ;--------------------------------
@@ -86,10 +90,8 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Section
 
-Section "Uninstall"
-
-  ;ADD YOUR OWN FILES HERE...
-
+Section "un.Application Files"
+  SectionIn RO
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir /r "$INSTDIR"
@@ -97,4 +99,8 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\$(^Name)"
   Delete "$SMPROGRAMS\$(^Name).lnk"
   Delete "$Desktop\$(^Name).lnk"
+SectionEnd
+
+Section "un.Application Data"
+  RMDir /r "$PROFILE\.pgmanage"
 SectionEnd
