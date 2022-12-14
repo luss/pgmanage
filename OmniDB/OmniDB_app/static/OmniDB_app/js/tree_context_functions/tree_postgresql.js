@@ -2506,7 +2506,7 @@ function getTreePostgresql(p_div) {
                         )
                     );
                 }
-            }, 
+            },
             // {
             //     text: 'Debug Function',
             //     icon: 'fas cm-all fa-bug',
@@ -4035,7 +4035,7 @@ function checkCurrentDatabase(p_node, p_complete_check, p_callback_continue,
 
                                 v_connTabControl.selectedTab.tag.divDetails
                                     .innerHTML =
-                                    'Active database: <b>' + p_node
+                                    '<i class="fas fa-server mr-1"></i>selected DB: <b>' + p_node
                                     .tag.database + '</b>';
 
                                 v_connTabControl.selectedTab.tag.selectedDatabaseNode
