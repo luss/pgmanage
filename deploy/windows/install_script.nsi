@@ -19,7 +19,7 @@
 
   ;Request application privileges for Windows Vista
   RequestExecutionLevel user
-
+  ManifestDPIAware true
 ;--------------------------------
 ;Interface Configuration
 
