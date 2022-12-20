@@ -223,7 +223,8 @@ var v_createConsoleTabFunction = function() {
   var v_editor2 = new Terminal({
         fontSize: v_font_size,
         theme: v_current_terminal_theme,
-        fontFamily: 'Monospace'
+        fontFamily: 'Monospace',
+        rendererType: 'dom' //FIXME: investigate in detail, for no use dom renderer because in nwjs we had some text rendering bugs on light theme
   });
   // var v_editor2_fit_addon = new FitAddon();
   // v_editor2.loadAddon(v_editor2_fit_addon);

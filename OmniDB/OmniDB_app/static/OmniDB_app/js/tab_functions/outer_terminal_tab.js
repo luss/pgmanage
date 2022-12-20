@@ -84,7 +84,8 @@ var v_createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Termi
   var term = new Terminal({
         fontSize: v_font_size,
         theme: v_current_terminal_theme,
-        fontFamily: 'Monospace'
+        fontFamily: 'Monospace',
+        rendererType: 'dom' //FIXME: investigate in detail, for no use dom renderer because in nwjs we had some text rendering bugs on light theme
   });
   term.open(term_div);
 
