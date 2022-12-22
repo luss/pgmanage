@@ -41,7 +41,7 @@ tar -czvf pgmanage-server_$VERSION.tar.gz pgmanage-server_$VERSION/
 mv pgmanage-server_$VERSION.tar.gz /tmp/
 
 # Building app
-curl -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz
+curl -C - -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz
 tar -xzvf nwjs-v0.69.1-linux-x64.tar.gz
 mv nwjs-v0.69.1-linux-x64 pgmanage-app_$VERSION
 cd pgmanage-app_$VERSION
@@ -50,6 +50,7 @@ rm ./lib/libGLESv2.so
 rm ./lib/libvulkan.so.1
 rm ./lib/libvk_swiftshader.so
 rm ./lib/*.json
+
 mkdir pgmanage-server
 cp $HOME/pgmanage-server ./pgmanage-server/
 cp $HOME/OmniDB/deploy/app/* .
