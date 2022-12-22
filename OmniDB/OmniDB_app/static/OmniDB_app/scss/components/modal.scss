@@ -1,0 +1,70 @@
+.modal {
+
+}
+
+.modal-connections {
+    &__dialog {
+       
+    }
+
+    &__content {
+        height: 400px;
+    
+    }
+
+    &__body {
+        overflow-y: hidden;
+        height: 400px;
+
+    }
+
+    &__list, &__form {
+        overflow-y: scroll;
+        height: 100%;
+    }
+
+    &__list {
+        &_group {
+
+        }
+    }
+
+    &__form  {
+        height: calc(100% - 54px);
+
+        &__group {
+
+        }
+
+        .group {
+            &__item {
+                border-radius: 16px;
+                background: #F1F1F1;
+                
+            }
+        }
+
+    }
+
+    .group {
+        &__header {
+            cursor: pointer;
+        }
+
+        &__content {
+            &_item {
+
+            }
+
+            .connection {
+                &__name {
+
+                }
+
+                &__subtitle {
+
+                }
+            }
+        }
+    }
+}

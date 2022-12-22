@@ -27,6 +27,10 @@ SOFTWARE.
 */
 
 function startTutorial(p_tutorial_name) {
+  $('#modal-restyle').modal({
+    show: true
+  })
+  return;
   if (v_omnis.omnis_ui_assistant) {
     v_omnis.omnis_ui_assistant.self_destruct();
   }

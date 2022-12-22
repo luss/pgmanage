@@ -1,0 +1,28 @@
+.modal-connections__content {
+  height: 400px;
+}
+
+.modal-connections__body {
+  overflow-y: hidden;
+  height: 400px;
+}
+
+.modal-connections__list, .modal-connections__form {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.modal-connections__form {
+  height: calc(100% - 54px);
+}
+
+.modal-connections__form .group__item {
+  border-radius: 16px;
+  background: #F1F1F1;
+}
+
+.modal-connections .group__header {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=../../css/modal.min.css.map */
