@@ -875,6 +875,38 @@ class PostgreSQL:
         ''', True)
 
     @lock_required
+    def QueryConfiguration(self, search=None):
+        where = ''
+        if search:
+            where = '''
+            WHERE name ILIKE '%{0}%'
+            OR short_desc ILIKE '%{0}%'
+            OR extra_desc ILIKE '%{0}%'
+            '''.format(search)
+
+        return self.v_connection.Query('''
+        SELECT name, setting,
+      current_setting(name) AS current_setting,
+        unit,
+        vartype,
+        min_val, max_val, enumvals,
+        context, category,
+        short_desc || ' ' || coalesce(extra_desc, '') AS desc,
+        boot_val, reset_val,
+        pending_restart
+        FROM pg_settings
+        {0}
+        ORDER BY category, name
+    '''.format(where), True)
+
+    @lock_required
+    def QueryConfigCategories(self):
+        return self.v_connection.Query(
+            '''
+            SELECT DISTINCT(category) FROM pg_settings ORDER BY category
+            ''', True)
+            
+    @lock_required
     def QuerySchemas(self):
         return self.v_connection.Query('''
             select schema_name,

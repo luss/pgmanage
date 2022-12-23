@@ -296,6 +296,11 @@ base_urlpatterns = [
     re_path(r'^remove_saved_monitor_unit/', views.monitor_dashboard.remove_saved_monitor_unit, name='remove_saved_monitor_unit'),
     re_path(r'^update_saved_monitor_unit_interval/', views.monitor_dashboard.update_saved_monitor_unit_interval, name='update_saved_monitor_unit_interval'),
 
+    # Configuration
+    re_path(r'^configuration/$', views.configuration.get_configuration, name='get_configuration'),
+    re_path(r'^configuration/categories/', views.configuration.get_configuration_categories, name='get_configuration_categories'),
+    re_path(r'^configuration/post/', views.configuration.post_configuration, name='post_configuration'),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.PATH == '':

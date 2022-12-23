@@ -4581,6 +4581,15 @@ function getTreeDetailsPostgresql(node) {
                     }
                 }
             });
+            node.tree.contextMenu.cm_server.elements.push(
+                {
+                    text: 'Config Testing',
+                    icon: 'fas fa-cog',
+                    action: function(node) {
+                        createConfTab()
+                    }
+                }
+            );
             node.tree.contextMenu.cm_server.elements.push({
                 text: 'Monitoring',
                 icon: 'fas cm-all fa-chart-line',

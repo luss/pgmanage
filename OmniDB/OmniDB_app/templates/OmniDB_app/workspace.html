@@ -1047,8 +1047,6 @@
     var v_super_user = {{ super_user }};
     var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
     </script>
-    <script type="text/javascript">
-    </script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/axios@1.2.1/axios.min.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/vue@3.2.45/vue.global.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/vue3-sfc-loader@0.8.4/vue3-sfc-loader.js"></script>
@@ -1056,5 +1054,10 @@
     <script src="{{url_folder}}/static/OmniDB_app/js/vuejs/explain.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/pev2/pev2.umd.js"></script>
     <script type="text/javascript" src="{{url_folder}}/static/OmniDB_app/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
+    <script src="{{url_folder}}/static/OmniDB_app/js/tab_functions/conf_tab.js"></script>
+    <script type="text/javascript">
+      axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
+      axios.defaults.headers.post['Content-Type'] = "application/x-www-form-urlencoded";
+    </script>
   </body>
 </html>
