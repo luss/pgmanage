@@ -1,13 +1,10 @@
-// let createConfTab = function (data) {
 let createConfTab = function () {
+
     // Removing last tab of the inner tab list
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
   let tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
     p_name: '<span>Configuration</span>',
-    p_selectFunction: function() {
-        console.log('123')
-    },
     p_closeFunction: function(e, tab) {
         let current_tab = tab;
         beforeCloseTab(e,
@@ -22,7 +19,7 @@ let createConfTab = function () {
 
   tab.elementDiv.innerHTML =`
   <div id='configuration_tab_${tab.id}' class="pt-3">
-    <config-list></config-list>
+    <config></config>
   </div>`
 
   let tag = {
@@ -49,7 +46,7 @@ let createConfTab = function () {
 
   const app = createApp({
     components: {
-        'config-list': Vue.defineAsyncComponent(() => loadModule('../static/OmniDB_app/js/vuejs/components/ConfigList.vue', options)),  
+        'config': Vue.defineAsyncComponent(() => loadModule('../static/OmniDB_app/js/vuejs/components/Config.vue', options)),  
     },
     })
 

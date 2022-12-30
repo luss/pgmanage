@@ -109,3 +109,18 @@ class MonUnitsConnections(models.Model):
     connection = models.ForeignKey(Connection,on_delete=models.CASCADE)
     interval = models.IntegerField(blank=False,default=60)
     plugin_name = models.TextField(blank=False, default='')
+
+
+class ConfigHistory(models.Model):
+    start_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    #TODO need to make confighistory not depend on connection but other unique value
+    # that will be the same every time it is generated
+    # now this setup  is only for develop purposes
+    connection = models.ForeignKey(Connection,on_delete=models.CASCADE)
+    #TODO consider maybe to make config model to store all config settings snapshot
+    config_snapshot = models.TextField(blank=False)
+    # commit_comment = models.TextField(blank=True)
+
+    # ask for deleting configHistory before deleting connection
+    

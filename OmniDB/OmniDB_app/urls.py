@@ -299,7 +299,8 @@ base_urlpatterns = [
     # Configuration
     re_path(r'^configuration/$', views.configuration.get_configuration, name='get_configuration'),
     re_path(r'^configuration/categories/', views.configuration.get_configuration_categories, name='get_configuration_categories'),
-    re_path(r'^configuration/post/', views.configuration.post_configuration, name='post_configuration'),
+    re_path(r'^save_configuration/', views.configuration.save_configuration, name='save_configuration'),
+    re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history')
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

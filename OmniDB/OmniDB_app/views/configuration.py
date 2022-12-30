@@ -1,57 +1,58 @@
 import json
 import ast
-from django.http import JsonResponse
-from OmniDB_app.views.memory_objects import database_required, user_authenticated
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.core.exceptions import ValidationError
+from django.db.models import Q
 
+from OmniDB_app.views.memory_objects import database_required, user_authenticated
+from OmniDB_app.utils.conf import get_settings, post_settings
+from OmniDB_app.models import ConfigHistory, Connection
 
 @user_authenticated
-@database_required(p_check_timeout = True, p_open_connection = True)
+@database_required(p_check_timeout=True, p_open_connection=True)
 def get_configuration(request, v_database):
     json_object = json.loads(request.POST.get('data', None))
     query_filter = json_object.get('query_filter', None)
-    tables_json = v_database.QueryConfiguration(query_filter).Jsonify()
-    tables = json.loads(tables_json)
-    ret = {}
-    for row in tables:
-        rows = ret.setdefault(row['category'], [])
-        enumvals = row['enumvals']
-        if enumvals != '':
+    settings = get_settings(v_database, query_filter)
 
-            enumvals = list(ast.literal_eval(enumvals))
-
-        rows.append({
-            'name': row['name'],
-            'setting': row['setting'],
-            'setting_raw': row['current_setting'],
-            'unit': row['unit'],
-            'vartype': row['vartype'],
-            'min_val': row['min_val'],
-            'max_val': row['max_val'],
-            'boot_val': row['boot_val'],
-            'reset_val': row['reset_val'],
-            'enumvals': enumvals,
-            'context': row['context'],
-            'desc': row['desc'],
-            'pending_restart': row['pending_restart'],
-        })
-
-    data = [{'category': k, 'rows': v} for k, v in ret.items()]
-
-    return JsonResponse(data=data, safe=False)
+    return JsonResponse({'settings': settings})
 
 
 @user_authenticated
-@database_required(p_check_timeout = True, p_open_connection = True)
+@database_required(p_check_timeout=True, p_open_connection=True)
 def get_configuration_categories(request, v_database):
     query = v_database.QueryConfigCategories().Rows
-    data = [l.pop() for l in query]
-    return JsonResponse({'data': data})
+    categories = [l.pop() for l in query]
+    return JsonResponse({'categories': categories})
 
 
-# post configurations
-@database_required(p_check_timeout = True, p_open_connection = True)
 @user_authenticated
-def post_configuration(request, database):
-    pass
+@database_required(p_check_timeout=True, p_open_connection=True)
+def save_configuration(request, v_database):
+    current = get_settings(v_database)
+    json_object = json.loads(request.POST.get('data', None))
+    update = json_object.get('settings')
+    try:
+        updated_settings = post_settings(request, v_database, current, update)
+        return JsonResponse({'data': updated_settings})
+    except ValidationError as e:
+        return HttpResponseBadRequest(content=e.message)
 
-# get configuration status ???????
+
+@user_authenticated
+@database_required(p_check_timeout=True, p_open_connection=True)
+def get_configuration_history(request, v_database):
+    config_history = ConfigHistory.objects.filter(Q(user=request.user) & \
+                                                  Q(connection=Connection.objects.get(id=v_database.v_conn_id))).order_by('-start_time')
+
+    data = []
+
+    for config in config_history:
+        data.append({
+            "start_time": config.start_time,
+            "user": config.user.username,
+            "connection": config.connection.id,
+            "config_snapshot": config.config_snapshot
+        })
+    
+    return JsonResponse({'config_history': data})
