@@ -35,9 +35,9 @@
   <div v-else class="row">
     <div class="col-12">
       <ConfigGroup 
-      v-for="(setting_group, index) in currentResult"
+      v-for="setting_group in currentResult"
       :initial-group="setting_group"
-      :key="index"
+      :key="setting_group.category"
       @group-change="changeData"
       />
     </div>

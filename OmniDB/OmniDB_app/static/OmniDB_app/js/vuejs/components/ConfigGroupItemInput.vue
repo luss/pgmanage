@@ -5,13 +5,15 @@
                 true-value="on"
                 false-value="off"
                 @change="changeSetting"
+                :disabled="isReadOnly"
         />
     </div>
     <select v-else-if="setting.vartype === 'enum'" 
     class="form-control form-control-sm" 
     :name="setting.name" 
     v-model="setting.setting" 
-    @input="changeSetting">
+    @input="changeSetting"
+    :disabled="isReadOnly">
         <option v-for="v in setting.enumvals" :value="v">{{ v }}</option>
     </select>
     <input v-else data-html="true" type="text" 
@@ -19,9 +21,10 @@
     :placeholder="setting.name" 
     v-model="setting.setting" 
     @input="changeSetting" 
-    :id="`${this.initialSetting.name}_${Date.now()}`"
+    :id="inputId"
+    :disabled="isReadOnly"
     >
-    <button v-if="setting.setting != setting.boot_val" 
+    <button v-if="setting.setting != setting.boot_val && setting.category != 'Preset Options'" 
     type="button" 
     class="btn btn-link btn-sm" 
     :id="buttonId"  
@@ -68,14 +71,17 @@ export default {
                         </td>
                     </tr>
                     </table>`,
-            // inputId: `${this.initialSetting.name}_${Date.now()}`,
-            buttonId: `buttonResetDefault_${this.initialSetting.name}_${Date.now()}`,
+            inputId: `${this.initialSetting.name}_input`,
+            buttonId: `buttonResetDefault_${this.initialSetting.name}`,
         }
     },
     computed: {
         setting() {
             return Object.assign({}, this.initialSetting)
         },
+        isReadOnly() {
+            return this.initialSetting.category === 'Preset Options'
+        }
     },
     methods: {
         changeSetting(e) {

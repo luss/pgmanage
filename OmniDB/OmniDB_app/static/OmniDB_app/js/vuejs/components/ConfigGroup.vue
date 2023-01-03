@@ -8,7 +8,7 @@
         <table class="table table-sm">
           <tr 
             v-for="(setting, index) in settingGroup.rows"
-            :key="index">
+            :key="setting.name">
             <td class="badge-settings">
               <span class="title-setting">
               {{ setting.name }}

@@ -75,6 +75,7 @@ def get_settings(conn, search=None):
             'name': row['name'],
             'setting': row['setting'],
             'setting_raw': row['current_setting'],
+            'category': row['category'],
             'unit': row['unit'],
             'vartype': row['vartype'],
             'min_val': row['min_val'],
@@ -147,7 +148,10 @@ def post_settings(request,conn, current, update):
         config_history.save()
 
     for setting_name, setting_val in update.items():
-        setting_valid, item = validate_setting(setting_name, setting_val, current)
+        try:
+            setting_valid, item = validate_setting(setting_name, setting_val, current)
+        except ValueError as exc:
+            raise ValidationError(code=400, message=f'{setting_name}: Invalid setting.')
         if setting_valid:
             if ((item['vartype'] == 'integer' and
             setting_val != item['setting_raw']) or
@@ -166,7 +170,7 @@ def post_settings(request,conn, current, update):
                 except Exception as exc:
                     if ret['settings']:
                         for setting in ret['settings']:
-                            query = f"ALTER SYSTEM SET {setting.name} TO '{setting.previous_setting}';"
+                            query = f"ALTER SYSTEM SET {setting['name']} TO '{setting['previous_setting']}';"
                             conn.Execute(query)
                     raise Exception from exc
 #                 raise HTTPError(408, "{}: {}".format(setting['name'], e))
@@ -181,21 +185,22 @@ def post_settings(request,conn, current, update):
         else:
             if ret['settings']:
                 for setting in ret['settings']:
-                    query = f"ALTER SYSTEM SET {setting.name} TO '{setting.previous_setting}';"
+                    query = f"ALTER SYSTEM SET {setting['name']} TO '{setting['previous_setting']}';"
                     conn.Execute(query)
             raise ValidationError(code=400, message=f'{setting_name}: Invalid setting.')
 
-    #     # Reload PG configuration.
-    conn.Execute("SELECT pg_reload_conf()")
+    # Reload PG configuration if there are any changes
+    if ret['settings']:
+        conn.Execute("SELECT pg_reload_conf()")
 
-    updated_settings = get_settings(conn)
+        updated_settings = get_settings(conn)
 
-    config_history = ConfigHistory(
-            user=request.user,
-            connection=Connection.objects.get(id=conn.v_conn_id),
-            config_snapshot=updated_settings
-        )
-    config_history.save()
+        config_history = ConfigHistory(
+                user=request.user,
+                connection=Connection.objects.get(id=conn.v_conn_id),
+                config_snapshot=updated_settings
+            )
+        config_history.save()
 
     return ret
 
