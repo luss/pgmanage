@@ -1,26 +1,26 @@
 <template>
   <div class="card" >
     <div class="card-header">
-    {{ settingGroup.category }}
+      {{ settingGroup.category }}
     </div>
     <div class="card-body">
       <form role="form">
         <table class="table table-sm">
           <tr 
             v-for="(setting, index) in settingGroup.rows"
-            :key="setting.name">
-            <td class="badge-settings">
-              <span class="title-setting">
-              {{ setting.name }}
+              :key="setting.name">
+            <td>
+              <span class="font-weight-bold">
+                {{ setting.name }}
               </span>
               <p class="text-muted mb-0 small">
                 {{ setting.desc }}</p>
             </td>
             <td class="input-setting">
               <InputItem
-              :initial-setting="setting"
-              :index="index"
-              @setting-change="changeSetting"
+                :initial-setting="setting"
+                :index="index"
+                @setting-change="changeSetting"
               />
             </td>
           </tr>
@@ -31,10 +31,13 @@
 </template>
 
 <script>
-import ConfigGroupItemInput from './ConfigGroupItemInput.vue';
+import ConfigTabGroupItemInput from './ConfigTabGroupItemInput.vue';
 
 export default {
   name: 'ConfigGroup',
+  components: {
+    InputItem: ConfigTabGroupItemInput
+  },
   props: {
     initialGroup: {
       type: Object,
@@ -59,9 +62,6 @@ export default {
       })
     }
   },
-  components: {
-    InputItem: ConfigGroupItemInput
-  }
 }
 </script>
 

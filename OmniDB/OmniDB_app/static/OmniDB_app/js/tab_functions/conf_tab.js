@@ -19,7 +19,7 @@ let createConfTab = function () {
 
   tab.elementDiv.innerHTML =`
   <div id='configuration_tab_${tab.id}' class="pt-3">
-    <config></config>
+    <config-tab></config-tab>
   </div>`
 
   let tag = {
@@ -46,7 +46,7 @@ let createConfTab = function () {
 
   const app = createApp({
     components: {
-        'config': Vue.defineAsyncComponent(() => loadModule('../static/OmniDB_app/js/vuejs/components/Config.vue', options)),  
+        'config-tab': Vue.defineAsyncComponent(() => loadModule('../static/OmniDB_app/js/vuejs/components/ConfigTab.vue', options)),  
     },
     })
 

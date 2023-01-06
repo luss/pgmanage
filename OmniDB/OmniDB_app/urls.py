@@ -300,7 +300,8 @@ base_urlpatterns = [
     re_path(r'^configuration/$', views.configuration.get_configuration, name='get_configuration'),
     re_path(r'^configuration/categories/', views.configuration.get_configuration_categories, name='get_configuration_categories'),
     re_path(r'^save_configuration/', views.configuration.save_configuration, name='save_configuration'),
-    re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history')
+    re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history'),
+    re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status")
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
