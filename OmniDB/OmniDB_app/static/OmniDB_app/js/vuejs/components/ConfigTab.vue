@@ -244,9 +244,8 @@ export default {
       axios
         .post("/save_configuration/", {
           data: JSON.stringify({
-            p_database_index:
-              window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            p_tab_id: window.v_connTabControl.selectedTab.id,
+            p_database_index: this.databaseId,
+            p_tab_id: this.tabId,
             settings: this.updateSettings,
             commit_comment: this.commitComment,
             new_config: newConfig,
@@ -268,9 +267,8 @@ export default {
       axios
         .post("/get_configuration_history/", {
           data: JSON.stringify({
-            p_database_index:
-              window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            p_tab_id: window.v_connTabControl.selectedTab.id,
+            p_database_index: this.databaseId,
+            p_tab_id: this.tabId,
           }),
         })
         .then((response) => {
@@ -302,9 +300,8 @@ export default {
       axios
         .post("/configuration/status/", {
           data: JSON.stringify({
-            p_database_index:
-              window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            p_tab_id: window.v_connTabControl.selectedTab.id,
+            p_database_index: this.databaseId,
+            p_tab_id: this.tabId,
           }),
         })
         .then((response) => {
