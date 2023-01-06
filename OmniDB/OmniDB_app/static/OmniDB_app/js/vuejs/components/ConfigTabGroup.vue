@@ -1,27 +1,22 @@
 <template>
-  <div class="card" >
+  <div class="card">
     <div class="card-header">
       {{ settingGroup.category }}
     </div>
     <div class="card-body">
       <form role="form">
         <table class="table table-sm">
-          <tr 
-            v-for="(setting, index) in settingGroup.rows"
-              :key="setting.name">
+          <tr v-for="(setting, index) in settingGroup.rows" :key="setting.name">
             <td>
               <span class="font-weight-bold">
                 {{ setting.name }}
               </span>
               <p class="text-muted mb-0 small">
-                {{ setting.desc }}</p>
+                {{ setting.desc }}
+              </p>
             </td>
             <td class="input-setting">
-              <InputItem
-                :initial-setting="setting"
-                :index="index"
-                @setting-change="changeSetting"
-              />
+              <InputItem :initial-setting="setting" :index="index" @setting-change="changeSetting" />
             </td>
           </tr>
         </table>
@@ -31,38 +26,38 @@
 </template>
 
 <script>
-import ConfigTabGroupItemInput from './ConfigTabGroupItemInput.vue';
+import ConfigTabGroupItemInput from "./ConfigTabGroupItemInput.vue";
 
 export default {
-  name: 'ConfigGroup',
+  name: "ConfigGroup",
   components: {
-    InputItem: ConfigTabGroupItemInput
+    InputItem: ConfigTabGroupItemInput,
   },
   props: {
     initialGroup: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  emits:['groupChange'],
+  emits: ["groupChange"],
   computed: {
     settingGroup() {
-      return Object.assign({}, this.initialGroup)
-    }
+      return Object.assign({}, this.initialGroup);
+    },
   },
   methods: {
     changeSetting(event) {
-      this.settingGroup.rows[event.index] = event.changedSetting
-      this.$emit('groupChange', {
+      this.settingGroup.rows[event.index] = event.changedSetting;
+      this.$emit("groupChange", {
         changedGroup: this.settingGroup,
         updatedSetting: {
           name: event.changedSetting.name,
-          setting: event.changedSetting.setting
-        }
-      })
-    }
+          setting: event.changedSetting.setting,
+        },
+      });
+    },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -70,7 +65,7 @@ export default {
   width: 20%;
 }
 
-.table td{
+.table td {
   vertical-align: middle;
 }
 </style>

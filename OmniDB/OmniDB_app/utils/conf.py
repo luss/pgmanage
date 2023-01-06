@@ -110,7 +110,10 @@ def validate_setting(setting_name, setting_val, current_settings):
     for pg_config_category in current_settings:
         for item in pg_config_category["rows"]:
             if item["name"] == setting_name:
-                if item["name"] in do_not_check_names:
+                if (
+                    item["name"] in do_not_check_names
+                    or item["category"] == "Preset Options"
+                ):
                     return True, item
                 if item["vartype"] == "integer":
                     setting_val = int(human_to_number(setting_val, item["unit"]))
@@ -145,7 +148,7 @@ def validate_setting(setting_name, setting_val, current_settings):
                     return True, item
 
 
-def post_settings(request, conn, update, commit_comment=None):
+def post_settings(request, conn, update, commit_comment=None, new_config=True):
     current_settings = get_settings(conn)
     ret = {"settings": []}
     config_history = ConfigHistory.objects.filter(
@@ -219,16 +222,17 @@ def post_settings(request, conn, update, commit_comment=None):
     if ret["settings"]:
         conn.Execute("SELECT pg_reload_conf()")
 
-        updated_settings = get_settings(conn, grouped=False)
+        if new_config:
+            updated_settings = get_settings(conn, grouped=False)
 
-        config_history = ConfigHistory(
-            user=request.user,
-            connection=Connection.objects.get(id=conn.v_conn_id),
-            config_snapshot=json.dumps(updated_settings),
-            start_time=make_aware(datetime.now()),
-            commit_comment=commit_comment,
-        )
-        config_history.save()
+            config_history = ConfigHistory(
+                user=request.user,
+                connection=Connection.objects.get(id=conn.v_conn_id),
+                config_snapshot=json.dumps(updated_settings),
+                start_time=make_aware(datetime.now()),
+                commit_comment=commit_comment,
+            )
+            config_history.save()
 
     return ret
 

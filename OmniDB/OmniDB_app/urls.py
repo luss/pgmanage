@@ -1,5 +1,5 @@
 #from django.conf.urls import url
-from django.urls import include, re_path
+from django.urls import include, re_path, path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -297,11 +297,12 @@ base_urlpatterns = [
     re_path(r'^update_saved_monitor_unit_interval/', views.monitor_dashboard.update_saved_monitor_unit_interval, name='update_saved_monitor_unit_interval'),
 
     # Configuration
+    path('configuration/<int:config_id>/', views.configuration.delete_config, name="delete_configuration"),
     re_path(r'^configuration/$', views.configuration.get_configuration, name='get_configuration'),
     re_path(r'^configuration/categories/', views.configuration.get_configuration_categories, name='get_configuration_categories'),
     re_path(r'^save_configuration/', views.configuration.save_configuration, name='save_configuration'),
     re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history'),
-    re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status")
+    re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
