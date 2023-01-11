@@ -1,7 +1,7 @@
 import json
 import threading
 import time
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from datetime import datetime, timedelta
 
 import OmniDB_app.include.OmniDatabase as OmniDatabase
@@ -94,6 +94,44 @@ def database_required(p_check_timeout=True, p_open_connection=True):
                 v_database = None
 
             return function(request, v_database, *args, **kwargs)
+        wrap.__doc__ = function.__doc__
+        wrap.__name__ = function.__name__
+        return wrap
+    return decorator
+
+
+def database_required_new(check_timeout=True, open_connection=True):
+    def decorator(function):
+        def wrap(request, *args, **kwargs):
+            
+            session = request.session.get('omnidb_session')
+            
+            json_object = json.loads(request.body) if request.body else {}
+            database_index = json_object.get('database_index')
+            tab_id = json_object.get('tab_id')
+
+            if database_index is not None:
+                try:
+                    if check_timeout:
+                        # Check database prompt timeout
+                        timeout = session.DatabaseReachPasswordTimeout(int(database_index))
+                        if timeout['timeout']:
+                            data = {'password_timeout': True, 'message': timeout['message']}
+                            return HttpResponseBadRequest(content=data)
+
+                    database = get_database_object(
+                        p_session=request.session,
+                        p_tab_id=tab_id,
+                        p_database_index=database_index,
+                        p_attempt_to_open_connection=open_connection
+                    )
+                except Exception as exc:
+                    data = {'password_timeout': True, 'message': str(exc)}
+                    return HttpResponseBadRequest(content=data)
+            else:
+                database = None
+
+            return function(request, database, *args, **kwargs)
         wrap.__doc__ = function.__doc__
         wrap.__name__ = function.__name__
         return wrap

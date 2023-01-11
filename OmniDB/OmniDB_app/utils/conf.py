@@ -70,7 +70,10 @@ def human_to_number(h_value, h_unit=None, h_type=int):
 
 
 def get_settings(conn, search=None, grouped=True):
-    tables_json = conn.QueryConfiguration(search).Jsonify()
+    try:
+        tables_json = conn.QueryConfiguration(search).Jsonify()
+    except Exception as exc:
+        raise DatabaseError(exc)
     tables = json.loads(tables_json)
     ret = {}
     if grouped:
@@ -198,7 +201,7 @@ def post_settings(request, conn, update, commit_comment=None, new_config=True):
                         for setting in ret["settings"]:
                             query = f"ALTER SYSTEM SET {setting['name']} TO '{setting['previous_setting']}';"
                             conn.Execute(query)
-                    raise DatabaseError from exc
+                    raise DatabaseError(exc) from exc
 
                 ret["settings"].append(
                     {

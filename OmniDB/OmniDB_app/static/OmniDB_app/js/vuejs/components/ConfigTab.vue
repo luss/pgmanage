@@ -5,7 +5,7 @@
         <label class="sr-only" for="selectServer">Search</label>
         <div class="input-group">
           <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
-            placeholder="Find in settings" />
+            :disabled="v$.$invalid" placeholder="Find in settings" />
         </div>
       </form>
     </div>
@@ -15,7 +15,7 @@
       <div class="input-group">
         <div class="input-group-prepend">
           <div class="input-group-text">Category</div>
-          <select class="form-control" id="selectConfCat" :disabled="!!query_filter" v-model="selected">
+          <select class="form-control" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
             <option v-for="(cat, index) in categories" :value="cat" :key="index">
               {{ cat }}
             </option>
@@ -104,14 +104,15 @@
 
   <div class="row mt-2 mb-2">
     <div class="col-12 text-center">
-      <button type="submit" class="btn btn-sm btn-success" :disabled="!hasUpdateValues" @click.prevent="confirmConfig">
+      <button type="submit" class="btn btn-sm btn-success" :disabled="!hasUpdateValues || v$.$invalid"
+        @click.prevent="confirmConfig">
         Save and reload configuration
       </button>
     </div>
   </div>
 
   <!--Modal for commit messaging and returning result-->
-  <div class="modal fade" :id="`config_modal_${tabId}`" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" :id="modalId" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header justify-content-center">
@@ -143,6 +144,11 @@ export default {
   components: {
     ConfigTabGroup,
   },
+  setup() {
+    return {
+      v$: Vuelidate.useVuelidate()
+    }
+  },
   data() {
     return {
       data: "",
@@ -160,6 +166,7 @@ export default {
         restartChanges: "",
         restartPending: "",
       },
+      modalId: `config_modal_${this.tabId}_${Date.now()}`
     };
   },
   computed: {
@@ -199,17 +206,15 @@ export default {
     this.getCategories();
     this.getConfiguration();
     this.getConfigHistory();
-    this.getSettingsStatus();
+    this.getConfigStatus();
   },
   methods: {
     getConfiguration() {
       axios
         .post("/configuration/", {
-          data: JSON.stringify({
-            p_database_index: this.databaseId,
-            p_tab_id: this.tabId,
-            query_filter: this.query_filter,
-          }),
+          database_index: this.databaseId,
+          tab_id: this.tabId,
+          query_filter: this.query_filter,
         })
         .then((response) => {
           this.data = response.data.settings;
@@ -222,10 +227,8 @@ export default {
     getCategories() {
       axios
         .post("/configuration/categories/", {
-          data: JSON.stringify({
-            p_database_index: this.databaseId,
-            p_tab_id: this.tabId,
-          }),
+          database_index: this.databaseId,
+          tab_id: this.tabId,
         })
         .then((response) => {
           this.categories = response.data.categories;
@@ -243,13 +246,11 @@ export default {
     saveConfiguration(event, newConfig = true) {
       axios
         .post("/save_configuration/", {
-          data: JSON.stringify({
-            p_database_index: this.databaseId,
-            p_tab_id: this.tabId,
-            settings: this.updateSettings,
-            commit_comment: this.commitComment,
-            new_config: newConfig,
-          }),
+          database_index: this.databaseId,
+          tab_id: this.tabId,
+          settings: this.updateSettings,
+          commit_comment: this.commitComment,
+          new_config: newConfig,
         })
         .then((response) => {
           this.updateSettings = {};
@@ -257,7 +258,7 @@ export default {
           this.appliedSettings.data = response.data.settings;
           this.getConfigHistory();
           this.getConfiguration();
-          this.getSettingsStatus();
+          this.getConfigStatus();
         })
         .catch((error) => {
           showError(error.response.data);
@@ -266,10 +267,8 @@ export default {
     getConfigHistory() {
       axios
         .post("/get_configuration_history/", {
-          data: JSON.stringify({
-            p_database_index: this.databaseId,
-            p_tab_id: this.tabId,
-          }),
+          database_index: this.databaseId,
+          tab_id: this.tabId,
         })
         .then((response) => {
           this.configHistory = response.data.config_history.map((el) => {
@@ -284,7 +283,7 @@ export default {
         });
     },
     confirmConfig() {
-      $(`#config_modal_${this.tabId}`).modal();
+      $(`#${this.modalId}`).modal();
     },
     applyOldConfig(event) {
       this.updateSettings = this.selectedConf.config_snapshot;
@@ -296,13 +295,11 @@ export default {
         ? text.slice(0, max_length - 1) + "..."
         : text;
     },
-    getSettingsStatus() {
+    getConfigStatus() {
       axios
         .post("/configuration/status/", {
-          data: JSON.stringify({
-            p_database_index: this.databaseId,
-            p_tab_id: this.tabId,
-          }),
+          database_index: this.databaseId,
+          tab_id: this.tabId,
         })
         .then((response) => {
           this.appliedSettings.restartPending = response.data.restart_pending;

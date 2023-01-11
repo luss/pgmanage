@@ -12,38 +12,43 @@ from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 
 from OmniDB_app.models import ConfigHistory, Connection
-from OmniDB_app.views.memory_objects import database_required, user_authenticated
+from OmniDB_app.views.memory_objects import database_required_new, user_authenticated
 from OmniDB_app.utils.conf import get_settings, post_settings, get_settings_status
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def get_configuration(request, v_database):
-    json_object = json.loads(request.POST.get("data", None))
-    query_filter = json_object.get("query_filter", None)
-    settings = get_settings(v_database, query_filter)
-
+@database_required_new(check_timeout=True, open_connection=True)
+def get_configuration(request, database):
+    data = json.loads(request.body) if request.body else {}
+    query_filter = data.get("query_filter", None)
+    try:
+        settings = get_settings(database, query_filter)
+    except DatabaseError as e:
+        return HttpResponseServerError(content=e)
     return JsonResponse({"settings": settings})
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def get_configuration_categories(request, v_database):
-    query = v_database.QueryConfigCategories().Rows
+@database_required_new(check_timeout=True, open_connection=True)
+def get_configuration_categories(request, database):
+    try:
+        query = database.QueryConfigCategories().Rows
+    except Exception as e:
+        return HttpResponseServerError(content=e)
     categories = [l.pop() for l in query]
     return JsonResponse({"categories": categories})
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def save_configuration(request, v_database):
-    json_object = json.loads(request.POST.get("data", None))
-    update = json_object.get("settings")
-    commit_comment = json_object.get("commit_comment")
-    new_config = json_object.get("new_config") == True
+@database_required_new(check_timeout=True, open_connection=True)
+def save_configuration(request, database):
+    data = json.loads(request.body) if request.body else {}
+    update_data = data.get("settings")
+    commit_comment = data.get("commit_comment")
+    new_config = data.get("new_config") == True
     try:
         updated_settings = post_settings(
-            request, v_database, update, commit_comment, new_config
+            request, database, update_data, commit_comment, new_config
         )
         return JsonResponse(data=updated_settings)
     except ValidationError as e:
@@ -53,11 +58,11 @@ def save_configuration(request, v_database):
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def get_configuration_history(request, v_database):
+def get_configuration_history(request):
+    data = json.loads(request.body) if request.body else {}
     config_history = ConfigHistory.objects.filter(
         Q(user=request.user)
-        & Q(connection=Connection.objects.get(id=v_database.v_conn_id))
+        & Q(connection=Connection.objects.filter(id=data.get("database_index")).first())
     ).order_by("-start_time")
 
     data = []
@@ -78,9 +83,12 @@ def get_configuration_history(request, v_database):
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def get_status(request, v_database):
-    settings_status = get_settings_status(v_database)
+@database_required_new(check_timeout=True, open_connection=True)
+def get_status(request, database):
+    try:
+        settings_status = get_settings_status(database)
+    except DatabaseError as e:
+        return HttpResponseServerError(content=e)
     return JsonResponse(settings_status)
 
 
