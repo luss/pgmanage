@@ -1,10 +1,10 @@
-@import '../common/themes';
+@import '../common//themes';
 
 $theme-map: null; //important! do not delete this
 
 @import '../common/variables';
 @import '../common/typography';
-@import '../components/button';
+@import '../components//button';
 @import '../components/dropdown';
 @import '../components/accordion';
 @import '../components/input';
@@ -32,6 +32,20 @@ $modalPadding: 24px;
         }
     }
 
+    .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 56px;
+        height: 56px;
+        margin: 0;
+        padding: 0;
+        z-index: 10;
+        color: inherit;
+        opacity: .3;
+        outline: none;
+    }
+
     &-header {
         min-height: 3.5rem;
         padding: 0 1.5rem;
@@ -39,15 +53,14 @@ $modalPadding: 24px;
         @include themify() {
             border-bottom: themed($border);
         }
-
-        .close {
-            color: inherit;
-            opacity: .3;
-        }
     }
 
     &-title {
         font-weight: $fontWeightMedium;
+    }
+
+    &-content {
+        overflow: hidden;
     }
 
     &-body {
@@ -60,6 +73,7 @@ $modalPadding: 24px;
 
         @include themify() {
             background-color: themed($surfaceBg);
+            border-top: themed($border);
         }
     }
 }
@@ -118,6 +132,8 @@ $modalPadding: 24px;
         }
 
         .group-edit-form {
+            display: none;
+
             &__list {
                 margin: -8px -8px;
                 .group-list {
