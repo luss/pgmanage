@@ -24,6 +24,10 @@
     <link id="ss_theme" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/pev2/css/style.css" />
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/Passtrength/css/passtrength.css">
+    {% comment %} FIXME: localize fonts {% endcomment %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <title>PgManage</title>
   </head>
   <body>
@@ -36,171 +40,9 @@
   <!-- .IF CHROME -->
 
 
-
-
-  <!-- Modal!!!! -->
-  <div class="modal modal-connections" id="modal-restyle" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-connections__dialog">
-      <div class="modal-content modal-connections__content h-100">
-        <div class="modal-header">
-          <h5 class="modal-title">Manage connections</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body modal-connections__body p-0">
-          <div class="container-fluid h-100">
-            <div class="row no-gutters h-100">
-              <div class="col-md-4 border-right">
-                <div class="modal-connections__panel modal-connections__panel--left">
-                  <div class="modal-connections__add d-flex justify-content-between">
-                    <span>5 connecting</span>
-                    <div class="btn-group" role="group">
-                      <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        Add
-                      </button>
-                      <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Dropdown link</a>
-                        <a class="dropdown-item" href="#">Dropdown link</a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="modal-connections__list accordion position-absolute w-100 pt-5" id="connectionsList">
-                      <div class="card modal-connections__list_group group">
-                        <div class="card-header group__header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
-                          <h2 class="group__header_name mb-0">
-                            Collapsible Group Item #1
-                          </h2>
-                        </div>
-                    
-                        <div id="collapseOne" class="collapse" data-parent="#connectionsList">
-                          <div class="group__content card-body">
-                            <ul class="list-group">
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 1</p>
-                                <p class="connection__subtitle">subtitle</p>
-                              </li>
-
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 2</p>
-                                <p class="connection__subtitle">subtitle 2</p>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="card modal-connections__list_group group">
-                        <div class="card-header group__header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
-                          <h2 class="group__header_name mb-0">
-                            Collapsible Group Item #1
-                          </h2>
-                        </div>
-                    
-                        <div id="collapseOne" class="collapse" data-parent="#connectionsList">
-                          <div class="group__content card-body">
-                            <ul class="list-group">
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 1</p>
-                                <p class="connection__subtitle">subtitle</p>
-                              </li>
-
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 2</p>
-                                <p class="connection__subtitle">subtitle 2</p>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="card modal-connections__list_group group">
-                        <div class="card-header group__header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
-                          <h2 class="group__header_name mb-0">
-                            Collapsible Group Item #1
-                          </h2>
-                        </div>
-                    
-                        <div id="collapseOne" class="collapse" data-parent="#connectionsList">
-                          <div class="group__content card-body">
-                            <ul class="list-group">
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 1</p>
-                                <p class="connection__subtitle">subtitle</p>
-                              </li>
-
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 2</p>
-                                <p class="connection__subtitle">subtitle 2</p>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="card modal-connections__list_group group">
-                        <div class="card-header group__header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
-                          <h2 class="group__header_name mb-0">
-                            Collapsible Group Item #1
-                          </h2>
-                        </div>
-                    
-                        <div id="collapseOne" class="collapse" data-parent="#connectionsList">
-                          <div class="group__content card-body">
-                            <ul class="list-group">
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 1</p>
-                                <p class="connection__subtitle">subtitle</p>
-                              </li>
-
-                              <li class="group__content_item connection list-group-item">
-                                <p class="connection__name">Connection item 2</p>
-                                <p class="connection__subtitle">subtitle 2</p>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    
-                  </div>
-                </div>
-
-              </div>
-          
-              <div class="col-md-8 d-flex ml-auto">
-                <div class="modal-connections__form position-absolute w-100">
-                  <div class="modal-connections__form_group group">
-                    <div class="group__item d-flex align-items-center p-3 mb-3 w-50">
-                      <input type="checkbox">
-                      <div class="d-flex flex-column pl-3">
-                        <p class="group__item_name">Name</p>
-                        <p class="group__item_subtitle">subtitle</p>
-                      </div>
-                    </div>
-                    <div class="group__item d-flex align-items-center p-3 mb-3 w-50">
-                      <input type="checkbox">
-                      <div class="d-flex flex-column pl-3">
-                        <p class="group__item_name">Name</p>
-                        <p class="group__item_subtitle">subtitle</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="modal-footer mt-auto justify-content-between w-100">
-                  <button type="button" class="btn btn-primary">Delete</button>
-                  <button type="button" class="btn btn-primary ml-auto">Save changes</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div id="connections-modal-wrap">
+    <connections-modal></connections-modal>
   </div>
-    <!-- Modal!!!! -->
-
 
 
   <div class="toast" data-autohide="false" style="position: absolute; top: 0; right: 0;">
@@ -1217,8 +1059,6 @@
     var v_super_user = {{ super_user }};
     var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
     </script>
-    <script type="text/javascript">
-    </script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/axios@1.2.1/axios.min.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/vue@3.2.45/vue.global.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/vue3-sfc-loader@0.8.4/vue3-sfc-loader.js"></script>
@@ -1226,5 +1066,9 @@
     <script src="{{url_folder}}/static/OmniDB_app/js/vuejs/explain.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/lib/pev2/pev2.umd.js"></script>
     <script type="text/javascript" src="{{url_folder}}/static/OmniDB_app/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
+    <script type="text/javascript">
+      axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
+    </script>
+    <script src="{{url_folder}}/static/OmniDB_app/js/vuejs/components/connections_modal.js"></script>
   </body>
 </html>

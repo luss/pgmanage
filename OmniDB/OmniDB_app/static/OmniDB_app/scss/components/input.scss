@@ -1,0 +1,64 @@
+input {
+    &:focus,
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+        box-shadow: $boxShadow;
+        color: $primaryLight;
+        transition: background-color 5000s ease-in-out 0s;
+
+        @include themify {
+            background: themed($inputBg);
+            border: themed($border);
+        }
+    }
+}
+
+input[type='checkbox']{
+    background-color: $primaryBlue;
+}
+
+.form-group {
+    .form-control {
+        border-radius: $borderRadius;
+        font-size: $fontSize;
+
+        @include themify {
+            background-color: themed($inputBg);
+            border: themed($border);
+            color: themed($color);
+        }
+
+        &::placeholder {
+            font-size: $fontSize;
+        }
+
+        &:disabled {
+            color: $primaryMutedColor;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            @include themify {
+                background-color: themed($disabledInputBg)!important; //workaround! to be removed when new stylesheets are implemented;
+            }
+        }
+    }
+
+    select.form-control {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a5a9b1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position-x: calc(100% - 10px);
+        background-position-y: 50%;
+        background-size: 15px 15px;
+    }
+}
+
+//switch bg color
+.custom-control-input:checked~.custom-control-label::before {
+    border-color: $primaryBlue;
+    background-color: $primaryBlue;
+}

@@ -1,0 +1,59 @@
+.accordion {
+    .card {
+        border-radius: 0;
+        border: 0;
+        background-color: inherit;
+
+        &-header {
+            border-bottom: 0;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all .3s ease-in-out;
+            white-space: nowrap;
+
+            @include themify() {
+                border-top: themed($accordionHeadingBorder);
+                background-color: themed($accordionHeadingBg);
+            }
+
+            .fa-chevron-down {
+                transform: rotate(0deg);
+                transition: inherit;
+                opacity: .5;
+            }
+
+            &:not(.collapsed){
+                transition: all .3s ease-in-out;
+
+                @include themify() {
+                    background-color: themed($accordionHeadingActiveBg);
+                }
+
+                .fa-chevron-down {
+                    transform: rotate(180deg);
+                    transition: inherit;
+                    opacity: 1;
+                }
+            }
+        }
+
+        &-body {
+            .list-group {
+
+                &-item {
+                    border: 0;
+                    padding: 8px 20px 8px 32px;
+                    background-color: rgba($primaryBlue, 0.08);
+
+                    &:first-child {
+                        border-radius: 0;
+                    }
+
+                    &:not(:last-of-type) {
+                        border-top: 1px solid rgba($primaryBlue, 0.1);
+                    }
+                }
+            }
+        }
+    }
+}

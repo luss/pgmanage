@@ -1320,6 +1320,15 @@ function showMenuNewTabOuter(e) {
         action: function() {
             setTimeout(function() { startConnectionManagement(); },0);
           }
+      },
+      {
+        text: 'Manage Connections New',
+        icon: 'fas cm-all fa-gears',
+        action: function() {
+          $('#connections-modal').modal({
+            show: true
+          })
+        }
         });
 
   		customMenu(

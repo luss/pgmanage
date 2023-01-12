@@ -33,6 +33,17 @@ base_urlpatterns = [
     re_path(r'^new_group/$', views.connections.new_group, name='new_group'),
     re_path(r'^save_group_connections/$', views.connections.save_group_connections, name='save_group_connections'),
 
+    #NEW CONNECTIONS
+    re_path(r'^new/get_connections/$', views.newconnections.get_connections, name='newget_connections'),
+    re_path(r'^new/save_connection/$', views.newconnections.save_connection, name='newsave_connection'),
+    re_path(r'^new/delete_connection/$', views.newconnections.delete_connection, name='newdelete_connection'),
+    re_path(r'^new/test_connection/$', views.newconnections.test_connection, name='newtest_connection'),
+
+    re_path(r'^new/get_groups/$', views.newconnections.get_groups, name='newget_groups'),
+    re_path(r'^new/save_group/$', views.newconnections.save_group, name='newsave_group'),
+    re_path(r'^new/delete_group/$', views.newconnections.delete_group, name='newdelete_group'),
+
+
     #USERS
     re_path(r'^get_users/$', views.users.get_users, name='get_users'),
     re_path(r'^new_user/$', views.users.new_user, name='new_user'),

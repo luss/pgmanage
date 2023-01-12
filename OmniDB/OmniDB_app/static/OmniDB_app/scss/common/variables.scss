@@ -1,0 +1,46 @@
+//common
+$primaryBlue: #206BC4;
+$primaryLight: #F8FAFC;
+$primaryColor: #1D273B;
+$primaryMutedColor: #767f8f;
+$secondaryGrey: #616876;
+$borderRadius: 8px;
+$boxShadow: 0 0 0 4px rgba(32, 107, 196, .25);
+$activeBorder: 1px solid $primaryBlue;
+
+//typography
+$fontFamily: 'Poppins', sans-serif;
+$fontSize: 0.875rem;
+$fontWeight: 400;
+$fontWeightMedium: 500;
+$fontWeightBold: 700;
+$lineHeight: 1.4;
+
+//light mode
+$bgLight: #F1F5F9;
+$fontColorLight: $primaryColor;
+$bgSurfaceLight: #FFFFFF;
+$bgSurfaceSecondaryLight: $primaryLight;
+$borderLightColor: #E6E7E9;
+$borderLight: 1px solid #E6E7E9;
+$disabledFontColorLight: #C8D3E1;
+$accordionHeadingBgLight: rgba($borderLightColor, .5);
+$accordionHeadingActiveBgLight: rgba($primaryBlue, .15);
+$accordionHeadingBorderLight: $borderLight;
+
+//dark mode
+$bgDark: #1A2234;
+$fontColorDark: $primaryLight;
+$bgSurfaceDark: #1D273B;
+$borderColorDark: #243049;
+$borderDark: 1px solid #243049;
+$borderColorActiveDark: #314264;
+$disabledFontColorDark: #313C52;
+$accordionHeadingBgDark: rgba($primaryBlue, .15);
+$accordionHeadingActiveBgDark: rgba($primaryBlue, .2);
+$accordionHeadingBorderDark: $activeBorder;
+$disabledInputBgDark: #404958;
+
+//accent colors
+$dangerColor: #D72239;
+$sucessColor: #2FB344;

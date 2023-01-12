@@ -1,0 +1,52 @@
+@import './variables.scss';
+
+//shortcuts
+$border: 'border';
+$color: 'color';
+$surfaceBg: 'surfaceBg';
+$inputBg: 'inputBg';
+$disabledInputBg: 'disabledInputBg';
+$accordionHeadingBg: 'accordionHeadingBg';
+$accordionHeadingBorder: 'accordionHeadingBorder';
+$accordionHeadingActiveBg: 'accordionHeadingActiveBg';
+
+$themes: (
+    light: (
+        border: $borderLight,
+        color: $fontColorLight,
+        surfaceBg: $bgSurfaceLight,
+        inputBg: $bgSurfaceLight,
+        accordionHeadingBg: $accordionHeadingBgLight,
+        accordionHeadingActiveBg: $accordionHeadingActiveBgLight,
+        accordionHeadingBorder: $accordionHeadingBorderLight,
+        disabledInputBg: $bgLight,
+    ),
+    dark: (
+        border: $borderDark,
+        color: $fontColorDark,
+        surfaceBg: $bgSurfaceDark,
+        inputBg: $bgDark,
+        accordionHeadingBg: $accordionHeadingBgDark,
+        accordionHeadingActiveBg: $accordionHeadingActiveBgDark,
+        accordionHeadingBorder: $accordionHeadingBorderDark,
+        disabledInputBg: $disabledInputBgDark,
+    ),
+);
+
+@mixin themify() {
+    @each $theme, $map in $themes {
+        .pgmanage-theme--#{$theme} & {
+            $theme-map: () !global;
+            @each $key, $submap in $map {
+                $value: map-get(map-get($themes, $theme), '#{$key}');
+                $theme-map: map-merge($theme-map, ($key: $value)) !global;
+            }
+            @content;
+            $theme-map: () !global;
+      }
+    }
+  }
+
+  @function themed($key) {
+    @return map-get($theme-map, $key);
+  }

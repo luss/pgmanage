@@ -1,0 +1,34 @@
+.btn {
+    color: $primaryLight!important; //workaround! to be removed when new stylesheets are implemented
+    font-size: $fontSize;
+    border-color: transparent;
+    font-weight: 500;
+
+    &:disabled {
+        opacity: .4;
+        pointer-events: none;
+    }
+
+    &:hover {
+        border-color: transparent;
+        opacity: .8;
+        color: $primaryLight;
+    }
+
+    &-primary {
+        background-color: $primaryBlue;
+    }
+
+    &-secondary {
+        background-color: $secondaryGrey!important; //workaround! to be removed when new stylesheets are implemented
+        border: 0!important; //workaround! to be removed when new stylesheets are implemented
+    }
+
+    &-success {
+        background-color: $sucessColor;
+    }
+
+    &-danger {
+        background-color: $dangerColor;
+    }
+}

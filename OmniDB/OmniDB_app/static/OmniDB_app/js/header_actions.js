@@ -78,13 +78,13 @@ $(function() {
 
 	if (v_theme=='light') {
 		v_current_terminal_theme = v_light_terminal_theme;
-		document.body.classList.remove('omnidb--theme-dark');
-		document.body.classList.add('omnidb--theme-light');
+		document.body.classList.remove('pgmanage-theme--dark', 'omnidb--theme-dark',);
+		document.body.classList.add('pgmanage-theme--light', 'omnidb--theme-light');
 	}
 	else {
 		v_current_terminal_theme = v_dark_terminal_theme;
-		document.body.classList.remove('omnidb--theme-light');
-		document.body.classList.add('omnidb--theme-dark');
+		document.body.classList.remove('pgmanage-theme--light', 'omnidb--theme-light');
+		document.body.classList.add('pgmanage-theme--dark', 'omnidb--theme-dark');
 	}
 });
 
@@ -144,16 +144,20 @@ function changeTheme(p_option) {
 		v_theme = 'dark';
 		v_editor_theme = 'omnidb_dark';
 		v_current_terminal_theme = v_dark_terminal_theme;
-		document.body.classList.remove('omnidb--theme-light');
-		document.body.classList.add('omnidb--theme-dark');
+		// document.body.classList.remove('omnidb--theme-light');
+		// document.body.classList.add('omnidb--theme-dark');
+		document.body.classList.remove('pgmanage-theme--light', 'omnidb--theme-light');
+		document.body.classList.add('pgmanage-theme--dark', 'omnidb--theme-dark');
 	}
 	else {
 		// v_fileref.setAttribute("href", v_url_folder + '/static/OmniDB_app/new/css/themes/light.css');
 		v_theme = 'light';
 		v_editor_theme = 'omnidb';
 		v_current_terminal_theme = v_light_terminal_theme;
-		document.body.classList.remove('omnidb--theme-dark');
-		document.body.classList.add('omnidb--theme-light');
+		// document.body.classList.remove('omnidb--theme-dark');
+		// document.body.classList.add('omnidb--theme-light');
+		document.body.classList.remove('pgmanage-theme--dark', 'omnidb--theme-dark',);
+		document.body.classList.add('pgmanage-theme--light', 'omnidb--theme-light');
 	}
 	// Updating theme of all consoles.
 	try {
