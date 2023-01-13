@@ -365,7 +365,7 @@ def save_connection(request):
             if json_object['tunnel']['password'].strip() != '':
                 conn.ssh_password = encrypt(json_object['tunnel']['password'], key)
             if json_object['tunnel']['key'].strip() != '':
-                conn.ssh_key = encrypt(json_object['tunnel']['password'], key)
+                conn.ssh_key = encrypt(json_object['tunnel']['key'], key)
 
             conn.use_tunnel = json_object['tunnel']['enabled']
             conn.conn_string = json_object['connstring']
