@@ -93,7 +93,7 @@
     </nav>
   </div>
 
-    <div id="omnidb__main" class="omnidb__main" style="min-height: 100vh;overflow-y: auto;">
+    <div id="omnidb__main" class="omnidb__main" style="min-height: 100vh">
       <div id="omnidb_main_tablist">
       </div>
     </div>
@@ -1058,6 +1058,7 @@
     <script src="{{url_folder}}/static/OmniDB_app/lib/pev2/pev2.umd.js"></script>
     <script type="text/javascript" src="{{url_folder}}/static/OmniDB_app/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
     <script src="{{url_folder}}/static/OmniDB_app/js/tab_functions/conf_tab.js"></script>
+    <script src="{{url_folder}}/static/OmniDB_app/lib/jaro-winkler/jaro-winkler.js"></script>
     <script type="text/javascript">
       axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
     </script>

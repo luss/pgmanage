@@ -21,8 +21,9 @@ from OmniDB_app.utils.conf import get_settings, post_settings, get_settings_stat
 def get_configuration(request, database):
     data = json.loads(request.body) if request.body else {}
     query_filter = data.get("query_filter", None)
+    grouped = data.get("grouped", True)
     try:
-        settings = get_settings(database, query_filter)
+        settings = get_settings(database, query_filter, grouped)
     except DatabaseError as e:
         return HttpResponseServerError(content=e)
     return JsonResponse({"settings": settings})

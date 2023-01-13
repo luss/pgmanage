@@ -4583,8 +4583,8 @@ function getTreeDetailsPostgresql(node) {
             });
             node.tree.contextMenu.cm_server.elements.push(
                 {
-                    text: 'Config Testing',
-                    icon: 'fas fa-cog',
+                    text: 'Server Configuration',
+                    icon: 'fas cm-all fa-cog',
                     action: function(node) {
                         createConfTab()
                     }

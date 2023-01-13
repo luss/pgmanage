@@ -7,7 +7,7 @@
       <form role="form">
         <table class="table table-sm">
           <tr v-for="(setting, index) in settingGroup.rows" :key="setting.name">
-            <td>
+            <td :class="[{ 'border-top-0': !index }]">
               <span class="font-weight-bold">
                 {{ setting.name }}
               </span>
@@ -15,7 +15,7 @@
                 {{ setting.desc }}
               </p>
             </td>
-            <td class="input-setting">
+            <td :class="['input-setting', { 'border-top-0': !index }]">
               <InputItem :initial-setting="setting" :index="index" @setting-change="changeSetting" />
             </td>
           </tr>
@@ -50,10 +50,7 @@ export default {
       this.settingGroup.rows[event.index] = event.changedSetting;
       this.$emit("groupChange", {
         changedGroup: this.settingGroup,
-        updatedSetting: {
-          name: event.changedSetting.name,
-          setting: event.changedSetting.setting,
-        },
+        changedSetting: event.changedSetting,
       });
     },
   },

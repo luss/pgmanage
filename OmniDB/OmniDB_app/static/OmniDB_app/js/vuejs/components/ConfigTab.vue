@@ -1,7 +1,7 @@
 <template>
   <div class="form-row form-group">
     <div class="col-2">
-      <form class="form" role="search">
+      <form class="form" role="search" @submit.prevent>
         <label class="sr-only" for="selectServer">Search</label>
         <div class="input-group">
           <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
@@ -33,10 +33,10 @@
             <option disabled value="">Please select one</option>
             <option v-for="(config, index) in configHistory" :value="config" :key="index"
               :title="config.commit_comment">
-              {{ index }} {{ truncateText(config, 50) }}
+              {{ index }}. {{ truncateText(config, 50) }}
             </option>
           </select>
-          <button class="btn btn-sm btn-success ml-2" :disabled="!selectedConf" @click="applyOldConfig">
+          <button class="btn btn-sm btn-success ml-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
             Apply
           </button>
           <button class="btn btn-sm btn-danger ml-2" :disabled="!selectedConf"
@@ -119,6 +119,28 @@
           <h5 class="modal-title">Config Management</h5>
         </div>
         <div class="modal-body">
+          <table class="table table-sm">
+            <tr>
+              <th width="50%" class="border-top-0">Name</th>
+              <th width="50%" class="border-top-0">New value</th>
+            </tr>
+            <template v-if="!modalOldConfig">
+              <tr v-for="(setting_value, setting_name) in updateSettings" :key="setting_value">
+                <td>{{ setting_name }}</td>
+                <td>
+                  <b>{{ setting_value }}</b>
+                </td>
+              </tr>
+            </template>
+            <template v-else>
+              <tr v-for="(setting_value, setting_name) in configDiffData" :key="setting_value">
+                <td>{{ setting_name }}</td>
+                <td>
+                  <b>{{ setting_value }}</b>
+                </td>
+              </tr>
+            </template>
+          </table>
           <div class="form-group">
             <label for="commit_message">Commit Comment</label>
             <input v-model="commitComment" id="commit_message" class="form-control"
@@ -126,8 +148,12 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button id="config_modal_button" type="button" class="btn btn-success" data-dismiss="modal"
-            @click="saveConfiguration">
+          <button v-if="!modalOldConfig" id="config_modal_button" type="button" class="btn btn-success"
+            data-dismiss="modal" @click="saveConfiguration">
+            Save configuration
+          </button>
+          <button v-else id="config_modal_button" type="button" class="btn btn-success" data-dismiss="modal"
+            @click="applyOldConfig">
             Save configuration
           </button>
         </div>
@@ -166,7 +192,9 @@ export default {
         restartChanges: "",
         restartPending: "",
       },
-      modalId: `config_modal_${this.tabId}_${Date.now()}`
+      modalId: `config_modal_${this.tabId}_${Date.now()}`,
+      modalOldConfig: false,
+      configDiffData: ''
     };
   },
   computed: {
@@ -178,13 +206,12 @@ export default {
           return this.data
             .map((element) => {
               const rows = element.rows.filter(
-                (row) =>
-                  row.name
-                    .toLowerCase()
-                    .includes(this.query_filter.toLowerCase()) ||
-                  row.desc
-                    .toLowerCase()
-                    .includes(this.query_filter.toLowerCase())
+                (row) => {
+                  let distance_name = distance(this.query_filter, row.name)
+                  let distance_desc = distance(this.query_filter, row.desc)
+
+                  return distance_desc > 0.7 || distance_name > 0.7
+                }
               );
               return { ...element, rows: rows };
             })
@@ -241,7 +268,10 @@ export default {
     changeData(e) {
       const index = this.categories.indexOf(e.changedGroup.category);
       this.data[index] = e.changedGroup;
-      this.updateSettings[e.updatedSetting.name] = e.updatedSetting.setting;
+      if (e.changedSetting.setting !== e.changedSetting.boot_val)
+        this.updateSettings[e.changedSetting.name] = e.changedSetting.setting;
+      else
+        delete this.updateSettings[e.changedSetting.name]
     },
     saveConfiguration(event, newConfig = true) {
       axios
@@ -274,7 +304,7 @@ export default {
           this.configHistory = response.data.config_history.map((el) => {
             return {
               ...el,
-              start_time: moment(el.start_time).format("MMMM D, YYYY hh:mm A"),
+              start_time: moment(el.start_time).format("DD/MM/YY hh:mm A"),
             };
           });
         })
@@ -282,8 +312,15 @@ export default {
           showError(error.response.data);
         });
     },
-    confirmConfig() {
-      $(`#${this.modalId}`).modal();
+    confirmConfig(event, old = false) {
+      if (!old) {
+        this.modalOldConfig = false
+        $(`#${this.modalId}`).modal();
+      } else {
+        this.getConfigurationDiffs()
+        this.modalOldConfig = true
+        $(`#${this.modalId}`).modal();
+      }
     },
     applyOldConfig(event) {
       this.updateSettings = this.selectedConf.config_snapshot;
@@ -320,6 +357,27 @@ export default {
           showError(error.response.data);
         });
     },
+    getConfigurationDiffs() {
+      axios
+        .post("/configuration/", {
+          database_index: this.databaseId,
+          tab_id: this.tabId,
+          grouped: false,
+        })
+        .then((response) => {
+          let diff = Object.keys(response.data.settings).reduce((diff, key) => {
+            if (this.selectedConf.config_snapshot[key] === response.data.settings[key]) return diff
+            return {
+              ...diff,
+              [key]: this.selectedConf.config_snapshot[key]
+            }
+          }, {})
+          this.configDiffData = diff
+        })
+        .catch((error) => {
+          showError(error.response.data);
+        });
+    }
   },
 };
 </script>
