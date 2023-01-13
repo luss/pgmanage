@@ -7,7 +7,7 @@
         <input v-model="groupLocal.name" type="text" class="form-control" id="groupName" placeholder="Group name">
       </div>
 
-      <label class="font-weight-bold mb-3">Group connections {{this.groupLocal.conn_list}} </label>
+      <label class="font-weight-bold mb-3">Group connections</label>
       <div class="group-edit-form__list group-list d-flex flex-wrap">
         <div v-for="(connection, index) in candidateConnections" :key=index class="group-list__item">
           <input

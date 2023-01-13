@@ -5,10 +5,11 @@
         <div class="connection-form__header d-flex justify-content-between align-items-center pb-3">
         <!-- TODO: integrate with active connection list -->
         <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
-        <!-- TODO: add test connecttion -->
-        <button @click="$emit('connection:test', this.connectionLocal)" class="btn btn-success">Test</button>
-        <!-- FIXME: conditionally disable if form is dirty -->
-        <button @click="dispatchConnectionSelected(this.connectionLocal)" class="btn btn-success">Connect</button>
+          <div>
+          <button @click="$emit('connection:test', this.connectionLocal)" class="btn btn-outline mr-2">Test</button>
+          <!-- FIXME: conditionally disable if form is dirty -->
+          <button @click="dispatchConnectionSelected(this.connectionLocal)" class="btn btn-success">Connect</button>
+          </div>
         </div>
 
         <form>
