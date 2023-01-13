@@ -131,10 +131,9 @@ export default {
     getGroups() {
       axios({
         method: 'post',
-        url: '/new/get_groups/',
+        url: '/get_groups/',
       })
       .then((response) => {
-        console.log(response)
         this.groups = response.data.data
       })
       .catch((error) => {
@@ -145,10 +144,9 @@ export default {
     getConnections() {
       axios({
         method: 'post',
-        url: '/new/get_connections/',
+        url: '/get_connections/',
       })
       .then((response) => {
-        console.log(response)
         this.connections = response.data.data.connections
         this.technologies = response.data.data.technologies
       })
@@ -163,7 +161,7 @@ export default {
       this.activeForm = undefined
     },
     saveConnection(connection) {
-      axios.post('/new/save_connection/', connection)
+      axios.post('/save_connection/', connection)
       .then((response) => {
         this.loadData()
       })
@@ -172,7 +170,7 @@ export default {
       })
     },
     testConnection(connection) {
-      axios.post('/new/test_connection/', connection)
+      axios.post('/test_connection/', connection)
       .then((response) => {
         let event = new CustomEvent('connection:tested', { detail: response.data })
         document.dispatchEvent(event)
@@ -182,7 +180,7 @@ export default {
       })
     },
     deleteConnection(connection) {
-      axios.post('/new/delete_connection/', connection)
+      axios.post('/delete_connection/', connection)
       .then((response) => {
         this.loadData()
       })
@@ -191,7 +189,7 @@ export default {
       })
     },
     saveGroup(group) {
-      axios.post('/new/save_group/', group)
+      axios.post('/save_group/', group)
       .then((response) => {
         this.loadData()
       })
@@ -200,7 +198,7 @@ export default {
       })
     },
     deleteGroup(group) {
-      axios.post('/new/delete_group/', group)
+      axios.post('/delete_group/', group)
       .then((response) => {
         this.loadData()
       })
