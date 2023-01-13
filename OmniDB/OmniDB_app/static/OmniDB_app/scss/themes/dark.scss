@@ -356,60 +356,60 @@ SOFTWARE.
     border-color: transparent;
   }
 
-  /* DATERANGEPICKER */
-  .daterangepicker {
-    background-color: #1d1f21;
-    border: 1px solid #5371bd;
-  }
-  .daterangepicker:after,
-  .daterangepicker:before {
-    top: -7px;
-    border-right: 7px solid transparent;
-    border-left: 7px solid transparent;
-    border-bottom: 7px solid #5371bd;
-  }
-  .daterangepicker .ranges {
-    background-color: #252e44;
-  }
-  .daterangepicker .ranges li.active {
-    background-color: #394E83;
-  }
-  .daterangepicker .ranges li:hover {
-    background-color: #374463;
-  }
-  .daterangepicker .drp-buttons {
-    border-top: 1px solid #5371bd;
-  }
-  .daterangepicker .cancelBtn {
-    color: #FFF;
-    background-color: #d26363;
-  }
-  .daterangepicker.show-ranges.ltr .drp-calendar.left {
-      border-left: 1px solid #5371bd;
-  }
-  .daterangepicker .calendar-table {
-    border: 1px solid #191b1d;
-    background-color: #222529;
-  }
-  .daterangepicker td.off,
-  .daterangepicker td.off.in-range,
-  .daterangepicker td.off.start-date,
-  .daterangepicker td.off.end-date {
-    background-color: #222529;
-    color: #999;
-  }
-  .daterangepicker td.in-range {
-    background-color: #9ba8b3;
-  }
-  .daterangepicker td.available:hover,
-  .daterangepicker th.available:hover {
-    background-color: #2b5ca7;
-  }
-  .daterangepicker td.active,
-  .daterangepicker td.active:hover {
-    background-color: #357ebd;
-    color: #fff;
-  }
+  // /* DATERANGEPICKER */
+  // .daterangepicker {
+  //   background-color: #1d1f21;
+  //   border: 1px solid #5371bd;
+  // }
+  // .daterangepicker:after,
+  // .daterangepicker:before {
+  //   top: -7px;
+  //   border-right: 7px solid transparent;
+  //   border-left: 7px solid transparent;
+  //   border-bottom: 7px solid #5371bd;
+  // }
+  // .daterangepicker .ranges {
+  //   background-color: #252e44;
+  // }
+  // .daterangepicker .ranges li.active {
+  //   background-color: #394E83;
+  // }
+  // .daterangepicker .ranges li:hover {
+  //   background-color: #374463;
+  // }
+  // .daterangepicker .drp-buttons {
+  //   border-top: 1px solid #5371bd;
+  // }
+  // .daterangepicker .cancelBtn {
+  //   color: #FFF;
+  //   background-color: #d26363;
+  // }
+  // .daterangepicker.show-ranges.ltr .drp-calendar.left {
+  //     border-left: 1px solid #5371bd;
+  // }
+  // .daterangepicker .calendar-table {
+  //   border: 1px solid #191b1d;
+  //   background-color: #222529;
+  // }
+  // .daterangepicker td.off,
+  // .daterangepicker td.off.in-range,
+  // .daterangepicker td.off.start-date,
+  // .daterangepicker td.off.end-date {
+  //   background-color: #222529;
+  //   color: #999;
+  // }
+  // .daterangepicker td.in-range {
+  //   background-color: #9ba8b3;
+  // }
+  // .daterangepicker td.available:hover,
+  // .daterangepicker th.available:hover {
+  //   background-color: #2b5ca7;
+  // }
+  // .daterangepicker td.active,
+  // .daterangepicker td.active:hover {
+  //   background-color: #357ebd;
+  //   color: #fff;
+  // }
 
   /* FORMS */
   ::placeholder {
@@ -528,20 +528,43 @@ SOFTWARE.
   }
 
   /* TOOLTIPS */
-  .bs-tooltip-auto[x-placement^=bottom] .arrow::before,
-  .bs-tooltip-bottom .arrow::before {
-    border-bottom-color: #43464E;
+  .tooltip {
+    &[x-placement='top']{
+      .arrow::before {
+        border-top-color: #29364E;
+      }
   }
 
-  .bs-tooltip-auto[x-placement^=right] .arrow::before,
-  .bs-tooltip-right .arrow::before {
-    border-right-color: #43464E;
+    &[x-placement='bottom']{
+      .arrow::before {
+        border-bottom-color: #29364E;
+      }
+    }
+
+    &[x-placement='left']{
+      .arrow::before {
+        border-left-color: #29364E;
+      }
+    }
+
+    &[x-placement='right']{
+      .arrow::before {
+        border-left-color: #29364E;
+      }
   }
 
-  .tooltip-inner {
-    color: #FFF;
-    background-color: #2F3136;
-    border: 1px solid #43464E;
+    &-inner {
+      color: #F8FAFC;
+      background-color: #29364E;
+      border-radius: 6px;
+      min-width: 350px;
+      padding: 8px;
+      box-shadow: 0 0.5rem 1rem rgba(0,  0,  0,  0.15);
+
+      ul {
+        padding-left: 20px;
+      }
+    }
   }
 
   /* CONNECTIONS */
@@ -777,46 +800,50 @@ SOFTWARE.
     color: #ffffff !important;
   }
   /* Handsontables */
+  .handsontable {
+    border-radius: 6px;
+  }
+
   .handsontable th .relative {
-    color: #d7d7d7 !important;
+    color: #F8FAFC !important;
   }
   select {
     background: #282A2F !important;
-    border: solid #4C5365 1px !important;
-    color: #dcddde !important;
+    border: 1px solid #243049 !important;
+    color: #F8FAFC !important;
   }
   .handsontable th {
     color: #2bb2d8 !important;
-    background-color: #282a2f !important;
+    background-color: #29364E !important;
   }
   .handsontable tr:nth-of-type(2n + 1) td {
-    border-right: 1px solid #2F3136 !important;
-    border-bottom: 1px solid #2F3136 !important;
-    background-color: #282a2f;
+    border-right: 1px solid #243049 !important;
+    border-bottom: 1px solid #243049 !important;
+    background-color: #29364E;
   }
   .handsontable tr:nth-of-type(2n) td {
     color: #c5c5c5;
-    border-right: 1px solid #2F3136 !important;
-    border-bottom: 1px solid #2F3136 !important;
-    background-color: #282a2f;
+    border-right: 1px solid #243049 !important;
+    border-bottom: 1px solid #243049 !important;
+    background-color: #29364E;
   }
 
   .handsontable tr:first-child th, .handsontable tr:first-child td {
-    border-top: 1px solid #2F3136 !important;
+    border-top: 1px solid #243049 !important;
   }
 
   .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame + th, .handsontable .htNoFrame + td {
-    border-left: 1px solid #2F3136 !important;
+    border-left: 1px solid #243049 !important;
   }
 
   .handsontable th:last-child {
-    border-right: 1px solid #2F3136 !important;
-    border-bottom: 1px solid #2F3136 !important;
+    border-right: 1px solid #243049!important;
+    border-bottom: 1px solid #243049 !important;
   }
 
   .handsontable th, .handsontable td {
-    border-right: 1px solid #2F3136 !important;
-    border-bottom: 1px solid #2F3136 !important;
+    border-right: 1px solid #243049 !important;
+    border-bottom: 1px solid #243049 !important;
   }
 
   .handsontable tr {
@@ -824,7 +851,7 @@ SOFTWARE.
   }
 
   .handsontable.htRowHeaders thead tr th:nth-child(2) {
-    border-left: 1px solid #2F3136 !important;
+    border-left: 1px solid #243049 !important;
   }
 
   .handsontable input, .handsontable textarea {
@@ -957,7 +984,7 @@ SOFTWARE.
   /* -------------------------
   				Modal
   --------------------------*/
-  .white_box, .config_box, .plugin_box, .users_box, .connection_list, .dashboard_unit_list, .dashboard_unit, .dashboard_unit_test, .console_command_history, .query_command_history {
+  .white_box, .config_box, .plugin_box, .users_box, .connection_list, .dashboard_unit_list, .dashboard_unit, .dashboard_unit_test, .console_command_history {
     border: 1px solid #484a55 !important;
     background-color: #25282c !important;
     box-shadow: none !important;
@@ -1222,12 +1249,6 @@ SOFTWARE.
 
   #div_autocomplete .handsontable tr:hover {
       background-color: #4e5a6b !important;
-  }
-
-  #modal_about {
-    a {
-      color: #DCDDDE;
-    }
   }
 
   div.welcome_release_content h2 {

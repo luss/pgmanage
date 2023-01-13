@@ -159,7 +159,7 @@ SOFTWARE.
       }
 
       &.active {
-        border-top: 2px solid #68A4FF;
+        // border-top: 2px solid #68A4FF;
       }
     }
   }
@@ -359,77 +359,78 @@ SOFTWARE.
   }
 
   /* DATERANGEPICKER */
-  .daterangepicker {
-    background-color: #ffffff;
-    border: 1px solid #dfdfdf;
+  // .daterangepicker {
+  //   background-color: #ffffff;
+  //   border: 1px solid #dfdfdf;
 
-    &:after,
-    &:before {
-      border-bottom: 7px solid #007bff;
-    }
+  //   &:after,
+  //   &:before {
+  //     border-bottom: 7px solid #007bff;
+  //   }
 
-    .ranges {
-      background-color: #f8f9fa;
+  //   .ranges {
+  //     background-color: #f8f9fa;
 
-      li {
-        &.active {
-          background-color: #4A81D4;
-          color: #FFF;
-        }
+  //     li {
+  //       &.active {
+  //         background-color: #4A81D4;
+  //         color: #FFF;
+  //       }
 
-        &:hover {
-          background-color: #eee;
-        }
-      }
-    }
+  //       &:hover {
+  //         background-color: #eee;
+  //       }
+  //     }
+  //   }
 
-    .drp-buttons {
-      border-top: 1px solid #dfdfdf;
-    }
+  //   .drp-buttons {
+  //     border-top: 1px solid #dfdfdf;
+  //   }
 
-    .cancelBtn {
-      color: #FFF;
-      background-color: #d26363;
-    }
+  //   .cancelBtn {
+  //     color: #FFF;
+  //     background-color: #d26363;
+  //   }
 
-    &.show-ranges.ltr .drp-calendar.left {
-      border-left: 1px solid #dfdfdf;
-    }
+  //   &.show-ranges.ltr .drp-calendar.left {
+  //     border-left: 1px solid #dfdfdf;
+  //   }
 
-    .calendar-table {
-      background-color: #ffffff;
-      border: 1px solid #dfdfdf;
-    }
+  //   .calendar-table {
+  //     background-color: #ffffff;
+  //     border: 1px solid #dfdfdf;
+  //   }
 
-    td {
-      &.off {
-        background-color: #ffffff;
-        color: #999;
+  //   td {
+  //     &.off {
+  //       background-color: #ffffff;
+  //       color: #999;
 
-        &.in-range,
-        &.start-date,
-        &.end-date {
-          background-color: #ffffff;
-          color: #999;
-        }
-      }
+  //       &.in-range,
+  //       &.start-date,
+  //       &.end-date {
+  //         background-color: #ffffff;
+  //         color: #999;
+  //       }
+  //     }
 
-      &.in-range {
-        background-color: #EBF4F8;
-      }
+  //     &.in-range {
+  //       background-color: #EBF4F8;
+  //     }
 
-      &.active:hover {
-        background-color: #357EBD;
-        color: #FFF;
-      }
+  //     &.active:hover {
+  //       background-color: #357EBD;
+  //       color: #FFF;
+  //     }
 
-    }
+  //   }
 
-    td.available:hover,
-    th.available:hover {
-      background-color: #EEE;
-    }
-  }
+  //   td.available:hover,
+  //   th.available:hover {
+  //     background-color: #EEE;
+  //   }
+  // }
+
 
   /* FORMS */
   ::placeholder {
@@ -514,19 +515,43 @@ SOFTWARE.
   }
 
   /* TOOLTIPS */
-  .bs-tooltip-auto[x-placement^=bottom] .arrow::before,
-  .bs-tooltip-bottom .arrow::before {
-    border-bottom-color: #4A81D4;
+  .tooltip {
+    &[x-placement='top']{
+      .arrow::before {
+        border-top-color: #F1F5F9;
+      }
   }
 
-  .bs-tooltip-auto[x-placement^=right] .arrow::before,
-  .bs-tooltip-right .arrow::before {
-    border-right-color: #4A81D4;
+    &[x-placement='bottom']{
+      .arrow::before {
+        border-bottom-color: #F1F5F9;
+      }
+    }
+
+    &[x-placement='left']{
+      .arrow::before {
+        border-left-color: #F1F5F9;
+      }
+    }
+
+    &[x-placement='right']{
+      .arrow::before {
+        border-left-color: #F1F5F9;
+      }
   }
 
-  .tooltip-inner {
-    color: #fff;
-    background-color: #4A81D4;
+    &-inner {
+      color: #1D273B;
+      background-color: #F1F5F9;
+      border-radius: 6px;
+      min-width: 350px;
+      padding: 8px;
+      box-shadow: 0 0.5rem 1rem rgba(0,  0,  0,  0.15);
+
+      ul {
+        padding-left: 20px;
+      }
+    }
   }
 
   /* CONNECTIONS */
@@ -563,6 +588,10 @@ SOFTWARE.
   }
 
   /* HANDSONTABLE */
+  .handsontable {
+    border-radius: 6px;
+  }
+
   .handsontable th {
     background-color: #FFFFFF;
     color: #9a9a9a;
@@ -576,11 +605,11 @@ SOFTWARE.
     thead th,
     tr th,
     td {
-      border-color: #DEE2E6 !important;
-      border-bottom-color: #DEE2E6 !important;
-      border-left-color: #DEE2E6 !important;
-      border-right-color: #DEE2E6 !important;
-      border-top-color: #DEE2E6 !important;
+      border-color: #E6E7E9 !important;
+      border-bottom-color: #E6E7E9 !important;
+      border-left-color: #E6E7E9 !important;
+      border-right-color: #E6E7E9 !important;
+      border-top-color: #E6E7E9 !important;
     }
   }
 
@@ -625,12 +654,6 @@ SOFTWARE.
   #div_autocomplete .handsontable tr:hover {
     background-color: #c7d6ff !important;
     cursor: pointer;
-  }
-
-  #modal_about {
-    a {
-      color: #585858;
-    }
   }
 
   /* Ace-search */

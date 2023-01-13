@@ -4,7 +4,7 @@ $primaryLight: #F8FAFC;
 $primaryColor: #1D273B;
 $primaryMutedColor: #767f8f;
 $secondaryGrey: #616876;
-$borderRadius: 8px;
+$borderRadius: 6px;
 $boxShadow: 0 0 0 4px rgba(32, 107, 196, .25);
 $activeBorder: 1px solid $primaryBlue;
 
@@ -21,17 +21,19 @@ $bgLight: #F1F5F9;
 $fontColorLight: $primaryColor;
 $bgSurfaceLight: #FFFFFF;
 $bgSurfaceSecondaryLight: $primaryLight;
-$borderLightColor: #E6E7E9;
+$borderColorLight: #E6E7E9;
 $borderLight: 1px solid #E6E7E9;
 $disabledFontColorLight: #C8D3E1;
-$accordionHeadingBgLight: rgba($borderLightColor, .5);
+$accordionHeadingBgLight: rgba($borderColorLight, .5);
 $accordionHeadingActiveBgLight: rgba($primaryBlue, .15);
 $accordionHeadingBorderLight: $borderLight;
+$bgSurfaceBlueLight: #E8F0F9;
 
 //dark mode
 $bgDark: #1A2234;
 $fontColorDark: $primaryLight;
 $bgSurfaceDark: #1D273B;
+$bgSurfaceSecondaryDark: #29364E;
 $borderColorDark: #243049;
 $borderDark: 1px solid #243049;
 $borderColorActiveDark: #314264;

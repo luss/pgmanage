@@ -11,23 +11,14 @@
     <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/lib/handsontable/handsontable.full.css?v{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/fa/css/all.css?v{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/xterm.css">
-    <!-- NOW IMPORTED INSIDE SCSS -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/lib/aimaraJS/css/Aimara.css?v3.0.6"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/css/node-icon.css?v2"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/css/interface-icon.css?v3.0.6"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/css/jquery.datetimepicker.min.css?v2"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/lib/daterangepicker/daterangepicker.css?v3.0.6"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/lib/json_html/styles/template-2.css?v3.0.6"/> -->
 
+    <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/font-poppins.css?{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/omnidb.min.css?{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/modal.min.css?{{omnidb_short_version}}">
     <link id="ss_theme" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/pev2/css/style.css" />
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/Passtrength/css/passtrength.css">
-    {% comment %} FIXME: localize fonts {% endcomment %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
     <title>PgManage</title>
   </head>
   <body>
@@ -361,43 +352,69 @@
     <div class="modal fade" id="modal_about" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{ omnidb_version }}</h5>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">About</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
-          <div class="modal-body text-center">
-            <div class="my-3">
-              <img src="{{url_folder}}/static/OmniDB_app/images/postgresql_medium.png" title="PostgreSQL"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/oracle_medium.png" title="Oracle"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/mysql_medium.png" title="MySQL"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/mariadb_medium.png" title="MariaDB"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/sqlite_medium.png" title="SQLite"/>
-              <!--<img src="{{url_folder}}/static/OmniDB_app/images/sqlserver_medium.png" title="SQL Server"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/firebird_medium.png" title="Firebird"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/access_medium.png" title="Microsoft Access"/>-->
+
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-5">
+                <p class="font-weight-semibold">Version:</p>
+              </div>
+              <div class="col-7">{{ omnidb_version }}</div>
             </div>
-            <div class="my-3"><a class="font-weight-bold" target="_blank" href="https://github.com/commandprompt/pgmanage">PgManage website</a></div>
-            <div class="my-3">
-              <h2>Primary Supporter:</h2>
-              <a target="_blank" class="font-weight-bold" href="https://www.commandprompt.com/">Command Prompt Inc</a>
-              <br>
-              <a target="_blank" href="https://www.commandprompt.com/"><img src="{{url_folder}}/static/OmniDB_app/images/supporters/command_prompt_inc.png" title="CommandPrompt Inc."/></a>
+
+            <div class="row mb-3">
+              <div class="col-5 d-flex align-items-center">
+                <p class="font-weight-semibold mb-0">Supported databases:</p>
+              </div>
+
+              <div class="col-7 modal-about__db d-flex justify-content-between align-items-center">
+                <img src="{{url_folder}}/static/OmniDB_app/images/postgresql_large.png" title="PostgreSQL"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/oracle_large.png" title="Oracle"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/mysql_large.png" title="MySQL"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/sqlite_large.png" title="SQLite"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/mariadb_large.png" title="MariaDB"/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-5">
+                <p class="font-weight-semibold">Primary Supporter:</p>
+              </div>
+              <div class="col-7">
+                <a target="_blank" class="font-weight-bold" href="https://www.commandprompt.com/">
+                  Command Prompt Inc
+                  <!-- <img src="{{url_folder}}/static/OmniDB_app/images/supporters/command_prompt_inc.png" title="CommandPrompt Inc."/> -->
+                </a>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-5">
+                <p class="font-weight-semibold">Website:</p>
+              </div>
+              <div class="col-7">
+                <a class="font-weight-bold" target="_blank" href="https://github.com/commandprompt/pgmanage">PgManage</a>
+            </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+
     <!-- Modal Monitoring Units -->
     <div class="modal fade" id="modal_monitoring_units" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <button class='btn btn-primary btn-sm mb-2' onclick='editMonitorUnit()'>New Unit</button>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">User management</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
@@ -411,10 +428,10 @@
     <div class="modal fade" id="modal_users" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h4>User management</h4>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">User management</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
@@ -428,14 +445,13 @@
     <div class="modal fade" id="modal_config" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Settings</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <div class="omnidb__modal-config">
-
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
                   <a class="nav-link active" id="config_shortcuts-tab" data-toggle="tab" href="#config_shortcuts" role="tab" aria-controls="config_shortcuts" aria-selected="true">Shortcuts</a>
@@ -449,8 +465,7 @@
                 </li>
                 {% endif %}
               </ul>
-              <div class="tab-content p-2 omnidb__theme-border--primary">
-
+              <div class="tab-content p-3">
                 <div class="tab-pane fade show active" id="config_shortcuts" role="tabpanel" aria-labelledby="config_shortcuts-tab">
                   <div id="div_shortcut_background_dark"><div style="position: absolute; top: 50%; width: 100%;">Press key combination... (ESC to cancel)</div></div>
                   <div class="form-group row">
@@ -523,23 +538,22 @@
                     </div>
                   </div>
 
-                  <div style="text-align:right;">
+                  <div class="text-right">
                     <button class='btn btn-success' onclick='saveShortcuts()'>Save</button>
                   </div>
                 </div>
 
                 <div class="tab-pane fade" id="config_options" role="tabpanel" aria-labelledby="config_options-tab">
-
                   <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                      <label for="sel_editor_theme">Theme</label>
+                    <div class="form-group col-6">
+                      <label for="sel_editor_theme" class="font-weight-bold mb-3">Theme</label>
                       <select id="sel_editor_theme" class="form-control" oninput="changeTheme(this.value)">
   		                	<option value="light">Light</option>
   							        <option value="dark">Dark</option>
   		                </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="sel_interface_font_size">Font Size</label>
+                    <div class="form-group col-6">
+                      <label for="sel_interface_font_size" class="font-weight-bold mb-3">Font Size</label>
                       <select id="sel_interface_font_size" class="form-control" oninput="changeInterfaceFontSize(this.value)">
   		                	<option value="10">10</option>
   		                	<option value="11">11</option>
@@ -555,9 +569,10 @@
   		                </select>
                     </div>
                   </div>
+
                   <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                      <label for="sel_csv_encoding">CSV Encoding</label>
+                    <div class="form-group col-6">
+                      <label for="sel_csv_encoding" class="font-weight-bold mb-3">CSV Encoding</label>
                       <select id="sel_csv_encoding" class="form-control">
                         <option value="ascii">ascii</option>
                         <option value="big5">big5</option>
@@ -660,38 +675,37 @@
                         <option value="windows-1252">windows-1252</option>
                       </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="txt_csv_delimiter">CSV Delimiter</label>
+
+                    <div class="form-group col-6">
+                      <label for="txt_csv_delimiter" class="font-weight-bold mb-3">CSV Delimiter</label>
                       <input type="text" class="form-control" id="txt_csv_delimiter" placeholder="Delimiter">
                     </div>
                   </div>
-                  <div style="text-align:right;">
+
+                  <div class="text-right">
                     <button class='btn btn-success' onclick='saveConfigUser()'>Save</button>
                   </div>
-
                 </div>
 
                 <div class="tab-pane fade" id="config_password" role="tabpanel" aria-labelledby="config_password-tab">
                   <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                      <label for="txt_new_pwd">New Password</label>
+                    <div class="form-group col-6">
+                      <label for="txt_new_pwd" class="font-weight-bold mb-3">New Password</label>
                       <input id="txt_new_pwd" type="password" class="form-control" oninput="checkPassword()" minlength="8" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="txt_confirm_new_pwd">Confirm</label>
+                    <div class="form-group col-6">
+                      <label for="txt_confirm_new_pwd" class="font-weight-bold mb-3">Confirm</label>
                       <input id="txt_confirm_new_pwd" type="password" class="form-control" oninput="checkPassword()" minlength="8" required>
                       <div class="invalid-tooltip">
-                        Password Must be Matching.
+                        Password must be matching.
                       </div>
                     </div>
                   </div>
-                  <div style="text-align:right;">
+                  <div class="text-right">
                     <button class='btn btn-success' onclick='saveConfigUser()' disabled>Save</button>
                   </div>
                 </div>
               </div>
-
-            </div><!-- .container-fluid -->
           </div>
         </div>
       </div>
@@ -701,16 +715,18 @@
     <div class="modal fade" id="modal_plugins" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required>
-              <label class="custom-file-label" for="plugin_file_selector">Select plugin package to be installed...</label>
-            </div>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Manage plugins</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
+            <div class="custom-file mb-3">
+              <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required>
+              <label class="custom-file-label" for="plugin_file_selector">Select plugin package to be installed...</label>
+            </div>
+
             <div id="plugin_grid" style="width: 100%; height: 300px; overflow: hidden;"></div>
           </div>
         </div>
@@ -721,9 +737,9 @@
     <div class="modal fade" id="modal_monitoring_unit_test" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
@@ -739,19 +755,19 @@
     </div>
 
     <!-- Modal Generic Message -->
-    <div class="modal fade" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal show" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
       <div id="modal_message_dialog" class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div id="modal_message_content" class="modal-body" style='white-space: pre-line;'>
           </div>
           <div class="modal-footer">
             <button id="modal_message_yes" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
-            <button id="modal_message_ok" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            <button id="modal_message_ok" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
             <button id="modal_message_no" type="button" class="btn btn-danger" data-dismiss="modal">No</button>
             <button id="modal_message_cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
           </div>
@@ -763,15 +779,16 @@
     <div class="modal fade" id="modal_password" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <div id="modal_password_content" style='white-space: pre-line;'>
+            <div id="modal_password_content"></div>
+            <div class="form-group">
+              <input id="txt_password_prompt" class="form-control" type="password" placeholder="Password"/>
             </div>
-            <input id="txt_password_prompt" class="form-control" type="password" placeholder="Password" style="margin-top: 20px; margin-bottom:20px; text-align: center;"/>
           </div>
           <div class="modal-footer">
             <button id="modal_password_ok" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
@@ -786,22 +803,25 @@
     <div class="modal fade" id="modal_password_set" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header justify-content-center">
-            <h5 class="modal-title">Master Password</h5>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Master Password</h2>
           </div>
+
           <div class="modal-body">
-            <div id="modal_password_content" style='white-space: pre-line;'>
+            <div id="modal_password_content">
             </div>
+
             <div class="form-row">
-              <div class="col-md-6 mb-3">
+              <div class="form-group col-6">
                 <input id="master_password" type="password" class="form-control" placeholder="New Password" oninput="checkMasterPassword()" minlength="8" required>
               </div>
-              <div class="col-md-6 mb-3">
+
+              <div class="form-group col-6">
                 <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" oninput="checkMasterPassword()" minlength="8" required>
                 <div class="invalid-tooltip">
-                  Password Must be Matching.
+                  Password must be matching.
                 </div>
-              </div>
+                </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -814,13 +834,15 @@
     <div class="modal fade" id="modal_password_check" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header justify-content-center">
-            <h5 class="modal-title">Master Password</h5>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Master Password</h2>
           </div>
           <div class="modal-body">
-            <div id="master_password_content" style='white-space: pre-line;'>
+            <div id="master_password_content" class="mb-3">
             </div>
-            <input id="master_password_check" class="form-control" type="password" placeholder="Password" style="margin-top: 20px; margin-bottom:20px; text-align: center;" minlength="8" required/>
+            <div class="form-group">
+              <input id="master_password_check" class="form-control" type="password" placeholder="Password" minlength="8" required/>
+            </div>
           </div>
           <div class="modal-footer">
             <button id="password_check_button" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>

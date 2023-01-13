@@ -8,8 +8,9 @@ input {
         transition: background-color 5000s ease-in-out 0s;
 
         @include themify {
-            background: themed($inputBg);
+            -webkit-box-shadow: 0 0 0px 1000px themed($inputBg) inset;
             border: themed($border);
+            -webkit-text-fill-color: themed($color);
         }
     }
 }
@@ -55,10 +56,44 @@ input[type='checkbox']{
         background-position-y: 50%;
         background-size: 15px 15px;
     }
+
+    .invalid-tooltip {
+        font-size: 12px;
+        background-color: $dangerColor;
+        padding: 4px 8px;
+        top: calc(100% + 5px);
+        left: 5px;
+    }
 }
 
 //switch bg color
 .custom-control-input:checked~.custom-control-label::before {
     border-color: $primaryBlue;
     background-color: $primaryBlue;
+}
+
+.custom-file {
+    &-label {
+        padding: 6px 12px;
+        border-radius: $borderRadius;
+        height: 35px;
+
+        @include themify() {
+            color: themed($color);
+            background-color: themed($customFileInputBg);
+            border: themed($customFileInputBorder);
+        }
+
+        &::after {
+            color: $fontColorDark;
+            font-weight: 500;
+            padding: inherit;
+            border-radius: 0 $borderRadius $borderRadius 0;
+            height: 35px;
+
+            @include themify() {
+                background-color: themed($customFileButtonBg);
+            }
+        }
+    }
 }
