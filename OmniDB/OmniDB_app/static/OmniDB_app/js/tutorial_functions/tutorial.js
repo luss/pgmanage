@@ -157,7 +157,11 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_callback_after_update_start: function() {setTimeout(function(){var v_target = document.getElementById('button_new_connection'); v_omnis.omnis_ui_assistant.divClonedElement.children[0].classList.remove('ml-2');},50);},
-        p_callback_start: function() {startConnectionManagement();},
+        p_callback_start: function() {
+          $('#connections-modal').modal({
+            show: true
+          });
+        },
         p_clone_target: true,
         p_message: `
         <p>Click on <strong>New Connection</strong>.</p>
@@ -246,7 +250,11 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_callback_after_update_start: function() {setTimeout(function(){var v_target = document.getElementById('button_new_connection'); v_omnis.omnis_ui_assistant.divClonedElement.children[0].classList.remove('ml-2');},50);},
-        p_callback_start: function() {startConnectionManagement();},
+        p_callback_start: function() {
+          $('#connections-modal').modal({
+            show: true
+          })
+        },
         p_clone_target: true,
         p_message: `
         <p>Click on <strong>New Connection</strong>.</p>
