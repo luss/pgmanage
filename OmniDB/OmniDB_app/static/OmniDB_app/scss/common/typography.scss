@@ -1,0 +1,47 @@
+.h1, h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+.h2, h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+.h3, h3 {
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+.h4, h4 {
+    font-size: .875rem;
+    line-height: 1.25rem;
+}
+.h5, h5 {
+    font-size: .75rem;
+    line-height: 1rem;
+}
+.h6, h6 {
+    font-size: .625rem;
+    line-height: 1rem;
+}
+p {
+    font-size: .875rem;
+    margin-top: 0;
+    margin-bottom: .3rem;
+}
+
+span.text-muted {
+    font-size: .75rem;
+}
+
+.muted-text {
+    color: $primaryMutedColor;
+}
+
+.clipped-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 5px;
+}
+
+.font-weight-semibold {
+    font-weight: 600;
+}

@@ -23,15 +23,15 @@ base_urlpatterns = [
     re_path(r'^sign_in/$', views.login.sign_in, name='sign_in'),
 
     #CONNECTIONS
-    re_path(r'^edit_group/$', views.connections.edit_group, name='edit_group'),
-    re_path(r'^delete_group/$', views.connections.delete_group, name='delete_group'),
     re_path(r'^get_connections/$', views.connections.get_connections, name='get_connections'),
     re_path(r'^save_connection/$', views.connections.save_connection, name='save_connection'),
     re_path(r'^delete_connection/$', views.connections.delete_connection, name='delete_connection'),
     re_path(r'^test_connection/$', views.connections.test_connection, name='test_connection'),
+
     re_path(r'^get_groups/$', views.connections.get_groups, name='get_groups'),
-    re_path(r'^new_group/$', views.connections.new_group, name='new_group'),
-    re_path(r'^save_group_connections/$', views.connections.save_group_connections, name='save_group_connections'),
+    re_path(r'^save_group/$', views.connections.save_group, name='save_group'),
+    re_path(r'^delete_group/$', views.connections.delete_group, name='delete_group'),
+
 
     #USERS
     re_path(r'^get_users/$', views.users.get_users, name='get_users'),

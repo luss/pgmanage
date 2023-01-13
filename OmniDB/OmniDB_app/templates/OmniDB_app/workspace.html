@@ -11,18 +11,14 @@
     <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/lib/handsontable/handsontable.full.css?v{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/fa/css/all.css?v{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/xterm.css">
-    <!-- NOW IMPORTED INSIDE SCSS -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/lib/aimaraJS/css/Aimara.css?v3.0.6"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/css/node-icon.css?v2"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/css/interface-icon.css?v3.0.6"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/css/jquery.datetimepicker.min.css?v2"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/lib/daterangepicker/daterangepicker.css?v3.0.6"/> -->
-    <!-- <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/OmniDB_app/new/lib/json_html/styles/template-2.css?v3.0.6"/> -->
 
+    <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/font-poppins.css?{{omnidb_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/omnidb.min.css?{{omnidb_short_version}}">
+    <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/css/modal.min.css?{{omnidb_short_version}}">
     <link id="ss_theme" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/pev2/css/style.css" />
     <link rel="stylesheet" href="{{url_folder}}/static/OmniDB_app/lib/Passtrength/css/passtrength.css">
+
     <title>PgManage</title>
   </head>
   <body>
@@ -33,6 +29,12 @@
     <input type="password" name="password_fake" id="password_fake" value="" />
   </form>
   <!-- .IF CHROME -->
+
+
+  <div id="connections-modal-wrap">
+    <connections-modal></connections-modal>
+  </div>
+
 
   <div class="toast" data-autohide="false" style="position: absolute; top: 0; right: 0;">
     <div class="toast-header">
@@ -74,7 +76,7 @@
                 <span>{{ user_name }}</span>
               </a>
               {% endif %}
-              <a id="omnidb__utilities-menu__link-connections" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="startConnectionManagement();"><i class="fas fa-plug" title="Connections"></i></a>
+              <a id="omnidb__utilities-menu__link-connections" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="$('#connections-modal').modal({show: true})"><i class="fas fa-plug" title="Connections"></i></a>
               {% if not desktop_mode %}
               {% if super_user == 1 %}
               <a id="omnidb__utilities-menu__link-user" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="listUsers();"><i class="fas fa-user" title="Users"></i></a>
@@ -110,199 +112,6 @@
       </div>
     </div>
 
-    <!-- Modal Connections -->
-    <div class="modal fade" id="modal_connections" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">
-              Connections
-              <button id="button_new_connection" type="button" class="btn btn-primary" onclick="newConnection();">New connection</button>
-            </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class='mb-3 d-flex align-items-center justify-content-start'>
-              <span id="group_actions_1" class="d-flex align-items-center justify-content-start">
-                <span>Groups</span>
-                <select id="group_selector" class="form-control mx-1" onchange="groupChange(this.value);" style='display: inline-block; width: 200px;'>
-                  <option value=-1 selected>Select Group</option>
-                </select>
-                <button id="button_new_group" type="button" class="btn ml-2 btn-primary" onclick="newGroup();">New group</button>
-                <button id="button_group_actions" type="button" class="btn ml-2 btn-secondary dropdown-toggle" style='display: none;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Group Actions
-                </button>
-                <div class="dropdown-menu dropdown-menu-left">
-                  <button class="dropdown-item" type="button" onclick="renameGroup();">Rename</button>
-                  <button class="dropdown-item" type="button" onclick="manageGroup();">Manage Connections</button>
-                  <button class="dropdown-item" type="button" onclick="deleteGroup();">Delete</button>
-                </div>
-              </span>
-              <span id="group_actions_2" style='display: none;'>
-                <button id="button_new_group" type="button" class="btn btn-success ml-2" onclick="manageGroupSave();">Save changes</button>
-              </span>
-              <div class="d-none">
-                <span>Show Public Connections (<span id="conn_list_public_counter">0</span>)</span>
-                <div class="d-inline-block omnidb__switch ml-2" data-toggle="tooltip" data-placement="right" data-html="true" title="<h5>Show Public Connections.</h5><div>Switch ON shows all public connections.</div>">
-                  <input type="checkbox" id="conn_list_public" class="omnidb__switch--input" onchange="toggleConnectionsPublic(event)">
-                  <label for="conn_list_public" class="omnidb__switch--label"><span><i class="fas fa-users"></i></span></label>
-                </div>
-              </div>
-              <!-- <div class="btn-group ml-auto" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-secondary active" title="Display connections as a grid with cards" onclick="toggleConnectionsLayout('cards')"><i class="fas fa-th-large"></i></button>
-                <button type="button" class="btn btn-secondary" title="Display connections as a list with rows" onclick="toggleConnectionsLayout('rows')"><i class="fas fa-list"></i></button>
-              </div> -->
-            </div>
-            <div id="connection_card_list" class="text-center omnidb__connections__card-list omnidb__connections__card-list--rows"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Edit Connection -->
-    <div class="modal fade" id="modal_edit_connection" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Edit Connection</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-
-              <div class="form-row">
-                <div class="col-md-4 mb-3 required">
-                  <label for="conn_form_type">Connection Type</label>
-                  <select id="conn_form_type" class="form-control" oninput="updateModalEditConnectionState(event)">
-                    <option value=-1 selected>Select Type</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label for="conn_form_title">Title</label>
-                  <input type="text" class="form-control" id="conn_form_title" placeholder="Title">
-                </div>
-                <!-- {% if not desktop_mode %} -->
-                <!-- <div class="col-md-4 mt-auto mb-3">
-                  <span class="ml-2">Public connection?</span>
-        					<div class="d-inline-block ml-2">
-        						<div class="omnidb__switch mr-2" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<h5>Toggle public status.</h5><div>Switch ON sets connection as usable for all other omnidb users.</div>">
-        							<input type="checkbox" id="conn_form_public" class="omnidb__switch--input">
-        							<label for="conn_form_public" class="omnidb__switch--label"><span><i class="fas fa-users"></i></span></label>
-        						</div>
-        					</div>
-                </div> -->
-                <!-- {% endif %} -->
-              </div>
-
-              <div class="card">
-                <div class="card-header">
-                  <h6 class="mb-0">Host Connection Info</h6>
-                </div>
-                <div class="card-body">
-                  <div class="form-row">
-                    <div class="col-md-3 mb-3">
-                      <label for="conn_form_server">Server</label>
-                      <input type="text" class="form-control" id="conn_form_server" placeholder="ex: 127.0.0.1" oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-1 mb-3">
-                      <label for="conn_form_port">Port</label>
-                      <input type="text" class="form-control" id="conn_form_port" placeholder="ex: 5432" oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <label for="conn_form_database">Database</label>
-                      <input type="text" class="form-control" id="conn_form_database" placeholder="ex: postgres" oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <label for="conn_form_user">User</label>
-                      <input type="text" class="form-control" id="conn_form_user" placeholder="ex: postgres" oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-2 mb-3">
-                      <label for="conn_form_user_pass">User Password <i class="fas fa-question-circle text-info" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<h4 class=&quot;mb-0&quot;><h5 class=&quot;my-1&quot;>Optional user password</h5></h4><ul><li><strong>If provided:</strong> password will be stored to pgmanage configuration's database and used when connecting to this connection.</li><li><strong>Leaving blank:</strong> No password will be saved and it will be requested to be manually type everytime the user tries to use this connection. If it's a <strong>PostgreSQL</strong> connection, PgManage will try to retrieve password from <strong>.pgpass</strong>.</li></ul>"></i></label>
-                      <input type="password" class="form-control" id="conn_form_user_pass" placeholder="User Password">
-                    </div>
-                  </div>
-
-                  <div class="position-relative">
-                    <div style="position: absolute; top: -1rem; left: 2rem; padding: 0.25rem;" class="omnidb__theme-bg--light"><b>OR</b></div>
-                    <hr/>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-md mb-3">
-                      <label for="conn_form_connstring">Connection string <i class="fas fa-question-circle text-info" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<h4 class=&quot;mb-0&quot;><h5 class=&quot;my-1&quot;>Optional connection string</h5></h4><ul><li><strong>If provided:</strong> PgManage will use this as the default config, and single inputs for server should not be filled.</li><li><strong>If blank:</strong> In this case, if this is not a terminal connection, you should instead fill the required single inputs for server above.</li></ul>"></i></label>
-                      <input type="text" class="form-control" id="conn_form_connstring" placeholder="ex: postgresql://postgres@localhost:5432/postgres" oninput="updateModalEditConnectionState(event)">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mt-4">
-                <div class="card-header">
-                  <div class="form-group mb-0">
-                    <div class="omnidb__form-check form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" value="" id="conn_form_use_tunnel" oninput="updateModalEditConnectionState(event)">
-                      <label class="form-check-label" for="conn_form_use_tunnel">
-                        <b style="vertical-align: middle;">Use SSH tunnel</b>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <div class="form-row">
-                    <div class="col-md-4 mb-3">
-                      <label for="conn_form_ssh_server">SSH Server</label>
-                      <input type="text" class="form-control" id="conn_form_ssh_server" placeholder="SSH server" readonly oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-2 mb-3">
-                      <label for="conn_form_ssh_port">SSH Port</label>
-                      <input type="text" class="form-control" id="conn_form_ssh_port" placeholder="SSH port" readonly oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <label for="conn_form_ssh_user">SSH User</label>
-                      <input type="text" class="form-control" id="conn_form_ssh_user" placeholder="SSH user" readonly oninput="updateModalEditConnectionState(event)">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <label for="conn_form_ssh_password">
-                        Password / Passphrase
-                        <i
-                          class="fas fa-question-circle text-info ml-2" data-toggle="tooltip" data-html="true" data-placement="bottom"
-                          title="<h4 class=&quot;mb-0&quot;><h5 class=&quot;my-1&quot;>Optional ssh password / passphrase</h5></h4><div>Leave this blank if you dont want the password to be stored.</div><ul><li><strong>If provided:</strong> PgManage will use this password when opening a SSH tunnel.</li><li><strong>Leaving blank:</strong> When the SSH tunnel is requested, PgManage will prompt an input requesting for this password to be used exclusively to open the connection, but it wont be stored.</li></ul>"
-                        ></i>
-                      </label>
-                      <input type="password" class="form-control" id="conn_form_ssh_password" placeholder="SSH password / passphrase" oninput="updateConnectionKey(event)" readonly>
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="col-md mb-3">
-                      <label for="conn_form_ssh_key">
-                        SSH Key Text File
-                        <i
-                          class="fas fa-question-circle text-info ml-2" data-toggle="tooltip" data-html="true" data-placement="bottom"
-                          title="<h4 class=&quot;mb-0&quot;><h5 class=&quot;my-1&quot;>Optional ssh key</h5></h4><div>Leave this blank if you dont want the key to be stored.</div><ul><li><strong>If provided:</strong> When saving this SSH tunnel, PgManage will read the content of this file and store just the text, but not the file.</li></ul>"
-                        ></i>
-                      </label>
-                      <textarea style="display:none;" class="form-control" id="conn_form_ssh_key" rows="4" readonly></textarea>
-                      <div class="ml-4 d-inline-block custom-file" style="width: 200px;">
-                        <input type="file" id="conn_form_ssh_key_input" onchange="updateConnectionKey(event)" style="width: 200px;height: 100%;" disabled/>
-                        <label id="conn_form_ssh_key_input_label" class="custom-file-label" for="conn_form_ssh_key_input">Click to select</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-4">
-                <button id="conn_form_button_test_connection" class="btn btn-primary" onclick="testConnection();" disabled>Test</button>
-                <button id="conn_form_button_save_connection" class="btn btn-success" onclick="saveConnection();" disabled>Save</button>
-              </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Modal Query History -->
     <div class="modal fade" id="modal_query_history" tabindex="-1" role="dialog" aria-hidden="true">
@@ -350,42 +159,69 @@
     <div class="modal fade" id="modal_about" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{ omnidb_version }}</h5>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">About</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
-          <div class="modal-body text-center">
-            <div class="my-3">
-              <img src="{{url_folder}}/static/OmniDB_app/images/postgresql_medium.png" title="PostgreSQL"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/oracle_medium.png" title="Oracle"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/mysql_medium.png" title="MySQL"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/mariadb_medium.png" title="MariaDB"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/sqlite_medium.png" title="SQLite"/>
-              <!--<img src="{{url_folder}}/static/OmniDB_app/images/sqlserver_medium.png" title="SQL Server"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/firebird_medium.png" title="Firebird"/>
-              <img src="{{url_folder}}/static/OmniDB_app/images/access_medium.png" title="Microsoft Access"/>-->
+
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-5">
+                <p class="font-weight-semibold">Version:</p>
+              </div>
+              <div class="col-7">{{ omnidb_version }}</div>
             </div>
-            <div class="my-3"><a class="font-weight-bold" target="_blank" href="https://github.com/commandprompt/pgmanage">PgManage website</a></div>
-            <div class="my-3">
-              <h2>Primary Supporter:</h2>
-              <a target="_blank" class="font-weight-bold" href="https://www.commandprompt.com/">Command Prompt Inc</a>
-              <a class="d-block" target="_blank" href="https://www.commandprompt.com/"><img src="{{url_folder}}/static/OmniDB_app/images/supporters/command_prompt_inc.png" title="CommandPrompt Inc."/></a>
+
+            <div class="row mb-3">
+              <div class="col-5 d-flex align-items-center">
+                <p class="font-weight-semibold mb-0">Supported databases:</p>
+              </div>
+
+              <div class="col-7 modal-about__db d-flex justify-content-between align-items-center">
+                <img src="{{url_folder}}/static/OmniDB_app/images/postgresql_large.png" title="PostgreSQL"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/oracle_large.png" title="Oracle"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/mysql_large.png" title="MySQL"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/sqlite_large.png" title="SQLite"/>
+                <img src="{{url_folder}}/static/OmniDB_app/images/mariadb_large.png" title="MariaDB"/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-5">
+                <p class="font-weight-semibold">Primary Supporter:</p>
+              </div>
+              <div class="col-7">
+                <a target="_blank" class="font-weight-bold" href="https://www.commandprompt.com/">
+                  Command Prompt Inc
+                  <!-- <img src="{{url_folder}}/static/OmniDB_app/images/supporters/command_prompt_inc.png" title="CommandPrompt Inc."/> -->
+                </a>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-5">
+                <p class="font-weight-semibold">Website:</p>
+              </div>
+              <div class="col-7">
+                <a class="font-weight-bold" target="_blank" href="https://github.com/commandprompt/pgmanage">PgManage</a>
+            </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+
     <!-- Modal Monitoring Units -->
     <div class="modal fade" id="modal_monitoring_units" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <button class='btn btn-primary btn-sm mb-2' onclick='editMonitorUnit()'>New Unit</button>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">User management</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
@@ -399,10 +235,10 @@
     <div class="modal fade" id="modal_users" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h4>User management</h4>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">User management</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
@@ -416,14 +252,13 @@
     <div class="modal fade" id="modal_config" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Settings</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <div class="omnidb__modal-config">
-
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
                   <a class="nav-link active" id="config_shortcuts-tab" data-toggle="tab" href="#config_shortcuts" role="tab" aria-controls="config_shortcuts" aria-selected="true">Shortcuts</a>
@@ -437,8 +272,7 @@
                 </li>
                 {% endif %}
               </ul>
-              <div class="tab-content p-2 omnidb__theme-border--primary">
-
+              <div class="tab-content p-3">
                 <div class="tab-pane fade show active" id="config_shortcuts" role="tabpanel" aria-labelledby="config_shortcuts-tab">
                   <div id="div_shortcut_background_dark"><div style="position: absolute; top: 50%; width: 100%;">Press key combination... (ESC to cancel)</div></div>
                   <div class="form-group row">
@@ -511,23 +345,22 @@
                     </div>
                   </div>
 
-                  <div style="text-align:right;">
+                  <div class="text-right">
                     <button class='btn btn-success' onclick='saveShortcuts()'>Save</button>
                   </div>
                 </div>
 
                 <div class="tab-pane fade" id="config_options" role="tabpanel" aria-labelledby="config_options-tab">
-
                   <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                      <label for="sel_editor_theme">Theme</label>
+                    <div class="form-group col-6">
+                      <label for="sel_editor_theme" class="font-weight-bold mb-3">Theme</label>
                       <select id="sel_editor_theme" class="form-control" oninput="changeTheme(this.value)">
   		                	<option value="light">Light</option>
   							        <option value="dark">Dark</option>
   		                </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="sel_interface_font_size">Font Size</label>
+                    <div class="form-group col-6">
+                      <label for="sel_interface_font_size" class="font-weight-bold mb-3">Font Size</label>
                       <select id="sel_interface_font_size" class="form-control" oninput="changeInterfaceFontSize(this.value)">
   		                	<option value="10">10</option>
   		                	<option value="11">11</option>
@@ -543,9 +376,10 @@
   		                </select>
                     </div>
                   </div>
+
                   <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                      <label for="sel_csv_encoding">CSV Encoding</label>
+                    <div class="form-group col-6">
+                      <label for="sel_csv_encoding" class="font-weight-bold mb-3">CSV Encoding</label>
                       <select id="sel_csv_encoding" class="form-control">
                         <option value="ascii">ascii</option>
                         <option value="big5">big5</option>
@@ -648,38 +482,37 @@
                         <option value="windows-1252">windows-1252</option>
                       </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="txt_csv_delimiter">CSV Delimiter</label>
+
+                    <div class="form-group col-6">
+                      <label for="txt_csv_delimiter" class="font-weight-bold mb-3">CSV Delimiter</label>
                       <input type="text" class="form-control" id="txt_csv_delimiter" placeholder="Delimiter">
                     </div>
                   </div>
-                  <div style="text-align:right;">
+
+                  <div class="text-right">
                     <button class='btn btn-success' onclick='saveConfigUser()'>Save</button>
                   </div>
-
                 </div>
 
                 <div class="tab-pane fade" id="config_password" role="tabpanel" aria-labelledby="config_password-tab">
                   <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                      <label for="txt_new_pwd">New Password</label>
+                    <div class="form-group col-6">
+                      <label for="txt_new_pwd" class="font-weight-bold mb-3">New Password</label>
                       <input id="txt_new_pwd" type="password" class="form-control" oninput="checkPassword()" minlength="8" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="txt_confirm_new_pwd">Confirm</label>
+                    <div class="form-group col-6">
+                      <label for="txt_confirm_new_pwd" class="font-weight-bold mb-3">Confirm</label>
                       <input id="txt_confirm_new_pwd" type="password" class="form-control" oninput="checkPassword()" minlength="8" required>
                       <div class="invalid-tooltip">
-                        Password Must be Matching.
+                        Password must be matching.
                       </div>
                     </div>
                   </div>
-                  <div style="text-align:right;">
+                  <div class="text-right">
                     <button class='btn btn-success' onclick='saveConfigUser()' disabled>Save</button>
                   </div>
                 </div>
               </div>
-
-            </div><!-- .container-fluid -->
           </div>
         </div>
       </div>
@@ -689,16 +522,18 @@
     <div class="modal fade" id="modal_plugins" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required>
-              <label class="custom-file-label" for="plugin_file_selector">Select plugin package to be installed...</label>
-            </div>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Manage plugins</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
+            <div class="custom-file mb-3">
+              <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required>
+              <label class="custom-file-label" for="plugin_file_selector">Select plugin package to be installed...</label>
+            </div>
+
             <div id="plugin_grid" style="width: 100%; height: 300px; overflow: hidden;"></div>
           </div>
         </div>
@@ -709,9 +544,9 @@
     <div class="modal fade" id="modal_monitoring_unit_test" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
@@ -727,19 +562,19 @@
     </div>
 
     <!-- Modal Generic Message -->
-    <div class="modal fade" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal show" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
       <div id="modal_message_dialog" class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div id="modal_message_content" class="modal-body" style='white-space: pre-line;'>
           </div>
           <div class="modal-footer">
             <button id="modal_message_yes" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
-            <button id="modal_message_ok" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            <button id="modal_message_ok" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
             <button id="modal_message_no" type="button" class="btn btn-danger" data-dismiss="modal">No</button>
             <button id="modal_message_cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
           </div>
@@ -751,15 +586,16 @@
     <div class="modal fade" id="modal_password" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header align-items-center">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <div id="modal_password_content" style='white-space: pre-line;'>
+            <div id="modal_password_content"></div>
+            <div class="form-group">
+              <input id="txt_password_prompt" class="form-control" type="password" placeholder="Password"/>
             </div>
-            <input id="txt_password_prompt" class="form-control" type="password" placeholder="Password" style="margin-top: 20px; margin-bottom:20px; text-align: center;"/>
           </div>
           <div class="modal-footer">
             <button id="modal_password_ok" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
@@ -774,22 +610,25 @@
     <div class="modal fade" id="modal_password_set" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header justify-content-center">
-            <h5 class="modal-title">Master Password</h5>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Master Password</h2>
           </div>
+
           <div class="modal-body">
-            <div id="modal_password_content" style='white-space: pre-line;'>
+            <div id="modal_password_content">
             </div>
+
             <div class="form-row">
-              <div class="col-md-6 mb-3">
+              <div class="form-group col-6">
                 <input id="master_password" type="password" class="form-control" placeholder="New Password" oninput="checkMasterPassword()" minlength="8" required>
               </div>
-              <div class="col-md-6 mb-3">
+
+              <div class="form-group col-6">
                 <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" oninput="checkMasterPassword()" minlength="8" required>
                 <div class="invalid-tooltip">
-                  Password Must be Matching.
+                  Password must be matching.
                 </div>
-              </div>
+                </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -802,13 +641,15 @@
     <div class="modal fade" id="modal_password_check" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header justify-content-center">
-            <h5 class="modal-title">Master Password</h5>
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Master Password</h2>
           </div>
           <div class="modal-body">
-            <div id="master_password_content" style='white-space: pre-line;'>
+            <div id="master_password_content" class="mb-3">
             </div>
-            <input id="master_password_check" class="form-control" type="password" placeholder="Password" style="margin-top: 20px; margin-bottom:20px; text-align: center;" minlength="8" required/>
+            <div class="form-group">
+              <input id="master_password_check" class="form-control" type="password" placeholder="Password" minlength="8" required/>
+            </div>
           </div>
           <div class="modal-footer">
             <button id="password_check_button" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
@@ -992,7 +833,6 @@
     <script src="{{url_folder}}/static/OmniDB_app/js/plugin_hook.js?v{{omnidb_short_version}}"></script>
     <script src="{{url_folder}}/static/OmniDB_app/js/users.js?v{{omnidb_short_version}}"></script>
     <script src="{{url_folder}}/static/OmniDB_app/js/shortcuts.js?v{{omnidb_short_version}}"></script>
-    <script src="{{url_folder}}/static/OmniDB_app/js/connections.js?v{{omnidb_short_version}}"></script>
     <script src="{{url_folder}}/static/OmniDB_app/js/command_history.js?v{{omnidb_short_version}}"></script>
     <script src="{{url_folder}}/static/OmniDB_app/js/console.js?v{{omnidb_short_version}}"></script>
     <script src="{{url_folder}}/static/OmniDB_app/js/terminal.js?v{{omnidb_short_version}}"></script>
@@ -1062,5 +902,6 @@
     <script type="text/javascript">
       axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
     </script>
+    <script src="{{url_folder}}/static/OmniDB_app/js/vuejs/components/connections_modal.js"></script>
   </body>
 </html>

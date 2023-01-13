@@ -1,0 +1,65 @@
+.btn {
+    color: $primaryLight!important; //workaround! to be removed when new stylesheets are implemented
+    font-size: $fontSize;
+    border: 0 !important;//workaround! to be removed when new stylesheets are implemented
+    font-weight: 500;
+    border-radius: $borderRadius;
+    box-sizing: border-box;
+    max-height: 35px;
+
+    &:disabled {
+        opacity: .4;
+        pointer-events: none;
+    }
+
+    &:hover {
+        border-color: transparent;
+        opacity: .8;
+        color: $primaryLight;
+    }
+
+    &-primary {
+        background-color: $primaryBlue!important; //workaround! to be removed when new stylesheets are implemented
+
+        &:hover {
+            background-color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;
+        }
+    }
+
+    &-outline {
+        background-color: transparent;
+        border: 2px solid $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;;
+        color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;;
+
+        &:hover {
+            opacity: 1;
+            color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented;;
+            background-color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;
+        }
+    }
+
+    &-secondary {
+        background-color: $secondaryGrey!important; //workaround! to be removed when new stylesheets are implemented
+        border: 0!important; //workaround! to be removed when new stylesheets are implemented
+
+        &:hover {
+            background-color: $secondaryGrey;
+        }
+    }
+
+    &-success {
+        background-color: $successColor;
+
+        &:hover {
+            background-color: $successColor;
+        }
+    }
+
+    &-danger {
+        background-color: $dangerColor;
+
+        &:hover {
+            background-color: $dangerColor;
+        }
+    }
+}

@@ -182,17 +182,13 @@ function showMasterPassPrompt(p_message) {
   setTimeout(function () {
   	v_modal_password_input.focus();
   },500);
-  
+
   v_modal_password_ok_function = function() {
     execAjax('/master_password/',
       JSON.stringify({"master_password": v_modal_password_input.value}),
       function(p_return) {
-
         // Retrieving database list.
         getDatabaseList(true);
-
-        // Retrieving connection list
-        showConnectionList(false, false);
       },
       function(p_return) {
         setTimeout(function() {showMasterPassPrompt(p_return.v_data)}
@@ -214,12 +210,12 @@ function showMasterPassPrompt(p_message) {
 	  v_button_cancel.style.display = 'none';
     v_button_no.className = 'btn btn-primary';
     v_button_yes.className = 'btn btn-danger';
-    
+
     $('#modal_message_dialog > div > div > button.close').css('display', 'none');
-    
+
     v_content_div.innerHTML = `Are you sure you want to reset you master password?
                                You will lose your saved connection passwords.`
-    
+
     v_button_yes.onclick = function () {
       execAjax(
         '/reset_master_password/',

@@ -86,9 +86,6 @@ $(function () {
   } else {
     // Retrieving database list.
     getDatabaseList(true);
-
-    // Retrieving connection list
-    showConnectionList(false, false);
   }
 
   // Updating explain component choice.
@@ -1081,7 +1078,9 @@ function indentSQL(p_mode = false) {
 function showMenuNewTabOuter(e) {
   // Opening connections management when there are no configured connections.
   if (!v_connTabControl.tag.connections || v_connTabControl.tag.connections.length === 0) {
-    startConnectionManagement();
+    $('#connections-modal').modal({
+      show: true
+    })
   }
   // Creating a custom menu for new outter connections.
   else {
@@ -1307,19 +1306,15 @@ function showMenuNewTabOuter(e) {
     }
 
   	if (v_option_list.length>0) {
-  		v_option_list.unshift({
-  			text: 'New Connection',
-  			icon: 'fas cm-all fa-plus',
-  			action: function() {
-          newConnection();
-  			}
-  		},
+  		v_option_list.unshift(
       {
         text: 'Manage Connections',
         icon: 'fas cm-all fa-gears',
         action: function() {
-            setTimeout(function() { startConnectionManagement(); },0);
-          }
+          $('#connections-modal').modal({
+            show: true
+          })
+        }
         });
 
   		customMenu(

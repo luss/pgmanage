@@ -82,13 +82,12 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
   "<div class='modal fade' id='modal_command_history_" + v_tab.id + "' tabindex='-1' role='dialog' aria-hidden='true'>" +
     "<div class='modal-dialog modal-xl' role='document'>" +
       "<div class='modal-content'>" +
-        "<div class='modal-header'>" +
-          "<h5 class='modal-title'>" +
+        "<div class='modal-header align-items-center'>" +
+          "<h2 class='modal-title font-weight-bold'>" +
             "Command history" +
-          "</h5>" +
-          "<button type='button' class='close' data-dismiss='modal' aria-label='Close' onclick='closeCommandHistory()'>" +
-            "<span aria-hidden='true'>&times;</span>" +
-          "</button>" +
+          "</h2>" +
+          "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>" +
+          "<span aria-hidden='true'><i class='fa-solid fa-xmark'></i></span></button>" +
         "</div>" +
         "<div class='modal-body'>" +
           "<div id='command_history_div_" + v_tab.id + "' class='query_command_history'>" +
