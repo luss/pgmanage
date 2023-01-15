@@ -536,7 +536,7 @@ SOFTWARE.
 
     &[x-placement='right']{
       .arrow::before {
-        border-left-color: #F1F5F9;
+        border-right-color: #F1F5F9;
       }
   }
 
@@ -544,7 +544,6 @@ SOFTWARE.
       color: #1D273B;
       background-color: #F1F5F9;
       border-radius: 6px;
-      min-width: 350px;
       padding: 8px;
       box-shadow: 0 0.5rem 1rem rgba(0,  0,  0,  0.15);
 
