@@ -21,7 +21,7 @@
     &-primary {
         background-color: $primaryBlue!important; //workaround! to be removed when new stylesheets are implemented
 
-        &:hover {
+        &:hover, &:focus, &.focus {
             background-color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;
         }
     }
@@ -29,7 +29,7 @@
     &-secondary {
         background-color: $secondaryGrey!important; //workaround! to be removed when new stylesheets are implemented
 
-        &:hover {
+        &:hover, &:focus, &.focus {
             background-color: $secondaryGrey;
         }
     }
@@ -37,7 +37,7 @@
     &-success {
         background-color: $successColor;
 
-        &:hover {
+        &:hover, &:focus, &.focus {
             background-color: $successColor;
         }
     }
@@ -45,7 +45,7 @@
     &-danger {
         background-color: $dangerColor;
 
-        &:hover {
+        &:hover, &:focus, &.focus {
             background-color: $dangerColor;
         }
     }
