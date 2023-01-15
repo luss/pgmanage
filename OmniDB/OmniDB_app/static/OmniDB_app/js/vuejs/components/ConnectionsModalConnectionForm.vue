@@ -6,7 +6,7 @@
         <!-- TODO: integrate with active connection list -->
         <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
           <div>
-          <button @click="$emit('connection:test', this.connectionLocal)" class="btn btn-outline mr-2">Test</button>
+          <button @click="$emit('connection:test', this.connectionLocal)" class="btn btn-outline-primary mr-2">Test</button>
           <!-- FIXME: conditionally disable if form is dirty -->
           <button @click="dispatchConnectionSelected(this.connectionLocal)" class="btn btn-success">Connect</button>
           </div>
