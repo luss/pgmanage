@@ -119,7 +119,6 @@ $modalPadding: 24px;
             cursor: pointer;
 
             @include themify() {
-                border-top: themed($border);
                 background-color: themed($surfaceBg);
             }
         }

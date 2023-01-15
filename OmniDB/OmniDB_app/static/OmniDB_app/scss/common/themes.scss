@@ -11,8 +11,8 @@ $customFileInputBg: 'customFileInputBg';
 $customFileInputBorder: 'customFileInputBorder';
 $customFileButtonBg: 'customFileButtonBg';
 $accordionHeadingBg: 'accordionHeadingBg';
-$accordionHeadingBorder: 'accordionHeadingBorder';
 $accordionHeadingActiveBg: 'accordionHeadingActiveBg';
+$accordionItemActiveBg: 'accordionItemActiveBg';
 $tabsSurfaceBg: 'tabsSurfaceBg';
 
 $themes: (
@@ -27,7 +27,7 @@ $themes: (
         customFileButtonBg: $secondaryGrey,
         accordionHeadingBg: $accordionHeadingBgLight,
         accordionHeadingActiveBg: $accordionHeadingActiveBgLight,
-        accordionHeadingBorder: $accordionHeadingBorderLight,
+        accordionItemActiveBg: $accordionItemActiveBgLight,
         disabledInputBg: $bgLight,
         tabsSurfaceBg: $bgSurfaceBlueLight,
     ),
@@ -42,7 +42,7 @@ $themes: (
         customFileButtonBg: $secondaryGrey,
         accordionHeadingBg: $accordionHeadingBgDark,
         accordionHeadingActiveBg: $accordionHeadingActiveBgDark,
-        accordionHeadingBorder: $accordionHeadingBorderDark,
+        accordionItemActiveBg: $accordionItemActiveBgDark,
         disabledInputBg: $disabledInputBgDark,
         tabsSurfaceBg: $bgSurfaceSecondaryDark,
     ),

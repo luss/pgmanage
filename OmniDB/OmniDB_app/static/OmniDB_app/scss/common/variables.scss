@@ -25,8 +25,8 @@ $borderColorLight: #E6E7E9;
 $borderLight: 1px solid #E6E7E9;
 $disabledFontColorLight: #C8D3E1;
 $accordionHeadingBgLight: rgba($borderColorLight, .5);
-$accordionHeadingActiveBgLight: rgba($primaryBlue, .15);
-$accordionHeadingBorderLight: $borderLight;
+$accordionHeadingActiveBgLight: rgba($primaryBlue, .2);
+$accordionItemActiveBgLight: rgba($primaryBlue, .05);
 $bgSurfaceBlueLight: #E8F0F9;
 
 //dark mode
@@ -40,7 +40,7 @@ $borderColorActiveDark: #314264;
 $disabledFontColorDark: #313C52;
 $accordionHeadingBgDark: rgba($primaryBlue, .15);
 $accordionHeadingActiveBgDark: rgba($primaryBlue, .2);
-$accordionHeadingBorderDark: $activeBorder;
+$accordionItemActiveBgDark: rgba($primaryBlue, .05);
 $disabledInputBgDark: #404958;
 
 //accent colors
