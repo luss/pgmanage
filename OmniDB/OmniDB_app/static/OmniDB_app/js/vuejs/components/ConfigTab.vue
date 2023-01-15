@@ -1,52 +1,54 @@
 <template>
-  <div class="form-row form-group">
-    <div class="col-2">
+  <div class="form-row">
+    <div class="form-group col-2">
       <form class="form" role="search" @submit.prevent>
-        <label class="sr-only" for="selectServer">Search</label>
-        <div class="input-group">
-          <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
-            :disabled="v$.$invalid" placeholder="Find in settings" />
-        </div>
+        <label class="font-weight-bold mb-3" for="selectServer">Search</label>
+        <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
+          :disabled="v$.$invalid" placeholder="Find in settings" />
       </form>
     </div>
 
-    <div class="col-auto">
-      <label class="sr-only" for="selectConfCat">Category</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Category</div>
-          <select class="form-control" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
-            <option v-for="(cat, index) in categories" :value="cat" :key="index">
-              {{ cat }}
-            </option>
-          </select>
-        </div>
-      </div>
+    <div class="form-group col-4">
+      <label class="font-weight-bold mb-3" for="selectConfCat">Category</label>
+      <select class="form-control" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
+        <option v-for="(cat, index) in categories" :value="cat" :key="index">
+          {{ cat }}
+        </option>
+      </select>
     </div>
 
-    <div class="col-5">
-      <label class="sr-only" for="selectConf">Config History</label>
-      <div class="input-group">
-        <div class="input-group">
-          <div class="input-group-text">Config History</div>
-          <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
-            <option disabled value="">Please select one</option>
-            <option v-for="(config, index) in configHistory" :value="config" :key="index"
-              :title="config.commit_comment">
-              {{ index }}. {{ truncateText(config, 50) }}
-            </option>
-          </select>
-          <button class="btn btn-sm btn-success ml-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
-            Apply
-          </button>
-          <button class="btn btn-sm btn-danger ml-2" :disabled="!selectedConf"
-            @click="deleteOldConfig(selectedConf.id)">
-            Delete
-          </button>
-        </div>
-      </div>
+    <div class="form-group col-4">
+      <label class="font-weight-bold mb-3" for="selectConf">Config History</label>
+        <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
+          <option disabled value="">Please select one</option>
+          <option v-for="(config, index) in configHistory" :value="config" :key="index"
+            :title="config.commit_comment">
+            {{ index }}. {{ truncateText(config, 50) }}
+          </option>
+        </select>
+    </div>
+
+    <div class="form-group col-2 d-flex align-items-end">
+      <button class="btn btn-success" :disabled="!selectedConf" @click="confirmConfig(e, true)">
+          Apply
+        </button>
+        <button class="btn btn-danger ml-2" :disabled="!selectedConf"
+          @click="deleteOldConfig(selectedConf.id)">
+          Delete
+        </button>
     </div>
   </div>
+
+  <div class="modal-footer d-none">
+          <button v-if="!modalOldConfig" id="config_modal_button" type="button" class="btn btn-success"
+            data-dismiss="modal" @click="saveConfiguration">
+            Save configuration
+          </button>
+          <button v-else id="config_modal_button" type="button" class="btn btn-success" data-dismiss="modal"
+            @click="applyOldConfig">
+            Save configuration
+          </button>
+        </div>
 
   <div v-if="appliedSettings.restartPending" class="row">
     <div class="col-12">
@@ -147,16 +149,7 @@
               placeholder="Short description of your changes(optional)" />
           </div>
         </div>
-        <div class="modal-footer">
-          <button v-if="!modalOldConfig" id="config_modal_button" type="button" class="btn btn-success"
-            data-dismiss="modal" @click="saveConfiguration">
-            Save configuration
-          </button>
-          <button v-else id="config_modal_button" type="button" class="btn btn-success" data-dismiss="modal"
-            @click="applyOldConfig">
-            Save configuration
-          </button>
-        </div>
+  
       </div>
     </div>
   </div>

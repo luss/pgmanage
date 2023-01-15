@@ -1,8 +1,10 @@
 <template>
-  <div class="text-center" v-if="setting.vartype === 'bool'">
-    <input class="config-checkbox" type="checkbox" v-model="setting.setting" true-value="on" false-value="off"
+  <div class="custom-control custom-switch" v-if="setting.vartype === 'bool'">
+    <input class="custom-control-input" type="checkbox" id="switch-{{ index }}" v-model="setting.setting" true-value="on" false-value="off"
       @change="changeSetting" :disabled="isReadOnly" />
+    <label class="custom-control-label" for="switch-{{ index }}"></label>
   </div>
+
   <select v-else-if="setting.vartype === 'enum'" class="form-control form-control-sm" :name="setting.name"
     v-model="setting.setting" @input="changeSetting" :disabled="isReadOnly">
     <option v-for="v in setting.enumvals" :value="v">{{ v }}</option>
@@ -55,7 +57,7 @@ export default {
   emits: ["settingChange"],
   data() {
     return {
-      tooltipTitle: `<table>
+      tooltipTitle: `<table class="text-left">
               <tr>
                 <td>Type:</td>
                 <td><b>${this.initialSetting.vartype}</b></td>
@@ -220,41 +222,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.config-checkbox[type="checkbox"] {
-  width: 30px;
-  height: 30px;
-}
-
-.config-checkbox[type="checkbox"]:before {
-  position: relative;
-  display: block;
-  width: 30px;
-  height: 30px;
-  content: "";
-  background: #fff;
-}
-
-.config-checkbox[type="checkbox"]:after {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: -30px;
-  width: 30px;
-  height: 30px;
-  content: "Off";
-  background: #dc3545;
-  color: #fff;
-}
-
-.config-checkbox[type="checkbox"]:checked:after {
-  background: #28a745;
-  content: "On";
-}
-
-.config-checkbox[type="checkbox"]:disabled:after {
-  -webkit-filter: opacity(0.4);
-}
-</style>
