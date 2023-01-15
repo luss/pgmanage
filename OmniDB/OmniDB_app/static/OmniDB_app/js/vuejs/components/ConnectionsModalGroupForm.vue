@@ -19,7 +19,7 @@
             <img class="group-list__item_logo mx-3" src="https://via.placeholder.com/50">
             <div class="d-flex flex-column">
               <p class="group-list__item_title">{{ connection.alias }}</p>
-              <span class="group-list__item_subtitle muted-text">{{ connectionSubtitle(connection) }}</span>
+              <span class="group-list__item_subtitle muted-text clipped-text">{{ connectionSubtitle(connection) }}</span>
             </div>
           </label>
         </div>

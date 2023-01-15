@@ -36,10 +36,20 @@ span.text-muted {
     color: $primaryMutedColor;
 }
 
+//only for single line text
 .clipped-text {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-right: 5px;
+}
+
+//for multiline text
+.line-clamp-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; //number of visible rows 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-wrap: break-word;
 }
 
 .font-weight-semibold {

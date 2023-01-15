@@ -39,8 +39,8 @@
                       <div v-bind:id="'collapse-group-' + group.id" class="collapse" data-parent="#connectionsList">
                         <div class="card-body p-0">
                           <ul class="list-group">
-                            <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index class="connection list-group-item">
-                              <p class="connection__name clipped-text">{{ connection.alias }}</p>
+                            <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index class="connection list-group-item clipped-text">
+                              <p class="connection__name">{{ connection.alias }}</p>
                               <span class="connection__subtitle muted-text">{{ connectionSubtitle(connection) }}</span>
                             </li>
                           </ul>

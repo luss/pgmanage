@@ -121,6 +121,10 @@ $modalPadding: 24px;
             @include themify() {
                 background-color: themed($surfaceBg);
             }
+
+            &__subtitle {
+                white-space: nowrap;
+            }
         }
     }
 
@@ -150,6 +154,10 @@ $modalPadding: 24px;
                             @include themify() {
                                 border: themed($border);
                             }
+                        }
+
+                        &_subtitle {
+                            max-width: 150px;
                         }
 
                         input[type='checkbox'] {
