@@ -804,7 +804,7 @@ SOFTWARE.
     color: #F8FAFC !important;
   }
   select {
-    background: #282A2F !important;
+    background: #1A2234 !important;
     border: 1px solid #243049 !important;
     color: #F8FAFC !important;
   }
@@ -1053,20 +1053,20 @@ SOFTWARE.
   }
   input,
   textarea  {
-    background-color: #282A2F !important;
-    border-color: #4C5365 !important;
-  	color: #d7d7d7 !important;
+    background-color: #1A2234 !important;
+    border-color: #243049 !important;
+  	color: #F8FAFC !important;
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus,
     &:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px #282A2F inset !important;
-      -webkit-text-fill-color: #d7d7d7 !important;
-      -moz-box-shadow: 0 0 0 30px #282A2F inset !important;
-      -moz-text-fill-color: #d7d7d7 !important;
-      background-color: #282A2F !important;
-      border-color: #4C5365 !important;
-    	color: #d7d7d7 !important;
+      -webkit-box-shadow: 0 0 0px 1000px #1A2234 inset;
+      -webkit-text-fill-color: #F8FAFC !important;
+      -moz-box-shadow: 0 0 0px 1000px #1A2234 inset !important;
+      -moz-text-fill-color: #F8FAFC !important;
+      background-color: #1A2234!important;
+      border-color: #243049 !important;
+    	color: #F8FAFC !important;
     }
   }
 
