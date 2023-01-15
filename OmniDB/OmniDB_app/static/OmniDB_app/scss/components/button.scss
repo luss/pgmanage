@@ -1,7 +1,7 @@
 .btn {
     color: $primaryLight!important; //workaround! to be removed when new stylesheets are implemented
     font-size: $fontSize;
-    border: 0 !important;//workaround! to be removed when new stylesheets are implemented
+    border: 2px solid transparent !important;//workaround! to be removed when new stylesheets are implemented
     font-weight: 500;
     border-radius: $borderRadius;
     box-sizing: border-box;
@@ -26,21 +26,8 @@
         }
     }
 
-    &-outline {
-        background-color: transparent;
-        border: 2px solid $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;;
-        color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;;
-
-        &:hover {
-            opacity: 1;
-            color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented;;
-            background-color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented;
-        }
-    }
-
     &-secondary {
         background-color: $secondaryGrey!important; //workaround! to be removed when new stylesheets are implemented
-        border: 0!important; //workaround! to be removed when new stylesheets are implemented
 
         &:hover {
             background-color: $secondaryGrey;
@@ -60,6 +47,56 @@
 
         &:hover {
             background-color: $dangerColor;
+        }
+    }
+
+    //outline buttons
+    &-outline {
+        background-color: transparent;
+
+        &-primary {
+            border: 2px solid $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
+            color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
+    
+            &:hover {
+                opacity: 1;
+                color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
+                color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+
+        &-secondary {
+            border: 2px solid $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
+            color: $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
+    
+            &:hover {
+                opacity: 1;
+                color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+
+        &-success {    
+            border: 2px solid $successColor !important; //workaround! to be removed when new stylesheets are implemented
+            color: $successColor !important; //workaround! to be removed when new stylesheets are implemented
+
+            &:hover {
+                opacity: 1;
+                color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $successColor !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+
+        &-danger {
+            border: 2px solid $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
+            color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
+    
+            &:hover {
+                opacity: 1;
+                color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
+            }
         }
     }
 }
