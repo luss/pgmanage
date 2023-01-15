@@ -160,6 +160,15 @@ $modalPadding: 24px;
                             max-width: 150px;
                         }
 
+                        &_logo {
+                            width: 50px;
+                            height: 50px;
+                            border-radius: $borderRadius;
+                            @include themify() {
+                                border: themed($border);
+                            }
+                        }
+
                         input[type='checkbox'] {
                             position: absolute;
                             left: 16px;
@@ -170,6 +179,10 @@ $modalPadding: 24px;
                         input[type='checkbox']:checked ~ .group-list__item_wrap {
                             background-color: rgba($primaryBlue, .15);
                             border: 1px solid $primaryBlue;
+
+                            .group-list__item_logo {
+                                border: 1px solid $primaryBlue;
+                            }
                           }
 
                         &_title {
