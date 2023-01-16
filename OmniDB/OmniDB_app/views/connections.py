@@ -308,6 +308,7 @@ def save_connection(request):
         if conn_id is None:
             password = ''
             tunnel_password = ''
+            tunnel_key = ''
             if conn_object['password']:
                 password = encrypt(conn_object['password'], key)
             if conn_object['tunnel']['password'] != '':
@@ -329,7 +330,7 @@ def save_connection(request):
                 ssh_password=tunnel_password,
                 ssh_key=tunnel_key,
                 use_tunnel=conn_object['tunnel']['enabled'],
-                conn_string=conn_object['connstring'],
+                conn_string=conn_object['conn_string'],
                 public=False
 
             )
