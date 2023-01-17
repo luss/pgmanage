@@ -39,7 +39,8 @@
                       <div v-bind:id="'collapse-group-' + group.id" class="collapse" data-parent="#connectionsList">
                         <div class="card-body p-0">
                           <ul class="list-group">
-                            <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index class="connection list-group-item">
+                            <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index
+                              :class="['connection', 'list-group-item', { 'active':connection===selectedConnection }]">
                               <p class="connection__name">{{ connection.alias }}</p>
                               <p class="connection__subtitle muted-text clipped-text">{{ connectionSubtitle(connection) }}</p>
                             </li>
@@ -53,7 +54,9 @@
 
                   <!-- NO GROUP CONNECTION-->
                   <ul class="list-group">
-                    <li @click="showForm('connection', connection)" v-for="(connection, index) in ungroupedConnections" :key=index class="connection list-group-item">
+                    <li @click="showForm('connection', connection)"
+                      v-for="(connection, index) in ungroupedConnections" :key=index
+                      :class="['connection', 'list-group-item', { 'active':connection===selectedConnection }]">
                       <p class="connection__name">{{ connection.alias }}</p>
                       <span class="connection__subtitle muted-text">{{ connectionSubtitle(connection) }}</span>
                     </li>
