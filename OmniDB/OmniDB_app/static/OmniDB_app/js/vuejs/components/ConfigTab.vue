@@ -86,23 +86,15 @@
 
         <div class="form-group col-2 d-flex align-items-end pl-0">
           <button class="btn btn-success mr-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
-              Apply
+              Revert
           </button>
           <button class="btn btn-danger mr-2" :disabled="!selectedConf"
             @click="deleteOldConfig(selectedConf.id)">
             Delete
           </button>
         </div>
-        <div class="form-group col-5 d-flex align-items-end">
-          <button v-if="!modalOldConfig" id="config_modal_button" type="button" class="btn btn-primary mr-2"
-            data-dismiss="modal" @click="saveConfiguration">
-            Save configuration
-          </button>
-          <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-dismiss="modal"
-            @click="applyOldConfig">
-            Save configuration
-          </button>
-          <button type="submit" class="btn btn-success mr-2" :disabled="!hasUpdateValues || v$.$invalid"
+        <div class="form-group col-5 d-flex align-items-end justify-content-center">
+          <button type="submit" class="btn btn-success mr-5" :disabled="!hasUpdateValues || v$.$invalid"
             @click.prevent="confirmConfig">
             Save and reload configuration
           </button>
@@ -116,18 +108,20 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
-          <h2 class="modal-title">Config Management</h2>
+          <h2 v-if="!modalRevertConfig" class="modal-title">Config Management</h2>
+          <h2 v-else class="modal-title">Revert Configuration</h2>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
         <div class="modal-body">
+          <p class="text-center">The following changes will be applied:</p>
           <table class="table table-sm">
             <tr>
               <th width="50%" class="border-top-0">Name</th>
               <th width="50%" class="border-top-0">New value</th>
             </tr>
-            <template v-if="!modalOldConfig">
+            <template v-if="!modalRevertConfig">
               <tr v-for="(setting_value, setting_name) in updateSettings" :key="setting_value">
                 <td>{{ setting_name }}</td>
                 <td>
@@ -144,13 +138,22 @@
               </tr>
             </template>
           </table>
-          <div class="form-group">
+          <div v-if="!modalRevertConfig" class="form-group">
             <label for="commit_message" class="font-weight-bold mb-3">Commit Comment</label>
             <input v-model="commitComment" id="commit_message" class="form-control"
               placeholder="Short description of your changes(optional)" />
           </div>
         </div>
-  
+        <div class="modal-footer">
+          <button v-if="!modalRevertConfig" id="config_modal_button" type="button" class="btn btn-primary mr-2"
+            data-dismiss="modal" @click="saveConfiguration">
+            Save configuration
+          </button>
+          <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-dismiss="modal"
+            @click="revertConfig">
+            Revert configuration
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -187,7 +190,7 @@ export default {
         restartPending: "",
       },
       modalId: `config_modal_${this.tabId}_${Date.now()}`,
-      modalOldConfig: false,
+      modalRevertConfig: false,
       configDiffData: ''
     };
   },
@@ -262,7 +265,7 @@ export default {
     changeData(e) {
       const index = this.categories.indexOf(e.changedGroup.category);
       this.data[index] = e.changedGroup;
-      if (e.changedSetting.setting !== e.changedSetting.boot_val)
+      if (e.changedSetting.setting !== e.changedSetting.reset_val)
         this.updateSettings[e.changedSetting.name] = e.changedSetting.setting;
       else
         delete this.updateSettings[e.changedSetting.name]
@@ -306,17 +309,17 @@ export default {
           showError(error.response.data);
         });
     },
-    confirmConfig(event, old = false) {
-      if (!old) {
-        this.modalOldConfig = false
+    confirmConfig(event, revert = false) {
+      if (!revert) {
+        this.modalRevertConfig = false
         $(`#${this.modalId}`).modal();
       } else {
         this.getConfigurationDiffs()
-        this.modalOldConfig = true
+        this.modalRevertConfig = true
         $(`#${this.modalId}`).modal();
       }
     },
-    applyOldConfig(event) {
+    revertConfig(event) {
       this.updateSettings = this.selectedConf.config_snapshot;
       this.saveConfiguration(event, false);
     },
