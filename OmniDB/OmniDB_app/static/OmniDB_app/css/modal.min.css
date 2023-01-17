@@ -52,6 +52,10 @@ span.text-muted {
   font-weight: 600;
 }
 
+.invalid-feedback {
+  font-size: .6rem;
+}
+
 .btn {
   color: #F8FAFC !important;
   font-size: 0.875rem;

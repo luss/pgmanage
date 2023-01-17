@@ -7,7 +7,7 @@
       <form role="form">
         <ul class="list-group list-group-flush form-group rounded-0">
           <li v-for="(setting, index) in settingGroup.rows" :key="setting.name" class="list-group-item d-flex pl-0">
-            <div :class="[{ 'border-top-0': !index }, 'col-8']">
+            <div :class="[{ 'border-top-0': !index }, 'col-7']">
               <span class="font-weight-semibold">
                 {{ setting.name }}
               </span>
@@ -15,7 +15,7 @@
                 {{ setting.desc }}
               </p>
             </div>
-            <div :class="[{ 'border-top-0': !index }, 'col-4 d-flex align-items-center']">
+            <div :class="[{ 'border-top-0': !index }, 'col-5 d-flex align-items-center']">
               <InputItem :initial-setting="setting" :index="index" @setting-change="changeSetting" />
             </div>
           </li>
