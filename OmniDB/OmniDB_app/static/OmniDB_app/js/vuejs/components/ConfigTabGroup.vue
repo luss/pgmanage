@@ -1,25 +1,25 @@
 <template>
-  <div class="card">
-    <div class="card-header">
+  <div class="card mb-2">
+    <div class="card-header font-weight-bold">
       {{ settingGroup.category }}
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
       <form role="form">
-        <table class="table table-sm">
-          <tr v-for="(setting, index) in settingGroup.rows" :key="setting.name">
-            <td :class="[{ 'border-top-0': !index }]">
-              <span class="font-weight-bold">
+        <ul class="list-group list-group-flush form-group rounded-0">
+          <li v-for="(setting, index) in settingGroup.rows" :key="setting.name" class="list-group-item d-flex pl-0">
+            <div :class="[{ 'border-top-0': !index }, 'col-8']">
+              <span class="font-weight-semibold">
                 {{ setting.name }}
               </span>
               <p class="text-muted mb-0 small">
                 {{ setting.desc }}
               </p>
-            </td>
-            <td :class="['input-setting', { 'border-top-0': !index }]">
+            </div>
+            <div :class="[{ 'border-top-0': !index }, 'col-4 d-flex align-items-center']">
               <InputItem :initial-setting="setting" :index="index" @setting-change="changeSetting" />
-            </td>
-          </tr>
-        </table>
+            </div>
+          </li>
+        </ul>
       </form>
     </div>
   </div>
@@ -56,13 +56,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.input-setting {
-  width: 20%;
-}
-
-.table td {
-  vertical-align: middle;
-}
-</style>

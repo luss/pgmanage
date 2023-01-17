@@ -11,6 +11,8 @@ $theme-map: null; //important! do not delete this
 @import '../components/tabs';
 @import '../components/daterangepicker';
 @import '../components/pagination';
+@import '../components/card';
+@import '../components/list-group';
 
 $modalPadding: 24px;
 
@@ -76,6 +78,10 @@ $modalPadding: 24px;
         @include themify() {
             background-color: themed($surfaceBg);
             border-top: themed($border);
+        }
+
+        &.fixed-bottom{
+            position: fixed;
         }
     }
 }

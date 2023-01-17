@@ -62,4 +62,9 @@
             background-color: $dangerColor;
         }
     }
+
+    &-link {
+        color: $primaryBlue!important; //workaround! to be removed when new stylesheets are implemented;
+        flex-shrink: 0;
+    }
 }

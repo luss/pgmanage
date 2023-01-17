@@ -1,50 +1,20 @@
 <template>
-  <div class="form-row form-group">
-    <div class="col-2">
+  <div class="form-row">
+    <div class="form-group col-6">
       <form class="form" role="search" @submit.prevent>
-        <label class="sr-only" for="selectServer">Search</label>
-        <div class="input-group">
-          <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
-            :disabled="v$.$invalid" placeholder="Find in settings" />
-        </div>
+        <label class="font-weight-bold mb-3" for="selectServer">Search</label>
+        <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
+          :disabled="v$.$invalid" placeholder="Find in settings" />
       </form>
     </div>
 
-    <div class="col-auto">
-      <label class="sr-only" for="selectConfCat">Category</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Category</div>
-          <select class="form-control" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
-            <option v-for="(cat, index) in categories" :value="cat" :key="index">
-              {{ cat }}
-            </option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-5">
-      <label class="sr-only" for="selectConf">Config History</label>
-      <div class="input-group">
-        <div class="input-group">
-          <div class="input-group-text">Config History</div>
-          <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
-            <option disabled value="">Please select one</option>
-            <option v-for="(config, index) in configHistory" :value="config" :key="index"
-              :title="config.commit_comment">
-              {{ index }}. {{ truncateText(config, 50) }}
-            </option>
-          </select>
-          <button class="btn btn-sm btn-success ml-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
-            Apply
-          </button>
-          <button class="btn btn-sm btn-danger ml-2" :disabled="!selectedConf"
-            @click="deleteOldConfig(selectedConf.id)">
-            Delete
-          </button>
-        </div>
-      </div>
+    <div class="form-group col-6">
+      <label class="font-weight-bold mb-3" for="selectConfCat">Category</label>
+      <select class="form-control" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
+        <option v-for="(cat, index) in categories" :value="cat" :key="index">
+          {{ cat }}
+        </option>
+      </select>
     </div>
   </div>
 
@@ -96,18 +66,48 @@
   </div>
 
   <div v-else class="row">
-    <div class="col-12">
+    <div class="col-12 overflow-auto config-tabgroup">
       <ConfigTabGroup v-for="setting_group in currentResult" :initial-group="setting_group"
         :key="setting_group.category" @group-change="changeData" />
     </div>
-  </div>
 
-  <div class="row mt-2 mb-2">
-    <div class="col-12 text-center">
-      <button type="submit" class="btn btn-sm btn-success" :disabled="!hasUpdateValues || v$.$invalid"
-        @click.prevent="confirmConfig">
-        Save and reload configuration
-      </button>
+    <div class="config-footer position-absolute w-100 mb-3">
+      <div class="row">
+        <div class="form-group col-5">
+          <label class="font-weight-bold mb-3" for="selectConf">Config History</label>
+          <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
+            <option disabled value="">Please select one</option>
+            <option v-for="(config, index) in configHistory" :value="config" :key="index"
+              :title="config.commit_comment">
+              {{ index }}. {{ truncateText(config, 50) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group col-2 d-flex align-items-end pl-0">
+          <button class="btn btn-success mr-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
+              Apply
+          </button>
+          <button class="btn btn-danger mr-2" :disabled="!selectedConf"
+            @click="deleteOldConfig(selectedConf.id)">
+            Delete
+          </button>
+        </div>
+        <div class="form-group col-5 d-flex align-items-end">
+          <button v-if="!modalOldConfig" id="config_modal_button" type="button" class="btn btn-primary mr-2"
+            data-dismiss="modal" @click="saveConfiguration">
+            Save configuration
+          </button>
+          <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-dismiss="modal"
+            @click="applyOldConfig">
+            Save configuration
+          </button>
+          <button type="submit" class="btn btn-success mr-2" :disabled="!hasUpdateValues || v$.$invalid"
+            @click.prevent="confirmConfig">
+            Save and reload configuration
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -115,8 +115,11 @@
   <div class="modal fade" :id="modalId" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header justify-content-center">
-          <h5 class="modal-title">Config Management</h5>
+        <div class="modal-header align-items-center">
+          <h2 class="modal-title">Config Management</h2>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+          </button>
         </div>
         <div class="modal-body">
           <table class="table table-sm">
@@ -142,21 +145,12 @@
             </template>
           </table>
           <div class="form-group">
-            <label for="commit_message">Commit Comment</label>
+            <label for="commit_message" class="font-weight-bold mb-3">Commit Comment</label>
             <input v-model="commitComment" id="commit_message" class="form-control"
               placeholder="Short description of your changes(optional)" />
           </div>
         </div>
-        <div class="modal-footer">
-          <button v-if="!modalOldConfig" id="config_modal_button" type="button" class="btn btn-success"
-            data-dismiss="modal" @click="saveConfiguration">
-            Save configuration
-          </button>
-          <button v-else id="config_modal_button" type="button" class="btn btn-success" data-dismiss="modal"
-            @click="applyOldConfig">
-            Save configuration
-          </button>
-        </div>
+  
       </div>
     </div>
   </div>
@@ -381,4 +375,15 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .config-tabgroup {
+    max-height: 480px;
+  }
+  .config-footer {
+    bottom: 0;
+    padding: 0 15px;
+  }
+</style>
+
 
