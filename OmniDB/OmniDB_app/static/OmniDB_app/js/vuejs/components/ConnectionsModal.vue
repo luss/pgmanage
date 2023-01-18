@@ -40,8 +40,8 @@
                         <div class="card-body p-0">
                           <ul class="list-group">
                             <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index class="connection list-group-item">
-                              <p class="connection__name clipped-text">{{ connection.alias }}</p>
-                              <span class="connection__subtitle muted-text">{{ connectionSubtitle(connection) }}</span>
+                              <p class="connection__name">{{ connection.alias }}</p>
+                              <p class="connection__subtitle muted-text clipped-text">{{ connectionSubtitle(connection) }}</p>
                             </li>
                           </ul>
                         </div>
