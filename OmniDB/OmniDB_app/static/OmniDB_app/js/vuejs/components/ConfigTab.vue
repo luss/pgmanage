@@ -23,7 +23,7 @@
         <option disabled value="">Please select one</option>
         <option v-for="(config, index) in configHistory" :value="config" :key="index"
           :title="config.commit_comment">
-          {{ index }}. {{ truncateText(config, 50) }}
+         {{ truncateText(config, 50) }}
         </option>
       </select>
     </div>
@@ -43,47 +43,6 @@
     </div>
   </div>
 
-  <div v-if="appliedSettings.restartPending" class="row">
-    <div class="col-12">
-      <div id="alert-configuration" class="alert alert-warning alert-dismissible" role="alert">
-        <h2><i class="fa fa-warning fa-fw"></i>WARNING</h2>
-        <p>Some changes are pending and PostgreSQL should be restarted:</p>
-        <ul>
-          <li v-for="change in appliedSettings.restartChanges" :key="change.name">
-            {{ change.name }}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="hasAppliedValues">
-    <div class="row">
-      <div class="col-12">
-        <div id="ok-configuration" class="alert alert-success alert-dismissible" role="alert">
-          <button type="button" class="close" aria-label="Close" @click="appliedSettings.data = ''">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <p class="text-center">The following changes have been applied:</p>
-          <table class="table table-sm">
-            <tr>
-              <th width="30%">Name</th>
-              <th width="30%">Prev. value</th>
-              <th width="40%">New value</th>
-            </tr>
-            <tr v-for="setting in appliedSettings.data" :key="setting.name">
-              <td>{{ setting.name }}</td>
-              <td>{{ setting.previous_setting }}</td>
-              <td>
-                <b>{{ setting.setting }}</b>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div v-if="!hasResult" class="row">
     <div class="col-12">
       <p>No results found...</p>
@@ -93,6 +52,40 @@
   <div v-else class="row">
     <div class="col-12">
       <div class="config-tabgroup">
+
+        <div v-if="appliedSettings.restartPending" id="alert-configuration" class="alert alert-warning alert-dismissible" role="alert">
+          <h2><i class="fa fa-warning fa-fw"></i>WARNING</h2>
+          <p>Some changes are pending and PostgreSQL should be restarted:</p>
+          <ul>
+            <li v-for="change in appliedSettings.restartChanges" :key="change.name">
+              {{ change.name }}
+            </li>
+          </ul>
+        </div>
+
+        <div v-if="hasAppliedValues">
+          <div id="ok-configuration" class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" aria-label="Close" @click="appliedSettings.data = ''">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <p class="text-center">The following changes have been applied:</p>
+            <table class="table table-sm">
+              <tr>
+                <th width="30%">Name</th>
+                <th width="30%">Prev. value</th>
+                <th width="40%">New value</th>
+              </tr>
+              <tr v-for="setting in appliedSettings.data" :key="setting.name">
+                <td>{{ setting.name }}</td>
+                <td>{{ setting.previous_setting }}</td>
+                <td>
+                  <b>{{ setting.setting }}</b>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
         <ConfigTabGroup v-for="setting_group in currentResult" :initial-group="setting_group"
         :key="setting_group.category" @group-change="changeData" />
       </div>
@@ -320,7 +313,7 @@ export default {
       this.saveConfiguration(event, false);
     },
     truncateText(input, max_length) {
-      const text = `${input.start_time} - ${input.user} - ${input.commit_comment}`;
+      const text = `${input.start_time} - ${input.commit_comment}`;
       return text.length > max_length
         ? text.slice(0, max_length - 1) + "..."
         : text;
