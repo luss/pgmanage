@@ -1,6 +1,6 @@
 <template>
   <div class="form-row">
-    <div class="form-group col-6">
+    <div class="form-group col-2">
       <form class="form" role="search" @submit.prevent>
         <label class="font-weight-bold mb-3" for="selectServer">Search</label>
         <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
@@ -8,13 +8,38 @@
       </form>
     </div>
 
-    <div class="form-group col-6">
+    <div class="form-group col-3">
       <label class="font-weight-bold mb-3" for="selectConfCat">Category</label>
-      <select class="form-control" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
+      <select class="form-control text-truncate pr-4" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
         <option v-for="(cat, index) in categories" :value="cat" :key="index">
           {{ cat }}
         </option>
       </select>
+    </div>
+    
+    <div class="form-group col-3">
+      <label class="font-weight-bold mb-3" for="selectConf">Config History</label>
+      <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
+        <option disabled value="">Please select one</option>
+        <option v-for="(config, index) in configHistory" :value="config" :key="index"
+          :title="config.commit_comment">
+          {{ index }}. {{ truncateText(config, 50) }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group col-4 d-flex align-items-end pl-0">
+      <button class="btn btn-success mr-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
+        <i class="fa-solid fa-arrow-rotate-left"></i>
+      </button>
+      <button class="btn btn-danger mr-2" :disabled="!selectedConf"
+        @click="deleteOldConfig(selectedConf.id)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button type="submit" class="btn btn-success ml-auto" :disabled="!hasUpdateValues || v$.$invalid"
+        @click.prevent="confirmConfig">
+        Apply
+      </button>
     </div>
   </div>
 
@@ -66,39 +91,10 @@
   </div>
 
   <div v-else class="row">
-    <div class="col-12 overflow-auto config-tabgroup">
-      <ConfigTabGroup v-for="setting_group in currentResult" :initial-group="setting_group"
+    <div class="col-12">
+      <div class="config-tabgroup">
+        <ConfigTabGroup v-for="setting_group in currentResult" :initial-group="setting_group"
         :key="setting_group.category" @group-change="changeData" />
-    </div>
-
-    <div class="config-footer position-absolute w-100 mb-3">
-      <div class="row">
-        <div class="form-group col-5">
-          <label class="font-weight-bold mb-3" for="selectConf">Config History</label>
-          <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
-            <option disabled value="">Please select one</option>
-            <option v-for="(config, index) in configHistory" :value="config" :key="index"
-              :title="config.commit_comment">
-              {{ index }}. {{ truncateText(config, 50) }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group col-2 d-flex align-items-end pl-0">
-          <button class="btn btn-success mr-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
-              Revert
-          </button>
-          <button class="btn btn-danger mr-2" :disabled="!selectedConf"
-            @click="deleteOldConfig(selectedConf.id)">
-            Delete
-          </button>
-        </div>
-        <div class="form-group col-5 d-flex align-items-end justify-content-center">
-          <button type="submit" class="btn btn-success mr-5" :disabled="!hasUpdateValues || v$.$invalid"
-            @click.prevent="confirmConfig">
-            Save and reload configuration
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -381,11 +377,8 @@ export default {
 
 <style scoped>
   .config-tabgroup {
-    max-height: 480px;
-  }
-  .config-footer {
-    bottom: 0;
-    padding: 0 15px;
+    height: calc(100vh - 200px);
+    overflow-y: scroll;
   }
 </style>
 

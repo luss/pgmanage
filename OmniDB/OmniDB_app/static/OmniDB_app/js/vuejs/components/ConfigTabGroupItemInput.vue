@@ -1,29 +1,31 @@
 <template>
-  <div class="custom-control custom-switch" v-if="setting.vartype === 'bool'">
-    <input class="custom-control-input" type="checkbox" id="switch-{{ index }}" v-model="setting.setting" true-value="on" false-value="off"
-      @change="changeSetting" :disabled="isReadOnly" />
-    <label class="custom-control-label" for="switch-{{ index }}"></label>
-  </div>
+  <div>
+    <div class="custom-control custom-switch" v-if="setting.vartype === 'bool'">
+      <input class="custom-control-input" type="checkbox" id="switch-{{ index }}" v-model="setting.setting" true-value="on" false-value="off"
+        @change="changeSetting" :disabled="isReadOnly" />
+      <label class="custom-control-label" for="switch-{{ index }}"></label>
+    </div>
 
-  <select v-else-if="setting.vartype === 'enum'" class="form-control form-control-sm" :name="setting.name"
-    v-model="setting.setting" @input="changeSetting" :disabled="isReadOnly">
-    <option v-for="v in setting.enumvals" :value="v">{{ v }}</option>
-  </select>
-  <input v-else-if="setting.vartype === 'string'" data-html="true" type="text" :name="setting.name"
-    :placeholder="setting.name" v-model="v$.setting.setting.$model" :id="inputId" :disabled="isReadOnly" :class="[
-      'form-control',
-      { 'is-invalid': v$.setting.setting.$invalid }
-    ]" @input="changeSetting" />
-  <input v-else data-html="true" :placeholder="setting.name" v-model="v$.setting.setting.$model" :id="inputId"
-    :disabled="isReadOnly" @input="changeSetting" :class="[
-      'form-control',
-      { 'is-invalid': v$.setting.setting.$invalid }
-    ]" />
-  <div class="invalid-feedback">
-    <a v-for="error of v$.setting.setting.$errors" :key="error.$uid">
-      {{ error.$message }}
-      <br />
-    </a>
+    <select v-else-if="setting.vartype === 'enum'" class="form-control form-control-sm" :name="setting.name"
+      v-model="setting.setting" @input="changeSetting" :disabled="isReadOnly">
+      <option v-for="v in setting.enumvals" :value="v">{{ v }}</option>
+    </select>
+    <input v-else-if="setting.vartype === 'string'" data-html="true" type="text" :name="setting.name"
+      :placeholder="setting.name" v-model="v$.setting.setting.$model" :id="inputId" :disabled="isReadOnly" :class="[
+        'form-control',
+        { 'is-invalid': v$.setting.setting.$invalid }
+      ]" @input="changeSetting" />
+    <input v-else data-html="true" :placeholder="setting.name" v-model="v$.setting.setting.$model" :id="inputId"
+      :disabled="isReadOnly" @input="changeSetting" :class="[
+        'form-control',
+        { 'is-invalid': v$.setting.setting.$invalid }
+      ]" />
+    <div class="invalid-feedback">
+      <a v-for="error of v$.setting.setting.$errors" :key="error.$uid">
+        {{ error.$message }}
+        <br />
+      </a>
+    </div>
   </div>
   <button v-if="
     setting.setting != setting.boot_val &&
