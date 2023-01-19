@@ -56,7 +56,7 @@
                   <ul class="list-group">
                     <li @click="showForm('connection', connection)"
                       v-for="(connection, index) in ungroupedConnections" :key=index
-                      :class="['connection', 'list-group-item', { 'active':connection===selectedConnection }]">
+                      :class="['connection', 'list-group-item']">
                       <p class="connection__name">{{ connection.alias }}</p>
                       <span class="connection__subtitle muted-text">{{ connectionSubtitle(connection) }}</span>
                     </li>
