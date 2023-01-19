@@ -163,10 +163,13 @@ export default {
       this.getConnections();
       this.activeForm = undefined
     },
+
     saveConnection(connection) {
       axios.post('/save_connection/', connection)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
@@ -186,6 +189,8 @@ export default {
       axios.post('/delete_connection/', connection)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
@@ -195,6 +200,8 @@ export default {
       axios.post('/save_group/', group)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
@@ -204,6 +211,8 @@ export default {
       axios.post('/delete_group/', group)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
