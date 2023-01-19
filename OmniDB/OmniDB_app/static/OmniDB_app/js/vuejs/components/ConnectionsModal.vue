@@ -39,7 +39,8 @@
                       <div v-bind:id="'collapse-group-' + group.id" class="collapse" data-parent="#connectionsList">
                         <div class="card-body p-0">
                           <ul class="list-group">
-                            <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index class="connection list-group-item">
+                            <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index
+                              :class="['connection', 'list-group-item', { 'active':connection===selectedConnection }]">
                               <p class="connection__name">{{ connection.alias }}</p>
                               <p class="connection__subtitle muted-text clipped-text">{{ connectionSubtitle(connection) }}</p>
                             </li>
@@ -53,7 +54,9 @@
 
                   <!-- NO GROUP CONNECTION-->
                   <ul class="list-group">
-                    <li @click="showForm('connection', connection)" v-for="(connection, index) in ungroupedConnections" :key=index class="connection list-group-item">
+                    <li @click="showForm('connection', connection)"
+                      v-for="(connection, index) in ungroupedConnections" :key=index
+                      :class="['connection', 'list-group-item']">
                       <p class="connection__name">{{ connection.alias }}</p>
                       <span class="connection__subtitle muted-text">{{ connectionSubtitle(connection) }}</span>
                     </li>
@@ -160,10 +163,13 @@ export default {
       this.getConnections();
       this.activeForm = undefined
     },
+
     saveConnection(connection) {
       axios.post('/save_connection/', connection)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
@@ -183,6 +189,8 @@ export default {
       axios.post('/delete_connection/', connection)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
@@ -192,6 +200,8 @@ export default {
       axios.post('/save_group/', group)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)
@@ -201,6 +211,8 @@ export default {
       axios.post('/delete_group/', group)
       .then((response) => {
         this.loadData()
+        let event = new CustomEvent('connection:changed',)
+        document.dispatchEvent(event)
       })
       .catch((error) => {
         console.log(error)

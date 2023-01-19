@@ -68,7 +68,7 @@ function showCommandList() {
 				"<p class='font-weight-bold mb-2'>Select a daterange:</p>" +
 				"<input type='text' class='form-control form-control-sm d-none' placeholder='Start Time' id='cl_input_from_" + v_tabTag.tab_id + "'>" +
 				"<input type='text' class='form-control form-control-sm d-none' placeholder='End Time' id='cl_input_to_" + v_tabTag.tab_id + "'>" +
-				"<button type='button' class='btn btn-outline' id='cl_time_range_" + v_tabTag.tab_id + "'>" +
+				"<button type='button' class='btn btn-outline-primary' id='cl_time_range_" + v_tabTag.tab_id + "'>" +
 					"<i class='far fa-calendar-alt'></i>" +
 					"<span class='mx-1'>Last 6 Hours</span> <i class='fa fa-caret-down'></i>" +
 				"</button>" +

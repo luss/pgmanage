@@ -25,11 +25,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener('connection:tested', function(event){
         let result = event.detail
-        console.log(result)
         if(result.status !== 'success') {
             showError(result.data);
         } else {
             showAlert(result.data);
         }
+    })
+
+    document.addEventListener('connection:changed', function(event){
+        getDatabaseList();
     })
 });
