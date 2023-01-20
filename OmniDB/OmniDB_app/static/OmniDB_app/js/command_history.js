@@ -146,6 +146,15 @@ function showCommandList() {
 				rowsLimit: 1000000000,
 				columnsLimit: 1000000000
 			},
+			beforeCopy: (data, coords) => {
+				const tempData = [...data]
+				tempData.map((row) => {
+					const tempRow = row.map(el => el.replace(/\n/g, ' '))
+					return [...tempRow]
+				})
+				data.splice(coords[0].startRow,data.length, tempData)
+				return data
+			},
 			manualColumnResize: true,
 			fillHandle: false,
 			contextMenu: {
