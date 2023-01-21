@@ -69,7 +69,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
             <p class="text-center">The following changes have been applied:</p>
-            <table class="table table-sm">
+            <table class="table table-sm table-borderless">
               <tr>
                 <th width="30%">Name</th>
                 <th width="30%">Prev. value</th>

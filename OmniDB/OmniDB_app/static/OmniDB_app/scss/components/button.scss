@@ -1,11 +1,10 @@
 .btn {
     color: $primaryLight!important; //workaround! to be removed when new stylesheets are implemented
     font-size: $fontSize;
-    border: 2px solid transparent !important;//workaround! to be removed when new stylesheets are implemented
+    border: 1px solid transparent !important;//workaround! to be removed when new stylesheets are implemented
     font-weight: 500;
     border-radius: $borderRadius;
     box-sizing: border-box;
-    max-height: 35px;
 
     &:disabled {
         opacity: .4;
@@ -54,7 +53,7 @@
         background-color: transparent;
 
         &-primary {
-            border: 2px solid $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
+            border: 1px solid $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
             color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
     
             &:hover {
@@ -66,7 +65,7 @@
         }
 
         &-secondary {
-            border: 2px solid $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
+            border: 1px solid $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
             color: $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
     
             &:hover {
@@ -77,7 +76,7 @@
         }
 
         &-success {    
-            border: 2px solid $successColor !important; //workaround! to be removed when new stylesheets are implemented
+            border: 1px solid $successColor !important; //workaround! to be removed when new stylesheets are implemented
             color: $successColor !important; //workaround! to be removed when new stylesheets are implemented
 
             &:hover {
@@ -88,7 +87,7 @@
         }
 
         &-danger {
-            border: 2px solid $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
+            border: 1px solid $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
             color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
     
             &:hover {

@@ -17,7 +17,6 @@
                 &.active {
                     border: 0;
                     position: relative;
-                    z-index: 2;
                     transition: babackground-color .3s ease-in-out;
 
                     @include themify() {

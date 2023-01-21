@@ -1,10 +1,10 @@
-@import '../common//themes';
+@import '../common/themes';
 
 $theme-map: null; //important! do not delete this
 
 @import '../common/variables';
 @import '../common/typography';
-@import '../components//button';
+@import '../components/button';
 @import '../components/dropdown';
 @import '../components/accordion';
 @import '../components/input';
