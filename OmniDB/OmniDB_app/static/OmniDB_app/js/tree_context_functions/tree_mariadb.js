@@ -289,15 +289,6 @@ function getTreeMariadb(p_div) {
                 icon: 'fas cm-all fa-list',
                 submenu: {
                     elements: [{
-                        text: 'Alter Table',
-                        icon: 'fas cm-all fa-table',
-                        action: function(node) {
-                            startAlterTable(true,
-                                'alter', node.text,
-                                node.parent.parent.text
-                            );
-                        }
-                    }, {
                         text: 'Alter Table (SQL)',
                         icon: 'fas cm-all fa-edit',
                         action: function(node) {

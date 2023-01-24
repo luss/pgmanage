@@ -291,15 +291,6 @@ function getTreeOracle(p_div) {
                 icon: 'fas cm-all fa-list',
                 submenu: {
                     elements: [{
-                        text: 'Alter Table',
-                        icon: 'fas cm-all fa-table',
-                        action: function(node) {
-                            startAlterTable(true,
-                                'alter', node.text,
-                                node.tree.tag.v_username
-                            );
-                        }
-                    }, {
                         text: 'Alter Table (SQL)',
                         icon: 'fas cm-all fa-edit',
                         action: function(node) {
