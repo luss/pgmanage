@@ -1458,33 +1458,29 @@ def thread_save_edit_data(self,args):
 
             # Inserting new row
             elif v_row_info['mode'] == 2:
+                skipindex = None
 
-                v_command = 'insert into ' + v_table_name + ' ( '
-                v_first = True
+                cols = []
+                for index, col in enumerate(v_columns):
+                    # if current column is primary key
+                    # and current data row at this position
+                    if col['v_is_pk'] and not v_data_rows[i][index]:
+                        skipindex = index
+                        continue
+                    cols.append(col['v_column'])
 
-                for v_col in v_columns:
-                    if not v_first:
-                        v_command = v_command + ', '
-                    v_first = False
-                    v_command = v_command + v_col['v_column']
+                vals = []
+                for index, row in enumerate(v_data_rows[i]):
+                    if index == skipindex:
+                        continue
 
-                v_command = v_command + ' ) values ( '
-                v_first = True
-
-                for j in range(1, len(v_data_rows[i])):
-                    if not v_first:
-                        v_command = v_command + ', '
-                    v_first = False
-
-                    v_value = ''
-                    if v_data_rows[i][j] != None:
-                        v_value = v_data_rows[i][j]
+                    v_value = row or ''
 
                     v_value = v_value.replace("'","''")
 
                     # Getting details about the data type
                     try:
-                        v_type_details = v_database.v_data_types[v_columns[j-1]['v_type']]
+                        v_type_details = v_database.v_data_types[v_columns[index]['v_type']]
                     # Type not found
                     except:
                         v_type_details = {
@@ -1492,13 +1488,15 @@ def thread_save_edit_data(self,args):
                         }
 
                     if v_value == '[null]':
-                        v_command = v_command + 'null'
+                        vals.append('null')
                     elif v_type_details['quoted']:
-                        v_command = "{0} '{1}'".format(v_command,v_value)
+                        vals.append(f"'{v_value}'")
                     else:
-                        v_command = "{0} {1}".format(v_command,v_value)
+                        vals.append(f"{v_value}")
 
-                v_command = v_command + ' )'
+                cols_part = ', '.join(cols)
+                vals_part = ', '.join(vals)
+                v_command = f"insert into {v_table_name} ( {cols_part} ) values ( {vals_part} )"
 
                 v_row_info_return = {}
                 v_row_info_return['mode'] = 2
@@ -1517,26 +1515,20 @@ def thread_save_edit_data(self,args):
 
             # Updating existing row
             elif v_row_info['mode'] == 1:
-
-                v_command = 'update ' + v_table_name + ' set '
-                v_first = True
-
-                for v_col_index in v_rows_info[i]['changed_cols']:
-                    if not v_first:
-                        v_command = v_command + ', '
-                    v_first = False
-
+                cols = []
+                # go over indexes of changed columns
+                # generate left_part = right_part add to cols array
+                for col_index in v_rows_info[i]['changed_cols']:
                     v_value = ''
-                    if v_data_rows[i][v_col_index+1] != None:
-                        v_value = v_data_rows[i][v_col_index+1]
+                    if v_data_rows[i][col_index] != None:
+                        v_value = v_data_rows[i][col_index]
 
                     v_value = v_value.replace("'","''")
 
-                    v_command = v_command + v_columns[v_col_index]['v_column'] + ' = '
-
+                    left_part = v_columns[col_index]['v_column']
                     # Getting details about the data type
                     try:
-                        v_type_details = v_database.v_data_types[v_columns[v_col_index]['v_type']]
+                        v_type_details = v_database.v_data_types[v_columns[index]['v_type']]
                     # Type not found
                     except:
                         v_type_details = {
@@ -1544,21 +1536,17 @@ def thread_save_edit_data(self,args):
                         }
 
                     if v_value == '[null]':
-                        v_command = v_command + 'null'
+                        right_part = 'null'
                     elif v_type_details['quoted']:
-                        v_command = "{0} '{1}'".format(v_command,v_value)
+                        right_part = f"'{v_value}'"
                     else:
-                        v_command = "{0} {1}".format(v_command,v_value)
+                        right_part = f"{v_value}"
 
-                v_command = v_command + ' where '
-                v_first = True
-                v_pk_index = 0
+                    cols.append(f"{left_part} = {right_part}")
 
+
+                wheres = []
                 for v_pk in v_row_info['pk']:
-                    if not v_first:
-                        v_command = v_command + ' and '
-                    v_first = False
-
                     # Getting details about the data type
                     try:
                         v_type_details = v_database.v_data_types[v_pk['v_type']]
@@ -1569,9 +1557,15 @@ def thread_save_edit_data(self,args):
                         }
 
                     if v_type_details['quoted']:
-                        v_command = "{0} {1} = '{2}'".format(v_command,v_pk['v_column'],v_pk['v_value'])
+                        where = f"{v_pk['v_column']} = \'{v_pk['v_value']}\'"
                     else:
-                        v_command = "{0} {1} = {2}".format(v_command,v_pk['v_column'],v_pk['v_value'])
+                        where = f"{v_pk['v_column']} = {v_pk['v_value']}"
+
+                    wheres.append(where)
+
+                cols_part = ', '.join(cols)
+                where_part = ' and '.join(wheres)
+                v_command = f"update {v_table_name} set {cols_part} where {where_part}"
 
                 v_row_info_return = {}
                 v_row_info_return['mode'] = 1
