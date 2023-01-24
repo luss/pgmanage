@@ -250,7 +250,7 @@ span.text-muted {
 }
 
 .accordion .card-body .list-group-item {
-  border: 0;
+  border-bottom: 1px solid transparent;
   padding: 8px 20px 8px 32px;
   background-color: rgba(32, 107, 196, 0.08);
 }
@@ -266,13 +266,13 @@ span.text-muted {
 .pgmanage-theme--light .accordion .card-body .list-group-item.active {
   color: #1D273B;
   background-color: rgba(32, 107, 196, 0.05);
-  border-top: 1px solid rgba(32, 107, 196, 0.05);
+  border-bottom: 1px solid rgba(32, 107, 196, 0.05);
 }
 
 .pgmanage-theme--dark .accordion .card-body .list-group-item.active {
   color: #F8FAFC;
   background-color: rgba(32, 107, 196, 0.05);
-  border-top: 1px solid rgba(32, 107, 196, 0.05);
+  border-bottom: 1px solid rgba(32, 107, 196, 0.05);
 }
 
 input:focus, input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
@@ -738,6 +738,18 @@ input[type='checkbox'] {
 
 .pgmanage-theme--dark .modal-connections__list .connection {
   background-color: #1D273B;
+}
+
+.pgmanage-theme--light .modal-connections__list .connection.active {
+  color: #1D273B;
+  background-color: rgba(32, 107, 196, 0.05);
+  border-bottom: 1px solid rgba(32, 107, 196, 0.05);
+}
+
+.pgmanage-theme--dark .modal-connections__list .connection.active {
+  color: #F8FAFC;
+  background-color: rgba(32, 107, 196, 0.05);
+  border-bottom: 1px solid rgba(32, 107, 196, 0.05);
 }
 
 .modal-connections__list .connection__subtitle {

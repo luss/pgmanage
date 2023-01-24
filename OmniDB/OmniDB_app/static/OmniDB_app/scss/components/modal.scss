@@ -121,6 +121,14 @@ $modalPadding: 24px;
             @include themify() {
                 background-color: themed($surfaceBg);
             }
+ 
+            &.active {
+                @include themify() {
+                    color: themed($color);
+                    background-color: themed($accordionItemActiveBg);
+                    border-bottom: 1px solid themed($accordionItemActiveBg);
+                }
+            }
 
             &__subtitle {
                 white-space: nowrap;
