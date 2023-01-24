@@ -15,8 +15,10 @@
                 {{ setting.desc }}
               </p>
             </div>
-            <div :class="[{ 'border-top-0': !index }, 'col-5 d-flex align-items-center']">
-              <InputItem :initial-setting="setting" :index="index" @setting-change="changeSetting" />
+            <div :class="[{ 'border-top-0': !index }, 'col-5']">
+              <div class="row no-gutters">
+                <InputItem :initial-setting="setting" :index="index" @setting-change="changeSetting" />
+              </div>
             </div>
           </li>
         </ul>
