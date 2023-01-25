@@ -283,20 +283,18 @@ span.text-muted {
   border-top: 1px solid rgba(32, 107, 196, 0.05);
 }
 
-input:focus, input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+input[type='text']:focus, input[type='text']:-webkit-autofill, input[type='text']:-webkit-autofill:hover, input[type='text']:-webkit-autofill:focus, input[type='password']:focus, input[type='password']:-webkit-autofill, input[type='password']:-webkit-autofill:hover, input[type='password']:-webkit-autofill:focus {
   box-shadow: 0 0 0 4px rgba(32, 107, 196, 0.25);
   color: #F8FAFC;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-.pgmanage-theme--light input:focus, .pgmanage-theme--light input:-webkit-autofill, .pgmanage-theme--light input:-webkit-autofill:hover, .pgmanage-theme--light input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset;
+.pgmanage-theme--light input[type='text']:focus, .pgmanage-theme--light input[type='text']:-webkit-autofill, .pgmanage-theme--light input[type='text']:-webkit-autofill:hover, .pgmanage-theme--light input[type='text']:-webkit-autofill:focus, .pgmanage-theme--light input[type='password']:focus, .pgmanage-theme--light input[type='password']:-webkit-autofill, .pgmanage-theme--light input[type='password']:-webkit-autofill:hover, .pgmanage-theme--light input[type='password']:-webkit-autofill:focus {
   border: 1px solid #E6E7E9;
   -webkit-text-fill-color: #1D273B;
 }
 
-.pgmanage-theme--dark input:focus, .pgmanage-theme--dark input:-webkit-autofill, .pgmanage-theme--dark input:-webkit-autofill:hover, .pgmanage-theme--dark input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #1A2234 inset;
+.pgmanage-theme--dark input[type='text']:focus, .pgmanage-theme--dark input[type='text']:-webkit-autofill, .pgmanage-theme--dark input[type='text']:-webkit-autofill:hover, .pgmanage-theme--dark input[type='text']:-webkit-autofill:focus, .pgmanage-theme--dark input[type='password']:focus, .pgmanage-theme--dark input[type='password']:-webkit-autofill, .pgmanage-theme--dark input[type='password']:-webkit-autofill:hover, .pgmanage-theme--dark input[type='password']:-webkit-autofill:focus {
   border: 1px solid #243049;
   -webkit-text-fill-color: #F8FAFC;
 }
@@ -654,6 +652,15 @@ input[type='checkbox'] {
 .pgmanage-theme--dark .list-group-item {
   background-color: #1D273B;
   border-color: #243049 !important;
+}
+
+.alert .close {
+  color: inherit;
+  outline: none;
+}
+
+.alert table {
+  color: #1D273B;
 }
 
 .modal {

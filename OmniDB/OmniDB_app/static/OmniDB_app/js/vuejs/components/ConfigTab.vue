@@ -66,7 +66,7 @@
         <div v-if="hasAppliedValues">
           <div id="ok-configuration" class="alert alert-success alert-dismissible" role="alert">
             <button type="button" class="close" aria-label="Close" @click="appliedSettings.data = ''">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
             <p class="text-center">The following changes have been applied:</p>
             <table class="table table-sm table-borderless">

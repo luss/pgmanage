@@ -1,18 +1,20 @@
 input {
-    &:focus,
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus {
-        box-shadow: $boxShadow;
-        color: $primaryLight;
-        transition: background-color 5000s ease-in-out 0s;
-
-        @include themify {
-            -webkit-box-shadow: 0 0 0px 1000px themed($inputBg) inset;
-            border: themed($border);
-            -webkit-text-fill-color: themed($color);
+    &[type='text'], &[type='password'] {
+        &:focus,
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus {
+            box-shadow: $boxShadow;
+            color: $primaryLight;
+            transition: background-color 5000s ease-in-out 0s;
+    
+            @include themify {
+                // -webkit-box-shadow: 0 0 0px 1000px themed($inputBg) inset;
+                border: themed($border);
+                -webkit-text-fill-color: themed($color);
+            }
         }
-    }
+    }  
 }
 
 input[type='checkbox']{
