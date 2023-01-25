@@ -490,48 +490,48 @@ function queryEditDataReturnRender(p_message,p_context) {
 
 function saveEditData() {
 
-	var v_currTabTag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
+	let currTabTag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 
-	var v_state = v_currTabTag.state;
+	var state = currTabTag.state;
 
-	if (v_state != v_editDataState.Idle) {
+	if (state != v_editDataState.Idle) {
 		showAlert('Tab with activity in progress.');
 	}
 	else {
 
-		v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.state = v_editDataState.Saving;
-		v_currTabTag.button_save.style.visibility = 'hidden';
+		currTabTag.state = v_editDataState.Saving;
+		currTabTag.button_save.style.visibility = 'hidden';
 
-		var v_changedRowsInfo = [];
-		var v_changedRowsData = [];
+		let changedRowsInfo = [];
+		let changedRowsData = [];
 
-		var v_currTabTag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-
-		for (var i = 0; i < v_currTabTag.editDataObject.infoRows.length; i++) {
-			if (v_currTabTag.editDataObject.infoRows[i].mode!=0) {
-				v_currTabTag.editDataObject.infoRows[i].index = i;
-				v_changedRowsInfo.push(v_currTabTag.editDataObject.infoRows[i]);
-				v_changedRowsData.push(v_currTabTag.editDataObject.ht.getDataAtRow(i));
+		currTabTag.editDataObject.infoRows.forEach((row, index) => {
+			if(row.mode !== 0) {
+				row.index = index
+				changedRowsInfo.push(row)
+				// the first row element is sliced out
+				// since it has the delete button and does not hold any data
+				changedRowsData.push(currTabTag.editDataObject.ht.getDataAtRow(index).slice(1));
 			}
-		}
+		})
 
-		var v_message_data = {
-			v_table: v_currTabTag.editDataObject.table,
-			v_schema: v_currTabTag.editDataObject.schema,
+		var message_data = {
+			v_table: currTabTag.editDataObject.table,
+			v_schema: currTabTag.editDataObject.schema,
 			v_db_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-			v_data_rows : v_changedRowsData,
-			v_rows_info: v_changedRowsInfo,
-			v_pk_info: v_currTabTag.editDataObject.pk,
-			v_columns: v_currTabTag.editDataObject.columns,
+			v_data_rows : changedRowsData,
+			v_rows_info: changedRowsInfo,
+			v_pk_info: currTabTag.editDataObject.pk,
+			v_columns: currTabTag.editDataObject.columns,
 			v_conn_tab_id: v_connTabControl.selectedTab.id,
-			v_tab_id: v_currTabTag.tab_id
+			v_tab_id: currTabTag.tab_id
 		}
 
-		v_currTabTag.tab_loading_span.style.visibility = 'visible';
-		v_currTabTag.bt_cancel.style.display = '';
+		currTabTag.tab_loading_span.style.visibility = 'visible';
+		currTabTag.bt_cancel.style.display = '';
 
-		var v_context = {
-			tab_tag: v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag,
+		let v_context = {
+			tab_tag: currTabTag,
 			start_time: new Date().getTime()
 		}
 		v_context.tab_tag.context = v_context;
@@ -539,7 +539,7 @@ function saveEditData() {
 		v_context.tab_tag.query_info.innerHTML = '';
 
 		//sendWebSocketMessage(v_queryWebSocket, v_queryRequestCodes.SaveEditData, v_message_data, false, v_context);
-		createRequest(v_queryRequestCodes.SaveEditData, v_message_data, v_context);
+		createRequest(v_queryRequestCodes.SaveEditData, message_data, v_context);
 
 	}
 }
