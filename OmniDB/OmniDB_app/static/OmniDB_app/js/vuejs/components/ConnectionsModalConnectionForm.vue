@@ -455,6 +455,7 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
       initialConnection(newVal, oldVal) {
         this.connectionLocal = {...newVal}
         this.connectionLocal.tunnel = {...newVal.tunnel}
+        this.v$.connectionLocal.$reset()
       },
     }
   }

@@ -109,7 +109,7 @@ $modalPadding: 24px;
     }
 
     &__list, &__forms {
-        overflow-y: auto;
+        overflow: hidden auto;
     }
 
     &__list {
@@ -127,6 +127,14 @@ $modalPadding: 24px;
 
             @include themify() {
                 background-color: themed($surfaceBg);
+            }
+ 
+            &.active {
+                @include themify() {
+                    color: themed($color);
+                    background-color: themed($accordionItemActiveBg);
+                    border-bottom: 1px solid themed($accordionItemActiveBg);
+                }
             }
 
             &__subtitle {
@@ -150,7 +158,8 @@ $modalPadding: 24px;
                     &__item {
                         position: relative;
                         margin: 8px;
-                        flex: 0 1 calc(33.3% - 16px);
+                        flex: 0 1 auto;
+                        width: calc(33.3% - 16px);
                         cursor: pointer;
 
                         &_wrap {
@@ -163,8 +172,13 @@ $modalPadding: 24px;
                             }
                         }
 
-                        &_subtitle {
-                            max-width: 150px;
+                        &_text {
+                            max-width: calc(100% - 90px);
+                        }
+
+                        &_title {
+                            font-weight: 500;
+                            white-space: nowrap;
                         }
 
                         &_logo {
@@ -172,6 +186,7 @@ $modalPadding: 24px;
                             height: 50px;
                             border-radius: $borderRadius;
                             overflow: hidden;
+                            flex-shrink: 0;
 
                             @include themify() {
                                 border: themed($border);
@@ -197,10 +212,6 @@ $modalPadding: 24px;
                             .group-list__item_logo {
                                 border: 1px solid $primaryBlue;
                             }
-                          }
-
-                        &_title {
-                            font-weight: 500;
                         }
                     }
                 }

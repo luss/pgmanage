@@ -608,7 +608,7 @@ function refreshMonitorUnitsList() {
           {
             licenseKey: 'non-commercial-and-evaluation',
             data: p_return.v_data.data,
-            colHeaders: ['Actions', 'Title', 'Type', 'Interval(s)'],
+            colHeaders: ['Show', 'Title', 'Type', 'Refr.(s)'],
             columns : [
                   {data: 'actions', renderer: actionsRenderer},
                   {data: 'title'},
@@ -618,7 +618,7 @@ function refreshMonitorUnitsList() {
             stretchH: 'all',
             readOnly: true,
             tableClassName: 'omnidb__ht__first-col-actions',
-            manualColumnResize: true,
+            manualColumnResize: false,
             fillHandle:true,
             disableVisualSelection: true,
             fixedColumnsLeft: 1,
