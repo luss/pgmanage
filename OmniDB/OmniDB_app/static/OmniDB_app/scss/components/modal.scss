@@ -137,6 +137,14 @@ $modalPadding: 24px;
                 }
             }
 
+            &.active {
+                @include themify() {
+                    color: themed($color);
+                    background-color: themed($accordionItemActiveBg);
+                    border-bottom: 1px solid themed($accordionItemActiveBg);
+                }
+            }
+
             &__subtitle {
                 white-space: nowrap;
             }
@@ -192,9 +200,36 @@ $modalPadding: 24px;
                                 border: themed($border);
                             }
 
-                            img {
-                                width: 100%;
+                            & > .icon {
                                 height: 100%;
+                                mask-position: center;
+                                mask-size: 40px 40px;
+                                mask-repeat: no-repeat;
+                                background-color: $secondaryGrey;
+
+                                &-mariadb {
+                                    mask-image: url("../images/db_icons/mariadb.svg");
+                                }
+
+                                &-mysql {
+                                    mask-image: url("../images/db_icons/mysql.svg");
+                                }
+
+                                &-oracle {
+                                    mask-image: url("../images/db_icons/oracle.svg");
+                                }
+
+                                &-postgresql {
+                                    mask-image: url("../images/db_icons/postgresql.svg");
+                                }
+
+                                &-sqlite {
+                                    mask-image: url("../images/db_icons/sqlite.svg");
+                                }
+
+                                &-terminal {
+                                    mask-image: url("../images/db_icons/terminal.svg");
+                                }
                             }
                         }
 
@@ -211,6 +246,9 @@ $modalPadding: 24px;
 
                             .group-list__item_logo {
                                 border: 1px solid $primaryBlue;
+                                & > .icon {
+                                    background-color: $primaryBlue;
+                                }
                             }
                         }
                     }

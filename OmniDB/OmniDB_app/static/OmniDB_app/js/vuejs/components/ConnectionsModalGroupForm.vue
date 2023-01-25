@@ -17,7 +17,9 @@
             type="checkbox">
           <label v-bind:for="'connection-' + connection.id" class="group-list__item_wrap d-flex align-items-center m-0">
             <div class="group-list__item_logo mx-3">
-              <img src="https://via.placeholder.com/50">
+              <div
+              :class="['icon', 'icon-' + connection.technology]"
+              ></div>
             </div>
             <div class="group-list__item_text d-flex flex-column">
               <p class="group-list__item_title">{{ connection.alias }}</p>
