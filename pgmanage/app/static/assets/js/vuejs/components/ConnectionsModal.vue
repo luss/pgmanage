@@ -200,6 +200,9 @@ export default {
       axios.post('/save_group/', group)
       .then((response) => {
         this.loadData()
+        // set selected group to something so that if "new group"
+        // is clicked again the watcher in group form will fire
+        this.selectedGroup = {}
         let event = new CustomEvent('connection:changed',)
         document.dispatchEvent(event)
       })
