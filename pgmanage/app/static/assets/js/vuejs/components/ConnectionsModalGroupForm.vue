@@ -23,7 +23,7 @@
             </div>
             <div class="group-list__item_text d-flex flex-column">
               <p class="group-list__item_title">{{ connection.alias }}</p>
-              <span class="group-list__item_subtitle muted-text line-clamp-text clipped-text">{{ connectionSubtitle(connection) }}</span>
+              <span class="group-list__item_subtitle muted-text line-clamp-text clipped-text">{{ this.connectionSubtitle(connection) }}</span>
             </div>
           </label>
         </div>
@@ -46,7 +46,7 @@
           name: 'New Group',
           connections: [],
           conn_list: []
-        }
+        },
       }
     },
     props: {
@@ -61,19 +61,16 @@
         }
       },
       connectionSubtitle: Function,
-      ungroupedConnections: []
+      ungroupedConnections: {
+        type: Array,
+        required: true
+      }
     },
     computed: {
       candidateConnections() {
         return [...this.ungroupedConnections, ...this.initialGroup.connections]
           .sort((a, b) => (a.alias > b.alias) ? 1 : -1)
       }
-    },
-    // FIXME: this is ugly, move to mixin?
-    methods: {
-      connectionSubtitle: function(connection) {
-        return this.connectionSubtitle(connection)
-      },
     },
     watch: {
       initialGroup(newVal, oldVal) {
