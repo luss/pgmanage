@@ -304,6 +304,10 @@ base_urlpatterns = [
     re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history'),
     re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status"),
 
+    # Backup
+
+    path('job/', views.backup.create_backup_objects_job, name='create_backup')
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.PATH == '':

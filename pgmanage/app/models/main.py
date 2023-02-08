@@ -118,3 +118,20 @@ class ConfigHistory(models.Model):
     config_snapshot = models.TextField(blank=False)
     commit_comment = models.TextField(blank=True)
     
+
+class Process(models.Model):
+    # pid = db.Column(db.String(), nullable=False, primary_key=True)
+    pid = models.TextField(null=False, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    command = models.TextField(blank=False)
+    desc = models.TextField(blank=False)
+    arguments =  models.TextField(blank=True)
+    # logdir = db.Column(db.String(), nullable=True)
+    start_time = models.DateTimeField(null=True)
+    end_time = models.DateTimeField(null=True)
+    exit_code = models.IntegerField(null=True)
+    acknowledge = models.TextField(blank=True)
+    # don't understand the purpose of this field
+    utility_pid = models.IntegerField(null=True)
+    process_state = models.IntegerField(null=True)
+    connection = models.ForeignKey(Connection,on_delete=models.CASCADE, null=True)
