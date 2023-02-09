@@ -42,8 +42,12 @@ cd $HOME
 # mv pgmanage-server_$VERSION-linux-x64.tar.gz /tmp/
 
 # Building app
+cd /tmp
 curl -C - -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz
-tar -xzvf nwjs-v0.69.1-linux-x64.tar.gz
+# get appimagetool v13
+curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage && chmod +x /tmp/appimagetool-x86_64.AppImage
+cd -
+tar -xzvf /tmp/nwjs-v0.69.1-linux-x64.tar.gz
 mv nwjs-v0.69.1-linux-x64 pgmanage-app_$VERSION
 cd pgmanage-app_$VERSION
 rm ./lib/libEGL.so
@@ -62,9 +66,7 @@ sed -i "s/X-AppImage-Version=dev/X-AppImage-Version=$VERSION/" pgmanage.desktop
 # rename nwjs runtime as pgmanage-app
 mv nw pgmanage-app
 cd $HOME
-# get appimagetool v13
-curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
-./appimagetool-x86_64.AppImage --appimage-extract-and-run pgmanage-app_$VERSION/ pgmanage-app_$VERSION.AppImage
+/tmp/appimagetool-x86_64.AppImage --appimage-extract-and-run pgmanage-app_$VERSION/ pgmanage-app_$VERSION.AppImage
 # tar -czvf pgmanage-app_$VERSION-linux-x64.tar.gz pgmanage-app_$VERSION/
 # mv pgmanage-app_$VERSION-linux-x64.tar.gz /tmp/
 mv pgmanage-app_$VERSION.AppImage /tmp
