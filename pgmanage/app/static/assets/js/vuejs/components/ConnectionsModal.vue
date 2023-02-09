@@ -233,6 +233,8 @@ export default {
 
       let techname = TECHMAP[connection.technology]
 
+      if(connection.conn_string) return `${techname} - ${connection.conn_string}`
+
       if(connection.technology === 'sqlite') return `${techname} - ${connection.service}`
       if(connection.technology === 'terminal') return `${techname} - ${connection.tunnel.server}:${connection.tunnel.port}`
       return `${techname} - ${connection.server}:${connection.port}`
