@@ -187,7 +187,7 @@ function refreshMonitoring(p_tab_tag) {
                 p_tab_tag.actions[j].icon += ' text-danger';
               }
               else {
-                p_tab_tag.actions[j].icon += ' omnidb__theme-text--primary';
+                p_tab_tag.actions[j].icon += ' omnidb__theme-icon--primary';
               }
               v_actions_html += '<div class="text-center"><i class="' + p_tab_tag.actions[j].icon + '" onclick="monitoringAction(' + i + ',&apos;' + p_tab_tag.actions[j].action + '&apos;)"></div>';
             }
