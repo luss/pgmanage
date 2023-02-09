@@ -168,6 +168,7 @@ export default {
       axios.post('/save_connection/', connection)
       .then((response) => {
         this.loadData()
+        this.selectedConnection = {}
         let event = new CustomEvent('connection:changed',)
         document.dispatchEvent(event)
       })
