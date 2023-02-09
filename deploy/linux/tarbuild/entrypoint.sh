@@ -35,10 +35,11 @@ pyinstaller pgmanage-lin.spec
 mv dist/pgmanage-server $HOME
 rm -rf build dist
 cd $HOME
-mkdir pgmanage-server_$VERSION
-cp pgmanage-server pgmanage-server_$VERSION/
-tar -czvf pgmanage-server_$VERSION.tar.gz pgmanage-server_$VERSION/
-mv pgmanage-server_$VERSION.tar.gz /tmp/
+# temporarily disabled, we do not distribute the server-only version yet
+# mkdir pgmanage-server_$VERSION
+# cp pgmanage-server pgmanage-server_$VERSION/
+# tar -czvf pgmanage-server_$VERSION-linux-x64.tar.gz pgmanage-server_$VERSION/
+# mv pgmanage-server_$VERSION-linux-x64.tar.gz /tmp/
 
 # Building app
 curl -C - -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz
@@ -53,9 +54,17 @@ rm ./lib/*.json
 
 mkdir pgmanage-server
 cp $HOME/pgmanage-server ./pgmanage-server/
+# copy index.html .desktop and pgmanage_icon.png to the output dir
 cp $HOME/pgmanage/deploy/app/* .
+# adjust the version
 sed -i "s/version_placeholder/v$VERSION/" index.html
+sed -i "s/X-AppImage-Version=dev/X-AppImage-Version=$VERSION/" pgmanage.desktop
+# rename nwjs runtime as pgmanage-app
 mv nw pgmanage-app
 cd $HOME
-tar -czvf pgmanage-app_$VERSION.tar.gz pgmanage-app_$VERSION/
-mv pgmanage-app_$VERSION.tar.gz /tmp/
+# get appimagetool v13
+curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
+./appimagetool-x86_64.AppImage --appimage-extract-and-run pgmanage-app_$VERSION/ pgmanage-app_$VERSION.AppImage
+# tar -czvf pgmanage-app_$VERSION-linux-x64.tar.gz pgmanage-app_$VERSION/
+# mv pgmanage-app_$VERSION-linux-x64.tar.gz /tmp/
+mv pgmanage-app_$VERSION.AppImage /tmp

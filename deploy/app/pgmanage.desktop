@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=PgManage
+Exec=AppRun
+Terminal=false
+Type=Application
+Icon=pgmanage_icon
+StartupWMClass=pgmanage
+X-AppImage-Version=dev
+Comment=PgManage - a lightweight database management tool
+MimeType=application/vnd.sqlite3;application/vnd.sqlite3;application/vnd.sqlite3;x-scheme-handler/mariadb;x-scheme-handler/mysql;x-scheme-handler/postgresql;x-scheme-handler/postgres;x-scheme-handler/psql;x-scheme-handler/sqlite;
+Categories=Development;
