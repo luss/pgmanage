@@ -64,7 +64,7 @@ cp $HOME/pgmanage/deploy/app/* .
 sed -i "s/version_placeholder/v$VERSION/" index.html
 sed -i "s/X-AppImage-Version=dev/X-AppImage-Version=$VERSION/" pgmanage.desktop
 # rename nwjs runtime as pgmanage-app
-mv nw pgmanage-app
+mv nw pgmanage-app && ln -s ./pgmanage-app AppRun
 cd $HOME
 /tmp/appimagetool-x86_64.AppImage --appimage-extract-and-run pgmanage-app_$VERSION/ pgmanage-app_$VERSION.AppImage
 # tar -czvf pgmanage-app_$VERSION-linux-x64.tar.gz pgmanage-app_$VERSION/
