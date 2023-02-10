@@ -168,6 +168,7 @@ export default {
       axios.post('/save_connection/', connection)
       .then((response) => {
         this.loadData()
+        this.selectedConnection = {}
         let event = new CustomEvent('connection:changed',)
         document.dispatchEvent(event)
       })
@@ -232,6 +233,8 @@ export default {
       }
 
       let techname = TECHMAP[connection.technology]
+
+      if(connection.conn_string) return `${techname} - ${connection.conn_string}`
 
       if(connection.technology === 'sqlite') return `${techname} - ${connection.service}`
       if(connection.technology === 'terminal') return `${techname} - ${connection.tunnel.server}:${connection.tunnel.port}`
