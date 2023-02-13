@@ -272,7 +272,7 @@
       </div>
     </div>
   </form>
-  <BackupTabProcesses />
+  <BackupTabProcesses ref="processes" />
 </template>
 <script>
 import BackupTabProcesses from "./BackupTabProcesses.vue";
@@ -366,13 +366,15 @@ export default {
         })
     },
     saveBackup() {
-      axios.post("/job/", {
+      axios.post("/backup/", {
         database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
         tab_id: window.v_connTabControl.selectedTab.id,
         data: this.backupOptions,
       })
         .then((resp) => {
+          // on success response get process list
           console.log(resp)
+          this.$refs.processes.startProcess(resp.data.job_id, resp.data.desc)
         })
         .catch((error) => {
           console.log(error)

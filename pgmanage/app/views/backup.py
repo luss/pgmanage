@@ -1,5 +1,6 @@
 import functools
 import json
+import shutil
 import operator
 import os
 
@@ -28,14 +29,16 @@ class BackupMessage:
     Defines the message shown for the backup operation.
     """
 
-    def __init__(self, _type, _sid, _bfile, *_args, **_kwargs):
-        self.backup_type = _type
-        self.sid = _sid
-        self.bfile = _bfile
-        self.database = _kwargs["database"] if "database" in _kwargs else None
+    # TODO rename sid(server id) to conn_id
+    def __init__(self, backup_type, sid, backup_file, *args, **kwargs):
+        self.backup_type = backup_type
+        self.sid = sid
+        self.bfile = backup_file
+        self.database = kwargs["database"] if "database" in kwargs else None
         self.cmd = ""
         self.args_str = "{0} ({1}:{2})"
 
+        # check to we need this?
         def cmd_arg(x):
             if x:
                 x = x.replace("\\", "\\\\")
@@ -44,14 +47,13 @@ class BackupMessage:
                 return ' "' + x + '"'
             return ""
 
-        for arg in _args:
+        for arg in args:
             if arg and len(arg) >= 2 and arg[:2] == "--":
                 self.cmd += " " + arg
             else:
                 self.cmd += cmd_arg(arg)
 
     def get_server_name(self):
-        # s = get_server(self.sid)
         s = Connection.objects.filter(id=self.sid).first()
 
         if s is None:
@@ -83,21 +85,16 @@ class BackupMessage:
         server_name = self.get_server_name()
 
         if self.backup_type == BACKUP.OBJECT:
-            return (
-                "Backing up an object on the server '{0}' from database '{1}'".format(
-                    server_name, self.database
-                )
-            )
+            return f"Backing up an object on the server '{server_name}' from database '{self.database}'"
         if self.backup_type == BACKUP.GLOBALS:
-            return "Backing up the global objects on the server '{0}'".format(
-                server_name
-            )
+            return f"Backing up the global objects on the server '{server_name}'"
         elif self.backup_type == BACKUP.SERVER:
-            return "Backing up the server '{0}'".format(server_name)
+            return f"Backing up the server '{server_name}'"
         else:
             # It should never reach here.
             return "Unknown Backup"
 
+    # args should be removed
     def details(self, cmd, args):
         server_name = self.get_server_name()
         backup_type = "Backup"
@@ -117,9 +114,7 @@ class BackupMessage:
         }
 
 
-def _get_args_params_values(
-    data, conn, backup_obj_type, backup_file, server=None, manager=None
-):
+def get_args_params_values(data, conn, backup_obj_type, backup_file):
     """
     Used internally by create_backup_objects_job. This function will create
     the required args and params for the job.
@@ -127,13 +122,8 @@ def _get_args_params_values(
     :param conn: connection obj
     :param backup_obj_type: object type
     :param backup_file: file name
-    :param server: server obj
-    :param manager: connection manager
     :return: args array
     """
-    # from pgadmin.utils.driver import get_driver
-    # driver = get_driver(PG_DEFAULT_DRIVER)
-    print(conn)
 
     host, port = (conn.v_server, str(conn.v_port))
     args = [
@@ -165,7 +155,6 @@ def _get_args_params_values(
     if backup_obj_type != "objects":
         args.append("--database")
         args.append(conn.v_service)
-        # args.append(server.maintenance_db)
 
     if backup_obj_type == "globals":
         args.append("--globals-only")
@@ -226,15 +215,7 @@ def _get_args_params_values(
     set_value("encoding", "--encoding")
     set_value("no_of_jobs", "--jobs")
 
-    # TODO check how this works
-    # args.extend(
-    #     functools.reduce(operator.iconcat, map(
-    #         lambda s: ['--schema', r'{0}'.format(driver.qtIdent(conn, s).
-    #                                              replace('"', '\"'))],
-    #         data.get('schemas', [])), []
-    #     )
-    # )
-
+    # TODO check possibility of backing up few schemas or tables
     args.extend(
         functools.reduce(
             operator.iconcat,
@@ -249,19 +230,11 @@ def _get_args_params_values(
         )
     )
 
-    # args.extend(
-    #     functools.reduce(operator.iconcat, map(
-    #         lambda t: ['--table',
-    #                    r'{0}'.format(driver.qtIdent(conn, t[0], t[1])
-    #                                  .replace('"', '\"'))],
-    #         data.get('tables', [])), []
-    #     )
-    # )
-
     return args
 
 
 def find(name, path):
+    # temporary solution for getting file from system
     for root, dirs, files in os.walk(path):
         if name in files:
             return os.path.join(root, name)
@@ -277,7 +250,7 @@ def create_backup_objects_job(request, database):
 
     data = json.loads(request.body) if request.body else {}
 
-    data = data["data"]
+    data = data.get("data", {})
 
     backup_obj_type = data.get("type", "objects")
 
@@ -295,36 +268,13 @@ def create_backup_objects_job(request, database):
 
     # Fetch the server details like hostname, port, roles etc
 
-    #  server = get_server(sid)
-
-    # if server is None:
-    # return make_json_response(
-    #     success=0,
-    #     errormsg=_("Could not find the specified server.")
-    # )
-
-    # utility = manager.utility('backup') if backup_obj_type == 'objects' \
-    # else manager.utility('backup_server')
-
     utility = "pg_dump" if backup_obj_type == "objects" else "pg_dumpall"
-
-    # TODO use shututils which ot check of utility exists
-    import shutil
 
     ret_val = shutil.which(utility)
     if not ret_val:
         return JsonResponse(data={"data": "Utility file not found"}, status=400)
-    # ret_val = does_utility_exist(utility)
-    # if ret_val:
-    #     return make_json_response(
-    #         success=0,
-    #         errormsg=ret_val
-    #     )
 
-    # args = _get_args_params_values(
-    #     data, conn, backup_obj_type, backup_file, server, manager)
-
-    args = _get_args_params_values(data, database, backup_obj_type, backup_file)
+    args = get_args_params_values(data, database, backup_obj_type, backup_file)
 
     escaped_args = [escape_dquotes_process_arg(arg) for arg in args]
 
@@ -343,7 +293,7 @@ def create_backup_objects_job(request, database):
                     database.v_conn_id,
                     bfile,
                     *args,
-                    database=data["database"]
+                    database=data["database"],
                 ),
                 cmd=utility,
                 args=escaped_args,
@@ -355,38 +305,20 @@ def create_backup_objects_job(request, database):
                     BACKUP.SERVER if backup_obj_type != "globals" else BACKUP.GLOBALS,
                     database.v_conn_id,
                     bfile,
-                    *args
+                    *args,
                 ),
                 cmd=utility,
                 args=escaped_args,
                 user=request.user,
             )
 
-        # manager.export_password_env(p.id)
-        # def export_password_env(self, env):
-        # if self.password:
-        #     crypt_key_present, crypt_key = get_crypt_key()
-        #     if not crypt_key_present:
-        #         return False, crypt_key
-
-        #     password = decrypt(self.password, crypt_key).decode()
-        #     os.environ[str(env)] = password
-        # TODO Is this ok?
         os.environ[str(p.id)] = database.v_password
-        # Check for connection timeout and if it is greater than 0 then
-        # set the environment variable PGCONNECT_TIMEOUT.
-        # timeout = manager.get_connection_param_value('connect_timeout')
-        # if timeout and timeout > 0:
-        # env = dict()
-        # env['PGCONNECT_TIMEOUT'] = str(timeout)
-        # p.set_env_variables(server, env=env)
-        # else:
+
         # p.set_env_variables(server)
 
         p.start()
         jid = p.id
-    except Exception as e:
-        return JsonResponse(data={"data": str(e)}, status=410)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=410)
 
-        # Return response
     return JsonResponse(data={"job_id": jid, "desc": p.desc.message, "Success": 1})

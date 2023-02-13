@@ -1,13 +1,17 @@
 from abc import abstractmethod
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
+import json
+import shutil
 from io import StringIO
 import os
-from pickle import dumps
+from pickle import dumps, loads
 import sys
+import psutil
 from subprocess import Popen, PIPE
 
-from app.models.main import Process
+from app.models.main import Connection, Process
+from pgmanage import settings
 
 
 PROCESS_NOT_STARTED = 0
@@ -27,40 +31,6 @@ class IProcessDesc:
     def details(self, cmd, args):
         pass
 
-    @property
-    def current_storage_dir(self):
-
-        if config.SERVER_MODE:
-
-            file = self.bfile
-            try:
-                # check if file name is encoded with UTF-8
-                file = self.bfile.decode("utf-8")
-            except Exception:
-                # do nothing if bfile is not encoded.
-                pass
-
-            path = get_complete_file_path(file)
-            path = file if path is None else path
-
-            if IS_WIN:
-                path = os.path.realpath(path)
-
-            storage_directory = os.path.basename(get_storage_directory())
-
-            if storage_directory in path:
-                start = path.index(storage_directory)
-                end = start + (len(storage_directory))
-                last_dir = os.path.dirname(path[end:])
-            else:
-                last_dir = file
-
-            last_dir = replace_path_for_win(last_dir)
-
-            return None if hasattr(self, "is_import") and self.is_import else last_dir
-
-        return None
-
 
 class BatchProcess:
     def __init__(self, **kwargs):
@@ -75,59 +45,60 @@ class BatchProcess:
             self.log_dir
         ) = self.stdout = self.stderr = self.stime = self.etime = self.ecode = None
         self.env = dict()
-        self.user = kwargs["user"]
-
+        self.user = kwargs.get("user", None)
         if "id" in kwargs:
             self._retrieve_process(kwargs["id"])
         else:
-            _cmd = kwargs["cmd"]
+            cmd = kwargs["cmd"]
             # Get system's interpreter
             # if kwargs['cmd'] == 'python':
             #     _cmd = self._get_python_interpreter()
 
-            self._create_process(kwargs["desc"], _cmd, kwargs["args"])
+            self._create_process(kwargs["desc"], cmd, kwargs["args"])
 
     def _retrieve_process(self, _id):
-        p = Process.query.filter_by(pid=_id, user_id=current_user.id).first()
+        process = Process.objects.filter(pid=_id, user=self.user).first()
 
-        if p is None:
+        if process is None:
             raise LookupError(PROCESS_NOT_FOUND)
 
         try:
-            tmp_desc = loads(bytes.fromhex(p.desc))
+            tmp_desc = loads(bytes.fromhex(process.desc))
         except Exception:
-            tmp_desc = loads(p.desc)
+            tmp_desc = loads(process.desc)
 
         # ID
         self.id = _id
         # Description
         self.desc = tmp_desc
         # Status Acknowledged time
-        self.atime = p.acknowledge
+        self.atime = process.acknowledge
         # Command
-        self.cmd = p.command
+        self.cmd = process.command
         # Arguments
-        self.args = p.arguments
+        self.args = process.arguments
         # Log Directory
-        self.log_dir = p.logdir
+        self.log_dir = process.logdir
         # Standard ouput log file
-        self.stdout = os.path.join(p.logdir, "out")
+        self.stdout = os.path.join(process.logdir, "out")
         # Standard error log file
-        self.stderr = os.path.join(p.logdir, "err")
+        self.stderr = os.path.join(process.logdir, "err")
         # Start time
-        self.stime = p.start_time
+        self.stime = process.start_time
         # End time
-        self.etime = p.end_time
+        self.etime = process.end_time
         # Exit code
-        self.ecode = p.exit_code
+        self.ecode = process.exit_code
         # Process State
-        self.process_state = p.process_state
+        self.process_state = process.process_state
+        self.user = process.user
 
-    def _create_process(self, _desc, _cmd, _args):
+    def _create_process(self, desc, cmd, args):
         ctime = datetime.now().strftime("%Y%m%d%H%M%S%f")
-        # log_dir = os.path.join(
-        #     config.SESSION_DB_PATH, 'process_logs'
-        # )
+
+        log_dir = os.path.join(
+            os.path.realpath(os.path.expanduser("~/.pgmanage/")), "process_logs"
+        )
 
         def random_number(size):
             import secrets
@@ -138,36 +109,37 @@ class BatchProcess:
                 for _ in range(size)
             )
 
-        # created = False
-        # size = 0
-        # uid = ctime
-        # while not created:
-        #     try:
-        #         uid += random_number(size)
-        # log_dir = os.path.join(log_dir, uid)
-        #     size += 1
-        #     if not os.path.exists(log_dir):
-        #         os.makedirs(log_dir, int('700', 8))
-        #         created = True
-        # except OSError as oe:
-        #     import errno
-        #     if oe.errno != errno.EEXIST:
-        #         raise
+        created = False
+        size = 0
+        uid = ctime
+        while not created:
+            try:
+                uid += random_number(size)
+                log_dir = os.path.join(log_dir, uid)
+                size += 1
+                if not os.path.exists(log_dir):
+                    os.makedirs(log_dir, int("700", 8))
+                    created = True
+            except OSError as oe:
+                import errno
+
+                if oe.errno != errno.EEXIST:
+                    raise
 
         # ID
         self.id = ctime
         # Description
-        self.desc = _desc
+        self.desc = desc
         # Status Acknowledged time
         self.atime = None
         # Command
-        self.cmd = _cmd
+        self.cmd = cmd
         # Log Directory
-        # self.log_dir = log_dir
+        self.log_dir = log_dir
         # Standard ouput log file
-        # self.stdout = os.path.join(log_dir, 'out')
+        self.stdout = os.path.join(log_dir, "out")
         # Standard error log file
-        # self.stderr = os.path.join(log_dir, 'err')
+        self.stderr = os.path.join(log_dir, "err")
         # Start time
         self.stime = None
         # End time
@@ -178,27 +150,26 @@ class BatchProcess:
         self.process_state = PROCESS_NOT_STARTED
 
         # Arguments
-        self.args = _args
+        self.args = args
         args_csv_io = StringIO()
         csv_writer = csv.writer(
             args_csv_io, delimiter=str(","), quoting=csv.QUOTE_MINIMAL
         )
-        csv_writer.writerow(_args)
+        csv_writer.writerow(args)
 
         args_val = args_csv_io.getvalue().strip(str("\r\n"))
         tmp_desc = dumps(self.desc).hex()
-
-        j = Process(
+        connection = Connection.objects.filter(id=desc.sid).first()
+        process = Process(
             pid=int(ctime),
-            command=_cmd,
+            command=cmd,
             arguments=args_val,
-            # logdir=log_dir,
+            logdir=log_dir,
             desc=tmp_desc,
             user=self.user,
+            connection=connection,
         )
-        j.save()
-        # db.session.add(j)
-        # db.session.commit()
+        process.save()
 
     def check_start_end_time(self):
         """
@@ -245,14 +216,10 @@ class BatchProcess:
         #     str(cmd)
         # )
 
-        # Acquiring lock while copying the environment from the parent process
-        # for the child process
-        # with ConnectionLocker(_is_kerberos_conn=False):
-        # Make a copy of environment, and add new variables to support
         env = os.environ.copy()
 
         env["PROCID"] = self.id
-        # env['OUTDIR'] = self.log_dir
+        env["OUTDIR"] = self.log_dir
         env["PGA_BGP_FOREGROUND"] = "1"
         # if config.SERVER_MODE and session and \
         #         session['auth_source_manager']['current_source'] == \
@@ -262,6 +229,7 @@ class BatchProcess:
         if self.env:
             env.update(self.env)
 
+        # TODO we might not need this
         if cb is not None:
             cb(env)
         if os.name == "nt":
@@ -312,7 +280,7 @@ class BatchProcess:
             # as standard output, and standard error were redirected to
             # devnull.
             p = Process.objects.filter(pid=self.id, user=self.user).first()
-            p.start_time = p.end_time = datetime.now()
+            p.start_time = p.end_time = datetime.now().strftime("%Y%m%d%H%M%S%f")
             if not p.exit_code:
                 p.exit_code = self.ecode
             p.process_state = PROCESS_FINISHED
@@ -357,69 +325,6 @@ class BatchProcess:
         # Explicitly ignoring signals in the child process
         signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-    def get_windows_interpreter(self, paths):
-        """
-        Get interpreter.
-        :param paths:
-        :return:
-        """
-        paths.insert(0, os.path.join(u_encode(sys.prefix), "Scripts"))
-        paths.insert(0, u_encode(sys.prefix))
-
-        interpreter = self.which("pythonw.exe", paths)
-        if interpreter is None:
-            interpreter = self.which("python.exe", paths)
-
-        current_app.logger.info(
-            "Process Executor: Interpreter value in path: %s", str(interpreter)
-        )
-        if interpreter is None and current_app.PGADMIN_RUNTIME:
-            # We've faced an issue with Windows 2008 R2 (x86) regarding,
-            # not honouring the environment variables set under the Qt
-            # (e.g. runtime), and also setting PYTHONHOME same as
-            # sys.executable (i.e. pgAdmin4.exe).
-            #
-            # As we know, we're running it under the runtime, we can assume
-            # that 'venv' directory will be available outside of 'bin'
-            # directory.
-            #
-            # We would try out luck to find python executable based on that
-            # assumptions.
-            bin_path = os.path.dirname(sys.executable)
-
-            venv = os.path.realpath(os.path.join(bin_path, "..\\venv"))
-
-            interpreter = self.which("pythonw.exe", [venv])
-            if interpreter is None:
-                interpreter = self.which("python.exe", [venv])
-
-            current_app.logger.info(
-                "Process Executor: Interpreter value in virtual " "environment: %s",
-                str(interpreter),
-            )
-
-            if interpreter is not None:
-                # Our assumptions are proven right.
-                # Let's append the 'bin' directory to the PATH environment
-                # variable. And, also set PYTHONHOME environment variable
-                # to 'venv' directory.
-                os.environ["PATH"] = bin_path + ";" + os.environ["PATH"]
-                os.environ["PYTHONHOME"] = venv
-
-        return interpreter
-
-    def which(self, program, paths):
-        def is_exe(fpath):
-            return os.path.exists(fpath) and os.access(fpath, os.X_OK)
-
-        for path in paths:
-            if not os.path.isdir(path):
-                continue
-            exe_file = os.path.join(u_encode(path, fs_encoding), program)
-            if is_exe(exe_file):
-                return file_quote(exe_file)
-        return None
-
     def read_log(self, logfile, log, pos, ctime, ecode=None, enc="utf-8"):
         import re
 
@@ -461,87 +366,34 @@ class BatchProcess:
 
         return pos, completed
 
-    def update_cloud_details(self):
-        """
-        Parse the output to get the cloud instance details
-        """
-        _pid = self.id
-
-        _process = Process.query.filter_by(user_id=current_user.id, pid=_pid).first()
-
-        if _process is None:
-            raise LookupError(PROCESS_NOT_FOUND)
-
-        ctime = get_current_time(format="%y%m%d%H%M%S%f")
-        stdout = []
-        stderr = []
-        out = 0
-        err = 0
-        cloud_server_id = 0
-        cloud_instance = ""
-
-        enc = sys.getdefaultencoding()
-        if enc == "ascii":
-            enc = "utf-8"
-
-        out, out_completed = self.read_log(
-            self.stdout, stdout, out, ctime, _process.exit_code, enc
-        )
-        err, err_completed = self.read_log(
-            self.stderr, stderr, err, ctime, _process.exit_code, enc
-        )
-
-        from pgadmin.misc.cloud import update_server, clear_cloud_session
-
-        if out_completed and not _process.exit_code:
-            for value in stdout:
-                if "instance" in value[1] and value[1] != "":
-                    cloud_instance = json.loads(value[1])
-                    cloud_server_id = _process.server_id
-
-                if type(cloud_instance) is dict and "instance" in cloud_instance:
-                    cloud_instance["instance"]["sid"] = cloud_server_id
-                    cloud_instance["instance"]["status"] = True
-                    cloud_instance["instance"]["pid"] = _pid
-                    return update_server(cloud_instance)
-        elif (
-            err_completed and _process.exit_code is not None and _process.exit_code > 0
-        ):
-            cloud_instance = {"instance": {}}
-            cloud_instance["instance"]["sid"] = _process.server_id
-            cloud_instance["instance"]["status"] = False
-            cloud_instance["instance"]["pid"] = _pid
-            return update_server(cloud_instance)
-        else:
-            clear_cloud_session(_pid)
-        return True, {}
-
     def status(self, out=0, err=0):
-        ctime = get_current_time(format="%y%m%d%H%M%S%f")
+        ctime = datetime.now().strftime("%Y%m%d%H%M%S%f")
 
         stdout = []
         stderr = []
         out_completed = err_completed = False
         process_output = out != -1 and err != -1
 
-        j = Process.query.filter_by(pid=self.id, user_id=current_user.id).first()
+        process = Process.objects.filter(pid=self.id, user=self.user).first()
         enc = sys.getdefaultencoding()
         if enc == "ascii":
             enc = "utf-8"
 
         execution_time = None
 
-        if j is not None:
-            status, updated = BatchProcess.update_process_info(j)
+        if process is not None:
+            status, updated = BatchProcess.update_process_info(process)
             if updated:
-                db.session.commit()
-            self.stime = j.start_time
-            self.etime = j.end_time
-            self.ecode = j.exit_code
+                process.save()
+            self.stime = process.start_time
+            self.etime = process.end_time
+            self.ecode = process.exit_code
 
             if self.stime is not None:
-                stime = parser.parse(self.stime)
-                etime = parser.parse(self.etime or get_current_time())
+                # stime = parser.parse(self.stime)
+                stime = self.stime
+                # etime = parser.parse(self.etime or datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                etime = self.etime or datetime.now().strftime("%Y%m%d%H%M%S%f")
 
                 execution_time = BatchProcess.total_seconds(etime - stime)
 
@@ -572,28 +424,30 @@ class BatchProcess:
         }
 
     @staticmethod
-    def _check_start_time(p, data):
+    def _check_start_time(process, data):
         """
         Check start time and its related other timing checks.
         :param p: Process.
         :param data: Data
         :return:
         """
-        if "start_time" in data and data["start_time"]:
-            p.start_time = data["start_time"]
+        if "start_time" in data and data.get("start_time", None):
+            process.start_time = datetime.strptime(data["start_time"], "%Y%m%d%H%M%S%f")
 
             # We can't have 'exit_code' without the 'start_time'
-            if "exit_code" in data and data["exit_code"] is not None:
-                p.exit_code = data["exit_code"]
+            if "exit_code" in data and data.get("exit_code", None) is not None:
+                process.exit_code = data["exit_code"]
 
                 # We can't have 'end_time' without the 'exit_code'.
-                if "end_time" in data and data["end_time"]:
-                    p.end_time = data["end_time"]
+                if "end_time" in data and data.get("end_time", None):
+                    process.end_time = datetime.strptime(
+                        data["end_time"], "%Y%m%d%H%M%S%f"
+                    )
 
     @staticmethod
-    def update_process_info(p):
-        if p.start_time is None or p.end_time is None:
-            status = os.path.join(p.logdir, "status")
+    def update_process_info(process):
+        if process.start_time is None or process.end_time is None:
+            status = os.path.join(process.logdir, "status")
             if not os.path.isfile(status):
                 return False, False
 
@@ -604,21 +458,15 @@ class BatchProcess:
                     data = json.load(fp)
 
                     #  First - check for the existance of 'start_time'.
-                    BatchProcess._check_start_time(p, data)
+                    BatchProcess._check_start_time(process, data)
                     # get the pid of the utility.
                     if "pid" in data:
-                        p.utility_pid = data["pid"]
+                        process.utility_pid = data["pid"]
 
                     return True, True
 
                 except ValueError as e:
-                    current_app.logger.warning(
-                        _(
-                            "Status for the background process '{0}' could "
-                            "not be loaded."
-                        ).format(p.pid)
-                    )
-                    current_app.logger.exception(e)
+                    print("UPDATE_PROCESS_INFO_EXCEPTION")
                     return False, False
         return True, False
 
@@ -637,12 +485,9 @@ class BatchProcess:
 
         details = desc
         type_desc = ""
-        current_storage_dir = None
+        # current_storage_dir = None
 
         if isinstance(desc, IProcessDesc):
-
-            from pgadmin.tools.backup import BackupMessage
-            from pgadmin.tools.import_export import IEMessage
 
             args = []
             args_csv = StringIO(
@@ -655,33 +500,35 @@ class BatchProcess:
                 args = args + arg
             details = desc.details(p.command, args)
             type_desc = desc.type_desc
-            if isinstance(desc, (BackupMessage, IEMessage)):
-                current_storage_dir = desc.current_storage_dir
+            # if isinstance(desc, (BackupMessage, IEMessage)):
+            #     current_storage_dir = desc.current_storage_dir
             desc = desc.message
 
-        return desc, details, type_desc, current_storage_dir
+        # return desc, details, type_desc, current_storage_dir
+        return desc, details, type_desc
 
     @staticmethod
-    def list():
-        processes = Process.query.filter_by(user_id=current_user.id)
+    def list(user):
+        processes = Process.objects.filter(user=user)
         changed = False
 
-        browser_preference = Preferences.module("browser")
-        expiry_add = timedelta(
-            browser_preference.preference("process_retain_days").get() or 1
-        )
-
+        # browser_preference = Preferences.module("browser")
+        # expiry_add = timedelta(
+        #     browser_preference.preference("process_retain_days").get() or 1
+        # )
+        expiry_add = 1
         res = []
-        for p in [*processes]:
+        for p in processes:
             if p.start_time is not None:
                 # remove expired jobs
-                process_expiration_time = parser.parse(p.start_time) + expiry_add
+                # process_expiration_time = parser.parse(p.start_time) + expiry_add
+                process_expiration_time = p.start_time + timedelta(days=expiry_add)
                 if (
                     datetime.now(process_expiration_time.tzinfo)
                     >= process_expiration_time
                 ):
                     shutil.rmtree(p.logdir, True)
-                    db.session.delete(p)
+                    p.delete()
                     changed = True
 
             status, updated = BatchProcess.update_process_info(p)
@@ -695,16 +542,17 @@ class BatchProcess:
             ):
                 continue
 
-            stime = parser.parse(p.start_time)
-            etime = parser.parse(p.end_time or get_current_time())
-
+            # stime = parser.parse(p.start_time)
+            stime = p.start_time
+            # etime = parser.parse(p.end_time or get_current_time())
+            etime = p.end_time or datetime.now().strftime("%Y%m%d%H%M%S%f")
             execution_time = BatchProcess.total_seconds(etime - stime)
 
             (
                 desc,
                 details,
                 type_desc,
-                current_storage_dir,
+                # current_storage_dir,
             ) = BatchProcess._check_process_desc(p)
 
             res.append(
@@ -720,13 +568,13 @@ class BatchProcess:
                     "execution_time": execution_time,
                     "process_state": p.process_state,
                     "utility_pid": p.utility_pid,
-                    "server_id": p.server_id,
-                    "current_storage_dir": current_storage_dir,
+                    "conn_id": p.connection.id,
+                    # "current_storage_dir": current_storage_dir,
                 }
             )
 
         if changed:
-            db.session.commit()
+            p.save()
 
         return res
 
@@ -735,7 +583,7 @@ class BatchProcess:
         return round(dt.total_seconds(), 2)
 
     @staticmethod
-    def acknowledge(_pid):
+    def delete(process_id, user):
         """
         Acknowledge from the user, he/she has alredy watched the status.
 
@@ -743,61 +591,62 @@ class BatchProcess:
         And, delete the process information from the configuration, and the log
         files related to the process, if it has already been completed.
         """
-        p = Process.query.filter_by(user_id=current_user.id, pid=_pid).first()
+        process = Process.objects.filter(user=user, pid=process_id).first()
 
-        if p is None:
+        if process is None:
             raise LookupError(PROCESS_NOT_FOUND)
 
-        if p.end_time is not None:
-            logdir = p.logdir
-            db.session.delete(p)
+        if process.end_time is not None:
+            logdir = process.logdir
+
+            process.delete()
             import shutil
 
             shutil.rmtree(logdir, True)
         else:
-            p.acknowledge = get_current_time()
+            process.acknowledge = datetime.now().strftime("%Y%m%d%H%M%S%f")
 
-        db.session.commit()
+            process.save()
 
-    def set_env_variables(self, server, **kwargs):
-        """Set environment variables"""
-        if server:
-            # Set SSL related ENV variables
-            if (
-                hasattr(server, "connection_params")
-                and server.connection_params
-                and "sslcert" in server.connection_params
-                and "sslkey" in server.connection_params
-                and "sslrootcert" in server.connection_params
-            ):
-                # SSL environment variables
-                sslcert = get_complete_file_path(server.connection_params["sslcert"])
-                sslkey = get_complete_file_path(server.connection_params["sslkey"])
-                sslrootcert = get_complete_file_path(
-                    server.connection_params["sslrootcert"]
-                )
+    # def set_env_variables(self, server, **kwargs):
+    #     """Set environment variables"""
+    #     if server:
+    #         # Set SSL related ENV variables
+    #         if (
+    #             hasattr(server, "connection_params")
+    #             and server.connection_params
+    #             and "sslcert" in server.connection_params
+    #             and "sslkey" in server.connection_params
+    #             and "sslrootcert" in server.connection_params
+    #         ):
+    #             # SSL environment variables
+    #             sslcert = get_complete_file_path(server.connection_params["sslcert"])
+    #             sslkey = get_complete_file_path(server.connection_params["sslkey"])
+    #             sslrootcert = get_complete_file_path(
+    #                 server.connection_params["sslrootcert"]
+    #             )
 
-                self.env["PGSSLMODE"] = (
-                    server.connection_params["sslmode"]
-                    if hasattr(server, "connection_params")
-                    and "sslmode" in server.connection_params
-                    else "prefer"
-                )
-                self.env["PGSSLCERT"] = "" if sslcert is None else sslcert
-                self.env["PGSSLKEY"] = "" if sslkey is None else sslkey
-                self.env["PGSSLROOTCERT"] = "" if sslrootcert is None else sslrootcert
+    #             self.env["PGSSLMODE"] = (
+    #                 server.connection_params["sslmode"]
+    #                 if hasattr(server, "connection_params")
+    #                 and "sslmode" in server.connection_params
+    #                 else "prefer"
+    #             )
+    #             self.env["PGSSLCERT"] = "" if sslcert is None else sslcert
+    #             self.env["PGSSLKEY"] = "" if sslkey is None else sslkey
+    #             self.env["PGSSLROOTCERT"] = "" if sslrootcert is None else sslrootcert
 
-            # Set service name related ENV variable
-            if server.service:
-                self.env["PGSERVICE"] = server.service
+    #         # Set service name related ENV variable
+    #         if server.service:
+    #             self.env["PGSERVICE"] = server.service
 
-        if "env" in kwargs:
-            self.env.update(kwargs["env"])
+    #     if "env" in kwargs:
+    #         self.env.update(kwargs["env"])
 
     @staticmethod
-    def stop_process(_pid):
+    def stop_process(process_id, user):
         """ """
-        p = Process.query.filter_by(user_id=current_user.id, pid=_pid).first()
+        p = Process.objects.filter(user=user, pid=process_id).first()
 
         if p is None:
             raise LookupError(PROCESS_NOT_FOUND)
@@ -810,22 +659,24 @@ class BatchProcess:
         except psutil.NoSuchProcess:
             p.process_state = PROCESS_TERMINATED
         except psutil.Error as e:
-            current_app.logger.warning(
-                _("Unable to kill the background process '{0}'").format(p.utility_pid)
-            )
-            current_app.logger.exception(e)
-        db.session.commit()
+            print("ENABLE TO KILL PROCESS")
+            # current_app.logger.warning(
+            #     _("Unable to kill the background process '{0}'").format(p.utility_pid)
+            # )
+            # current_app.logger.exception(e)
+        # db.session.commit()
+        p.save()
 
-    @staticmethod
-    def update_server_id(_pid, _sid):
-        p = Process.query.filter_by(user_id=current_user.id, pid=_pid).first()
+    # @staticmethod
+    # def update_server_id(_pid, _sid):
+    #     p = Process.query.filter_by(user_id=current_user.id, pid=_pid).first()
 
-        if p is None:
-            raise LookupError(PROCESS_NOT_FOUND)
+    #     if p is None:
+    #         raise LookupError(PROCESS_NOT_FOUND)
 
-        # Update the cloud server id
-        p.server_id = _sid
-        db.session.commit()
+    #     # Update the cloud server id
+    #     p.server_id = _sid
+    #     db.session.commit()
 
 
 def escape_dquotes_process_arg(arg):
@@ -833,8 +684,6 @@ def escape_dquotes_process_arg(arg):
     # run without the double quotes. Add extra quotes to save our double
     # quotes from stripping.
 
-    # This cannot be at common place as this file executes
-    # separately from pgadmin
     dq_id = "#DQ#"
 
     if arg.startswith('"') and arg.endswith('"'):
