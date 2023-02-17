@@ -305,13 +305,13 @@ base_urlpatterns = [
     re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status"),
 
     # Backup
-    path('backup/', views.backup.create_backup_objects_job, name='create_backup'),
+    path('backup/', views.backup.create_backup, name='create_backup'),
 
-    # Background Processes
-    path('bgprocess/', views.process.index, name='process_list'),
-    path('bgprocess/<int:process_id>/status/', views.process.status, name='process_status'),
-    path('bgprocess/stop/<int:process_id>/', views.process.stop_process, name='stop_process'),
-    path('bgprocess/delete/<int:process_id>/', views.process.delete_process, name='delete_process')
+    # Background jobs
+    path('bgprocess/', views.bgjob.index, name='job_list'),
+    path('bgprocess/<int:job_id>/<int:out>/<int:err>/', views.bgjob.details, name='job_details'),
+    path('bgprocess/stop/<int:job_id>/', views.bgjob.stop_job, name='stop_job'),
+    path('bgprocess/delete/<int:job_id>/', views.bgjob.delete_job, name='delete_job')
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

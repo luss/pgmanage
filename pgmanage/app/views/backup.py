@@ -1,15 +1,13 @@
 import functools
 import json
-import shutil
 import operator
 import os
+import shutil
 
-from app.views.memory_objects import database_required_new, user_authenticated
-
-from django.http import JsonResponse
-
+from app.bgjob.jobs import BatchJob, IProcessDesc, escape_dquotes_process_arg
 from app.models.main import Connection
-from app.bgprocess.processes import BatchProcess, escape_dquotes_process_arg
+from app.views.memory_objects import database_required_new, user_authenticated
+from django.http import JsonResponse
 
 
 class BACKUP:
@@ -22,17 +20,16 @@ class BACKUP:
     OBJECT = 3
 
 
-class BackupMessage:
+class BackupMessage(IProcessDesc):
     """
     BackupMessage(IProcessDesc)
 
     Defines the message shown for the backup operation.
     """
 
-    # TODO rename sid(server id) to conn_id
-    def __init__(self, backup_type, sid, backup_file, *args, **kwargs):
+    def __init__(self, backup_type, conn_id, backup_file, *args, **kwargs):
         self.backup_type = backup_type
-        self.sid = sid
+        self.conn_id = conn_id
         self.bfile = backup_file
         self.database = kwargs["database"] if "database" in kwargs else None
         self.cmd = ""
@@ -54,14 +51,10 @@ class BackupMessage:
                 self.cmd += cmd_arg(arg)
 
     def get_server_name(self):
-        s = Connection.objects.filter(id=self.sid).first()
+        s = Connection.objects.filter(id=self.conn_id).first()
 
         if s is None:
             return "Not available"
-
-        # from pgadmin.utils.driver import get_driver
-        # driver = get_driver(PG_DEFAULT_DRIVER)
-        # manager = driver.connection_manager(self.sid)
 
         # host = manager.local_bind_host if manager.use_ssh_tunnel else s.host
         # port = manager.local_bind_port if manager.use_ssh_tunnel else s.port
@@ -242,7 +235,7 @@ def find(name, path):
 
 @database_required_new(check_timeout=True, open_connection=True)
 @user_authenticated
-def create_backup_objects_job(request, database):
+def create_backup(request, database):
     """
     Creates a new job for backup task
     (Backup Database(s)/Schema(s)/Table(s))
@@ -254,19 +247,7 @@ def create_backup_objects_job(request, database):
 
     backup_obj_type = data.get("type", "objects")
 
-    # TODO find out how to get file name from system path
-
     backup_file = find(data.get("fileName"), os.path.expanduser("~"))
-
-    # try:
-    #     backup_file = filename_with_file_manager_path(
-    #         data['file'], (data.get('format', '') != 'directory'))
-    # except PermissionError as e:
-    #     return unauthorized(errormsg=str(e))
-    # except Exception as e:
-    #     return bad_request(errormsg=str(e))
-
-    # Fetch the server details like hostname, port, roles etc
 
     utility = "pg_dump" if backup_obj_type == "objects" else "pg_dumpall"
 
@@ -279,16 +260,12 @@ def create_backup_objects_job(request, database):
     escaped_args = [escape_dquotes_process_arg(arg) for arg in args]
 
     try:
-        bfile = (
-            data["fileName"].encode("utf-8")
-            if hasattr(data["fileName"], "encode")
-            else data["fileName"]
-        )
+        bfile = data["fileName"]
         if backup_obj_type == "objects":
             args.append(data["database"])
             escaped_args.append(data["database"])
-            p = BatchProcess(
-                desc=BackupMessage(
+            job = BatchJob(
+                description=BackupMessage(
                     BACKUP.OBJECT,
                     database.v_conn_id,
                     bfile,
@@ -300,8 +277,8 @@ def create_backup_objects_job(request, database):
                 user=request.user,
             )
         else:
-            p = BatchProcess(
-                desc=BackupMessage(
+            job = BatchJob(
+                description=BackupMessage(
                     BACKUP.SERVER if backup_obj_type != "globals" else BACKUP.GLOBALS,
                     database.v_conn_id,
                     bfile,
@@ -312,13 +289,12 @@ def create_backup_objects_job(request, database):
                 user=request.user,
             )
 
-        os.environ[str(p.id)] = database.v_password
+        os.environ[str(job.id)] = database.v_password
 
         # p.set_env_variables(server)
 
-        p.start()
-        jid = p.id
+        job.start()
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=410)
 
-    return JsonResponse(data={"job_id": jid, "desc": p.desc.message, "Success": 1})
+    return JsonResponse(data={"job_id": job.id, "description": job.description.message, "Success": 1})

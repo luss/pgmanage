@@ -272,15 +272,15 @@
       </div>
     </div>
   </form>
-  <BackupTabProcesses ref="processes" />
+  <BackupTabJobs ref="jobs" />
 </template>
 <script>
-import BackupTabProcesses from "./BackupTabProcesses.vue";
+import BackupTabJobs from "./BackupTabJobs.vue";
 
 export default {
   name: "BackupTab",
   components: {
-    BackupTabProcesses,
+    BackupTabJobs,
   },
   props: {
     backupType: String,
@@ -372,9 +372,7 @@ export default {
         data: this.backupOptions,
       })
         .then((resp) => {
-          // on success response get process list
-          console.log(resp)
-          this.$refs.processes.startProcess(resp.data.job_id, resp.data.desc)
+          this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
         })
         .catch((error) => {
           console.log(error)

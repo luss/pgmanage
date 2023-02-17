@@ -119,17 +119,16 @@ class ConfigHistory(models.Model):
     commit_comment = models.TextField(blank=True)
     
 
-class Process(models.Model):
-    pid = models.TextField(null=False, primary_key=True)
+class Job(models.Model):
+    id = models.TextField(null=False, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     command = models.TextField(blank=False)
-    desc = models.TextField(blank=False)
+    description = models.TextField(blank=False)
     arguments =  models.TextField(blank=True)
     logdir = models.TextField()
     start_time = models.DateTimeField(null=True)
     end_time = models.DateTimeField(null=True)
     exit_code = models.IntegerField(null=True)
-    acknowledge = models.TextField(blank=True)
     utility_pid = models.IntegerField(null=True)
     process_state = models.IntegerField(null=True)
     connection = models.ForeignKey(Connection,on_delete=models.CASCADE, null=True)
