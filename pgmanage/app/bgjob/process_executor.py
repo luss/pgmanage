@@ -74,7 +74,7 @@ class ProcessLogger(Thread):
         if self.logger:
             if msg:
                 self.logger.write(
-                    datetime.now().strftime("[%m/%d/%Y %H:%M:%S%f]").encode("utf-8")
+                    datetime.now().strftime("%Y%m%d%H%M%S%f").encode("utf-8")
                 )
                 self.logger.write(b",")
                 self.logger.write(msg.lstrip(b"\r\n" if _IS_WIN else b"\n"))

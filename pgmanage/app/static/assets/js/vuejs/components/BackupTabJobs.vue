@@ -85,12 +85,17 @@ export default {
       pendingJobId: [],
       jobList: [],
       workerId: '',
+      detailedJobWorker: '',
       logs: [],
       selectedJob: {},
     }
   },
   mounted() {
     this.startWorker()
+    $('#exampleModal').on('hidden.bs.modal', () => {
+      this.logs.splice(0)
+      clearInterval(this.detailedJobWorker)
+    })
   },
   methods: {
     getJobList() {
@@ -114,11 +119,11 @@ export default {
     startWorker() {
       this.getJobList()
       this.pendingJobId = this.jobList.filter((p) => (p.process_state === JobState.PROCESS_STARTED)).map((p) => p.id)
-      // this.workerId = setInterval(() => {
-      //   if (this.pendingJobId.length > 0) {
-      //     this.getJobList();
-      //   }
-      // }, 1000)
+      this.workerId = setInterval(() => {
+        if (this.pendingJobId.length > 0) {
+          this.getJobList();
+        }
+      }, 1000)
     },
     startJob(job_id) {
       this.pendingJobId.push(job_id)
@@ -147,16 +152,21 @@ export default {
       .then((resp) => {
         console.log(resp)
         this.selectedJob = Object.assign({}, this.jobList.find((p) => p.id == job_id))
-        this.logs = [
+        let out_pos = resp.data.data.out.pos
+        let err_pos = resp.data.data.err.pos
+        this.logs.push(
           ...resp.data.data.err.lines.map((l) => l[1]),
-          ...resp.data.data.out.lines.map((l) => l[1])]
-        $('#exampleModal').modal('show')
+          ...resp.data.data.out.lines.map((l) => l[1]))
+        $('#exampleModal').modal('show')  
+        if (!this.detailedJobWorker) {
+          this.detailedJobWorker = setInterval(() => {
+          this.getJobDetails(job_id, out_pos, err_pos)
+        }, 1000)
 
-
-      //     if(resData.out?.done && resData.err?.done && resData.exit_code != null) {
-      // setExitCode(resData.exit_code);
-      // setCompleted(true);
-    // }
+        }
+        if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailedJobWorker) {
+          clearInterval(this.detailedJobWorker)
+        }
       })
       .catch((error) => {
         console.log(error)

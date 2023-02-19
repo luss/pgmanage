@@ -25,7 +25,7 @@
           <div class="form-group row">
             <label for="backupFileName" class="col-form-label col-2">FileName</label>
             <div class="col-3">
-              <input type="file" class="form-control" id="backupFileName" @change="onFile">
+              <input type="file" class="form-control" id="backupFileName" @change="onFile" nwsaveas>
             </div>
           </div>
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
@@ -380,6 +380,7 @@ export default {
     },
     onFile(e) {
       const [file] = e.target.files
+      console.log(file)
       this.backupOptions.fileName = file?.name
     }
   }

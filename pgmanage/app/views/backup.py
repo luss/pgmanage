@@ -4,7 +4,7 @@ import operator
 import os
 import shutil
 
-from app.bgjob.jobs import BatchJob, IProcessDesc, escape_dquotes_process_arg
+from app.bgjob.jobs import BatchJob, IJobDesc, escape_dquotes_process_arg
 from app.models.main import Connection
 from app.views.memory_objects import database_required_new, user_authenticated
 from django.http import JsonResponse
@@ -20,9 +20,9 @@ class BACKUP:
     OBJECT = 3
 
 
-class BackupMessage(IProcessDesc):
+class BackupMessage(IJobDesc):
     """
-    BackupMessage(IProcessDesc)
+    BackupMessage(IJobDesc)
 
     Defines the message shown for the backup operation.
     """
@@ -290,8 +290,6 @@ def create_backup(request, database):
             )
 
         os.environ[str(job.id)] = database.v_password
-
-        # p.set_env_variables(server)
 
         job.start()
     except Exception as exc:

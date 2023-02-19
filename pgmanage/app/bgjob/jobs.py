@@ -23,7 +23,7 @@ PROCESS_TERMINATED = 3
 PROCESS_NOT_FOUND = "Could not find a process with the specified ID."
 
 
-class IProcessDesc:
+class IJobDesc:
     @property
     @abstractmethod
     def message(self):
@@ -215,23 +215,6 @@ class BatchJob:
             job.process_state = PROCESS_STARTED
             job.save()
 
-    def get_process_output(self, command, env):
-        p = Popen(
-            command,
-            close_fds=True,
-            stdout=PIPE,
-            stderr=PIPE,
-            stdin=None,
-            start_new_session=True,
-            env=env,
-        )
-
-        output, errors = p.communicate()
-        output = output.decode() if hasattr(output, "decode") else output
-        errors = errors.decode() if hasattr(errors, "decode") else errors
-
-        return p
-
     def read_log(self, logfile, log, pos, ctime, ecode=None, enc="utf-8"):
 
         completed = True
@@ -297,7 +280,7 @@ class BatchJob:
 
             if self.start_time is not None:
                 stime = self.start_time
-                etime = self.end_time or datetime.now().strftime("%Y%m%d%H%M%S%f")
+                etime = self.end_time or make_aware(datetime.now())
 
                 execution_time = BatchJob.total_seconds(etime - stime)
 
@@ -310,14 +293,6 @@ class BatchJob:
                 )
         else:
             out_completed = err_completed = False
-
-        if out == -1 or err == -1:
-            return {
-                "start_time": self.start_time,
-                "exit_code": self.exit_code,
-                "execution_time": execution_time,
-                "process_state": self.process_state,
-            }
 
         return {
             "out": {"pos": out, "lines": stdout, "done": out_completed},
@@ -387,7 +362,7 @@ class BatchJob:
         details = ""
         type_desc = ""
 
-        if isinstance(description, IProcessDesc):
+        if isinstance(description, IJobDesc):
 
             args = []
             args_csv = StringIO(
