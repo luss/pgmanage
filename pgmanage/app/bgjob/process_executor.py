@@ -235,26 +235,6 @@ def signal_handler(signal, msg):
     pass
 
 
-def convert_environment_variables(env):
-    """
-    This function is use to convert environment variable to string
-    because environment variable must be string in popen
-    :param env: Dict of environment variable
-    :return: Encoded environment variable as string
-    """
-    temp_env = dict()
-    for key, value in env.items():
-        try:
-            if not isinstance(key, str):
-                key = key.encode(sys_encoding)
-            if not isinstance(value, str):
-                value = value.encode(sys_encoding)
-            temp_env[key] = value
-        except Exception:
-            logging.exception("Exception occured")
-    return temp_env
-
-
 if __name__ == "__main__":
 
     argv = [unescape_dquotes_process_arg(arg) for arg in sys.argv]
@@ -295,51 +275,6 @@ if __name__ == "__main__":
             execute(argv)
         except Exception:
             logging.exception("Exception occurred")
-        # else:
-        #     from subprocess import CREATE_NEW_PROCESS_GROUP
-
-        #     DETACHED_PROCESS = 0x00000008
-
-        #     # Forward the standard input, output, and error stream to the
-        #     # 'devnull'.
-        #     stdin = open(os.devnull, "r")
-        #     stdout = open(os.devnull, "a")
-        #     stderr = open(os.devnull, "a")
-        #     env = os.environ.copy()
-
-        #     # We need environment variables & values in string
-        # logging.info("[PARENT] Converting the environment variable in the bytes format...")
-        #     try:
-        #         env = convert_environment_variables(env)
-        #     except Exception:
-        #         logging.exception("Exception occurred")
-
-        #     kwargs = {
-        #         "stdin": stdin.fileno(),
-        #         "stdout": stdout.fileno(),
-        #         "stderr": stderr.fileno(),
-        #         "creationflags": CREATE_NEW_PROCESS_GROUP | DETACHED_PROCESS,
-        #         "close_fds": False,
-        #         "cwd": out_dir,
-        #         "env": env,
-        #     }
-
-        #     cmd = [sys.executable]
-        #     cmd.extend(argv)
-
-        #     logging.info("[Parent] Command executing %s", cmd)
-
-        #     p = Popen(cmd, **kwargs)
-
-        #     exit_code = p.poll()
-
-        #     if exit_code is not None:
-        #         logging.info(f"[PARENT] Child exited with exit-code#{exit_code}...")
-        #     else:
-        #         logging.info(f"[PARENT] Started the child with PID#{p.pid}")
-
-        #     logging.info("[PARENT] Exiting...")
-        #     sys.exit(0)
     else:
         r, w = os.pipe()
 

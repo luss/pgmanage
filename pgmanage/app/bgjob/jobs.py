@@ -139,22 +139,11 @@ class BatchJob:
         )
         job.save()
 
-    def _get_python_interpreter(self):
-        """Get Python Interpreter"""
-        if os.name == "nt":
-            paths = os.environ["PATH"].split(os.pathsep)
-
-            interpreter = self.get_windows_interpreter(paths)
-        else:
-            interpreter = sys.executable
-
-        return interpreter if interpreter else "python"
-
     def start(self):
 
         executor = os.path.join(os.path.dirname(__file__), "process_executor.py")
 
-        interpreter = self._get_python_interpreter()
+        interpreter = sys.executable
 
         cmd = [interpreter, executor, self.command]
         cmd.extend(self.args)
@@ -174,11 +163,9 @@ class BatchJob:
             # We need to redirect the standard input, standard output, and
             # standard error to devnull in order to allow it start in detached
             # mode on
-            stdout = os.devnull
-            stderr = stdout
             stdin = open(os.devnull, "r")
-            stdout = open(stdout, "a")
-            stderr = open(stderr, "a")
+            stdout = open(os.devnull, "a")
+            stderr = open(os.devnull, "a")
 
             p = Popen(
                 cmd,

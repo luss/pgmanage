@@ -376,6 +376,8 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          showError(error.response.data.data);
+          
         })
     },
     onFile(e) {
