@@ -60,20 +60,20 @@ python3 pgmanage-server.py
 
 - Major Bugs fixed:
   - fixed data export to csv/xls format in the desktop version of the app
-  - added superuser permission check on all user managepent APIs
+  - added superuser permission check on all user management APIs
   - extra validations added to prevent creation of unnamed connection groups
-  - fixed extenal links not working in the desktop variant of the app
-  - fixed posgres special commands on postgresql versions 12 and higher
+  - fixed external links not working in the desktop variant of the app
+  - fixed postgres special commands on postgresql versions 12 and higher
   - fixed broken postgres documentation links available in database tree view menus
   - made all web/cdn app dependencies local so pgmanage can work properly without an internet connection
 
 - UI/UX Improvements:
   - reorganized connection management menus in the left menu bar 
-  - fixed ddl tab auto resizing
+  - fixed DDL tab auto resizing
   - the top-right utilities menu now expands on click instead of mouse-hover
-  - added ddl/properties tab resize limits to prevent it from becoming impossible to grab/resize back
+  - added DDL/properties tab resize limits to prevent it from becoming impossible to grab/resize back
   - unified tooltip appearance throughout the whole app
-  - unified pictogram look and feed thoughout the whole app
+  - unified pictogram look and feel thoughout the whole app
   - improved database tree view navigation by adding smooth scroll to the newly expanded tree node. previously when some tree view node was expanded it jumped out of sight
   - improved data grid/table readability
   - improved database entity tree view readability
