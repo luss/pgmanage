@@ -49,13 +49,15 @@ python3 pgmanage-server.py
 ## Release Notes
 
 - New features:
+  - new connection management UI
+  - added support for postgres server configuration management
   - new explain/analyze UI powered by pev2, including pev2 dark theme support
   - connection credential encryption
   - backported support for monitoring data-grid-based monitoring widgets
   - backported pie charts widgets for numbackends and database sizes
   - added password strength validation for user and master passwords
   - PostgreSQL 9.6, 10, 11, 12, 13, 14 and 15 support
-  -
+
 - Major Bugs fixed:
   - fixed data export to csv/xls format in the desktop version of the app
   - added superuser permission check on all user managepent APIs
