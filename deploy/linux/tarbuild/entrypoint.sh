@@ -25,6 +25,19 @@ fi
 # Building server
 cd pgmanage/
 
+# Do a small clean-up
+echo -n "Removing sass and map files"
+find ./ -name "*.map" -delete
+find ./ -name "*.scss" -delete
+
+echo -n "Switching to Release Mode..."
+sed -i -e 's/DEV_MODE = True/DEV_MODE = False/g' pgmanage/custom_settings.py
+echo "Done."
+
+echo -n "Switching to Desktop Mode... "
+sed -i -e 's/DESKTOP_MODE = False/DESKTOP_MODE = True/g' pgmanage/custom_settings.py
+echo "Done."
+
 # setting up versions in custom_settins.py
 sed -i "s/Dev/PgManage $VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$VERSION/" pgmanage/custom_settings.py
