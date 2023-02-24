@@ -304,6 +304,12 @@ base_urlpatterns = [
     re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history'),
     re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status"),
 
+    # File Management
+    path('file_manager/get_directory/', views.file_manager.get_directory, name="get_directory"),
+    path('file_manager/create/', views.file_manager.create, name="create_file_or_directory"),
+    path('file_manager/rename/', views.file_manager.rename, name="rename_file_or_directory"),
+    path('file_manager/delete/', views.file_manager.delete, name='delete_file_or_directory')
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.PATH == '':
