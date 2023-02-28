@@ -1,5 +1,5 @@
 <template>
-  <div class="modal modal-blurr" id="filemanager-modal" tabindex="-1">
+  <div class="modal modal-blurr" :id="modalId" tabindex="-1">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header align-items-center">
@@ -81,7 +81,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <a :class="['btn', 'btn-secondary', 'btn-sm', 'm-0', { 'disabled': !Object.keys(this.selectedFile).length }]">
+          <a :class="['btn', 'btn-secondary', 'btn-sm', 'm-0', { 'disabled': !Object.keys(this.selectedFile).length }]"
+            @click="confirmSelection">
             Select</a>
         </div>
       </div>
@@ -108,8 +109,10 @@ export default {
       selectedFile: {},
       action: '',
       currentView: 'grid',
+      modalId: `${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_filemanager`
     }
   },
+  emits: ['changeFile'],
   computed: {
     isChild() {
       return this.parent
@@ -119,7 +122,8 @@ export default {
     },
   },
   mounted() {
-    this.getDirContent()
+    if (!window.gv_desktopMode)
+      this.getDirContent()
   },
   methods: {
     refreshManager() {
@@ -172,6 +176,15 @@ export default {
     openActionsModal(action) {
       this.action = action
       $(this.$refs.actionsModal.$el).modal('show')
+    },
+    confirmSelection() {
+      this.$emit('changeFile', {
+        filePath: this.selectedFile.file_path
+      })
+      $(`#${this.modalId}`).modal('hide')
+    },
+    showModal() {
+      $(`#${this.modalId}`).modal('show')
     }
   }
 }

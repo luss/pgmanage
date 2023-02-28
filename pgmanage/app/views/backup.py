@@ -226,13 +226,6 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
     return args
 
 
-def find(name, path):
-    # temporary solution for getting file from system
-    for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
-
-
 @database_required_new(check_timeout=True, open_connection=True)
 @user_authenticated
 def create_backup(request, database):
@@ -247,7 +240,7 @@ def create_backup(request, database):
 
     backup_obj_type = data.get("type", "objects")
 
-    backup_file = find(data.get("fileName"), os.path.expanduser("~"))
+    backup_file = data.get("fileName")
 
     utility = "pg_dump" if backup_obj_type == "objects" else "pg_dumpall"
 

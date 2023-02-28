@@ -2,8 +2,8 @@
   <form>
     <div class="mb-5">
       <div class="btn-group" role="group">
-        <button class="btn btn-secondary mb-2" @click.prevent="saveBackup">Backup</button>
-        <button class="btn btn-danger mb-2">Reset</button>
+        <a class="btn btn-secondary mb-2" @click.prevent="saveBackup">Backup</a>
+        <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>
       </div>
 
       <ul class="nav nav-tabs" id="backupOptionsTab" role="tablist">
@@ -25,7 +25,18 @@
           <div class="form-group row">
             <label for="backupFileName" class="col-form-label col-2">FileName</label>
             <div class="col-3">
-              <input type="file" class="form-control" id="backupFileName" @change="onFile" nwsaveas>
+              <input v-if="desktopMode" type="file" class="form-control" id="backupFileName" @change="onFile" nwsaveas>
+
+              <div v-else class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text btn btn-secondary" id="btnGroupAddon" @click="openFileManagerModal">Select
+                    a file</div>
+                </div>
+                <input type="text" class="form-control" :value="backupOptions.fileName"
+                  placeholder="Select file or folder" disabled>
+              </div>
+              <!-- <input v-else type="file" class="form-control" id="backupFileName" @change="onFile"> -->
+
             </div>
           </div>
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
@@ -273,14 +284,18 @@
     </div>
   </form>
   <BackupTabJobs ref="jobs" />
+
+  <FileManager ref="fileManager" @change-file="changeFilePath" />
 </template>
 <script>
 import BackupTabJobs from "./BackupTabJobs.vue";
+import FileManager from "./FileManager.vue";
 
 export default {
   name: "BackupTab",
   components: {
     BackupTabJobs,
+    FileManager
   },
   props: {
     backupType: String,
@@ -303,7 +318,7 @@ export default {
         'UHC', 'UTF8', 'WIN1250', 'WIN1251', 'WIN1252', 'WIN1253', 'WIN1254', 'WIN1255', 'WIN1256',
         'WIN1257', 'WIN1258', 'WIN866', 'WIN874'
       ],
-      backupOptions: {
+      backupOptionsDefault: {
         database: this.treeNode.tag.database,
         tables: [],
         schemas: [],
@@ -334,7 +349,9 @@ export default {
         verbose: true,
         dqoute: false,
         use_set_session_auth: false
-      }
+      },
+      backupOptions: {},
+      desktopMode: window.gv_desktopMode
     }
   },
   computed: {
@@ -344,6 +361,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      this.backupOptions = {...this.backupOptionsDefault}
       this.getRoleNames()
       if (this.treeNode.tag.type === 'schema') {
         this.backupOptions.schemas.push(this.treeNode.text)
@@ -372,18 +390,28 @@ export default {
         data: this.backupOptions,
       })
         .then((resp) => {
+          console.log(resp)
           this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
         })
         .catch((error) => {
           console.log(error)
           showError(error.response.data.data);
-          
+
         })
     },
     onFile(e) {
       const [file] = e.target.files
       console.log(file)
-      this.backupOptions.fileName = file?.name
+      this.backupOptions.fileName = file?.path
+    },
+    changeFilePath(event) {
+      this.backupOptions.fileName = event.filePath
+    },
+    openFileManagerModal() {
+      this.$refs.fileManager.showModal()
+    },
+    resetToDefault() {
+      this.backupOptions = {...this.backupOptionsDefault}
     }
   }
 }
