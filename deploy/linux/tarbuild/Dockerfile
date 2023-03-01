@@ -1,5 +1,5 @@
 # FROM pyappbuild
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 USER root
 ENV HOME /root

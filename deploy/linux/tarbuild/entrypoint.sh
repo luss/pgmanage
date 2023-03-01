@@ -62,12 +62,6 @@ curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appim
 cd -
 tar -xzvf /tmp/nwjs-v0.69.1-linux-x64.tar.gz
 mv nwjs-v0.69.1-linux-x64 pgmanage-app_$VERSION
-cd pgmanage-app_$VERSION
-rm ./lib/libEGL.so
-rm ./lib/libGLESv2.so
-rm ./lib/libvulkan.so.1
-rm ./lib/libvk_swiftshader.so
-rm ./lib/*.json
 
 mkdir pgmanage-server
 cp $HOME/pgmanage-server ./pgmanage-server/
