@@ -48,9 +48,12 @@ pyinstaller pgmanage-lin.spec
 mv dist/pgmanage-server $HOME
 rm -rf build dist
 cd $HOME
+
+staticx -l /lib/x86_64-linux-gnu/libcrypt.so.1  ./pgmanage-server ./pgmanage-server-static
+
 # temporarily disabled, we do not distribute the server-only version yet
-mkdir pgmanage-server_$VERSION
-cp pgmanage-server pgmanage-server_$VERSION/
+# mkdir pgmanage-server_$VERSION
+# cp pgmanage-server pgmanage-server_$VERSION/
 # tar -czvf pgmanage-server_$VERSION-linux-x64.tar.gz pgmanage-server_$VERSION/
 # mv pgmanage-server_$VERSION-linux-x64.tar.gz /tmp/
 
@@ -64,7 +67,7 @@ tar -xzvf /tmp/nwjs-v0.69.1-linux-x64.tar.gz
 mv nwjs-v0.69.1-linux-x64 pgmanage-app_$VERSION
 cd pgmanage-app_$VERSION
 mkdir pgmanage-server
-cp $HOME/pgmanage-server ./pgmanage-server/
+cp $HOME/pgmanage-server-static ./pgmanage-server/pgmanage-server
 # copy index.html .desktop and pgmanage_icon.png to the output dir
 cp $HOME/pgmanage/deploy/app/* .
 # adjust the version
