@@ -26,15 +26,15 @@ fi
 cd pgmanage/
 
 # Do a small clean-up
-echo -n "Removing sass and map files"
+echo "Removing sass and map files"
 find ./ -name "*.map" -delete
 find ./ -name "*.scss" -delete
 
-echo -n "Switching to Release Mode..."
+echo "Switching to Release Mode..."
 sed -i -e 's/DEV_MODE = True/DEV_MODE = False/g' pgmanage/custom_settings.py
 echo "Done."
 
-echo -n "Switching to Desktop Mode... "
+echo "Switching to Desktop Mode... "
 sed -i -e 's/DESKTOP_MODE = False/DESKTOP_MODE = True/g' pgmanage/custom_settings.py
 echo "Done."
 
@@ -49,8 +49,8 @@ mv dist/pgmanage-server $HOME
 rm -rf build dist
 cd $HOME
 # temporarily disabled, we do not distribute the server-only version yet
-# mkdir pgmanage-server_$VERSION
-# cp pgmanage-server pgmanage-server_$VERSION/
+mkdir pgmanage-server_$VERSION
+cp pgmanage-server pgmanage-server_$VERSION/
 # tar -czvf pgmanage-server_$VERSION-linux-x64.tar.gz pgmanage-server_$VERSION/
 # mv pgmanage-server_$VERSION-linux-x64.tar.gz /tmp/
 
@@ -62,7 +62,7 @@ curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appim
 cd -
 tar -xzvf /tmp/nwjs-v0.69.1-linux-x64.tar.gz
 mv nwjs-v0.69.1-linux-x64 pgmanage-app_$VERSION
-
+cd pgmanage-app_$VERSION
 mkdir pgmanage-server
 cp $HOME/pgmanage-server ./pgmanage-server/
 # copy index.html .desktop and pgmanage_icon.png to the output dir
