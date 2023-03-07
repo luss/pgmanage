@@ -5,6 +5,7 @@ import os
 import shutil
 
 from app.bgjob.jobs import BatchJob, IJobDesc, escape_dquotes_process_arg
+from app.file_manager.file_manager import FileManager
 from app.models.main import Connection
 from app.views.memory_objects import database_required_new, user_authenticated
 from django.http import JsonResponse
@@ -50,16 +51,16 @@ class BackupMessage(IJobDesc):
             else:
                 self.cmd += cmd_arg(arg)
 
-    def get_server_name(self):
-        s = Connection.objects.filter(id=self.conn_id).first()
+    def get_connection_name(self):
+        conn = Connection.objects.filter(id=self.conn_id).first()
 
-        if s is None:
+        if conn is None:
             return "Not available"
 
-        # host = manager.local_bind_host if manager.use_ssh_tunnel else s.host
-        # port = manager.local_bind_port if manager.use_ssh_tunnel else s.port
+        host = conn.ssh_server if conn.use_tunnel else conn.server
+        port = conn.ssh_port if conn.use_tunnel else conn.port
 
-        return "{0} ({1}:{2})".format(s.database, s.server, s.port)
+        return f"{conn.database} ({host}:{port})"
 
     @property
     def type_desc(self):
@@ -75,21 +76,21 @@ class BackupMessage(IJobDesc):
 
     @property
     def message(self):
-        server_name = self.get_server_name()
+        connection_name = self.get_connection_name()
 
         if self.backup_type == BACKUP.OBJECT:
-            return f"Backing up an object on the server '{server_name}' from database '{self.database}'"
+            return f"Backing up an object on the server '{connection_name}' from database '{self.database}'"
         if self.backup_type == BACKUP.GLOBALS:
-            return f"Backing up the global objects on the server '{server_name}'"
+            return f"Backing up the global objects on the server '{connection_name}'"
         elif self.backup_type == BACKUP.SERVER:
-            return f"Backing up the server '{server_name}'"
+            return f"Backing up the server '{connection_name}'"
         else:
             # It should never reach here.
             return "Unknown Backup"
 
     # args should be removed
     def details(self, cmd, args):
-        server_name = self.get_server_name()
+        server_name = self.get_connection_name()
         backup_type = "Backup"
         if self.backup_type == BACKUP.OBJECT:
             backup_type = "Backup Object"
@@ -198,17 +199,15 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
     set_param("with_oids", "--oids")
     set_param("use_set_session_auth", "--use-set-session-authorization")
 
-    set_param("no_comments", "--no-comments", int(conn.v_version_num) >= 110000)
+    set_param("no_comments", "--no-comments")
     set_param(
         "load_via_partition_root",
         "--load-via-partition-root",
-        int(conn.v_version_num) >= 110000,
     )
 
     set_value("encoding", "--encoding")
     set_value("no_of_jobs", "--jobs")
 
-    # TODO check possibility of backing up few schemas or tables
     args.extend(
         functools.reduce(
             operator.iconcat,
@@ -242,6 +241,11 @@ def create_backup(request, database):
 
     backup_file = data.get("fileName")
 
+    try:
+        FileManager(request.user).check_access_permission(backup_file)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=403)
+
     utility = "pg_dump" if backup_obj_type == "objects" else "pg_dumpall"
 
     ret_val = shutil.which(utility)
@@ -253,7 +257,6 @@ def create_backup(request, database):
     escaped_args = [escape_dquotes_process_arg(arg) for arg in args]
 
     try:
-        bfile = data["fileName"]
         if backup_obj_type == "objects":
             args.append(data["database"])
             escaped_args.append(data["database"])
@@ -261,7 +264,7 @@ def create_backup(request, database):
                 description=BackupMessage(
                     BACKUP.OBJECT,
                     database.v_conn_id,
-                    bfile,
+                    backup_file,
                     *args,
                     database=data["database"],
                 ),
@@ -274,7 +277,7 @@ def create_backup(request, database):
                 description=BackupMessage(
                     BACKUP.SERVER if backup_obj_type != "globals" else BACKUP.GLOBALS,
                     database.v_conn_id,
-                    bfile,
+                    backup_file,
                     *args,
                 ),
                 cmd=utility,
@@ -288,4 +291,4 @@ def create_backup(request, database):
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=410)
 
-    return JsonResponse(data={"job_id": job.id, "description": job.description.message, "Success": 1})
+    return JsonResponse(data={"job_id": job.id, "Success": 1})

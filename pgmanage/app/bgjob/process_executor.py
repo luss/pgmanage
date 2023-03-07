@@ -15,7 +15,7 @@ Args:
   list of program and arguments passed to it.
 
 It also depends on the following environment variable for proper execution.
-PROCID - Process-id
+JOB_ID - Job-id
 OUTDIR - Output directory
 """
 
@@ -40,8 +40,6 @@ def unescape_dquotes_process_arg(arg):
     #
     # Remove the saviour #DQ#
 
-    # This cannot be at common place as this file executes
-    # separately from pgadmin
     dq_id = "#DQ#"
 
     if arg.startswith(dq_id) and arg.endswith(dq_id):

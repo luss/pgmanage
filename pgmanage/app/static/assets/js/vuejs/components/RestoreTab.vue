@@ -1,0 +1,345 @@
+<template>
+  <form>
+    <div class="mb-5">
+      <div class="btn-group" role="group">
+        <a class="btn btn-secondary mb-2" @click.prevent="createRestore">Restore</a>
+        <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>
+      </div>
+      <ul class="nav nav-tabs" id="restoreOptionsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="restoreOptions_1" data-toggle="tab" data-target="#restoreGeneral"
+            type="button" role="tab" aria-controls="restoreGeneral" aria-selected="true">General</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="restoreOptions_2" data-toggle="tab" data-target="#restoreDataObjects" type="button"
+            role="tab" aria-controls="restoreDataObjects" aria-selected="false">Data/Objects
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="restoreOptions_3" data-toggle="tab" data-target="#restoreOptions" type="button"
+            role="tab" aria-controls="restoreOptions" aria-selected="false">Options
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="restoreTabContent" style="min-height:300px;">
+
+        <div class="tab-pane fade show active" id="restoreGeneral" role="tabpanel" aria-labelledby="restoreOptions_1">
+
+          <div class="form-group row">
+            <label for="restoreFileName" class="col-form-label col-2">FileName</label>
+            <div class="col-3">
+              <input v-if="desktopMode" type="file" class="form-control" id="restoreFileName" @change="onFile" nwsaveas>
+
+              <div v-else class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
+                    a file</div>
+                </div>
+                <input type="text" class="form-control" :value="restoreOptions.fileName"
+                  placeholder="Select file or folder" disabled>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="restoreNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
+            <div class="col-3">
+              <input type="text" class="form-control" id="restoreNumberOfJobs">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="restoreRoleName" class="col-form-label col-2">Role name</label>
+            <div class="col-3">
+              <select id="restoreRoleName" class="form-control" v-model="restoreOptions.role">
+                <option value="" disabled>Select an item...</option>
+                <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="restoreDataObjects" role="tabpanel" aria-labelledby="restoreOptions_2">
+
+          <fieldset>
+            <legend><b>Sections</b></legend>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsPreData"
+                v-model="restoreOptions.pre_data" :disabled="restoreOptions.only_data || restoreOptions.only_schema">
+              <label class="custom-control-label" for="restoreOptionsPreData">
+                Pre-data
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsData" v-model="restoreOptions.data"
+                :disabled="restoreOptions.only_data || restoreOptions.only_schema">
+              <label class="custom-control-label" for="restoreOptionsData">Data</label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsPostData"
+                v-model="restoreOptions.post_data" :disabled="restoreOptions.only_data || restoreOptions.only_schema">
+              <label class="custom-control-label" for="restoreOptionsPostData">
+                Post-data
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><b>Type of objects</b></legend>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsOnlyData"
+                v-model="restoreOptions.only_data"
+                :disabled="restoreOptions.pre_data || restoreOptions.data || restoreOptions.post_data">
+              <label class="custom-control-label" for="restoreOptionsOnlyData">
+                Only data
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsOnlySchema"
+                v-model="restoreOptions.only_schema"
+                :disabled="restoreOptions.pre_data || restoreOptions.data || restoreOptions.post_data">
+              <label class="custom-control-label" for="restoreOptionsOnlySchema">
+                Only schema
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><b>Do not save</b></legend>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsOwner" v-model="restoreOptions.owner">
+              <label class="custom-control-label" for="restoreOptionsOwner">
+                Owner
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsPrivilege"
+                v-model="restoreOptions.privilege">
+              <label class="custom-control-label" for="restoreOptionsPrivilege">
+                Privilege
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsTablespace"
+                v-model="restoreOptions.tablespace">
+              <label class="custom-control-label" for="restoreOptionsTablespace">
+                Tablespace
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsComments"
+                v-model="restoreOptions.comments">
+              <label class="custom-control-label" for="restoreOptionsComments">
+                Comments
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="tab-pane fade" id="restoreOptions" role="tabpanel" aria-labelledby="restoreOptions_3">
+          <fieldset>
+            <legend><b>Queries</b></legend>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsIncludeCreateDatabase"
+                v-model="restoreOptions.include_create_database">
+              <label class="custom-control-label" for="restoreOptionsIncludeCreateDatabase">
+                Include 'Create Database' statement
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsClean" v-model="restoreOptions.clean">
+              <label class="custom-control-label" for="restoreOptionsClean">
+                Clean before restore
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsSingleTransaction"
+                v-model="restoreOptions.single_transaction">
+              <label class="custom-control-label" for="restoreOptionsSingleTransaction">
+                Single transaction
+              </label>
+            </div>
+
+          </fieldset>
+
+          <fieldset>
+            <legend><b>Disable</b></legend>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsTrigger"
+                v-model="restoreOptions.disable_trigger">
+              <label class="custom-control-label" for="restoreOptionsTrigger">
+                Trigger
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsNoDataTableFail"
+                v-model="restoreOptions.no_data_fail_table">
+              <label class="custom-control-label" for="restoreOptionsNoDataTableFail">
+                No data for failed tables
+              </label>
+            </div>
+
+          </fieldset>
+
+          <fieldset>
+            <legend><b>Miscellaneous</b></legend>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsVerboseMessages"
+                v-model="restoreOptions.verbose">
+              <label class="custom-control-label" for="restoreOptionsVerboseMessages">
+                Verbose messages
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsSetSeessionAuthorization"
+                v-model="restoreOptions.use_set_session_auth">
+              <label class="custom-control-label" for="restoreOptionsSetSeessionAuthorization">
+                Use SET SESSION AUTHORIZATION
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsExitOnError"
+                v-model="restoreOptions.exit_on_error">
+              <label class="custom-control-label" for="restoreOptionsExitOnError">
+                Exit on error
+              </label>
+            </div>
+
+          </fieldset>
+
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+  <UtilityJobs ref="jobs" />
+  <FileManager ref="fileManager" @change-file="changeFilePath" />
+</template>
+
+<script>
+import UtilityJobs from './UtilityJobs.vue';
+import FileManager from './FileManager.vue';
+
+export default {
+  name: "RestoreTab",
+  components: {
+    FileManager,
+    UtilityJobs
+  },
+  props: {
+    treeNode: Object
+  },
+  data() {
+    return {
+      roleNames: [],
+      encodingList: [
+        'BIG5', 'EUC_CN', 'EUC_JIS_2004', 'EUC_JP', 'EUC_KR', 'EUC_TW', 'GB18030',
+        'GBK', 'ISO_8859_5', 'ISO_8859_6', 'ISO_8859_7', 'ISO_8859_8', 'JOHAB',
+        'KOI18R', 'KOI8U', 'LATIN1', 'LATIN10', 'LATIN2', 'LATIN3', 'LATIN4', 'LATIN5',
+        'LATIN6', 'LATIN7', 'LATIN8', 'LATIN9', 'MULE_INTERNAL', 'SHIFT_JIS_2004', 'SJIS', 'SQL_ASCII',
+        'UHC', 'UTF8', 'WIN1250', 'WIN1251', 'WIN1252', 'WIN1253', 'WIN1254', 'WIN1255', 'WIN1256',
+        'WIN1257', 'WIN1258', 'WIN866', 'WIN874'
+      ],
+      restoreOptionsDefault: {
+        database: this.treeNode.tag.database,
+        table: "",
+        schema: "",
+        function: "",
+        trigger: "",
+        role: "",
+        encoding: "",
+        fileName: "",
+        pre_data: false,
+        post_data: false,
+        only_data: false,
+        only_schema: false,
+        owner: false,
+        privilege: false,
+        tablespace: false,
+        comments: false,
+        include_create_database: false,
+        clean: false,
+        single_transaction: false,
+        disable_trigger: false,
+        no_data_fail_table: false,
+        verbose: false,
+        use_set_session_auth: false,
+        exit_on_error: false
+      },
+      restoreOptions: {},
+      desktopMode: window.gv_desktopMode
+    }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.restoreOptions = { ...this.restoreOptionsDefault }
+      this.getRoleNames()
+      if (this.treeNode.tag.type === 'schema') {
+        this.restoreOptions.schema = this.treeNode.text
+      } else if (this.treeNode.tag.type === 'table') {
+        this.restoreOptions.table = `"${this.treeNode.tag.schema}.${this.treeNode.text}"`
+      } else if (this.treeNode.tag.type === 'trigger') {
+        this.restoreOptions.trigger = `"${this.treeNode.tag.schema}.${this.treeNode.text}"`
+      } else if (this.treeNode.tag.type === 'function') {
+        this.restoreOptions.function = `"${this.treeNode.tag.id}"`
+      }
+    })
+  },
+  methods: {
+    getRoleNames() {
+      axios.post("/get_roles_postgresql/", {
+        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tab_id: window.v_connTabControl.selectedTab.id,
+      })
+        .then((resp) => {
+          resp.data.data.forEach(element => this.roleNames.push(element.name))
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    createRestore() {
+      axios.post("/restore/", {
+        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tab_id: window.v_connTabControl.selectedTab.id,
+        data: this.restoreOptions
+      })
+        .then((resp) => {
+          console.log(resp)
+          this.$refs.jobs.startJob(resp.data.job_id)
+        })
+        .catch((error) => {
+          console.log(error)
+          showError(error.response.data.data)
+        })
+    },
+    onFile(e) {
+      const [file] = e.target.fieldset
+      this.restoreOptions.fileName = file?.path
+    },
+    changeFilePath(event) {
+      this.restoreOptions.fileName = event.filePath
+    },
+    openFileManagerModal() {
+      this.$refs.fileManager.showModal()
+    },
+    resetToDefault() {
+      this.restoreOptions = { ...this.restoreOptionsDefault }
+    }
+  }
+}
+
+</script>

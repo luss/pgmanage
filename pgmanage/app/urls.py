@@ -304,8 +304,9 @@ base_urlpatterns = [
     re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history'),
     re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status"),
 
-    # Backup
+    # Backup and Restore
     path('backup/', views.backup.create_backup, name='create_backup'),
+    path('restore/', views.restore.create_restore, name='create_restore'),
 
     # Background jobs
     path('bgprocess/', views.bgjob.index, name='job_list'),

@@ -1,6 +1,5 @@
 import os
 import pathlib
-import shutil
 import time
 
 from pgmanage.settings import DESKTOP_MODE, HOME_DIR
@@ -44,8 +43,8 @@ class FileManager:
         return f"{num:.1f} {suffix}"
 
     def create(self, path, name, file_type):
-        self._assert_not_exists(os.path.join(path, name))
         self.check_access_permission(os.path.join(path, name))
+        self._assert_not_exists(os.path.join(path, name))
 
         if file_type == "dir":
             self._create_dir(path, name)

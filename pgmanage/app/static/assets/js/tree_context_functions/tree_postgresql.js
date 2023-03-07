@@ -1078,9 +1078,16 @@ function getTreePostgresql(p_div) {
                 text: 'Backup',
                 icon: 'fas cm-all fa-cog',
                 action: function(node) {
-                    createBackupTab(node)
+                    createUtilityTab(node, 'Backup')
                 }
-            }
+            },
+            {
+                text: 'Restore',
+                icon: 'fas cm-all fa-cog',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
+                }
+            },
             
             /*, {
                 text: 'Advanced Object Search',
@@ -1378,12 +1385,12 @@ function getTreePostgresql(p_div) {
                         }
                     }]
                 }
-            }, 
+            },
             {
                 text: 'Backup',
                 icon: 'fas cm-all fa-cog',
                 action: function(node) {
-                    createBackupTab(node)
+                    createUtilityTab(node, 'Backup')
                 }
             },
             {
@@ -1408,7 +1415,13 @@ function getTreePostgresql(p_div) {
                         .drop_schema.replace(
                             '#schema_name#', node.text));
                 }
-            }]
+            }, {
+                text: 'Restore',
+                icon: 'fas cm-all fa-cog',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
+                }
+            },]
         },
         'cm_tables': {
             elements: [{
@@ -1584,13 +1597,21 @@ function getTreePostgresql(p_div) {
                                     node.tag.schema + '.' +
                                     node.text));
                         }
-                    }, {
+                    }, 
+                    {
                         text: 'Backup',
                         icon: 'fas cm-all fa-cog',
                         action: function(node) {
-                            createBackupTab(node)
+                            createUtilityTab(node, 'Backup')
                         }
-                    }
+                    },
+                    {
+                        text: 'Restore',
+                        icon: 'fas cm-all fa-cog',
+                        action: function(node) {
+                            createUtilityTab(node, 'Restore')
+                        }
+                    },
                 ]
                 }
             }]
@@ -2194,6 +2215,12 @@ function getTreePostgresql(p_div) {
                             node.parent.parent.text).replace(
                             '#trigger_name#', node.text));
                 }
+            }, {
+                text: 'Restore',
+                icon: 'fas cm-all fa-cog',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
+                }
             }]
         },
         'cm_eventtriggers': {
@@ -2529,6 +2556,12 @@ function getTreePostgresql(p_div) {
                             node.tag.id
                         )
                     );
+                }
+            }, { 
+                text: 'Restore',
+                icon: 'fas cm-all fa-cog',
+                action: function(node) {
+                createUtilityTab(node, 'Restore')
                 }
             },
             // {
@@ -4609,7 +4642,7 @@ function getTreeDetailsPostgresql(node) {
                     text: 'Backup Globals',
                     icon: 'fas cm-all fa-cog',
                     action: function(node) {
-                        createBackupTab(node, 'globals')
+                        createUtilityTab(node, 'Backup', 'globals')
                     }
                 }
             );
@@ -4618,9 +4651,9 @@ function getTreeDetailsPostgresql(node) {
                     text: 'Backup Server',
                     icon: 'fas cm-all fa-cog',
                     action: function(node) {
-                        createBackupTab(node, 'server')
+                        createUtilityTab(node, 'Backup', 'server')
                     }
-                }
+                },
             );
             node.tree.contextMenu.cm_server.elements.push({
                 text: 'Monitoring',

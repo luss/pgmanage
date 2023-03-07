@@ -29,7 +29,7 @@
 
               <div v-else class="input-group">
                 <div class="input-group-prepend">
-                  <div class="input-group-text btn btn-secondary" id="btnGroupAddon" @click="openFileManagerModal">Select
+                  <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                     a file</div>
                 </div>
                 <input type="text" class="form-control" :value="backupOptions.fileName"
@@ -283,18 +283,18 @@
       </div>
     </div>
   </form>
-  <BackupTabJobs ref="jobs" />
+  <UtilityJobs ref="jobs" />
 
   <FileManager ref="fileManager" @change-file="changeFilePath" />
 </template>
 <script>
-import BackupTabJobs from "./BackupTabJobs.vue";
+import UtilityJobs from "./UtilityJobs.vue";
 import FileManager from "./FileManager.vue";
 
 export default {
   name: "BackupTab",
   components: {
-    BackupTabJobs,
+    UtilityJobs,
     FileManager
   },
   props: {
@@ -391,7 +391,7 @@ export default {
       })
         .then((resp) => {
           console.log(resp)
-          this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
+          this.$refs.jobs.startJob(resp.data.job_id)
         })
         .catch((error) => {
           console.log(error)

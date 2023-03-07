@@ -20,7 +20,8 @@
       <tr v-for="job in jobList" :key="job.id" class="text-center">
         <th scope="row"></th>
         <td><a class="btn" @click="deleteJob(job.id)"><i class="fas fa-times"></i></a></td>
-        <td><a :class="['btn', {'disabled': job.canStop}]" @click="stopJob(job.id)"><i class="fa-regular fa-circle-stop"></i></a></td>
+        <td><a :class="['btn', { 'disabled': job.canStop }]" @click="stopJob(job.id)"><i
+              class="fa-regular fa-circle-stop"></i></a></td>
         <td><a class="btn" @click="getJobDetails(job.id)"><i class="fas fa-file-code"></i></a></td>
         <td>{{ job.utility_pid }}</td>
         <td>{{ job.details.type }}</td>
@@ -38,34 +39,34 @@
     </tbody>
   </table>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header p-3">
-        <h3 class="modal-title" id="exampleModalLabel">{{ selectedJob?.type_desc}}</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>{{ selectedJob?.description }}</p>
-        <p>Command:</p>
-        <p class="bg-ligth p-2 border border-dark">{{ selectedJob?.details?.cmd }}</p>
-        <div class="d-flex justify-content-between">
-          <a>Start time - {{ selectedJob?.start_time }}</a>
-          <a>Execution time {{ selectedJob?.execution_time }}</a>
+  <!-- Modal -->
+  <div class="modal fade" :id="detailModalId" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header p-3">
+          <h3 class="modal-title">{{ selectedJob?.type_desc }}</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div :style="{height: '200px', overflowY: 'scroll'}" class="border border-dark p-1">
-          <p v-for="log in logs"> {{ log }}</p>
+        <div class="modal-body">
+          <p>{{ selectedJob?.description }}</p>
+          <p>Command:</p>
+          <p class="bg-ligth p-2 border border-dark">{{ selectedJob?.details?.cmd }}</p>
+          <div class="d-flex justify-content-between">
+            <a>Start time - {{ selectedJob?.start_time }}</a>
+            <a>Execution time {{ selectedJob?.execution_time }}</a>
+          </div>
+          <div :style="{ height: '200px', overflowY: 'scroll' }" class="border border-dark p-1">
+            <p v-for="log in logs"> {{ log }}</p>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <a :class="['btn', 'btn-danger', {'d-none': selectedJob.canStop}]">Stop process</a>
+        <div class="modal-footer">
+          <a :class="['btn', 'btn-danger', { 'd-none': selectedJob.canStop }]">Stop process</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -88,6 +89,7 @@ export default {
       detailedJobWorker: '',
       logs: [],
       selectedJob: {},
+      detailModalId: `${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_modal_job_detail`
     }
   },
   mounted() {
@@ -147,30 +149,30 @@ export default {
           console.log(error)
         })
     },
-    getJobDetails(job_id, out=0, err=0) {
+    getJobDetails(job_id, out = 0, err = 0) {
       axios.get(`/bgprocess/${job_id}/${out}/${err}`)
-      .then((resp) => {
-        console.log(resp)
-        this.selectedJob = Object.assign({}, this.jobList.find((p) => p.id == job_id))
-        let out_pos = resp.data.data.out.pos
-        let err_pos = resp.data.data.err.pos
-        this.logs.push(
-          ...resp.data.data.err.lines.map((l) => l[1]),
-          ...resp.data.data.out.lines.map((l) => l[1]))
-        $('#exampleModal').modal('show')  
-        if (!this.detailedJobWorker) {
-          this.detailedJobWorker = setInterval(() => {
-          this.getJobDetails(job_id, out_pos, err_pos)
-        }, 1000)
+        .then((resp) => {
+          console.log(resp)
+          this.selectedJob = Object.assign({}, this.jobList.find((p) => p.id == job_id))
+          let out_pos = resp.data.data.out.pos
+          let err_pos = resp.data.data.err.pos
+          this.logs.push(
+            ...resp.data.data.err.lines.map((l) => l[1]),
+            ...resp.data.data.out.lines.map((l) => l[1]))
+          $(`#${this.detailModalId}`).modal('show')
+          if (!this.detailedJobWorker) {
+            this.detailedJobWorker = setInterval(() => {
+              this.getJobDetails(job_id, out_pos, err_pos)
+            }, 1000)
 
-        }
-        if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailedJobWorker) {
-          clearInterval(this.detailedJobWorker)
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+          }
+          if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailedJobWorker) {
+            clearInterval(this.detailedJobWorker)
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     jobStatus(process_state) {
       if (process_state === JobState.PROCESS_STARTED) {

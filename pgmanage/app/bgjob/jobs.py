@@ -10,7 +10,7 @@ from abc import abstractmethod
 from datetime import datetime
 from io import StringIO
 from pickle import dumps, loads
-from subprocess import PIPE, Popen
+from subprocess import Popen
 
 import psutil
 from app.models.main import Connection, Job
@@ -140,13 +140,13 @@ class BatchJob:
         job.save()
 
     def _get_python_interpreter(self):
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
             # running in a PyInstaller-compiled executable
-            python_path = shutil.which('python3')
+            python_path = shutil.which("python3")
         else:
             # running in a normal Python environment
             python_path = sys.executable
-        
+
         return python_path
 
     def start(self):
