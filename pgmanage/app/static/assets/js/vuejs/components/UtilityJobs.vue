@@ -94,7 +94,7 @@ export default {
   },
   mounted() {
     this.startWorker()
-    $('#exampleModal').on('hidden.bs.modal', () => {
+    $(`#${this.detailModalId}`).on('hidden.bs.modal', () => {
       this.logs.splice(0)
       clearInterval(this.detailedJobWorker)
     })

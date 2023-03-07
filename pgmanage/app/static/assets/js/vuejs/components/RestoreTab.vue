@@ -5,29 +5,29 @@
         <a class="btn btn-secondary mb-2" @click.prevent="createRestore">Restore</a>
         <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>
       </div>
-      <ul class="nav nav-tabs" id="restoreOptionsTab" role="tablist">
+      <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="restoreOptions_1" data-toggle="tab" data-target="#restoreGeneral"
-            type="button" role="tab" aria-controls="restoreGeneral" aria-selected="true">General</button>
+          <button class="nav-link active" id="restoreOptions_1" data-toggle="tab" :data-target="`#${restoreTabId}_general`"
+            type="button" role="tab" aria-selected="true">General</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="restoreOptions_2" data-toggle="tab" data-target="#restoreDataObjects" type="button"
-            role="tab" aria-controls="restoreDataObjects" aria-selected="false">Data/Objects
+          <button class="nav-link" id="restoreOptions_2" data-toggle="tab" :data-target="`#${restoreTabId}_data_objects`" type="button"
+            role="tab" aria-selected="false">Data/Objects
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="restoreOptions_3" data-toggle="tab" data-target="#restoreOptions" type="button"
-            role="tab" aria-controls="restoreOptions" aria-selected="false">Options
+          <button class="nav-link" id="restoreOptions_3" data-toggle="tab" :data-target="`#${restoreTabId}_options`" type="button"
+            role="tab" aria-selected="false">Options
           </button>
         </li>
       </ul>
-      <div class="tab-content" id="restoreTabContent" style="min-height:300px;">
+      <div class="tab-content" style="min-height:300px;">
 
-        <div class="tab-pane fade show active" id="restoreGeneral" role="tabpanel" aria-labelledby="restoreOptions_1">
+        <div class="tab-pane fade show active" :id="`${restoreTabId}_general`" role="tabpanel">
 
           <div class="form-group row">
             <label for="restoreFileName" class="col-form-label col-2">FileName</label>
-            <div class="col-3">
+            <div class="col-5">
               <input v-if="desktopMode" type="file" class="form-control" id="restoreFileName" @change="onFile" nwsaveas>
 
               <div v-else class="input-group">
@@ -43,14 +43,14 @@
 
           <div class="form-group row">
             <label for="restoreNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
-            <div class="col-3">
+            <div class="col-5">
               <input type="text" class="form-control" id="restoreNumberOfJobs">
             </div>
           </div>
 
           <div class="form-group row">
             <label for="restoreRoleName" class="col-form-label col-2">Role name</label>
-            <div class="col-3">
+            <div class="col-5">
               <select id="restoreRoleName" class="form-control" v-model="restoreOptions.role">
                 <option value="" disabled>Select an item...</option>
                 <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
@@ -59,7 +59,7 @@
           </div>
         </div>
 
-        <div class="tab-pane fade" id="restoreDataObjects" role="tabpanel" aria-labelledby="restoreOptions_2">
+        <div class="tab-pane fade" :id="`${restoreTabId}_data_objects`" role="tabpanel">
 
           <fieldset>
             <legend><b>Sections</b></legend>
@@ -143,7 +143,7 @@
           </fieldset>
         </div>
 
-        <div class="tab-pane fade" id="restoreOptions" role="tabpanel" aria-labelledby="restoreOptions_3">
+        <div class="tab-pane fade" :id="`${restoreTabId}_options`" role="tabpanel">
           <fieldset>
             <legend><b>Queries</b></legend>
             <div class="custom-control custom-switch">
@@ -280,7 +280,8 @@ export default {
         exit_on_error: false
       },
       restoreOptions: {},
-      desktopMode: window.gv_desktopMode
+      desktopMode: window.gv_desktopMode,
+      restoreTabId: window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id
     }
   },
   mounted() {

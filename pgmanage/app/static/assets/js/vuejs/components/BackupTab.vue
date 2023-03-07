@@ -6,25 +6,25 @@
         <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>
       </div>
 
-      <ul class="nav nav-tabs" id="backupOptionsTab" role="tablist">
+      <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="backupOptions_1" data-toggle="tab" data-target="#backupGeneral"
-            type="button" role="tab" aria-controls="backupGeneral" aria-selected="true">General</button>
+          <button class="nav-link active" data-toggle="tab" :data-target="`#${backupTabId}_general`"
+            type="button" role="tab" aria-selected="true">General</button>
         </li>
         <li v-if="isNotGlobals" class="nav-item" role="presentation">
-          <button class="nav-link" id="backupOptions_2" data-toggle="tab" data-target="#backupDataObjects" type="button"
-            role="tab" aria-controls="backupDataObjects" aria-selected="false">Data/Objects</button>
+          <button class="nav-link" data-toggle="tab" :data-target="`#${backupTabId}_data_objects`" type="button"
+            role="tab" aria-selected="false">Data/Objects</button>
         </li>
         <li v-if="isNotGlobals" class="nav-item" role="presentation">
-          <button class="nav-link" id="backupOptions_3" data-toggle="tab" data-target="#backupOptions" type="button"
-            role="tab" aria-controls="backupOptions" aria-selected="false">Options</button>
+          <button class="nav-link" data-toggle="tab" :data-target="`#${backupTabId}_options`" type="button"
+            role="tab" aria-selected="false">Options</button>
         </li>
       </ul>
-      <div class="tab-content" id="myTabContent" style="min-height: 300px;">
-        <div class="tab-pane fade show active" id="backupGeneral" role="tabpanel" aria-labelledby="backupOptions_1">
+      <div class="tab-content" style="min-height: 300px;">
+        <div class="tab-pane fade show active" :id="`${backupTabId}_general`" role="tabpanel">
           <div class="form-group row">
             <label for="backupFileName" class="col-form-label col-2">FileName</label>
-            <div class="col-3">
+            <div class="col-5">
               <input v-if="desktopMode" type="file" class="form-control" id="backupFileName" @change="onFile" nwsaveas>
 
               <div v-else class="input-group">
@@ -35,13 +35,12 @@
                 <input type="text" class="form-control" :value="backupOptions.fileName"
                   placeholder="Select file or folder" disabled>
               </div>
-              <!-- <input v-else type="file" class="form-control" id="backupFileName" @change="onFile"> -->
 
             </div>
           </div>
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupFormat" class="col-form-label col-2">Format</label>
-            <div class="col-3">
+            <div class="col-5">
               <select id="backupFormat" class="form-control" v-model="backupOptions.format">
                 <option v-for="(value, key) in formats" :value="key" :key="key">{{ value }}</option>
               </select>
@@ -49,13 +48,13 @@
           </div>
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupCompressionRatio" class="col-form-label col-2">Compression ratio</label>
-            <div class="col-3">
+            <div class="col-5">
               <input type="text" class="form-control" id="backupCompressionRatio">
             </div>
           </div>
           <div v-if="isNotGlobals" class="form-group row">
             <label for="backupEncoding" class="col-form-label col-2">Encoding</label>
-            <div class="col-3">
+            <div class="col-5">
               <select id="backupEncoding" class="form-control" v-model="backupOptions.encoding">
                 <option value="" disabled>Select your option</option>
                 <option v-for="encoding in encodingList" :key="encoding" :value="encoding">{{ encoding }}</option>
@@ -64,44 +63,45 @@
           </div>
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
-            <div class="col-3">
+            <div class="col-5">
               <input type="text" class="form-control" id="backupNumberOfJobs"
                 :disabled="backupOptions.format != 'directory'">
             </div>
           </div>
           <div class="form-group row">
             <label for="backupRoleName" class="col-form-label col-2">Role name</label>
-            <div class="col-3">
+            <div class="col-5">
               <select id="backupRoleName" class="form-control" v-model="backupOptions.role">
                 <option value="" disabled>Select an item...</option>
                 <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
               </select>
             </div>
           </div>
-
-          <div v-if="!isNotGlobals" class="form-group row">
-            <fieldset>
-              <legend><b>Miscellaneous</b></legend>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" id="backupOptionsVerboseMessages"
-                  v-model="backupOptions.verbose">
-                <label class="custom-control-label" for="backupOptionsVerboseMessages">
-                  Verbose messages
-                </label>
-              </div>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" id="backupOptionsDoubleQuote"
-                  v-model="backupOptions.dqoute">
-                <label class="custom-control-label" for="backupOptionsDoubleQuote">
-                  Force double quote on identifiers
-                </label>
-              </div>
-              <p>Only objects global to the entire database will be backed up, in PLAIN format</p>
-            </fieldset>
+          <div v-if="backupType === 'server'" class="bg-hit font-italic w-25" >
+            <a>The backup will be in PLAIN format.</a>
           </div>
+          <fieldset v-if="!isNotGlobals">
+            <legend><b>Miscellaneous</b></legend>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="backupOptionsVerboseMessages"
+                v-model="backupOptions.verbose">
+              <label class="custom-control-label" for="backupOptionsVerboseMessages">
+                Verbose messages
+              </label>
+            </div>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="backupOptionsDoubleQuote"
+                v-model="backupOptions.dqoute">
+              <label class="custom-control-label" for="backupOptionsDoubleQuote">
+                Force double quote on identifiers
+              </label>
+            </div>
+            <div class="bg-hit font-italic w-50">
+              <a>Only objects global to the entire database will be backed up, in PLAIN format</a>
+          </div>
+          </fieldset>
         </div>
-        <div v-if="isNotGlobals" class="tab-pane fade" id="backupDataObjects" role="tabpanel"
-          aria-labelledby="backupOptions_2">
+        <div v-if="isNotGlobals" class="tab-pane fade" :id="`${backupTabId}_data_objects`" role="tabpanel">
           <fieldset v-if="backupType === 'objects'">
             <legend><b>Sections</b></legend>
             <div class="custom-control custom-switch">
@@ -189,8 +189,7 @@
             </div>
           </fieldset>
         </div>
-        <div v-if="isNotGlobals" class="tab-pane fade" id="backupOptions" role="tabpanel"
-          aria-labelledby="backupOptions_3">
+        <div v-if="isNotGlobals" class="tab-pane fade" :id="`${backupTabId}_options`" role="tabpanel">
           <fieldset>
             <legend><b>Queries</b></legend>
             <div class="custom-control custom-switch">
@@ -351,7 +350,8 @@ export default {
         use_set_session_auth: false
       },
       backupOptions: {},
-      desktopMode: window.gv_desktopMode
+      desktopMode: window.gv_desktopMode,
+      backupTabId: window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id
     }
   },
   computed: {
