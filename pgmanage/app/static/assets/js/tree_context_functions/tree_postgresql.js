@@ -1076,14 +1076,14 @@ function getTreePostgresql(p_div) {
             },
             {
                 text: 'Backup',
-                icon: 'fas cm-all fa-cog',
+                icon: 'fa-solid fa-download cm-all',
                 action: function(node) {
                     createUtilityTab(node, 'Backup')
                 }
             },
             {
                 text: 'Restore',
-                icon: 'fas cm-all fa-cog',
+                icon: 'fa-solid fa-upload cm-all',
                 action: function(node) {
                     createUtilityTab(node, 'Restore')
                 }
@@ -1388,9 +1388,16 @@ function getTreePostgresql(p_div) {
             },
             {
                 text: 'Backup',
-                icon: 'fas cm-all fa-cog',
+                icon: 'fa-solid fa-download cm-all',
                 action: function(node) {
                     createUtilityTab(node, 'Backup')
+                }
+            },
+            {
+                text: 'Restore',
+                icon: 'fa-solid fa-upload cm-all',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
                 }
             },
             {
@@ -1414,12 +1421,6 @@ function getTreePostgresql(p_div) {
                     tabSQLTemplate('Drop Schema', node.tree.tag
                         .drop_schema.replace(
                             '#schema_name#', node.text));
-                }
-            }, {
-                text: 'Restore',
-                icon: 'fas cm-all fa-cog',
-                action: function(node) {
-                    createUtilityTab(node, 'Restore')
                 }
             },]
         },
@@ -1600,14 +1601,14 @@ function getTreePostgresql(p_div) {
                     }, 
                     {
                         text: 'Backup',
-                        icon: 'fas cm-all fa-cog',
+                        icon: 'fa-solid fa-download cm-all',
                         action: function(node) {
                             createUtilityTab(node, 'Backup')
                         }
                     },
                     {
                         text: 'Restore',
-                        icon: 'fas cm-all fa-cog',
+                        icon: 'fa-solid fa-upload cm-all',
                         action: function(node) {
                             createUtilityTab(node, 'Restore')
                         }
@@ -2217,7 +2218,7 @@ function getTreePostgresql(p_div) {
                 }
             }, {
                 text: 'Restore',
-                icon: 'fas cm-all fa-cog',
+                icon: 'fa-solid fa-upload cm-all',
                 action: function(node) {
                     createUtilityTab(node, 'Restore')
                 }
@@ -2559,7 +2560,7 @@ function getTreePostgresql(p_div) {
                 }
             }, { 
                 text: 'Restore',
-                icon: 'fas cm-all fa-cog',
+                icon: 'fa-solid fa-upload cm-all',
                 action: function(node) {
                 createUtilityTab(node, 'Restore')
                 }
@@ -4640,7 +4641,7 @@ function getTreeDetailsPostgresql(node) {
             node.tree.contextMenu.cm_server.elements.push(
                 {
                     text: 'Backup Globals',
-                    icon: 'fas cm-all fa-cog',
+                    icon: 'fa-solid fa-download cm-all',
                     action: function(node) {
                         createUtilityTab(node, 'Backup', 'globals')
                     }
@@ -4649,7 +4650,7 @@ function getTreeDetailsPostgresql(node) {
             node.tree.contextMenu.cm_server.elements.push(
                 {
                     text: 'Backup Server',
-                    icon: 'fas cm-all fa-cog',
+                    icon: 'fa-solid fa-download cm-all',
                     action: function(node) {
                         createUtilityTab(node, 'Backup', 'server')
                     }
