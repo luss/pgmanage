@@ -169,7 +169,7 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
         )
 
         set_param("blobs", "--blobs", data["format"] in ["custom", "tar"])
-        set_value("ratio", "--compress", None, ["custom", "plain", "directory"])
+        set_value("compression_ratio", "--compress", None, ["custom", "plain", "directory"])
 
     set_param("only_data", "--data-only", data.get("only_data", None))
     set_param(
@@ -206,7 +206,7 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
     )
 
     set_value("encoding", "--encoding")
-    set_value("no_of_jobs", "--jobs")
+    set_value("number_of_jobs", "--jobs")
 
     args.extend(
         functools.reduce(

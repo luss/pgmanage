@@ -2,8 +2,8 @@
   <form>
     <div>
       <div class="btn-group" role="group">
-        <a class="btn btn-secondary mb-2" @click.prevent="createRestore">Restore</a>
-        <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>
+        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !restoreOptions.fileName }]" @click.prevent="createRestore">Restore</a>
+        <a :class="['btn', 'btn-danger', 'mb-2', {'disabled': !isOptionsChanged}]" @click="resetToDefault">Reset</a>
       </div>
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -44,7 +44,7 @@
           <div class="form-group row">
             <label for="restoreNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="restoreNumberOfJobs">
+              <input type="text" class="form-control" id="restoreNumberOfJobs" v-model="restoreOptions.number_of_jobs">
             </div>
           </div>
 
@@ -277,26 +277,32 @@ export default {
         no_data_fail_table: false,
         verbose: false,
         use_set_session_auth: false,
-        exit_on_error: false
+        exit_on_error: false,
+        number_of_jobs: ""
       },
       restoreOptions: {},
       desktopMode: window.gv_desktopMode,
       restoreTabId: window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id
     }
   },
+  computed: {
+    isOptionsChanged() {
+      return JSON.stringify(this.restoreOptionsDefault) !== JSON.stringify(this.restoreOptions)
+    }
+  },
   mounted() {
     this.$nextTick(() => {
+      if (this.treeNode.tag.type === 'schema') {
+        this.restoreOptionsDefault.schema = this.treeNode.text
+      } else if (this.treeNode.tag.type === 'table') {
+        this.restoreOptionsDefault.table = `"${this.treeNode.tag.schema}.${this.treeNode.text}"`
+      } else if (this.treeNode.tag.type === 'trigger') {
+        this.restoreOptionsDefault.trigger = `"${this.treeNode.tag.schema}.${this.treeNode.text}"`
+      } else if (this.treeNode.tag.type === 'function') {
+        this.restoreOptionsDefault.function = `"${this.treeNode.tag.id}"`
+      }
       this.restoreOptions = { ...this.restoreOptionsDefault }
       this.getRoleNames()
-      if (this.treeNode.tag.type === 'schema') {
-        this.restoreOptions.schema = this.treeNode.text
-      } else if (this.treeNode.tag.type === 'table') {
-        this.restoreOptions.table = `"${this.treeNode.tag.schema}.${this.treeNode.text}"`
-      } else if (this.treeNode.tag.type === 'trigger') {
-        this.restoreOptions.trigger = `"${this.treeNode.tag.schema}.${this.treeNode.text}"`
-      } else if (this.treeNode.tag.type === 'function') {
-        this.restoreOptions.function = `"${this.treeNode.tag.id}"`
-      }
     })
   },
   methods: {

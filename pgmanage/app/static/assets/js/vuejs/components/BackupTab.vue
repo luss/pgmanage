@@ -2,8 +2,8 @@
   <form>
     <div>
       <div class="btn-group" role="group">
-        <a class="btn btn-secondary mb-2" @click.prevent="saveBackup">Backup</a>
-        <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>
+        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !backupOptions.fileName }]" @click.prevent="saveBackup">Backup</a>
+        <a :class="['btn', 'btn-danger', 'mb-2', {'disabled': !isOptionsChanged}]" @click="resetToDefault">Reset</a>
       </div>
 
       <ul class="nav nav-tabs" role="tablist">
@@ -49,7 +49,7 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupCompressionRatio" class="col-form-label col-2">Compression ratio</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupCompressionRatio">
+              <input type="text" class="form-control" id="backupCompressionRatio" v-model="backupOptions.compression_ratio">
             </div>
           </div>
           <div v-if="isNotGlobals" class="form-group row">
@@ -64,7 +64,7 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupNumberOfJobs"
+              <input type="text" class="form-control" id="backupNumberOfJobs" v-model="backupOptions.number_of_jobs"
                 :disabled="backupOptions.format != 'directory'">
             </div>
           </div>
@@ -347,7 +347,9 @@ export default {
         with_oids: false,
         verbose: true,
         dqoute: false,
-        use_set_session_auth: false
+        use_set_session_auth: false,
+        number_of_jobs: "",
+        compression_ratio: ""
       },
       backupOptions: {},
       desktopMode: window.gv_desktopMode,
@@ -357,17 +359,20 @@ export default {
   computed: {
     isNotGlobals() {
       return this.backupType !== 'globals'
+    },
+    isOptionsChanged() {
+      return JSON.stringify(this.backupOptionsDefault) !== JSON.stringify(this.backupOptions)
     }
   },
   mounted() {
     this.$nextTick(() => {
+      if (this.treeNode.tag.type === 'schema') {
+        this.backupOptionsDefault.schemas.push(this.treeNode.text)
+      } else if (this.treeNode.tag.type === 'table') {
+        this.backupOptionsDefault.tables.push(`"${this.treeNode.tag.schema}.${this.treeNode.text}"`)
+      }
       this.backupOptions = {...this.backupOptionsDefault}
       this.getRoleNames()
-      if (this.treeNode.tag.type === 'schema') {
-        this.backupOptions.schemas.push(this.treeNode.text)
-      } else if (this.treeNode.tag.type === 'table') {
-        this.backupOptions.tables.push(`"${this.treeNode.tag.schema}.${this.treeNode.text}"`)
-      }
     })
   },
   methods: {

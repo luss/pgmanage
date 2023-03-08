@@ -107,7 +107,7 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
     set_param("use_set_session_auth", "--use-set-session-authorization", data, args)
     set_param("exit_on_error", "--exit-on-error", data, args)
 
-    set_value("no_of_jobs", "--jobs", data, args)
+    set_value("number_of_jobs", "--jobs", data, args)
     set_param("verbose", "--verbose", data, args)
 
     # TODO these values may also include many instances,
