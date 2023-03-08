@@ -1,6 +1,6 @@
 <template>
   <form>
-    <div class="mb-5">
+    <div>
       <div class="btn-group" role="group">
         <a class="btn btn-secondary mb-2" @click.prevent="createRestore">Restore</a>
         <a class="btn btn-danger mb-2" @click="resetToDefault">Reset</a>

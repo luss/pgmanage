@@ -1,5 +1,6 @@
 <template>
   <h2 class="text-center">Jobs</h2>
+  <div class="utility-jobs">
   <table class="table table-hover table-dark table-bordered">
     <thead class="text-center">
       <tr>
@@ -19,10 +20,10 @@
     <tbody>
       <tr v-for="job in jobList" :key="job.id" class="text-center">
         <th scope="row"></th>
-        <td><a class="btn" @click="deleteJob(job.id)"><i class="fas fa-times"></i></a></td>
-        <td><a :class="['btn', { 'disabled': job.canStop }]" @click="stopJob(job.id)"><i
+        <td><a class="btn" @click="deleteJob(job.id)"><i class="fas fa-times" title="delete job"></i></a></td>
+        <td><a :class="['btn', { 'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job"><i
               class="fa-regular fa-circle-stop"></i></a></td>
-        <td><a class="btn" @click="getJobDetails(job.id)"><i class="fas fa-file-code"></i></a></td>
+        <td><a class="btn" @click="getJobDetails(job.id)" title="View Details"><i class="fas fa-file-code"></i></a></td>
         <td>{{ job.utility_pid }}</td>
         <td>{{ job.details.type }}</td>
         <td>{{ job.details.server }}</td>
@@ -31,13 +32,15 @@
         <td :class="{
           'bg-info': jobStatus(job.process_state) === 'Running',
           'bg-danger': jobStatus(job.process_state) === 'Terminated' || jobStatus(job.process_state) === 'Terminating',
-          'bg-success': jobStatus(job.process_state) === 'Finished'
+          'bg-success': jobStatus(job.process_state) === 'Finished',
+          'bg-dirtied': jobStatus(job.process_state) === 'Failed'
         }">{{ jobStatus(job.process_state) }}
         </td>
         <td>{{ job.execution_time }}</td>
       </tr>
     </tbody>
   </table>
+</div>
 
   <!-- Modal -->
   <div class="modal fade" :id="detailModalId" tabindex="-1" role="dialog" aria-hidden="true">
@@ -62,7 +65,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <a :class="['btn', 'btn-danger', { 'd-none': selectedJob.canStop }]">Stop process</a>
+          <a :class="['btn', 'btn-danger', { 'd-none': selectedJob.canStop }]" @click="stopJob(selectedJob.id)">Stop process</a>
         </div>
       </div>
     </div>
@@ -153,9 +156,10 @@ export default {
       axios.get(`/bgprocess/${job_id}/${out}/${err}`)
         .then((resp) => {
           console.log(resp)
-          this.selectedJob = Object.assign({}, this.jobList.find((p) => p.id == job_id))
+          this.selectedJob = Object.assign({}, this.jobList.find((j) => j.id == job_id))
           let out_pos = resp.data.data.out.pos
           let err_pos = resp.data.data.err.pos
+          this.selectedJob.execution_time = resp.data.data.execution_time
           this.logs.push(
             ...resp.data.data.err.lines.map((l) => l[1]),
             ...resp.data.data.out.lines.map((l) => l[1]))
@@ -217,3 +221,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .utility-jobs {
+    height: 50vh;
+    overflow-y: scroll;
+  }
+</style>
