@@ -49,7 +49,7 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupCompressionRatio" class="col-form-label col-2">Compression ratio</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupCompressionRatio" v-model="backupOptions.compression_ratio">
+              <input type="text" class="form-control" id="backupCompressionRatio" v-model.number="backupOptions.compression_ratio">
             </div>
           </div>
           <div v-if="isNotGlobals" class="form-group row">
@@ -64,7 +64,7 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupNumberOfJobs" v-model="backupOptions.number_of_jobs"
+              <input type="text" class="form-control" id="backupNumberOfJobs" v-model.number="backupOptions.number_of_jobs"
                 :disabled="backupOptions.format != 'directory'">
             </div>
           </div>

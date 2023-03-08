@@ -44,7 +44,7 @@
           <div class="form-group row">
             <label for="restoreNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="restoreNumberOfJobs" v-model="restoreOptions.number_of_jobs">
+              <input type="text" class="form-control" id="restoreNumberOfJobs" v-model.number="restoreOptions.number_of_jobs">
             </div>
           </div>
 
