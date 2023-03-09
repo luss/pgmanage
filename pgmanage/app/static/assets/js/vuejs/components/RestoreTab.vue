@@ -51,7 +51,7 @@
           </div>
 
           <div class="form-group row">
-            <label for="restoreRoleName" class="col-form-label col-2">Role name</label>
+            <label for="restoreRoleName" class="col-form-label col-2">Restore as:</label>
             <div class="col-5">
               <select id="restoreRoleName" class="form-control" v-model="restoreOptions.role">
                 <option value="" disabled>Select an item...</option>

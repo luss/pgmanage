@@ -71,7 +71,7 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="backupRoleName" class="col-form-label col-2">Role name</label>
+            <label for="backupRoleName" class="col-form-label col-2">Backup as:</label>
             <div class="col-5">
               <select id="backupRoleName" class="form-control" v-model="backupOptions.role">
                 <option value="" disabled>Select an item...</option>
