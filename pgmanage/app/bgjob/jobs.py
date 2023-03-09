@@ -14,6 +14,7 @@ from subprocess import Popen
 
 import psutil
 from app.models.main import Connection, Job
+from app.views.polling import GetDuration
 from django.utils.timezone import make_aware
 
 PROCESS_NOT_STARTED = 0
@@ -264,7 +265,7 @@ class BatchJob:
         if enc == "ascii":
             enc = "utf-8"
 
-        execution_time = None
+        duration = None
 
         if job is not None:
             status, updated = BatchJob.update_job_info(job)
@@ -278,7 +279,7 @@ class BatchJob:
                 stime = self.start_time
                 etime = self.end_time or make_aware(datetime.now())
 
-                execution_time = BatchJob.total_seconds(etime - stime)
+                duration = GetDuration(stime, etime)
 
             if process_output:
                 out, out_completed = self.read_log(
@@ -295,7 +296,7 @@ class BatchJob:
             "err": {"pos": err, "lines": stderr, "done": err_completed},
             "start_time": self.start_time,
             "exit_code": self.exit_code,
-            "execution_time": execution_time,
+            "duration": duration,
         }
 
     @staticmethod
@@ -391,7 +392,7 @@ class BatchJob:
 
             start_time = job.start_time
             end_time = job.end_time or make_aware(datetime.now())
-            execution_time = BatchJob.total_seconds(end_time - start_time)
+            duration = GetDuration(start_time, end_time)
 
             (
                 description,
@@ -408,7 +409,7 @@ class BatchJob:
                     "start_time": start_time,
                     "end_time": job.end_time,
                     "exit_code": job.exit_code,
-                    "execution_time": execution_time,
+                    "duration": duration,
                     "process_state": job.process_state,
                     "utility_pid": job.utility_pid,
                     "conn_id": job.connection.id,
@@ -419,10 +420,6 @@ class BatchJob:
                 job.save()
 
         return res
-
-    @staticmethod
-    def total_seconds(dt):
-        return round(dt.total_seconds(), 2)
 
     @staticmethod
     def delete(job_id, user):

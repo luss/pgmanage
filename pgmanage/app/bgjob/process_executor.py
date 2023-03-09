@@ -153,7 +153,7 @@ def execute(argv):
     command = argv[1:]
     args = dict()
 
-    logging.info("Initialize the rpocess execution: %s", command)
+    logging.info("Initialize the process execution: %s", command)
 
     # Create separate thread for stdout and stderr
     process_stdout = ProcessLogger("out")

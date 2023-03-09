@@ -1,46 +1,46 @@
 <template>
   <h2 class="text-center">Jobs</h2>
   <div class="utility-jobs">
-  <table class="table table-hover table-dark table-bordered">
-    <thead class="text-center">
-      <tr>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col">PID</th>
-        <th scope="col">Type</th>
-        <th scope="col">Server</th>
-        <th scope="col">Object</th>
-        <th scope="col">Start Time</th>
-        <th scope="col">Status</th>
-        <th scope="col">Time Taken (sec)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="job in jobList" :key="job.id" class="text-center">
-        <th scope="row"></th>
-        <td><a class="btn" @click="deleteJob(job.id)"><i class="fas fa-times" title="delete job"></i></a></td>
-        <td><a :class="['btn', { 'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job"><i
-              class="fa-regular fa-circle-stop"></i></a></td>
-        <td><a class="btn" @click="getJobDetails(job.id)" title="View Details"><i class="fas fa-file-code"></i></a></td>
-        <td>{{ job.utility_pid }}</td>
-        <td>{{ job.details.type }}</td>
-        <td>{{ job.details.server }}</td>
-        <td>{{ job.details.object }}</td>
-        <td>{{ job.start_time }}</td>
-        <td :class="{
-          'bg-info': jobStatus(job.process_state) === 'Running',
-          'bg-danger': jobStatus(job.process_state) === 'Terminated' || jobStatus(job.process_state) === 'Terminating',
-          'bg-success': jobStatus(job.process_state) === 'Finished',
-          'bg-dirtied': jobStatus(job.process_state) === 'Failed'
-        }">{{ jobStatus(job.process_state) }}
-        </td>
-        <td>{{ job.execution_time }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <table class="table table-hover table-dark table-bordered">
+      <thead class="text-center">
+        <tr>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col">PID</th>
+          <th scope="col">Type</th>
+          <th scope="col">Server</th>
+          <th scope="col">Object</th>
+          <th scope="col">Start Time</th>
+          <th scope="col">Status</th>
+          <th scope="col">Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="job in jobList" :key="job.id" class="text-center">
+          <th scope="row"></th>
+          <td><a class="btn" @click="deleteJob(job.id)"><i class="fas fa-times" title="delete job"></i></a></td>
+          <td><a :class="['btn', { 'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job"><i
+                class="fa-regular fa-circle-stop"></i></a></td>
+          <td><a class="btn" @click="getJobDetails(job.id)" title="View Details"><i class="fas fa-file-code"></i></a></td>
+          <td>{{ job.utility_pid }}</td>
+          <td>{{ job.details.type }}</td>
+          <td>{{ job.details.server }}</td>
+          <td>{{ job.details.object }}</td>
+          <td>{{ job.start_time }}</td>
+          <td :class="{
+            'bg-info': jobStatus(job.process_state) === 'Running',
+            'bg-danger': jobStatus(job.process_state) === 'Terminated' || jobStatus(job.process_state) === 'Terminating',
+            'bg-success': jobStatus(job.process_state) === 'Finished',
+            'bg-dirtied': jobStatus(job.process_state) === 'Failed'
+          }">{{ jobStatus(job.process_state) }}
+          </td>
+          <td>{{ job.duration }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- Modal -->
   <div class="modal fade" :id="detailModalId" tabindex="-1" role="dialog" aria-hidden="true">
@@ -57,15 +57,16 @@
           <p>Command:</p>
           <p class="bg-ligth p-2 border border-dark">{{ selectedJob?.details?.cmd }}</p>
           <div class="d-flex justify-content-between">
-            <a>Start time - {{ selectedJob?.start_time }}</a>
-            <a>Execution time {{ selectedJob?.execution_time }}</a>
+            <a>Start time: {{ selectedJob?.start_time }}</a>
+            <a>Duration: {{ selectedJob?.duration }}</a>
           </div>
           <div :style="{ height: '200px', overflowY: 'scroll' }" class="border border-dark p-1">
             <p v-for="log in logs"> {{ log }}</p>
           </div>
         </div>
         <div class="modal-footer">
-          <a :class="['btn', 'btn-danger', { 'd-none': selectedJob.canStop }]" @click="stopJob(selectedJob.id)">Stop process</a>
+          <a :class="['btn', 'btn-danger', { 'd-none': selectedJob.canStop }]" @click="stopJob(selectedJob.id)">Stop
+            process</a>
         </div>
       </div>
     </div>
@@ -111,6 +112,7 @@ export default {
             let processState = this.evaluateProcessState(j);
             return {
               ...j,
+              start_time: moment(j.start_time).format("DD/MM/YY hh:mm A"),
               process_state: processState,
               canStop: ![JobState.PROCESS_NOT_STARTED, JobState.PROCESS_STARTED].includes(processState),
             }
@@ -159,7 +161,7 @@ export default {
           this.selectedJob = Object.assign({}, this.jobList.find((j) => j.id == job_id))
           let out_pos = resp.data.data.out.pos
           let err_pos = resp.data.data.err.pos
-          this.selectedJob.execution_time = resp.data.data.execution_time
+          this.selectedJob.duration = resp.data.data.duration
           this.logs.push(
             ...resp.data.data.err.lines.map((l) => l[1]),
             ...resp.data.data.out.lines.map((l) => l[1]))
@@ -223,8 +225,8 @@ export default {
 </script>
 
 <style scoped>
-  .utility-jobs {
-    height: 50vh;
-    overflow-y: scroll;
-  }
+.utility-jobs {
+  height: 50vh;
+  overflow-y: scroll;
+}
 </style>
