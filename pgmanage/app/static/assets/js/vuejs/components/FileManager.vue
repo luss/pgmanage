@@ -45,7 +45,7 @@
           <div v-if="isGrid" class="d-flex p-2 flex-wrap">
             <div v-for="file in files" :key="file.file_name"
               :class="['text-center', 'text-break', 'btn', 'btn-outline-light', 'border-0', 'pt-3', { 'active': file === this.selectedFile }]"
-              style="height: 55px;width: 80px;" @click="selectFileOrDir(file)"
+              style="height: 55px;width: 80px;" @click="selectFileOrDir(file.file_name)"
               @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : {}">
               <div class="position-relative">
                 <i :class="['fas', 'fa-2xl', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
@@ -66,7 +66,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="file in files" :key="file.file_name" @click="selectFileOrDir(file)"
+                <tr v-for="file in files" :key="file.file_name" @click="selectFileOrDir(file.file_name)"
                   @dblclick="getDirContent(file.file_path)">
                   <td><i
                       :class="['fas', 'fa-2xl', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
@@ -126,11 +126,14 @@ export default {
       this.getDirContent()
   },
   methods: {
-    refreshManager() {
+    refreshManager(event, created_file_name = null) {
+      if (!!created_file_name) {
+        this.getDirContent(this.currentPath, null, created_file_name)
+      }
       this.getDirContent(this.currentPath)
     },
-    selectFileOrDir(file) {
-      this.selectedFile = file
+    selectFileOrDir(file_name) {
+      this.selectedFile = this.files.find((file) => file.file_name === file_name)
     },
     changeView() {
       if (this.currentView === 'grid') {
@@ -146,7 +149,7 @@ export default {
     stepHomeDir() {
       this.getDirContent()
     },
-    getDirContent(path = null, parent_dir = null) {
+    getDirContent(path = null, parent_dir = null, created_file_name = null) {
       axios.post('/file_manager/get_directory/', {
         current_path: path,
         parent_dir: parent_dir
@@ -156,6 +159,9 @@ export default {
           this.currentPath = resp.data.current_path
           this.parent = resp.data.parent
           this.selectedFile = {}
+          if (!!created_file_name) {
+            this.selectFileOrDir(created_file_name)
+          }
         })
         .catch((error) => {
           console.log(error)
