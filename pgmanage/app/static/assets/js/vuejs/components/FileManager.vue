@@ -38,7 +38,7 @@
             </div>
             <input class="w-75 form-control" type="text" :value="currentPath" disabled>
             <a :class="['btn', 'btn-outline-secondary', 'btn-sm', { 'disabled': !Object.keys(this.selectedFile).length }]"
-              title="Delete" @click="deleteFileOrDir"><i class="fas fa-trash fa-xl"></i></a>
+              title="Delete" @click="openActionsModal('delete')"><i class="fas fa-trash fa-xl"></i></a>
           </div>
 
           <!-- Box format for files and folders -->
@@ -155,18 +155,6 @@ export default {
           this.files = [...resp.data.files]
           this.currentPath = resp.data.current_path
           this.parent = resp.data.parent
-          this.selectedFile = {}
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
-    deleteFileOrDir() {
-      axios.post('/file_manager/delete/', {
-        path: this.selectedFile.file_path
-      })
-        .then((resp) => {
-          this.refreshManager()
           this.selectedFile = {}
         })
         .catch((error) => {
