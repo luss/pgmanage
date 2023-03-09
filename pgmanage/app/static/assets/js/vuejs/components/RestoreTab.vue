@@ -2,22 +2,23 @@
   <form>
     <div>
       <div class="btn-group" role="group">
-        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !restoreOptions.fileName }]" @click.prevent="createRestore">Restore</a>
-        <a :class="['btn', 'btn-danger', 'mb-2', {'disabled': !isOptionsChanged}]" @click="resetToDefault">Reset</a>
+        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
+          @click.prevent="createRestore">Restore</a>
+        <a :class="['btn', 'btn-danger', 'mb-2', { 'disabled': !isOptionsChanged }]" @click="resetToDefault">Reset</a>
       </div>
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="restoreOptions_1" data-toggle="tab" :data-target="`#${restoreTabId}_general`"
-            type="button" role="tab" aria-selected="true">General</button>
+          <button class="nav-link active" id="restoreOptions_1" data-toggle="tab"
+            :data-target="`#${restoreTabId}_general`" type="button" role="tab" aria-selected="true">General</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="restoreOptions_2" data-toggle="tab" :data-target="`#${restoreTabId}_data_objects`" type="button"
-            role="tab" aria-selected="false">Data/Objects
+          <button class="nav-link" id="restoreOptions_2" data-toggle="tab" :data-target="`#${restoreTabId}_data_objects`"
+            type="button" role="tab" aria-selected="false">Data/Objects
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="restoreOptions_3" data-toggle="tab" :data-target="`#${restoreTabId}_options`" type="button"
-            role="tab" aria-selected="false">Options
+          <button class="nav-link" id="restoreOptions_3" data-toggle="tab" :data-target="`#${restoreTabId}_options`"
+            type="button" role="tab" aria-selected="false">Options
           </button>
         </li>
       </ul>
@@ -44,7 +45,8 @@
           <div class="form-group row">
             <label for="restoreNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="restoreNumberOfJobs" v-model.number="restoreOptions.number_of_jobs">
+              <input type="text" class="form-control" id="restoreNumberOfJobs"
+                v-model.number="restoreOptions.number_of_jobs">
             </div>
           </div>
 
@@ -245,14 +247,6 @@ export default {
   data() {
     return {
       roleNames: [],
-      encodingList: [
-        'BIG5', 'EUC_CN', 'EUC_JIS_2004', 'EUC_JP', 'EUC_KR', 'EUC_TW', 'GB18030',
-        'GBK', 'ISO_8859_5', 'ISO_8859_6', 'ISO_8859_7', 'ISO_8859_8', 'JOHAB',
-        'KOI18R', 'KOI8U', 'LATIN1', 'LATIN10', 'LATIN2', 'LATIN3', 'LATIN4', 'LATIN5',
-        'LATIN6', 'LATIN7', 'LATIN8', 'LATIN9', 'MULE_INTERNAL', 'SHIFT_JIS_2004', 'SJIS', 'SQL_ASCII',
-        'UHC', 'UTF8', 'WIN1250', 'WIN1251', 'WIN1252', 'WIN1253', 'WIN1254', 'WIN1255', 'WIN1256',
-        'WIN1257', 'WIN1258', 'WIN866', 'WIN874'
-      ],
       restoreOptionsDefault: {
         database: this.treeNode.tag.database,
         table: "",
@@ -260,7 +254,6 @@ export default {
         function: "",
         trigger: "",
         role: "",
-        encoding: "",
         fileName: "",
         pre_data: false,
         post_data: false,

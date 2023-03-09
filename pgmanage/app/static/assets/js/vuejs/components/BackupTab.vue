@@ -2,22 +2,23 @@
   <form>
     <div>
       <div class="btn-group" role="group">
-        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !backupOptions.fileName }]" @click.prevent="saveBackup">Backup</a>
-        <a :class="['btn', 'btn-danger', 'mb-2', {'disabled': !isOptionsChanged}]" @click="resetToDefault">Reset</a>
+        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !backupOptions.fileName }]"
+          @click.prevent="saveBackup">Backup</a>
+        <a :class="['btn', 'btn-danger', 'mb-2', { 'disabled': !isOptionsChanged }]" @click="resetToDefault">Reset</a>
       </div>
 
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" data-toggle="tab" :data-target="`#${backupTabId}_general`"
-            type="button" role="tab" aria-selected="true">General</button>
+          <button class="nav-link active" data-toggle="tab" :data-target="`#${backupTabId}_general`" type="button"
+            role="tab" aria-selected="true">General</button>
         </li>
         <li v-if="isNotGlobals" class="nav-item" role="presentation">
           <button class="nav-link" data-toggle="tab" :data-target="`#${backupTabId}_data_objects`" type="button"
             role="tab" aria-selected="false">Data/Objects</button>
         </li>
         <li v-if="isNotGlobals" class="nav-item" role="presentation">
-          <button class="nav-link" data-toggle="tab" :data-target="`#${backupTabId}_options`" type="button"
-            role="tab" aria-selected="false">Options</button>
+          <button class="nav-link" data-toggle="tab" :data-target="`#${backupTabId}_options`" type="button" role="tab"
+            aria-selected="false">Options</button>
         </li>
       </ul>
       <div class="tab-content" style="min-height: 300px;">
@@ -49,14 +50,15 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupCompressionRatio" class="col-form-label col-2">Compression ratio</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupCompressionRatio" v-model.number="backupOptions.compression_ratio">
+              <input type="text" class="form-control" id="backupCompressionRatio"
+                v-model.number="backupOptions.compression_ratio">
             </div>
           </div>
           <div v-if="isNotGlobals" class="form-group row">
             <label for="backupEncoding" class="col-form-label col-2">Encoding</label>
             <div class="col-5">
               <select id="backupEncoding" class="form-control" v-model="backupOptions.encoding">
-                <option value="" disabled>Select your option</option>
+                <option value="">Use database encoding</option>
                 <option v-for="encoding in encodingList" :key="encoding" :value="encoding">{{ encoding }}</option>
               </select>
             </div>
@@ -64,8 +66,8 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupNumberOfJobs" v-model.number="backupOptions.number_of_jobs"
-                :disabled="backupOptions.format != 'directory'">
+              <input type="text" class="form-control" id="backupNumberOfJobs"
+                v-model.number="backupOptions.number_of_jobs" :disabled="backupOptions.format != 'directory'">
             </div>
           </div>
           <div class="form-group row">
@@ -77,7 +79,7 @@
               </select>
             </div>
           </div>
-          <div v-if="backupType === 'server'" class="bg-hit font-italic w-25" >
+          <div v-if="backupType === 'server'" class="bg-hit font-italic w-25">
             <a>The backup will be in PLAIN format.</a>
           </div>
           <fieldset v-if="!isNotGlobals">
@@ -98,7 +100,7 @@
             </div>
             <div class="bg-hit font-italic w-50">
               <a>Only objects global to the entire database will be backed up, in PLAIN format</a>
-          </div>
+            </div>
           </fieldset>
         </div>
         <div v-if="isNotGlobals" class="tab-pane fade" :id="`${backupTabId}_data_objects`" role="tabpanel">
@@ -371,7 +373,7 @@ export default {
       } else if (this.treeNode.tag.type === 'table') {
         this.backupOptionsDefault.tables.push(`"${this.treeNode.tag.schema}.${this.treeNode.text}"`)
       }
-      this.backupOptions = {...this.backupOptionsDefault}
+      this.backupOptions = { ...this.backupOptionsDefault }
       this.getRoleNames()
     })
   },
@@ -416,7 +418,7 @@ export default {
       this.$refs.fileManager.showModal()
     },
     resetToDefault() {
-      this.backupOptions = {...this.backupOptionsDefault}
+      this.backupOptions = { ...this.backupOptionsDefault }
     }
   }
 }
