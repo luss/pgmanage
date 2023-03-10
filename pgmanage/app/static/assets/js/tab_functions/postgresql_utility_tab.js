@@ -1,9 +1,10 @@
-let createUtilityTab = function (node, utility_type, backup_type = "objects") {
+let createUtilityTab = function (node, utility, backup_type = "objects") {
   // Removing last tab of the inner tab list
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
-  let utility_title = backup_type === 'objects' ? `(${node.tag.type}:${node.text})` : backup_type
-  let tab_name = `${utility_type} ${utility_title}`;
-  let mode = utility_type.toLowerCase();
+  let utility_title =
+    backup_type === "objects" ? `(${node.tag.type}:${node.text})` : backup_type;
+  let tab_name = `${utility} ${utility_title}`;
+  let mode = utility.toLowerCase();
 
   let tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
     p_name: `<span>${tab_name}</span>`,
@@ -46,7 +47,7 @@ let createUtilityTab = function (node, utility_type, backup_type = "objects") {
   const app = createApp({
     data() {
       return {
-        currentUtility: utility_type,
+        currentUtility: utility,
         backupType: backup_type,
         treeNode: node,
       };
@@ -65,7 +66,10 @@ let createUtilityTab = function (node, utility_type, backup_type = "objects") {
         if (this.currentUtility === "Backup") {
           return { "backup-type": this.backupType, "tree-node": this.treeNode };
         } else if (this.currentUtility === "Restore") {
-          return { "tree-node": this.treeNode };
+          return {
+            "tree-node": this.treeNode,
+            "restore-type": this.backupType,
+          };
         }
       },
     },

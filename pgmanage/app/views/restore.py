@@ -85,6 +85,11 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
             return True
         return False
 
+    if data.get("type") == "server":
+        set_param("quiet", "--quiet", data, args)
+        set_param("echo_queries", "--echo-queries", data, args)
+        args.extend(["-f", backup_file])
+        return args
     set_value("role", "--role", data, args)
     set_value("database", "--dbname", data, args)
 
@@ -130,7 +135,7 @@ def create_restore(request, database):
 
     data = data.get("data", {})
 
-    utility = "pg_restore"
+    utility = "psql" if data.get("type") == "server" else "pg_restore"
 
     ret_val = shutil.which(utility)
 

@@ -4656,6 +4656,15 @@ function getTreeDetailsPostgresql(node) {
                     }
                 },
             );
+            node.tree.contextMenu.cm_server.elements.push(
+                {
+                    text: 'Restore Server',
+                    icon: 'fa-solid fa-upload cm-all',
+                    action: function(node) {
+                        createUtilityTab(node, 'Restore', 'server')
+                    }
+                }
+            );
             node.tree.contextMenu.cm_server.elements.push({
                 text: 'Monitoring',
                 icon: 'fas cm-all fa-chart-line',

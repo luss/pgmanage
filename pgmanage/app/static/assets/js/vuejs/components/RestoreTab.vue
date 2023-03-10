@@ -11,12 +11,12 @@
           <button class="nav-link active" id="restoreOptions_1" data-toggle="tab"
             :data-target="`#${restoreTabId}_general`" type="button" role="tab" aria-selected="true">General</button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li v-if="isNotServer" class="nav-item" role="presentation">
           <button class="nav-link" id="restoreOptions_2" data-toggle="tab" :data-target="`#${restoreTabId}_data_objects`"
             type="button" role="tab" aria-selected="false">Data/Objects
           </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li v-if="isNotServer" class="nav-item" role="presentation">
           <button class="nav-link" id="restoreOptions_3" data-toggle="tab" :data-target="`#${restoreTabId}_options`"
             type="button" role="tab" aria-selected="false">Options
           </button>
@@ -42,7 +42,23 @@
             </div>
           </div>
 
-          <div class="form-group row">
+          <div v-if="!isNotServer">
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsEchoQueries"
+                v-model="restoreOptions.echo_queries">
+              <label class="custom-control-label" for="restoreOptionsEchoQueries">
+                Echo all queries
+              </label>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="restoreOptionsQuiet" v-model="restoreOptions.quiet">
+              <label class="custom-control-label" for="restoreOptionsQuiet">Quiet mode</label>
+            </div>
+
+          </div>
+
+          <div v-if="isNotServer" class="form-group row">
             <label for="restoreNumberOfJobs" class="col-form-label col-2">Number of jobs</label>
             <div class="col-5">
               <input type="text" class="form-control" id="restoreNumberOfJobs"
@@ -50,7 +66,7 @@
             </div>
           </div>
 
-          <div class="form-group row">
+          <div v-if="isNotServer" class="form-group row">
             <label for="restoreRoleName" class="col-form-label col-2">Restore as:</label>
             <div class="col-5">
               <select id="restoreRoleName" class="form-control" v-model="restoreOptions.role">
@@ -242,13 +258,15 @@ export default {
     UtilityJobs
   },
   props: {
-    treeNode: Object
+    treeNode: Object,
+    restoreType: String
   },
   data() {
     return {
       roleNames: [],
       restoreOptionsDefault: {
         database: this.treeNode.tag.database,
+        type: this.restoreType,
         table: "",
         schema: "",
         function: "",
@@ -271,7 +289,9 @@ export default {
         verbose: false,
         use_set_session_auth: false,
         exit_on_error: false,
-        number_of_jobs: ""
+        number_of_jobs: "",
+        quiet: false,
+        echo_queries: false
       },
       restoreOptions: {},
       desktopMode: window.gv_desktopMode,
@@ -281,6 +301,9 @@ export default {
   computed: {
     isOptionsChanged() {
       return JSON.stringify(this.restoreOptionsDefault) !== JSON.stringify(this.restoreOptions)
+    },
+    isNotServer() {
+      return this.restoreType !== 'server'
     }
   },
   mounted() {
