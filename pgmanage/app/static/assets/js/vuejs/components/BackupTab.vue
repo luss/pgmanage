@@ -50,8 +50,10 @@
           <div v-if="isNotGlobals && backupType !== 'server'" class="form-group row">
             <label for="backupCompressionRatio" class="col-form-label col-2">Compression ratio</label>
             <div class="col-5">
-              <input type="text" class="form-control" id="backupCompressionRatio"
-                v-model.number="backupOptions.compression_ratio">
+              <select id="backupCompressionRatio" class="form-control" v-model="backupOptions.compression_ratio" :disabled="isTarFormat">
+              <option value="" disabled>Select an item...</option>
+              <option v-for="compress_ratio in comporessionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
+            </select>
             </div>
           </div>
           <div v-if="isNotGlobals" class="form-group row">
@@ -364,6 +366,12 @@ export default {
     },
     isOptionsChanged() {
       return JSON.stringify(this.backupOptionsDefault) !== JSON.stringify(this.backupOptions)
+    },
+    comporessionRatioValues() {
+      return [...Array(10).keys()]
+    },
+    isTarFormat() {
+      return this.backupOptions.format === 'tar'
     }
   },
   mounted() {
