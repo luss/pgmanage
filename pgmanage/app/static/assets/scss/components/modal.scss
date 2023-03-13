@@ -14,8 +14,9 @@ $theme-map: null; //important! do not delete this
 @import '../components/card';
 @import '../components/list-group';
 @import '../components/alert';
+@import '../common/ui-elements';
 
-$modalPadding: 24px;
+$modalPadding: 21px;
 
 .modal {
     font-family: $fontFamily;
@@ -39,8 +40,7 @@ $modalPadding: 24px;
 
     .close {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        right: 21px;
         width: 20px;
         height: 20px;
         margin: 0;
