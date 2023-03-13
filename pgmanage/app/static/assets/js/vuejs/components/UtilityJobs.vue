@@ -1,72 +1,81 @@
 <template>
-  <h2 class="text-center">Jobs</h2>
-  <div class="utility-jobs">
-    <table class="table table-hover table-dark table-bordered">
-      <thead class="text-center">
-        <tr>
-          <th scope="col"></th>
-          <th scope="col"></th>
-          <th scope="col"></th>
-          <th scope="col"></th>
-          <th scope="col">PID</th>
-          <th scope="col">Type</th>
-          <th scope="col">Server</th>
-          <th scope="col">Object</th>
-          <th scope="col">Start Time</th>
-          <th scope="col">Status</th>
-          <th scope="col">Duration</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="job in jobList" :key="job.id" class="text-center">
-          <th scope="row"></th>
-          <td><a class="btn" @click="deleteJob(job.id)"><i class="fas fa-times" title="delete job"></i></a></td>
-          <td><a :class="['btn', { 'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job"><i
-                class="fa-regular fa-circle-stop"></i></a></td>
-          <td><a class="btn" @click="getJobDetails(job.id)" title="View Details"><i class="fas fa-file-code"></i></a></td>
-          <td>{{ job.utility_pid }}</td>
-          <td>{{ job.details.type }}</td>
-          <td>{{ job.details.server }}</td>
-          <td>{{ job.details.object }}</td>
-          <td>{{ job.start_time }}</td>
-          <td :class="{
-            'bg-info': jobStatus(job.process_state) === 'Running',
-            'bg-danger': jobStatus(job.process_state) === 'Terminated' || jobStatus(job.process_state) === 'Terminating',
-            'bg-success': jobStatus(job.process_state) === 'Finished',
-            'bg-dirtied': jobStatus(job.process_state) === 'Failed'
-          }">{{ jobStatus(job.process_state) }}
-          </td>
-          <td>{{ job.duration }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <h2 class="font-weight-bold text-center my-3">Jobs</h2>
+  <div class="card">
+    <div class="card-body p-0 utility-jobs">
+      <ul class="list-group list-group-flush form-group rounded-0">
+        <li class="list-group-item d-flex row no-gutters font-weight-bold">
+          <div class="col-1">PID</div>
+          <div class="col-2">Type</div>
+          <div class="col-2">Server</div>
+          <div class="col-1">Object</div>
+          <div class="col-2">Start Time</div>
+          <div class="col-1">Status</div>
+          <div class="col-1">Duration</div>
+          <div class="col-2"></div>
+        </li>
+
+        <li v-for="job in jobList" :key="job.id" class="list-group-item d-flex row no-gutters" role="button">
+          <div class="col-1">{{ job.utility_pid }}</div>
+          <div class="col-2">{{ job.details.type }}</div>
+          <div class="col-2">{{ job.details.server }}</div>
+          <div class="col-1">{{ job.details.object }}</div>
+          <div class="col-2">{{ job.start_time }}</div>
+          <div class="col-1"> 
+            <i :class="['fa-solid', {
+              'fa-hourglass text-info' : jobStatus(job.process_state) === 'Running',
+              'fa-ban text-warning' : jobStatus(job.process_state) === 'Terminated' || jobStatus(job.process_state) === 'Terminating',
+              'fa-circle-check text-success' : jobStatus(job.process_state) === 'Finished',
+              'fa-circle-exclamation text-danger' : jobStatus(job.process_state) === 'Failed'
+            }]"
+              data-toggle="tooltip" data-placement="bottom" :title="jobStatus(job.process_state)"
+            ></i>
+          </div>
+          <div class="col-1">{{ job.duration }}</div>
+          <div class="col-2 d-flex justify-content-end align-items-start">
+            <div class="btn-group">
+              <a class="btn btn-outline-secondary" @click="getJobDetails(job.id)" title="View details">
+                <i class="fas fa-file-code"></i>
+              </a>
+              <a :class="['btn btn-outline-secondary', { 'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job">
+                <i class="fa-regular fa-circle-stop"></i>
+              </a>
+              <a class="btn btn-outline-secondary" @click="deleteJob(job.id)">
+                <i class="fas fa-times" title="Delete job"></i>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <!-- Modal -->
   <div class="modal fade" :id="detailModalId" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header p-3">
+        <div class="modal-header align-items-center">
           <h3 class="modal-title">{{ selectedJob?.type_desc }}</h3>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+            </button>
         </div>
         <div class="modal-body">
-          <p>{{ selectedJob?.description }}</p>
-          <p>Command:</p>
-          <p class="bg-ligth p-2 border border-dark">{{ selectedJob?.details?.cmd }}</p>
-          <div class="d-flex justify-content-between">
-            <a>Start time: {{ selectedJob?.start_time }}</a>
-            <a>Duration: {{ selectedJob?.duration }}</a>
+          <p class="mb">{{ selectedJob?.description }}</p>
+          <p class="font-weight-bold mb-2">Command:</p>
+          <p class="p-2 border border-radius text-break">{{ selectedJob?.details?.cmd }}</p>
+          <div class="d-flex justify-content-between mt-3 mb-2">
+            <span>Start time: {{ selectedJob?.start_time }}</span>
+            <span>Duration: {{ selectedJob?.duration }}</span>
           </div>
-          <div :style="{ height: '200px', overflowY: 'scroll' }" class="border border-dark p-1">
+          <p class="font-weight-bold mb-2">Output:</p>
+          <div :style="{ height: '200px', overflowY: 'auto' }" class="border border-radius p-1">
             <p v-for="log in logs"> {{ log }}</p>
           </div>
         </div>
-        <div class="modal-footer">
-          <a :class="['btn', 'btn-danger', { 'd-none': selectedJob.canStop }]" @click="stopJob(selectedJob.id)">Stop
-            process</a>
+        <div :class="['modal-footer', { 'd-none': selectedJob.canStop }]">
+          <a class="btn btn-danger" @click="stopJob(selectedJob.id)">
+            Stop process
+          </a>
         </div>
       </div>
     </div>
@@ -226,7 +235,7 @@ export default {
 
 <style scoped>
 .utility-jobs {
-  height: 50vh;
+  height: calc(100vh - 550px);
   overflow-y: scroll;
 }
 </style>
