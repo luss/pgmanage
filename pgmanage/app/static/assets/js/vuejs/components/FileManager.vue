@@ -46,7 +46,7 @@
             <div v-for="file in files" :key="file.file_name"
               :class="['text-center', 'btn', 'btn-outline-light', 'border-0', 'pt-3', { 'active': file === this.selectedFile }]"
               style="height: 55px;width: 80px;" @click="selectFileOrDir(file.file_name)"
-              @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : {}">
+              @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
               <div class="position-relative">
                 <i :class="['fas', 'fa-2xl', 'mr-2', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
                   :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
