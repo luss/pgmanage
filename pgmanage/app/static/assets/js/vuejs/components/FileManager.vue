@@ -15,12 +15,12 @@
                   class="fas fa-file-circle-plus fa-xl"></i></a>
               <a class="btn btn-outline-secondary btn-sm" title="Add Folder" @click="openActionsModal('addFolder')"><i
                   class="fas fa-folder-plus fa-xl"></i></a>
-              <a :class="['btn', 'btn-outline-secondary', 'btn-sm', { 'disabled': !Object.keys(this.selectedFile).length }]"
+              <a :class="['btn', 'btn-outline-secondary', 'btn-sm', { 'disabled': !Object.keys(selectedFile).length }]"
                 title="Rename Folder/File" @click="openActionsModal('rename')"><i
                   class="fas fa-thin fa-file-pen fa-xl"></i></a>
             </div>
             <div>
-              <a :class="['btn', 'btn-outline-secondary', 'btn-sm', { 'disabled': !Object.keys(this.selectedFile).length }]"
+              <a :class="['btn', 'btn-outline-secondary', 'btn-sm', { 'disabled': !Object.keys(selectedFile).length }]"
               title="Delete" @click="openActionsModal('delete')"><i class="fas fa-trash fa-xl"></i></a>
             </div>
           </div>
@@ -44,7 +44,7 @@
           <!-- Box format for files and folders -->
           <div v-if="isGrid" class="d-flex p-2 flex-wrap">
             <div v-for="file in files" :key="file.file_name"
-              :class="['text-center', 'btn', 'btn-outline-light', 'border-0', 'pt-3', { 'active': file === this.selectedFile }]"
+              :class="['text-center', 'btn', 'btn-outline-light', 'border-0', 'pt-3', { 'active': file === selectedFile }]"
               style="height: 55px;width: 80px;" @click="selectFileOrDir(file.file_name)"
               @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
               <div class="position-relative">
@@ -69,7 +69,7 @@
                     @dblclick="getDirContent(file.file_path)">
                     <div class="col-7">
                       <i :class="['fas', 'fa-2xl', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
-                        :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i> 
+                        :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
                         {{ file.file_name }}
                     </div>
                     <div class="col-2" v-if="file.file_type === 'file'">{{ file.file_size }}</div>
@@ -81,7 +81,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <a :class="['btn', 'btn-secondary', 'btn-sm', 'm-0', { 'disabled': !Object.keys(this.selectedFile).length }]"
+          <a :class="['btn', 'btn-secondary', 'btn-sm', 'm-0', { 'disabled': !Object.keys(selectedFile).length }]"
             @click="confirmSelection">
             Select</a>
         </div>
