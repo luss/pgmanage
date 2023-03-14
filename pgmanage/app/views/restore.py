@@ -50,7 +50,7 @@ class RestoreMessage(IJobDesc):
     def type_desc(self):
         return "Restoring backup on the server"
 
-    def details(self, cmd, args):
+    def details(self, cmd):
         return {
             "message": self.message,
             "cmd": cmd + self.cmd,
@@ -166,3 +166,28 @@ def create_restore(request, database):
         return JsonResponse(data={"data": str(exc)}, status=410)
 
     return JsonResponse(data={"job_id": job.id, "Success": 1})
+
+
+@database_required_new(check_timeout=True, open_connection=True)
+@user_authenticated
+def preview_command(request, database):
+    data = json.loads(request.body) if request.body else {}
+
+    data = data.get("data", {})
+
+    backup_file = data.get("fileName")
+
+    try:
+        FileManager(request.user).check_access_permission(backup_file)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=403)
+
+    utility = "psql" if data.get("type") == "server" else "pg_restore"
+
+    args = get_args_param_values(data, database, backup_file)
+
+    restore_message = RestoreMessage(
+        database.v_conn_id, backup_file, *args, database=data.get("database")
+    )
+
+    return JsonResponse(data={"command": restore_message.details(utility)})
