@@ -66,7 +66,7 @@
                 </li>
                 <li class="list-group-item d-flex row no-gutters"
                     v-for="file in files" :key="file.file_name" @click="selectFileOrDir(file.file_name)"
-                    @dblclick="getDirContent(file.file_path)">
+                    @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
                     <div class="col-7">
                       <i :class="['fas', 'fa-2xl', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
                         :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
