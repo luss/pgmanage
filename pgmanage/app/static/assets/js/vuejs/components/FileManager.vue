@@ -1,5 +1,5 @@
 <template>
-  <div class="modal modal-blurr" :id="modalId" tabindex="-1">
+  <div class="modal" :id="modalId" tabindex="-1">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header align-items-center">
