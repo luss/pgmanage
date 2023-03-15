@@ -306,7 +306,9 @@ base_urlpatterns = [
 
     # Backup and Restore
     path('backup/', views.backup.create_backup, name='create_backup'),
+    path('backup/preview_command/', views.backup.preview_command, name='backup_preview_command'),
     path('restore/', views.restore.create_restore, name='create_restore'),
+    path('restore/preview_command/', views.restore.preview_command, name='restore_preview_command'),
 
     # Background jobs
     path('bgprocess/', views.bgjob.index, name='job_list'),

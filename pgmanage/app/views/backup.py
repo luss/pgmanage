@@ -3,6 +3,7 @@ import json
 import operator
 import os
 import shutil
+from abc import abstractmethod
 
 from app.bgjob.jobs import BatchJob, IJobDesc, escape_dquotes_process_arg
 from app.file_manager.file_manager import FileManager
@@ -11,14 +12,89 @@ from app.views.memory_objects import database_required_new, user_authenticated
 from django.http import JsonResponse
 
 
-class BACKUP:
+class Backup:
     """
-    Constants defined for Backup utilities
+    A base class representing backup type
     """
 
     GLOBALS = 1
     SERVER = 2
     OBJECT = 3
+
+    TYPE_MAPPING = {
+        "globals": GLOBALS,
+        "server": SERVER,
+        "objects": OBJECT,
+    }
+
+    @classmethod
+    def create(cls, backup_type: int):
+        if backup_type == cls.GLOBALS:
+            return GlobalsBackup()
+        if backup_type == cls.SERVER:
+            return ServerBackup()
+        if backup_type == cls.OBJECT:
+            return ObjectBackup()
+
+    @classmethod
+    def get_backup_type(cls, backup_type_str):
+        backup_type = cls.TYPE_MAPPING.get(backup_type_str)
+        if backup_type is None:
+            raise ValueError(f"Invalid backup type: {backup_type_str}")
+        return backup_type
+
+    @property
+    @abstractmethod
+    def type_desc(self):
+        pass
+
+    @property
+    @abstractmethod
+    def backup_type(self):
+        pass
+
+    @abstractmethod
+    def get_message(self, connection_name, database):
+        pass
+
+
+class GlobalsBackup(Backup):
+    @property
+    def type_desc(self):
+        return "Backing up the global objects"
+
+    @property
+    def backup_type(self):
+        return "Backup Globals"
+
+    def get_message(self, connection_name: str, database=None):
+        return f"Backing up the global objects on the server '{connection_name}'"
+
+
+class ServerBackup(Backup):
+    @property
+    def type_desc(self):
+        return "Backing up the server"
+
+    @property
+    def backup_type(self):
+        return "Backup Server"
+
+    def get_message(self, connection_name: str, database=None):
+        return f"Backing up the server '{connection_name}'"
+
+
+class ObjectBackup(Backup):
+    @property
+    def type_desc(self):
+        return "Backing up an object on the server"
+
+    @property
+    def backup_type(self):
+        return "Backup Object"
+
+    def get_message(self, connection_name: str, database=None):
+        return f"Backing up an object on the server '{connection_name}' from database '{database}'"
 
 
 class BackupMessage(IJobDesc):
@@ -28,7 +104,7 @@ class BackupMessage(IJobDesc):
     Defines the message shown for the backup operation.
     """
 
-    def __init__(self, backup_type, conn_id, backup_file, *args, **kwargs):
+    def __init__(self, backup_type: Backup, conn_id, backup_file, *args, **kwargs):
         self.backup_type = backup_type
         self.conn_id = conn_id
         self.bfile = backup_file
@@ -64,41 +140,16 @@ class BackupMessage(IJobDesc):
 
     @property
     def type_desc(self):
-        if self.backup_type == BACKUP.OBJECT:
-            return "Backing up an object on the server"
-        if self.backup_type == BACKUP.GLOBALS:
-            return "Backing up the global objects"
-        elif self.backup_type == BACKUP.SERVER:
-            return "Backing up the server"
-        else:
-            # It should never reach here.
-            return "Unknown Backup"
+        return self.backup_type.type_desc
 
     @property
     def message(self):
         connection_name = self.get_connection_name()
+        return self.backup_type.get_message(connection_name, self.database)
 
-        if self.backup_type == BACKUP.OBJECT:
-            return f"Backing up an object on the server '{connection_name}' from database '{self.database}'"
-        if self.backup_type == BACKUP.GLOBALS:
-            return f"Backing up the global objects on the server '{connection_name}'"
-        elif self.backup_type == BACKUP.SERVER:
-            return f"Backing up the server '{connection_name}'"
-        else:
-            # It should never reach here.
-            return "Unknown Backup"
-
-    # args should be removed
-    def details(self, cmd, args):
+    def details(self, cmd):
         server_name = self.get_connection_name()
-        backup_type = "Backup"
-        if self.backup_type == BACKUP.OBJECT:
-            backup_type = "Backup Object"
-        elif self.backup_type == BACKUP.GLOBALS:
-            backup_type = "Backup Globals"
-        elif self.backup_type == BACKUP.SERVER:
-            backup_type = "Backup Server"
-
+        backup_type = self.backup_type.backup_type
         return {
             "message": self.message,
             "cmd": cmd + self.cmd,
@@ -191,29 +242,29 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
         data.get("only_schema", None) and not data.get("only_data", None),
     )
 
-    set_param("dns_owner", "--no-owner")
+    set_param("owner", "--no-owner")
     set_param("include_create_database", "--create")
     set_param("include_drop_database", "--clean")
     set_param("pre_data", "--section=pre-data")
     set_param("data", "--section=data")
     set_param("post_data", "--section=post-data")
-    set_param("dns_privilege", "--no-privileges")
-    set_param("dns_tablespace", "--no-tablespaces")
-    set_param("dns_unlogged_tbl_data", "--no-unlogged-table-data")
+    set_param("privilege", "--no-privileges")
+    set_param("tablespace", "--no-tablespaces")
+    set_param("unlogged_tbl_data", "--no-unlogged-table-data")
     set_param("use_insert_commands", "--inserts")
     set_param("use_column_inserts", "--column-inserts")
     set_param("disable_quoting", "--disable-dollar-quoting")
     set_param("with_oids", "--oids")
     set_param("use_set_session_auth", "--use-set-session-authorization")
 
-    set_param("no_comments", "--no-comments")
+    set_param("comments", "--no-comments")
     set_param(
         "load_via_partition_root",
         "--load-via-partition-root",
     )
 
     set_value("encoding", "--encoding")
-    set_value("number_of_jobs", "--jobs", None, data.get('format') == 'directory')
+    set_value("number_of_jobs", "--jobs", None, data.get("format") == "directory")
 
     args.extend(
         functools.reduce(
@@ -244,7 +295,7 @@ def create_backup(request, database):
 
     data = data.get("data", {})
 
-    backup_obj_type = data.get("type", "objects")
+    backup_type_str = data.get("type", "objects")
 
     backup_file = data.get("fileName")
 
@@ -253,23 +304,25 @@ def create_backup(request, database):
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=403)
 
-    utility = "pg_dump" if backup_obj_type == "objects" else "pg_dumpall"
+    utility = "pg_dump" if backup_type_str == "objects" else "pg_dumpall"
 
     ret_val = shutil.which(utility)
     if not ret_val:
         return JsonResponse(data={"data": "Utility file not found"}, status=400)
 
-    args = get_args_params_values(data, database, backup_obj_type, backup_file)
+    args = get_args_params_values(data, database, backup_type_str, backup_file)
 
     escaped_args = [escape_dquotes_process_arg(arg) for arg in args]
 
     try:
-        if backup_obj_type == "objects":
+        backup_type = Backup.get_backup_type(backup_type_str)
+        
+        if backup_type_str == "objects":
             args.append(data["database"])
             escaped_args.append(data["database"])
             job = BatchJob(
                 description=BackupMessage(
-                    BACKUP.OBJECT,
+                    Backup.create(backup_type),
                     database.v_conn_id,
                     backup_file,
                     *args,
@@ -282,7 +335,7 @@ def create_backup(request, database):
         else:
             job = BatchJob(
                 description=BackupMessage(
-                    BACKUP.SERVER if backup_obj_type != "globals" else BACKUP.GLOBALS,
+                    Backup.create(backup_type),
                     database.v_conn_id,
                     backup_file,
                     *args,
@@ -299,3 +352,36 @@ def create_backup(request, database):
         return JsonResponse(data={"data": str(exc)}, status=410)
 
     return JsonResponse(data={"job_id": job.id, "Success": 1})
+
+
+@database_required_new(check_timeout=True, open_connection=True)
+@user_authenticated
+def preview_command(request, database):
+    data = json.loads(request.body) if request.body else {}
+
+    data = data.get("data", {})
+
+    backup_type_str = data.get("type", "objects")
+
+    backup_file = data.get("fileName")
+
+    try:
+        FileManager(request.user).check_access_permission(backup_file)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=403)
+
+    utility = "pg_dump" if backup_type_str == "objects" else "pg_dumpall"
+
+    args = get_args_params_values(data, database, backup_type_str, backup_file)
+
+    backup_type = Backup.get_backup_type(backup_type_str)
+
+    backup_message = BackupMessage(
+        Backup.create(backup_type),
+        database.v_conn_id,
+        backup_file,
+        *args,
+        database=data.get(database),
+    )
+
+    return JsonResponse(data={"command": backup_message.details(utility)})

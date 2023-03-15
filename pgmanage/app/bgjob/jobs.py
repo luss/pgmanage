@@ -31,7 +31,7 @@ class IJobDesc:
         pass
 
     @abstractmethod
-    def details(self, cmd, args):
+    def details(self, cmd):
         pass
 
 
@@ -370,7 +370,7 @@ class BatchJob:
             args_reader = csv.reader(args_csv, delimiter=str(","))
             for arg in args_reader:
                 args = args + arg
-            details = description.details(job.command, args)
+            details = description.details(job.command)
             type_desc = description.type_desc
             description = description.message
 

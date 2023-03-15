@@ -273,13 +273,13 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-end mt-2">
-        <div class="btn-group">
-          <a :class="['btn', 'btn-outline-secondary', 'mb-2', { 'disabled': !isOptionsChanged }]" 
-              @click="resetToDefault">Revert settings</a>
-          <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
-              @click.prevent="saveBackup">Backup</a>
-        </div>
+      <div class="d-flex justify-content-between mt-3">
+        <a :class="['btn', 'btn-outline-secondary', 'mb-2', { 'disabled': !isOptionsChanged }]" 
+            @click="resetToDefault">Revert settings</a>
+        <a :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !backupOptions.fileName}]"
+            @click="previewCommand">Preview</a>
+        <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
+            @click.prevent="saveBackup">Backup</a>
       </div>
   </form>
   <UtilityJobs ref="jobs" />
@@ -423,6 +423,22 @@ export default {
     },
     resetToDefault() {
       this.backupOptions = { ...this.backupOptionsDefault }
+    },
+    previewCommand() {
+      axios.post("/backup/preview_command/", {
+        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tab_id: window.v_connTabControl.selectedTab.id,
+        data: this.backupOptions,
+      })
+        .then((resp) => {
+          console.log(resp)
+          showAlert(resp.data.command.cmd)
+        })
+        .catch((error) => {
+          console.log(error)
+          showError(error.response.data.data);
+
+        })
     }
   }
 }

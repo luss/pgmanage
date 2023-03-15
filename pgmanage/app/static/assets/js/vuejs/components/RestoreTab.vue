@@ -2,8 +2,10 @@
   <form>
     <div>
       <div class="btn-group" role="group">
-        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
+        <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
           @click.prevent="createRestore">Restore</a>
+        <a :class="['btn', 'btn-secondary', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
+          @click="previewCommand">Preview</a>
         <a :class="['btn', 'btn-danger', 'mb-2', { 'disabled': !isOptionsChanged }]" @click="resetToDefault">Reset</a>
       </div>
       <ul class="nav nav-tabs" role="tablist">
@@ -361,6 +363,22 @@ export default {
     },
     resetToDefault() {
       this.restoreOptions = { ...this.restoreOptionsDefault }
+    },
+    previewCommand() {
+      axios.post("/restore/preview_command/", {
+        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tab_id: window.v_connTabControl.selectedTab.id,
+        data: this.restoreOptions,
+      })
+        .then((resp) => {
+          console.log(resp)
+          showAlert(resp.data.command.cmd)
+        })
+        .catch((error) => {
+          console.log(error)
+          showError(error.response.data.data);
+
+        })
     }
   }
 }
