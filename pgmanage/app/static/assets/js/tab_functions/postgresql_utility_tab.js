@@ -20,7 +20,7 @@ let createUtilityTab = function (node, utility, backup_type = "objects") {
   v_connTabControl.selectedTab.tag.tabControl.selectTab(tab);
 
   tab.elementDiv.innerHTML = `
-  <div id='${mode}_tab_${tab.id}' class="pt-3">
+  <div id='${mode}_tab_${tab.id}' class="backup-tab-scrollable pt-3">
     <component :is="currentComp" v-bind="currentProps"></component>
   </div>`;
   let tag = {
