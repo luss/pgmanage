@@ -1,24 +1,24 @@
 <template>
-  <h2 class="font-weight-bold text-center my-3">Jobs</h2>
+  <h2 class="font-weight-bold text-center mt-2 mb-3">Jobs</h2>
   <div class="card">
-    <div class="card-body p-0 utility-jobs">
+    <div class="card-body p-0">
       <ul class="list-group list-group-flush form-group rounded-0">
         <li class="list-group-item d-flex row no-gutters font-weight-bold">
           <div class="col-1">PID</div>
           <div class="col-2">Type</div>
           <div class="col-2">Server</div>
-          <div class="col-1">Object</div>
+          <div class="col-2">Object</div>
           <div class="col-2">Start Time</div>
           <div class="col-1">Status</div>
           <div class="col-1">Duration</div>
-          <div class="col-2"></div>
+          <div class="col-1">Actions</div>
         </li>
 
         <li v-for="job in jobList" :key="job.id" class="list-group-item d-flex row no-gutters" role="button">
           <div class="col-1">{{ job.utility_pid }}</div>
           <div class="col-2">{{ job.details.type }}</div>
           <div class="col-2">{{ job.details.server }}</div>
-          <div class="col-1">{{ job.details.object }}</div>
+          <div class="col-2">{{ job.details.object }}</div>
           <div class="col-2">{{ job.start_time }}</div>
           <div class="col-1"> 
             <i :class="['fa-solid', {
@@ -31,18 +31,16 @@
             ></i>
           </div>
           <div class="col-1">{{ job.duration }}</div>
-          <div class="col-2 d-flex justify-content-end align-items-start">
-            <div class="btn-group">
-              <a class="btn btn-outline-secondary" @click="getJobDetails(job.id)" title="View details">
-                <i class="fas fa-file-code"></i>
+          <div class="col-1 d-flex justify-content-between align-items-start muted-text">
+              <a class="btn btn-ghost btn-ghost-secondary" @click="getJobDetails(job.id)" title="View details">
+                <i class="fa-solid fa-scroll fa-lg"></i>
               </a>
-              <a :class="['btn btn-outline-secondary', { 'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job">
-                <i class="fa-regular fa-circle-stop"></i>
+              <a :class="['btn btn-ghost btn-ghost-secondary', {'disabled': job.canStop }]" @click="stopJob(job.id)" title="Stop job">
+                <i class="fa-solid fa-stop fa-lg"></i>
               </a>
-              <a class="btn btn-outline-secondary" @click="deleteJob(job.id)">
-                <i class="fas fa-times" title="Delete job"></i>
+              <a class="btn btn-ghost btn-ghost-secondary" @click="deleteJob(job.id)">
+                <i class="fas fa-times fa-lg" title="Delete job"></i>
               </a>
-            </div>
           </div>
         </li>
       </ul>
@@ -64,8 +62,12 @@
           <p class="font-weight-bold mb-2">Command:</p>
           <p class="p-2 border border-radius text-break">{{ selectedJob?.details?.cmd }}</p>
           <div class="d-flex justify-content-between mt-3 mb-2">
-            <span>Start time: {{ selectedJob?.start_time }}</span>
-            <span>Duration: {{ selectedJob?.duration }}</span>
+            <span>
+              <span class="font-weight-bold">Start time:</span> {{ selectedJob?.start_time }}
+            </span>
+            <span>
+              <span class="font-weight-bold">Duration:</span> {{ selectedJob?.duration }}
+            </span>
           </div>
           <p class="font-weight-bold mb-2">Output:</p>
           <div :style="{ height: '200px', overflowY: 'auto' }" class="border border-radius p-1">
@@ -232,10 +234,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.utility-jobs {
-  height: calc(100vh - 550px);
-  overflow-y: scroll;
-}
-</style>

@@ -5050,6 +5050,12 @@ SOFTWARE.
 
 body {
   font-family: 'Poppins';
+  font-size: 0.875rem;
+}
+
+.backup-tab-scrollable {
+  height: calc(100vh - 100px);
+  overflow: hidden scroll;
 }
 
 /*# sourceMappingURL=../css/omnidb.min.css.map */

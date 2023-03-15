@@ -59,7 +59,6 @@
             &:hover {
                 opacity: 1;
                 color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
-                color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
                 background-color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
             }
         }
@@ -93,6 +92,50 @@
             &:hover {
                 opacity: 1;
                 color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+    }
+
+    &-ghost {
+        padding: 0.375rem;
+        min-width: 30px;
+        background-color: transparent !important; //workaround! to be removed when new stylesheets are implemented
+        border: 1px solid transparent  !important; //workaround! to be removed when new stylesheets are implemented
+        transition: all .3s;
+
+        &-primary {
+            color: $primaryBlue  !important; //workaround! to be removed when new stylesheets are implemented
+
+            &:hover {
+                color: $primaryLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $primaryBlue  !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+
+        &-secondary {
+            color: $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
+    
+            &:hover {
+                color: $primaryLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+
+        &-success {    
+            color: $successColor !important; //workaround! to be removed when new stylesheets are implemented
+
+            &:hover {
+                color: $primaryLight !important; //workaround! to be removed when new stylesheets are implemented
+                background-color: $successColor !important; //workaround! to be removed when new stylesheets are implemented
+            }
+        }
+
+        &-danger {
+            color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
+    
+            &:hover {
+                color: $primaryLight !important; //workaround! to be removed when new stylesheets are implemented
                 background-color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
             }
         }

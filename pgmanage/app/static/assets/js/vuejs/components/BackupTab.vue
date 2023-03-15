@@ -3,10 +3,10 @@
       <div class="row">
         <div :class="(isNotGlobals) ? 'col-4':'col-12'" class="d-flex">
           <div class="card flex-grow-1">
-            <h3 class="card-header font-weight-bold px-3 py-2">General</h3>
-            <div class="card-body d-flex flex-column p-3">
-              <div class="form-group">
-                <label for="backupFileName" class="font-weight-bold mb-2">FileName</label>
+            <h4 class="card-header font-weight-bold px-3 py-2">General</h4>
+            <div class="card-body d-flex flex-column px-3 py-2">
+              <div class="form-group mb-1">
+                <label for="backupFileName" class="font-weight-bold mb-1">FileName</label>
                   <input v-if="desktopMode" type="file" class="form-control" id="backupFileName" @change="onFile" nwsaveas>
 
                   <div v-else class="input-group">
@@ -18,44 +18,44 @@
                       placeholder="Select file or folder" disabled>
                   </div>
               </div>
-              <div v-if="isNotGlobals && backupType !== 'server'" class="form-group">
-                <label for="backupFormat" class="font-weight-bold mb-2">Format</label>
+              <div v-if="isNotGlobals && backupType !== 'server'" class="form-group mb-1">
+                <label for="backupFormat" class="font-weight-bold mb-1">Format</label>
                 <select id="backupFormat" class="form-control" v-model="backupOptions.format">
                   <option v-for="(value, key) in formats" :value="key" :key="key">{{ value }}</option>
                 </select>
               </div>
-              <div v-if="isNotGlobals && backupType !== 'server'" class="form-group">
-                <label for="backupCompressionRatio" class="font-weight-bold mb-2">Compression ratio</label>
+              <div v-if="isNotGlobals && backupType !== 'server'" class="form-group mb-1">
+                <label for="backupCompressionRatio" class="font-weight-bold mb-1">Compression ratio</label>
                 <select id="backupCompressionRatio" class="form-control" v-model="backupOptions.compression_ratio" :disabled="isTarFormat">
                   <option value="" disabled>Select an item...</option>
                   <option v-for="compress_ratio in comporessionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
                 </select>
               </div>
-              <div v-if="isNotGlobals" class="form-group">
-                <label for="backupEncoding" class="font-weight-bold mb-2">Encoding</label>
+              <div v-if="isNotGlobals" class="form-group mb-1">
+                <label for="backupEncoding" class="font-weight-bold mb-1">Encoding</label>
                 <select id="backupEncoding" class="form-control" v-model="backupOptions.encoding">
                   <option value="">Use database encoding</option>
                   <option v-for="encoding in encodingList" :key="encoding" :value="encoding">{{ encoding }}</option>
                 </select>
               </div>
-              <div v-if="isNotGlobals && backupType !== 'server'" class="form-group">
-                <label for="backupNumberOfJobs" class="font-weight-bold mb-2">Number of jobs</label>
+              <div v-if="isNotGlobals && backupType !== 'server'" class="form-group mb-1">
+                <label for="backupNumberOfJobs" class="font-weight-bold mb-1">Number of jobs</label>
                 <input type="text" class="form-control" id="backupNumberOfJobs"
                   v-model.number="backupOptions.number_of_jobs" :disabled="backupOptions.format != 'directory'">
               </div>
-              <div class="form-group">
-                <label for="backupRoleName" class="font-weight-bold mb-2">Backup as:</label>
+              <div class="form-group mb-1">
+                <label for="backupRoleName" class="font-weight-bold mb-1">Backup as:</label>
                 <select id="backupRoleName" class="form-control" v-model="backupOptions.role">
                   <option value="" disabled>Select an item...</option>
                   <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
                 </select>
               </div>
-              <div v-if="backupType === 'server'" class="d-flex font-italic mt-auto">
+              <div v-if="backupType === 'server'" class="d-flex font-italic mt-auto muted-text">
                 <i class="fa-solid fa-circle-info mr-1"></i>
                 <p>The backup will be in PLAIN format.</p>
               </div>
               <div v-if="!isNotGlobals" class="form-group d-flex flex-column mb-0">
-                <h3 class="font-weight-bold mb-2">Miscellaneous</h3>
+                <h3 class="font-weight-bold mb-1">Miscellaneous</h3>
                 <div class="custom-control custom-switch">
                   <input class="custom-control-input" type="checkbox" id="backupOptionsVerboseMessages"
                     v-model="backupOptions.verbose">
@@ -70,7 +70,7 @@
                     Force double quote on identifiers
                   </label>
                 </div>
-                <div class="d-flex font-italic mt-4">
+                <div class="d-flex font-italic mt-4 muted-text">
                   <i class="fa-solid fa-circle-info mr-1"></i>
                   <p>Only objects global to the entire database will be backed up, in PLAIN format</p>
                 </div>
@@ -81,10 +81,10 @@
 
         <div v-if="isNotGlobals" class="col-4 d-flex">
           <div class="card flex-grow-1">
-            <h3 class="card-header font-weight-bold px-3 py-2">Data/Objects</h3>
-            <div class="card-body p-3">
-              <div v-if="backupType === 'objects'" class="form-group">
-                <h3 class="font-weight-bold mb-2">Sections</h3>
+            <h4 class="card-header font-weight-bold px-3 py-2">Data/Objects</h4>
+            <div class="card-body px-3 py-2">
+              <div v-if="backupType === 'objects'" class="form-group mb-1">
+                <h5 class="font-weight-bold mb-2">Sections</h5>
                 <div class="custom-control custom-switch">
                   <input class="custom-control-input" type="checkbox" id="backupOptionsPreData"
                     v-model="backupOptions.pre_data" :disabled="backupOptions.only_data || backupOptions.only_schema">
@@ -108,8 +108,8 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <h3 class="font-weight-bold mb-2">Type of objects</h3>
+              <div class="form-group mb-1">
+                <p class="font-weight-bold mb-1">Type of objects</p>
                 <div class="custom-control custom-switch">
                   <input class="custom-control-input" type="checkbox" id="backupOptionsOnlyData"
                     v-model="backupOptions.only_data"
@@ -135,7 +135,7 @@
               </div>
 
               <div class="form-group mb-0">
-                <h3 class="font-weight-bold mb-2">Do not save</h3>
+                <p class="font-weight-bold mb-2">Do not save</p>
                 <div class="custom-control custom-switch">
                   <input class="custom-control-input" type="checkbox" id="backupOptionsOwner" v-model="backupOptions.owner">
                   <label class="custom-control-label" for="backupOptionsOwner">
@@ -177,10 +177,10 @@
         
         <div v-if="isNotGlobals" class="col-4 d-flex">
           <div class="card flex-grow-1">
-            <h3 class="card-header font-weight-bold px-3 py-2">Options</h3>
-            <div class="card-body p-3">
-            <div class="form-group">
-              <h3 class="font-weight-bold mb-2">Queries</h3>
+            <h4 class="card-header font-weight-bold px-3 py-2">Options</h4>
+            <div class="card-body px-2 px-3 py-2">
+            <div class="form-group mb-1">
+              <p class="font-weight-bold mb-1">Queries</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="backupOptionsColumnInserts"
                   v-model="backupOptions.use_column_inserts">
@@ -218,8 +218,8 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <h3 class="font-weight-bold mb-2">Disable</h3>
+            <div class="form-group mb-1">
+              <p class="font-weight-bold mb-1">Disable</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="backupOptionsTrigger"
                   title="disabled on object backup" v-model="backupOptions.disable_trigger"
@@ -238,7 +238,7 @@
             </div>
             
             <div class="form-group mb-0">
-              <h3 class="font-weight-bold mb-2">Miscellaneous</h3>
+              <p class="font-weight-bold mb-1">Miscellaneous</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="backupOptionsWithOid"
                   v-model="backupOptions.with_oids" disabled>
@@ -267,18 +267,19 @@
                   Use SET SESSION AUTHORIZATION
                 </label>
               </div>
-
             </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="d-flex justify-content-between mt-3">
-        <a :class="['btn', 'btn-danger', 'mb-2', { 'disabled': !isOptionsChanged }]" 
-            @click="resetToDefault">Reset</a>
-        <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
-            @click.prevent="saveBackup">Backup</a>
+      <div class="d-flex justify-content-end mt-2">
+        <div class="btn-group">
+          <a :class="['btn', 'btn-outline-secondary', 'mb-2', { 'disabled': !isOptionsChanged }]" 
+              @click="resetToDefault">Revert settings</a>
+          <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
+              @click.prevent="saveBackup">Backup</a>
+        </div>
       </div>
   </form>
   <UtilityJobs ref="jobs" />

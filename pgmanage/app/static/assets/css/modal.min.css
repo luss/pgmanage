@@ -143,7 +143,6 @@ span.text-muted {
 .btn-outline-primary:hover {
   opacity: 1;
   color: #FFFFFF !important;
-  color: #FFFFFF !important;
   background-color: #206BC4 !important;
 }
 
@@ -177,6 +176,50 @@ span.text-muted {
 .btn-outline-danger:hover {
   opacity: 1;
   color: #FFFFFF !important;
+  background-color: #D72239 !important;
+}
+
+.btn-ghost {
+  padding: 0.375rem;
+  min-width: 30px;
+  background-color: transparent !important;
+  border: 1px solid transparent  !important;
+  transition: all .3s;
+}
+
+.btn-ghost-primary {
+  color: #206BC4 !important;
+}
+
+.btn-ghost-primary:hover {
+  color: #F8FAFC !important;
+  background-color: #206BC4 !important;
+}
+
+.btn-ghost-secondary {
+  color: #616876 !important;
+}
+
+.btn-ghost-secondary:hover {
+  color: #F8FAFC !important;
+  background-color: #616876 !important;
+}
+
+.btn-ghost-success {
+  color: #2FB344 !important;
+}
+
+.btn-ghost-success:hover {
+  color: #F8FAFC !important;
+  background-color: #2FB344 !important;
+}
+
+.btn-ghost-danger {
+  color: #D72239 !important;
+}
+
+.btn-ghost-danger:hover {
+  color: #F8FAFC !important;
   background-color: #D72239 !important;
 }
 
@@ -377,6 +420,20 @@ input[type='checkbox'] {
 .custom-control-input:checked ~ .custom-control-label::before {
   border-color: #206BC4;
   background-color: #206BC4;
+}
+
+.custom-switch .custom-control-label::before {
+  height: 0.875rem;
+}
+
+.custom-switch .custom-control-label:after {
+  top: calc(0.21875rem + 3px);
+  width: calc(0.875rem - 5px);
+  height: calc(0.875rem - 5px);
+}
+
+.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  transform: translateX(0.875rem);
 }
 
 .custom-file-label {
