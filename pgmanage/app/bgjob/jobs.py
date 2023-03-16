@@ -430,6 +430,12 @@ class BatchJob:
 
         logdir = job.logdir
 
+        try:
+            process = psutil.Process(job.utility_pid)
+            process.terminate()
+        except psutil.Error as error:
+            raise
+
         job.delete()
 
         shutil.rmtree(logdir, True)
