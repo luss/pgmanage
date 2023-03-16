@@ -344,7 +344,7 @@ export default {
       })
         .then((resp) => {
           console.log(resp)
-          this.$refs.jobs.startJob(resp.data.job_id)
+          this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
         })
         .catch((error) => {
           console.log(error)

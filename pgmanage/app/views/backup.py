@@ -351,7 +351,7 @@ def create_backup(request, database):
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=410)
 
-    return JsonResponse(data={"job_id": job.id, "Success": 1})
+    return JsonResponse(data={"job_id": job.id, "description": job.description.message, "Success": 1})
 
 
 @database_required_new(check_timeout=True, open_connection=True)
