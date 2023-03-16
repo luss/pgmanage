@@ -145,7 +145,6 @@ export default {
     },
     startJob(job_id, desc) {
       this.pendingJobId.push(job_id)
-      this.sendNotifyJobStarted(desc, () => { this.getJobDetails(job_id) })
     },
     stopJob(job_id) {
       this.jobList.find((p) => p.id == job_id).process_state = JobState.PROCESS_TERMINATING;
@@ -229,7 +228,8 @@ export default {
       this.pendingJobId = this.pendingJobId.filter((id) => {
         if (completedJobIds.includes(id)) {
           let j = this.jobList.find((j) => j.id == id)
-          this.sendNotifyJobFinished(j.description, j.process_state, () => this.getJobDetails(j.id))
+          if (j.process_state != JobState.PROCESS_TERMINATED)
+            this.sendNotifyJobFinished(j.description, j.process_state, () => this.getJobDetails(j.id))
           return false
         }
         return true
@@ -243,19 +243,11 @@ export default {
                 ${desc}  
               </div>`
     },
-    sendNotifyJobStarted(desc, onClickProcess) {
-      this.$toast.info(this.createNotifyMessage('Job started', desc), {
-        onClick: onClickProcess
-      })
-    },
     sendNotifyJobFinished(desc, process_state, onClickProcess) {
       let success = true;
       let message = this.createNotifyMessage('Job finished', desc)
-      if (process_state == JobState.PROCESS_TERMINATED) {
+      if (process_state == JobState.PROCESS_FAILED) {
         message = this.createNotifyMessage('Job terminated', desc)
-        success = false;
-      } else if (process_state == JobState.PROCESS_FAILED) {
-        message = this.createNotifyMessage('Job failed', desc)
         success = false;
       }
       if (success) {

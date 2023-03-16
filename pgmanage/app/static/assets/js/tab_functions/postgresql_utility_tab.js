@@ -75,7 +75,7 @@ let createUtilityTab = function (node, utility, backup_type = "objects") {
     },
   });
   app.use(VueToast.ToastPlugin, {
-    duration: 1000 * 10,
+    duration: 0,
   });
   app.mount(`#${mode}_tab_${tab.id}`);
 };
