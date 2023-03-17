@@ -37,14 +37,14 @@ export default {
     return {
       detailJobWorkerId: '',
       logs: [],
-      done: false,
     }
   },
   mounted() {
-    $('#jobDetailModal').on('hidden.bs.modal', () => {
+    $('#jobDetailModal').on('hide.bs.modal', () => {
       this.logs.splice(0)
-      this.done = false
       jobDetailState.clearSelectedAndHide()
+      clearInterval(this.detailJobWorkerId)
+      this.detailJobWorkerId = ''
     })
     $('#jobDetailModal').on('show.bs.modal', () => {
       this.getJobDetails(this.selectedJob.id);
@@ -66,7 +66,7 @@ export default {
 
   methods: {
     getJobDetails(job_id, out = 0, err = 0) {
-      axios.get(`/bgprocess/${job_id}/${out}/${err}`)
+      axios.get(`/bgprocess/${job_id}/${out}/${err}/`)
         .then((resp) => {
           console.log(resp)
           let out_pos = resp.data.data.out.pos
@@ -75,15 +75,16 @@ export default {
           this.logs.push(
             ...resp.data.data.err.lines.map((l) => l[1]),
             ...resp.data.data.out.lines.map((l) => l[1]))
-          if (!this.detailedJobWorker) {
-            this.detailedJobWorker = setInterval(() => {
-              if (!!Object.keys(this.selectedJob).length && !this.done) {
+          if (!this.detailJobWorkerId) {
+            this.detailJobWorkerId = setInterval(() => {
+              if (!!Object.keys(this.selectedJob).length) {
                 this.getJobDetails(job_id, out_pos, err_pos)
               }
             }, 1000)
           }
-          if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailedJobWorker) {
-            this.done = true
+          if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailJobWorkerId) {
+            clearInterval(this.detailJobWorkerId)
+            this.detailJobWorkerId = ''
           }
         })
         .catch((error) => {
