@@ -46,42 +46,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- Modal -->
-  <div class="modal fade" :id="detailModalId" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h3 class="modal-title">{{ selectedJob?.type_desc }}</h3>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-            </button>
-        </div>
-        <div class="modal-body">
-          <p class="mb">{{ selectedJob?.description }}</p>
-          <p class="font-weight-bold mb-2">Command:</p>
-          <p class="p-2 border border-radius text-break">{{ selectedJob?.details?.cmd }}</p>
-          <div class="d-flex justify-content-between mt-3 mb-2">
-            <span>
-              <span class="font-weight-bold">Start time:</span> {{ selectedJob?.start_time }}
-            </span>
-            <span>
-              <span class="font-weight-bold">Duration:</span> {{ selectedJob?.duration }}
-            </span>
-          </div>
-          <p class="font-weight-bold mb-2">Output:</p>
-          <div :style="{ height: '200px', overflowY: 'auto' }" class="border border-radius p-1">
-            <p v-for="log in logs"> {{ log }}</p>
-          </div>
-        </div>
-        <div :class="['modal-footer', { 'd-none': selectedJob.canStop }]">
-          <a class="btn btn-danger" @click="stopJob(selectedJob.id)">
-            Stop process
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -101,18 +65,11 @@ export default {
       pendingJobId: [],
       jobList: [],
       workerId: '',
-      detailedJobWorker: '',
-      logs: [],
       selectedJob: {},
-      detailModalId: `${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_modal_job_detail`
     }
   },
   mounted() {
     this.startWorker()
-    $(`#${this.detailModalId}`).on('hidden.bs.modal', () => {
-      this.logs.splice(0)
-      clearInterval(this.detailedJobWorker)
-    })
   },
   methods: {
     getJobList() {
@@ -161,32 +118,6 @@ export default {
         .then((resp) => {
           this.pendingJobId = this.pendingJobId.filter(id => id != job_id)
           this.getJobList()
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
-    getJobDetails(job_id, out = 0, err = 0) {
-      axios.get(`/bgprocess/${job_id}/${out}/${err}`)
-        .then((resp) => {
-          console.log(resp)
-          this.selectedJob = Object.assign({}, this.jobList.find((j) => j.id == job_id))
-          let out_pos = resp.data.data.out.pos
-          let err_pos = resp.data.data.err.pos
-          this.selectedJob.duration = resp.data.data.duration
-          this.logs.push(
-            ...resp.data.data.err.lines.map((l) => l[1]),
-            ...resp.data.data.out.lines.map((l) => l[1]))
-          $(`#${this.detailModalId}`).modal('show')
-          if (!this.detailedJobWorker) {
-            this.detailedJobWorker = setInterval(() => {
-              this.getJobDetails(job_id, out_pos, err_pos)
-            }, 1000)
-
-          }
-          if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailedJobWorker) {
-            clearInterval(this.detailedJobWorker)
-          }
         })
         .catch((error) => {
           console.log(error)
@@ -259,6 +190,10 @@ export default {
           onClick: onClickProcess
         })
       }
+    },
+    getJobDetails(job_id) {
+      this.selectedJob = Object.assign({}, this.jobList.find((j) => j.id == job_id))
+      jobDetailState.setJobAndShow(this.selectedJob)
     }
   }
 }
