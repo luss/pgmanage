@@ -433,6 +433,8 @@ class BatchJob:
         try:
             process = psutil.Process(job.utility_pid)
             process.terminate()
+        except psutil.NoSuchProcess:
+            job.process_state = PROCESS_TERMINATED
         except psutil.Error as error:
             raise
 
