@@ -276,10 +276,12 @@
       <div class="d-flex justify-content-between mt-3">
         <a :class="['btn', 'btn-outline-secondary', 'mb-2', { 'disabled': !isOptionsChanged }]" 
             @click="resetToDefault">Revert settings</a>
-        <a :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !backupOptions.fileName}]"
-            @click="previewCommand">Preview</a>
-        <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
-            @click.prevent="saveBackup">Backup</a>
+          <div class="btn-group">
+            <a :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !backupOptions.fileName}]"
+                @click="previewCommand">Preview</a>
+            <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
+                @click.prevent="saveBackup">Backup</a>
+          </div>
       </div>
   </form>
   <UtilityJobs ref="jobs" />
