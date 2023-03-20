@@ -167,11 +167,9 @@ export default {
       })
     },
     createNotifyMessage(title, desc) {
-      return `<div class="text-center">
-                <strong class="mr-auto">${title}</strong>
-              </div>
-              <div class="toast-body">
-                ${desc}  
+      return `<div class="toast-body p-0">
+                <h4 class="font-weight-bold">${title}</h4>
+                <p>${desc}</p>  
               </div>`
     },
     sendNotifyJobFinished(desc, process_state, onClickProcess) {
