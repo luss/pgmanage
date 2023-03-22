@@ -20,8 +20,16 @@
               <span class="font-weight-bold">Duration:</span> {{ selectedJob?.duration }}
             </span>
           </div>
-          <p class="font-weight-bold mb-2">Output:</p>
-          <div :style="{ height: '200px', overflowY: 'auto' }" class="border border-radius p-1">
+          <div class="d-flex justify-content-between mt-3 mb-2">
+            <span class="font-weight-bold">Output:</span>
+            <div class="custom-control custom-switch">
+              <input class="custom-control-input" type="checkbox" id="jobDetailAutoscroll" v-model="autoScroll">
+              <label class="custom-control-label" for="jobDetailAutoscroll">
+                Autoscroll
+              </label>
+            </div>
+          </div>
+          <div ref="job_detail_output" :style="{ height: '200px', overflowY: 'auto' }" class="border border-radius p-1">
             <p v-for="log in logs"> {{ log }}</p>
           </div>
         </div>
@@ -36,18 +44,21 @@ export default {
   data() {
     return {
       detailJobWorkerId: '',
+      autoScrollWorkerId: '',
       logs: [],
+      autoScroll: true
     }
   },
   mounted() {
     $('#jobDetailModal').on('hide.bs.modal', () => {
-      this.logs.splice(0)
+      this.setDefault()
       jobDetailState.clearSelectedAndHide()
       clearInterval(this.detailJobWorkerId)
-      this.detailJobWorkerId = ''
+      clearInterval(this.autoScrollWorkerId)
     })
     $('#jobDetailModal').on('show.bs.modal', () => {
       this.getJobDetails(this.selectedJob.id);
+      this.startAutoScrollWorker()
     })
     setInterval(() => {
       if (this.visible && !this.logs.length) {
@@ -91,6 +102,20 @@ export default {
           console.log(error)
         })
     },
+    startAutoScrollWorker() {
+      this.autoScrollWorkerId = setInterval(() => {
+        if (this.autoScroll) {
+          let scrollHeight = this.$refs.job_detail_output.scrollHeight
+          this.$refs.job_detail_output.scrollTo({ 'top': scrollHeight, 'behavior': 'smooth' })
+        }
+      }, 1000)
+    },
+    setDefault() {
+      this.$refs.job_detail_output.scrollTop = 0;
+      this.logs.splice(0)
+      this.autoScroll = true
+      this.detailJobWorkerId = ''
+    }
   }
 }
 </script>
