@@ -95,7 +95,6 @@ export default {
           }
           if (resp.data.data.out.done && resp.data.data.err.done && resp.data.data.exit_code != null && this.detailJobWorkerId) {
             clearInterval(this.detailJobWorkerId)
-            this.detailJobWorkerId = ''
           }
         })
         .catch((error) => {
