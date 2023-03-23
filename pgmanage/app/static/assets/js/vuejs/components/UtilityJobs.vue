@@ -160,7 +160,7 @@ export default {
         if (completedJobIds.includes(id)) {
           let j = this.jobList.find((j) => j.id == id)
           if (j.process_state != JobState.PROCESS_TERMINATED)
-            this.sendNotifyJobFinished(j.description, j.process_state, () => this.getJobDetails(event, j.id))
+            this.sendNotifyJobFinished(j.description, j.process_state, () => this.getJobDetails(j.id, event))
           return false
         }
         return true
@@ -192,8 +192,8 @@ export default {
         })
       }
     },
-    getJobDetails(event, job_id) {
-      if (event.target.tagName === 'BUTTON') {
+    getJobDetails(job_id, event) {
+      if (!event || event.target.tagName === 'BUTTON') {
         this.selectedJob = Object.assign({}, this.jobList.find((j) => j.id == job_id))
         jobDetailState.setJobAndShow(this.selectedJob)
       }
