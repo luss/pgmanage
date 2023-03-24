@@ -307,7 +307,7 @@ def create_backup(request, database):
 
     ret_val = shutil.which(utility)
     if not ret_val:
-        return JsonResponse(data={"data": "Utility file not found"}, status=400)
+        return JsonResponse(data={"data": f"'{utility}' file not found."}, status=400)
 
     args = get_args_params_values(data, database, backup_type_str, backup_file)
 
