@@ -7,8 +7,7 @@
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
                 <label for="restoreFileName" class="font-weight-bold mb-1">FileName</label>
-                <input v-if="desktopMode" type="file" class="form-control" id="restoreFileName" @change="onFile" nwsaveas>
-                <div v-else class="input-group">
+                <div class="input-group">
                   <div class="input-group-prepend">
                     <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                       a file</div>
@@ -16,6 +15,14 @@
                   <input type="text" class="form-control" :value="restoreOptions.fileName"
                     placeholder="Select file or folder" disabled>
                 </div>
+              </div>
+
+              <div  class="form-group mb-1">
+                <label for="restoreFormat" class="font-weight-bold mb-1">Format</label>
+                <select id="restoreFormat" class="form-control" v-model="restoreOptions.format">
+                  <option value="custom/tar">Custom or tar</option>
+                  <option value="directory">Directory</option>
+                </select>
               </div>
 
               <div v-if="!isNotServer" class="form-group mb-1 mt-2">
@@ -276,7 +283,8 @@ export default {
         exit_on_error: false,
         number_of_jobs: "",
         quiet: false,
-        echo_queries: false
+        echo_queries: false,
+        format: 'custom/tar'
       },
       restoreOptions: {},
       desktopMode: window.gv_desktopMode,
@@ -342,7 +350,7 @@ export default {
       this.restoreOptions.fileName = event.filePath
     },
     openFileManagerModal() {
-      this.$refs.fileManager.showModal()
+      this.$refs.fileManager.show(this.desktopMode, this.onFile, this.restoreOptions.format)
     },
     resetToDefault() {
       this.restoreOptions = { ...this.restoreOptionsDefault }

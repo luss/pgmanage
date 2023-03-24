@@ -7,9 +7,7 @@
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
                 <label for="backupFileName" class="font-weight-bold mb-1">FileName</label>
-                  <input v-if="desktopMode" type="file" class="form-control" id="backupFileName" @change="onFile" nwsaveas>
-
-                  <div v-else class="input-group">
+                  <div class="input-group">
                     <div class="input-group-prepend">
                       <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                         a file</div>
@@ -421,14 +419,13 @@ export default {
     },
     onFile(e) {
       const [file] = e.target.files
-      console.log(file)
       this.backupOptions.fileName = file?.path
     },
     changeFilePath(event) {
       this.backupOptions.fileName = event.filePath
     },
     openFileManagerModal() {
-      this.$refs.fileManager.showModal()
+      this.$refs.fileManager.show(this.desktopMode, this.onFile, this.backupOptions.format)
     },
     resetToDefault() {
       this.backupOptions = { ...this.backupOptionsDefault }
