@@ -39,7 +39,9 @@ sed -i "s/dev/$APP_VERSION/" pgmanage/custom_settings.py
 
 echo "running pyinstaller"
 /cygdrive/c/Users/$USER/AppData/Roaming/Python/Python38/Scripts/pyinstaller.exe ./pgmanage-win.spec
+/cygdrive/c/Users/$USER/AppData/Roaming/Python/Python38/Scripts/pyinstaller.exe ./process_executor-win.spec
 mv dist/pgmanage-server ../release_$APP_VERSION/
+mv dist/process_executor ../release_$APP_VERSION/pgmanage-server/
 
 cd ..
 curl -C - https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-win-x64.zip -o nwjs.zip
