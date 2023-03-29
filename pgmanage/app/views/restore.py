@@ -102,6 +102,8 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
         set_param("dns_privilege", "--no-privileges", data, args)
         set_param("dns_tablespace", "--no-tablespaces", data, args)
 
+    set_param('no_comments', '--no-comments', data, args)
+
     if not set_param("only_schema", "--schema-only", data, args):
         set_param("disable_trigger", "--disable-triggers", data, args)
 

@@ -110,7 +110,7 @@
             <div class="form-group mb-1">
               <p class="font-weight-bold mb-1">Do not save</p>
               <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" id="restoreOptionsOwner" v-model="restoreOptions.owner">
+                <input class="custom-control-input" type="checkbox" id="restoreOptionsOwner" v-model="restoreOptions.dns_owner">
                 <label class="custom-control-label" for="restoreOptionsOwner">
                   Owner
                 </label>
@@ -118,7 +118,7 @@
 
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsPrivilege"
-                  v-model="restoreOptions.privilege">
+                  v-model="restoreOptions.dns_privilege">
                 <label class="custom-control-label" for="restoreOptionsPrivilege">
                   Privilege
                 </label>
@@ -126,7 +126,7 @@
 
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsTablespace"
-                  v-model="restoreOptions.tablespace">
+                  v-model="restoreOptions.dns_tablespace">
                 <label class="custom-control-label" for="restoreOptionsTablespace">
                   Tablespace
                 </label>
@@ -134,7 +134,7 @@
 
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsComments"
-                  v-model="restoreOptions.comments">
+                  v-model="restoreOptions.no_comments">
                 <label class="custom-control-label" for="restoreOptionsComments">
                   Comments
                 </label>
@@ -266,13 +266,14 @@ export default {
         role: "",
         fileName: "",
         pre_data: false,
+        data: false,
         post_data: false,
         only_data: false,
         only_schema: false,
-        owner: false,
-        privilege: false,
-        tablespace: false,
-        comments: false,
+        dns_owner: false,
+        dns_privilege: false,
+        dns_tablespace: false,
+        no_comments: false,
         include_create_database: false,
         clean: false,
         single_transaction: false,
