@@ -85,9 +85,9 @@ export default {
             ...resp.data.data.out.lines.map((l) => l[1]))
 
           this.$nextTick(() => {
-            setTimeout(function () {
-              $('#job_detail_output').children().last()[0].scrollIntoView()
-            }, 400)
+            if (this.autoScroll) {
+              setTimeout($('#job_detail_output').children().last()[0].scrollIntoView(), 400)
+            }
           })
 
           if (!this.detailJobWorkerId) {
