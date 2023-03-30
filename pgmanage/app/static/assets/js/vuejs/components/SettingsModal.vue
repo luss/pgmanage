@@ -85,11 +85,11 @@
                   <label for="binary_path" class="font-weight-bold mb-3">PostgreSQL Binary Path</label>
                   <div class="input-group">
                     <input type="text" class="form-control" v-model="binaryPath" :placeholder="`${action} binary path..`">
-                    <label v-if="desktopMode" class="btn btn-sm">
+                    <label v-if="desktopMode" class="btn btn-ghost btn-ghost-secondary">
                       <i class="fas fa-2x fa-folder"></i>
                       <input type="file" @change="onFile" nwdirectory hidden>
                     </label>
-                    <a class="btn btn" @click="validateBinaryPath" title="Validate">
+                    <a class="btn btn-ghost btn-ghost-secondary" @click="validateBinaryPath" title="Validate">
                       <i class="fas fa-2x fa-check-to-slot"></i>
                     </a>
                   </div>

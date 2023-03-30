@@ -61,7 +61,7 @@
             <h4 class="card-header font-weight-bold px-3 py-2">Data/Objects</h4>
             <div class="card-body px-3 py-2">
               <div v-if="isObjectsType" class="form-group mb-1">
-                <h5 class="font-weight-bold mb-2">Sections</h5>
+                <p class="font-weight-bold mb-2">Sections</p>
                 <div class="custom-control custom-switch">
                   <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsPreData`"
                     v-model="backupOptions.pre_data" :disabled="isOnlyDataOrSchemaSelected">
