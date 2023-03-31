@@ -1,9 +1,10 @@
 {
- "name": "PgManage",
- "main": "index.html",
-"window": {
+  "name": "PgManage",
+  "main": "index.html",
+  "window": {
     "frame": false,
     "transparent": false,
+    "show": false,
     "icon": "pgmanage_icon.png"
   }
 }
