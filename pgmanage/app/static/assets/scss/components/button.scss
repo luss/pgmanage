@@ -50,12 +50,14 @@
     }
     //outline buttons
     &-outline {
-        background-color: transparent;
-
         &-primary {
             border: 1px solid $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
             color: $primaryBlue !important; //workaround! to be removed when new stylesheets are implemented
-    
+
+            @include themify() {
+                background-color: themed($buttonOutlinePrimaryBg);
+            }
+
             &:hover {
                 opacity: 1;
                 color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
@@ -67,6 +69,10 @@
             border: 1px solid $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
             color: $secondaryGrey !important; //workaround! to be removed when new stylesheets are implemented
     
+            @include themify() {
+                background-color: themed($buttonOutlineSecondaryBg);
+            }
+
             &:hover {
                 opacity: 1;
                 color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented
@@ -74,9 +80,13 @@
             }
         }
 
-        &-success {    
+        &-success {
             border: 1px solid $successColor !important; //workaround! to be removed when new stylesheets are implemented
             color: $successColor !important; //workaround! to be removed when new stylesheets are implemented
+
+            @include themify() {
+                background-color: themed($buttonOutlineSuccessBg);
+            }
 
             &:hover {
                 opacity: 1;
@@ -88,7 +98,11 @@
         &-danger {
             border: 1px solid $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
             color: $dangerColor !important; //workaround! to be removed when new stylesheets are implemented
-    
+
+            @include themify() {
+                background-color: themed($buttonOutlineDangerBg);
+            }
+
             &:hover {
                 opacity: 1;
                 color: $bgSurfaceLight !important; //workaround! to be removed when new stylesheets are implemented

@@ -273,7 +273,7 @@
           <div class="btn-group">
             <a :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !backupOptions.fileName}]"
                 @click="previewCommand">Preview</a>
-            <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !backupOptions.fileName }]"
+            <a :class="['btn', 'btn-success', 'mb-2', 'ml-0', { 'disabled': !backupOptions.fileName }]"
                 @click.prevent="saveBackup">Backup</a>
           </div>
       </div>
