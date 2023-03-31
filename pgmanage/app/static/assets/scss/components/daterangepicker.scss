@@ -102,9 +102,9 @@
     }
 
     select {
-        background: #1A2234 !important;
-        border: 1px solid #243049 !important;
-        color: #F8FAFC !important;
-        border-radius: 6px;
+        background: transparent !important;
+        color: $primaryBlue !important;
+        border-radius: $borderRadius;
+        border: $activeBorder !important;
     }
 }
