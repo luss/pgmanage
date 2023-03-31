@@ -44,14 +44,15 @@
           <!-- Box format for files and folders -->
           <div v-if="isGrid" class="d-flex p-2 flex-wrap">
             <div v-for="file in files" :key="file.file_name"
-              :class="['text-center', 'btn', 'btn-outline-light', 'border-0', 'pt-3', { 'active': file === selectedFile }]"
-              style="height: 55px;width: 80px;" @click="selectFileOrDir(file.file_name)"
+              :class="['text-center', 'border-0', 'pt-3', { 'active': file === selectedFile }]"
+              style="width: 80px;" @click="selectFileOrDir(file.file_name)"
+              role="button"
               @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
               <div class="position-relative">
                 <i :class="['fas', 'fa-2xl', 'mr-2', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
                   :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
               </div>
-              <p class="text-dark clipped-text">{{ file.file_name }}</p>
+              <p class="clipped-text mt-1">{{ file.file_name }}</p>
             </div>
           </div>
 
