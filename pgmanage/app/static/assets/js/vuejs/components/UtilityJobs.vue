@@ -167,12 +167,12 @@ export default {
       })
     },
     createNotifyMessage(title, desc) {
-      return `<div class="toast-body p-0">
-                  <h4 class="font-weight-bold">${title}</h4>
-                <p>${desc}</p>
-                <div class="text-center">
-                <button class="btn btn-info">View details</button>
-                </div>
+      return `<div class="v-toast__body p-0">
+                  <h3 class="font-weight-bold">${title}</h3>
+                  <p>${desc}</p>
+                  <div class="text-right">
+                    <button class="btn v-toast__details font-weight-bold">View details</button>
+                  </div>
               </div>`
     },
     sendNotifyJobFinished(desc, process_state, onClickProcess) {

@@ -23,5 +23,18 @@
         &-error {
             background-color: $dangerColor;
         }
+
+        .v-toast__text {
+            padding: 1rem;
+        }
+    }
+
+    &__details {
+        text-decoration: underline;
+
+        &:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
     }
 }
