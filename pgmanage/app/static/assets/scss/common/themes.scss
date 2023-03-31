@@ -14,6 +14,10 @@ $accordionHeadingBg: 'accordionHeadingBg';
 $accordionHeadingActiveBg: 'accordionHeadingActiveBg';
 $accordionItemActiveBg: 'accordionItemActiveBg';
 $tabsSurfaceBg: 'tabsSurfaceBg';
+$buttonOutlinePrimaryBg: 'buttonOutlinePrimaryBg';
+$buttonOutlineSecondaryBg: 'buttonOutlineSecondaryBg';
+$buttonOutlineSuccessBg: 'buttonOutlineSuccessBg';
+$buttonOutlineDangerBg: 'buttonOutlineDangerBg';
 
 $themes: (
     light: (
@@ -30,6 +34,10 @@ $themes: (
         accordionItemActiveBg: $accordionItemActiveBgLight,
         disabledInputBg: $bgLight,
         tabsSurfaceBg: $bgSurfaceBlueLight,
+        buttonOutlinePrimaryBg: transparent,
+        buttonOutlineSecondaryBg: transparent,
+        buttonOutlineSuccessBg: transparent,
+        buttonOutlineDangerBg: transparent,
     ),
     dark: (
         borderColor: $borderColorDark,
@@ -45,6 +53,10 @@ $themes: (
         accordionItemActiveBg: $accordionItemActiveBgDark,
         disabledInputBg: $disabledInputBgDark,
         tabsSurfaceBg: $bgSurfaceSecondaryDark,
+        buttonOutlinePrimaryBg: rgba($primaryBlue, 0.15),
+        buttonOutlineSecondaryBg: rgba($secondaryGrey, 0.15),
+        buttonOutlineSuccessBg: rgba($successColor, 0.15),
+        buttonOutlineDangerBg: rgba($dangerColor, 0.15),
     ),
 );
 
