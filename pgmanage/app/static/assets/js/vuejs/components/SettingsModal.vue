@@ -83,14 +83,18 @@
               <div class="form-row">
                 <div class="form-group col-12">
                   <label for="binary_path" class="font-weight-bold mb-3">PostgreSQL Binary Path</label>
-                  <div class="input-group">
-                    <input type="text" class="form-control" v-model="binaryPath" :placeholder="`${action} binary path..`">
-                    <label v-if="desktopMode" class="btn btn-ghost btn-ghost-secondary">
-                      <i class="fas fa-2x fa-folder"></i>
-                      <input type="file" @change="onFile" nwdirectory hidden>
-                    </label>
-                    <a class="btn btn-ghost btn-ghost-secondary" @click="validateBinaryPath" title="Validate">
-                      <i class="fas fa-2x fa-check-to-slot"></i>
+                  <div class="d-flex">
+                    <div class="input-group">
+                      <input type="text" class="form-control" v-model="binaryPath" :placeholder="`${action} binary path..`">
+                      <div v-if="desktopMode" class="input-group-append">
+                        <label class="btn btn-outline-secondary mb-0" type="button">
+                          Select
+                          <input type="file" @change="onFile" nwdirectory hidden>
+                        </label>
+                      </div>
+                    </div>
+                    <a class="btn btn-outline-primary ml-2" @click="validateBinaryPath" title="Validate">
+                      Validate
                     </a>
                   </div>
                 </div>
