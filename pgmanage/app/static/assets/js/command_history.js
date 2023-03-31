@@ -73,14 +73,14 @@ function showCommandList() {
 					"<span class='mx-1'>Last 6 Hours</span> <i class='fa fa-caret-down'></i>" +
 				"</button>" +
 			"</div>" +
-			"<div class='form-group col-4 d-flex flex-column justify-content-end'>"+
-				"<label class='font-weight-bold mb-2'>Command contains:</label>" +
-				"<input type='text' id='cl_input_contains_" + v_tabTag.tab_id + "' class='form-control' onchange='refreshCommandList();' />" +
+			"<div class='form-group col-7 d-flex justify-content-end align-items-end'>"+
+				"<div>"+
+					"<label class='font-weight-bold mb-2'>Command contains:</label>" +
+					"<input type='text' id='cl_input_contains_" + v_tabTag.tab_id + "' class='form-control' onchange='refreshCommandList();' />" +
+				"</div>"+
+				"<button id='bt_refresh_" + v_tabTag.tab_id + "' onclick='refreshCommandList()' class='bt_execute btn btn-primary ml-1' title='Refresh'><i class='fas fa-sync-alt mr-1'></i>Refresh</button>" +
+				"<button id='bt_clear_" + v_tabTag.tab_id + "' onclick='deleteCommandList()' class='bt_execute btn btn-danger ml-1' title='Clear List'><i class='fas fa-broom mr-1'></i>Clear List</button>" +
 			"</div>" +
-			"<div class='form-group col-3 d-flex align-items-end'>"+
-				"<button id='bt_refresh_" + v_tabTag.tab_id + "' onclick='refreshCommandList()' class='bt_execute btn btn-primary mx-1' title='Refresh'><i class='fas fa-sync-alt mr-1'></i>Refresh</button>" +
-				"<button id='bt_clear_" + v_tabTag.tab_id + "' onclick='deleteCommandList()' class='bt_execute btn btn-danger mx-1' title='Clear List'><i class='fas fa-broom mr-1'></i>Clear List</button>" +
-			"</div>"+
 		"</div>" +
 	"</div>" +
 	"<div id='command_history_daterangepicker_container_" + v_tabTag.tab_id  + "' style='position:relative;'></div>"+

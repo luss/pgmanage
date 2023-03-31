@@ -66,12 +66,14 @@ var v_createConsoleTabFunction = function() {
   "<div class='modal fade' id='modal_console_history_" + v_tab.id + "' tabindex='-1' role='dialog' aria-hidden='true'>" +
     "<div class='modal-dialog modal-xl' role='document'>" +
       "<div class='modal-content'>" +
-        "<div class='modal-header'>" +
-          "<h5 class='modal-title'>" +
+        "<div class='modal-header align-items-center'>" +
+          "<h2 class='modal-title font-weight-bold'>" +
             "Console commands history" +
-          "</h5>" +
+          "</h2>" +
           "<button type='button' class='close' data-dismiss='modal' aria-label='Close' onclick='closeConsoleHistory()'>" +
-            "<span aria-hidden='true'>&times;</span>" +
+            "<span aria-hidden='true'>" +
+              "<i class='fa-solid fa-xmark'></i>" +
+            "</span>" +
           "</button>" +
         "</div>" +
         "<div class='modal-body'>" +
