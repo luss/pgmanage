@@ -1,9 +1,6 @@
 import json
 from django.http import (
     JsonResponse,
-    HttpResponseBadRequest,
-    HttpResponseServerError,
-    HttpResponseForbidden,
     HttpResponse,
 )
 from django.core.exceptions import ValidationError
@@ -25,7 +22,7 @@ def get_configuration(request, database):
     try:
         settings = get_settings(database, query_filter, grouped)
     except DatabaseError as e:
-        return HttpResponseServerError(content=e)
+        return JsonResponse(data={"data": str(e)}, status=500)
     return JsonResponse({"settings": settings})
 
 
@@ -35,7 +32,7 @@ def get_configuration_categories(request, database):
     try:
         query = database.QueryConfigCategories().Rows
     except Exception as e:
-        return HttpResponseServerError(content=e)
+        return JsonResponse(data={"data": str(e)}, status=500)
     categories = [l.pop() for l in query]
     return JsonResponse({"categories": categories})
 
@@ -53,9 +50,9 @@ def save_configuration(request, database):
         )
         return JsonResponse(data=updated_settings)
     except ValidationError as e:
-        return HttpResponseBadRequest(content=e.message)
+        return JsonResponse(data={"data": e.message}, status=400)
     except DatabaseError as e:
-        return HttpResponseServerError(content=e)
+        return JsonResponse(data={"data": str(e)}, status=500)
 
 
 @user_authenticated
@@ -89,7 +86,7 @@ def get_status(request, database):
     try:
         settings_status = get_settings_status(database)
     except DatabaseError as e:
-        return HttpResponseServerError(content=e)
+        return JsonResponse(data={"data": str(e)}, status=500)
     return JsonResponse(settings_status)
 
 
@@ -97,11 +94,13 @@ def get_status(request, database):
 @user_authenticated
 def delete_config(request, config_id):
     config = ConfigHistory.objects.filter(id=config_id).first()
-
     if config:
         if config.user.id != request.user.id:
-            return HttpResponseForbidden(
-                content="You are not allowed to delete not yours configurations."
+            return JsonResponse(
+                data={
+                    "message": "You are not allowed to delete not yours configurations."
+                },
+                status=403,
             )
 
         config.delete()

@@ -1186,37 +1186,23 @@ def get_tablespaces(request, v_database):
 
     return JsonResponse(v_return)
 
+
 @user_authenticated
-@database_required(p_check_timeout = True, p_open_connection = True)
-def get_roles(request, v_database):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_database_index = json_object['p_database_index']
-    v_tab_id = json_object['p_tab_id']
-
-    v_list_roles = []
-
+@database_required_new(check_timeout=True, open_connection=True)
+def get_roles(request, database):
+    list_roles = []
     try:
-        v_roles = v_database.QueryRoles()
-        for v_role in v_roles.Rows:
-            v_role_data = {
-                'v_name': v_role['role_name'],
-                'v_oid': v_role['oid']
+        roles = database.QueryRoles()
+        for role in roles.Rows:
+            role_data = {
+                'name': role['role_name'],
+                'oid': role['oid']
             }
-            v_list_roles.append(v_role_data)
+            list_roles.append(role_data)
     except Exception as exc:
-        v_return['v_data'] = {'password_timeout': True, 'message': str(exc) }
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
+        return JsonResponse(data={'data': str(exc)}, status=400)
+    return JsonResponse(data={"data": list_roles})
 
-    v_return['v_data'] = v_list_roles
-
-    return JsonResponse(v_return)
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)

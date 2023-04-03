@@ -477,7 +477,7 @@
 
     v_window.x = Math.floor((window.screen.availWidth/2) - (v_window.width/2));
     v_window.y = Math.floor((window.screen.availHeight/2) - (v_window.height/2));
-
+    v_window.show()
     v_loading_data_container.style.display = '';
 
     v_window.on('close', function() {
@@ -505,6 +505,10 @@
       nw.App.quit();
     })
 
+    if (process.platform === 'darwin') {
+      process.env.PATH=path.join('/usr/local/bin', path.delimiter, process.env.PATH)
+    }
+
     setTimeout(function() {
 
       django = child_process.spawn(path.join(global.__dirname,'pgmanage-server/pgmanage-server'),['-A'],{detached: false});
@@ -529,7 +533,7 @@
               //loading_interface.style.display = 'none';
               v_loading_data_container.style.display = 'none';
               v_window.maximize();
-
+              v_window.setMinimumSize(1024, 768);
               /*v_window.width = 1280;
               v_window.height = 1024;
 

@@ -304,6 +304,25 @@ base_urlpatterns = [
     re_path(r'^get_configuration_history/', views.configuration.get_configuration_history, name='get_configuration_history'),
     re_path(r'^configuration/status/', views.configuration.get_status, name="settings_status"),
 
+    # Backup and Restore
+    path('backup/', views.backup.create_backup, name='create_backup'),
+    path('backup/preview_command/', views.backup.preview_command, name='backup_preview_command'),
+    path('restore/', views.restore.create_restore, name='create_restore'),
+    path('restore/preview_command/', views.restore.preview_command, name='restore_preview_command'),
+
+    # Background jobs
+    path('bgprocess/', views.bgjob.index, name='job_list'),
+    path('bgprocess/<int:job_id>/<int:out>/<int:err>/', views.bgjob.details, name='job_details'),
+    path('bgprocess/stop/<int:job_id>/', views.bgjob.stop_job, name='stop_job'),
+    path('bgprocess/delete/<int:job_id>/', views.bgjob.delete_job, name='delete_job'),
+    # File Management
+    path('file_manager/get_directory/', views.file_manager.get_directory, name="get_directory"),
+    path('file_manager/create/', views.file_manager.create, name="create_file_or_directory"),
+    path('file_manager/rename/', views.file_manager.rename, name="rename_file_or_directory"),
+    path('file_manager/delete/', views.file_manager.delete, name='delete_file_or_directory'),
+
+    path('validate_binary_path/', views.workspace.validate_binary_path, name='validate_binary_path')
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.PATH == '':

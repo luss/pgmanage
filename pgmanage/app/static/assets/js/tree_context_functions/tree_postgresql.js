@@ -1073,7 +1073,23 @@ function getTreePostgresql(p_div) {
                         .drop_database.replace(
                             '#database_name#', node.text));
                 }
-            }/*, {
+            },
+            {
+                text: 'Backup',
+                icon: 'fa-solid fa-download cm-all',
+                action: function(node) {
+                    createUtilityTab(node, 'Backup')
+                }
+            },
+            {
+                text: 'Restore',
+                icon: 'fa-solid fa-upload cm-all',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
+                }
+            },
+            
+            /*, {
                 text: 'Advanced Object Search',
                 icon: 'fas cm-all fa-search',
                 action: function(node) {
@@ -1369,7 +1385,22 @@ function getTreePostgresql(p_div) {
                         }
                     }]
                 }
-            }, {
+            },
+            {
+                text: 'Backup',
+                icon: 'fa-solid fa-download cm-all',
+                action: function(node) {
+                    createUtilityTab(node, 'Backup')
+                }
+            },
+            {
+                text: 'Restore',
+                icon: 'fa-solid fa-upload cm-all',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
+                }
+            },
+            {
                 text: 'Alter Schema',
                 icon: 'fas cm-all fa-edit',
                 action: function(node) {
@@ -1391,7 +1422,7 @@ function getTreePostgresql(p_div) {
                         .drop_schema.replace(
                             '#schema_name#', node.text));
                 }
-            }]
+            },]
         },
         'cm_tables': {
             elements: [{
@@ -1567,7 +1598,22 @@ function getTreePostgresql(p_div) {
                                     node.tag.schema + '.' +
                                     node.text));
                         }
-                    }]
+                    }, 
+                    {
+                        text: 'Backup',
+                        icon: 'fa-solid fa-download cm-all',
+                        action: function(node) {
+                            createUtilityTab(node, 'Backup')
+                        }
+                    },
+                    {
+                        text: 'Restore',
+                        icon: 'fa-solid fa-upload cm-all',
+                        action: function(node) {
+                            createUtilityTab(node, 'Restore')
+                        }
+                    },
+                ]
                 }
             }]
         },
@@ -2170,6 +2216,12 @@ function getTreePostgresql(p_div) {
                             node.parent.parent.text).replace(
                             '#trigger_name#', node.text));
                 }
+            }, {
+                text: 'Restore',
+                icon: 'fa-solid fa-upload cm-all',
+                action: function(node) {
+                    createUtilityTab(node, 'Restore')
+                }
             }]
         },
         'cm_eventtriggers': {
@@ -2505,6 +2557,12 @@ function getTreePostgresql(p_div) {
                             node.tag.id
                         )
                     );
+                }
+            }, { 
+                text: 'Restore',
+                icon: 'fa-solid fa-upload cm-all',
+                action: function(node) {
+                createUtilityTab(node, 'Restore')
                 }
             },
             // {
@@ -4580,6 +4638,24 @@ function getTreeDetailsPostgresql(node) {
                     }
                 }
             );
+            node.tree.contextMenu.cm_server.elements.push(
+                {
+                    text: 'Backup Server',
+                    icon: 'fa-solid fa-download cm-all',
+                    action: function(node) {
+                        createUtilityTab(node, 'Backup', 'server')
+                    }
+                },
+            );
+            node.tree.contextMenu.cm_server.elements.push(
+                {
+                    text: 'Restore Server',
+                    icon: 'fa-solid fa-upload cm-all',
+                    action: function(node) {
+                        createUtilityTab(node, 'Restore', 'server')
+                    }
+                }
+            );
             node.tree.contextMenu.cm_server.elements.push({
                 text: 'Monitoring',
                 icon: 'fas cm-all fa-chart-line',
@@ -5053,40 +5129,33 @@ function getRolesPostgresql(node) {
     node.createChildNode('', false, 'node-spin', null,
         null);
 
-    execAjax('/get_roles_postgresql/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id
-        }),
-        function(p_return) {
+    axios.post('/get_roles_postgresql/', {
+        database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tab_id: v_connTabControl.selectedTab.id
+    })
+    .then((resp) => {
+        if (node.childNodes.length > 0)
+            node.removeChildNodes();
+        node.setText(`Roles (${resp.data.data.length})`);
 
-            if (node.childNodes.length > 0)
-                node.removeChildNodes();
+        node.tag.num_tablespaces = resp.data.length
 
-            node.setText('Roles (' + p_return.v_data.length + ')');
+        for (i = 0; i < resp.data.data.length; i++) {
 
-            node.tag.num_tablespaces = p_return.v_data.length;
+            node.createChildNode(resp.data.data[i].name,
+                false, 'fas node-all fa-user node-user', {
+                    type: 'role',
+                    oid: resp.data.data[i].oid
+                }, 'cm_role', null, false);
+        }
 
-            for (i = 0; i < p_return.v_data.length; i++) {
+        node.drawChildNodes();
 
-                v_node = node.createChildNode(p_return.v_data[i].v_name,
-                    false, 'fas node-all fa-user node-user', {
-                        type: 'role',
-                        oid: p_return.v_data[i].v_oid
-                    }, 'cm_role', null, false);
-
-            }
-
-            node.drawChildNodes();
-
-            afterNodeOpenedCallbackPostgreSQL(node);
-
-        },
-        function(p_return) {
-            nodeOpenErrorPostgresql(p_return, node);
-        },
-        'box',
-        false);
+        afterNodeOpenedCallbackPostgreSQL(node);
+    })
+    .catch((error) => {
+        nodeOpenErrorPostgresqlNew(error, node)
+    })
 }
 
 /// <summary>
@@ -9009,6 +9078,34 @@ function nodeOpenErrorPostgresql(p_return, p_node) {
             'fas fa-times node-error', {
                 type: 'error',
                 message: p_return.v_data
+            }, null);
+    }
+
+}
+
+function nodeOpenErrorPostgresqlNew(error_response, node) {
+    if (error_response.response.data?.password_timeout) {
+        node.collapseNode();
+        showPasswordPrompt(
+            v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+            function() {
+                node.expandNode();
+            },
+            null,
+            error_response.response.data.data
+        );
+    } else {
+
+        if (node.childNodes.length > 0)
+            node.removeChildNodes();
+
+        node.createChildNode(
+            "Error - <a class='a_link' onclick='showError(&quot;" +
+            error_response.response.data.data.replace(/\n/g, "<br/>").replace(/"/g, '') +
+            "&quot;)'>View Detail</a>", false,
+            'fas fa-times node-error', {
+                type: 'error',
+                message: error_response.response.data.data
             }, null);
     }
 

@@ -116,8 +116,8 @@ def database_required_new(check_timeout=True, open_connection=True):
                         # Check database prompt timeout
                         timeout = session.DatabaseReachPasswordTimeout(int(database_index))
                         if timeout['timeout']:
-                            data = {'password_timeout': True, 'message': timeout['message']}
-                            return HttpResponseBadRequest(content=data)
+                            data = {'password_timeout': True, 'data': timeout['message']}
+                            return JsonResponse(data=data, status=400)
 
                     database = get_database_object(
                         p_session=request.session,
@@ -126,8 +126,8 @@ def database_required_new(check_timeout=True, open_connection=True):
                         p_attempt_to_open_connection=open_connection
                     )
                 except Exception as exc:
-                    data = {'password_timeout': True, 'message': str(exc)}
-                    return HttpResponseBadRequest(content=data)
+                    data = {'password_timeout': True, 'data': str(exc)}
+                    return JsonResponse(data=data, status=400)
             else:
                 database = None
 

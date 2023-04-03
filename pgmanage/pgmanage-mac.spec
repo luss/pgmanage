@@ -8,7 +8,7 @@ data_files_server = [
   ('app/static','app/static'),
   ('app/include','app/include'),
   ('app/templates','app/templates'),
-  ('app/plugins','app/plugins')
+  ('app/plugins','app/plugins'),
 ]
 
 

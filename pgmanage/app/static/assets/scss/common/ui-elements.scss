@@ -1,0 +1,9 @@
+.border {
+    @include themify() {
+        border: themed($border);
+    }
+}
+
+.border-radius {
+    border-radius: $borderRadius;
+}

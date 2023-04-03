@@ -31,8 +31,7 @@
                 <div style="position: absolute; top: 50%; width: 100%;">Press key combination... (ESC to cancel)</div>
               </div>
 
-              <div v-for="(shortcut, shortcut_id, index) in shortcutObject.shortcuts" :key="index"
-                class="form-group row">
+              <div v-for="(shortcut, shortcut_id, index) in shortcutObject.shortcuts" :key="index" class="form-group row">
                 <label :for="shortcut_id" class="col-sm-6 col-form-label">{{ shortcutLabels[index] }}</label>
                 <div class="col-sm-6">
                   <button :id="shortcut_id" class='btn btn-secondary btn-sm btn-block' @click="startSetShortcut">{{
@@ -78,6 +77,26 @@
                   <label for="txt_csv_delimiter" class="font-weight-bold mb-3">CSV Delimiter</label>
                   <input type="text" class="form-control" id="txt_csv_delimiter" placeholder="Delimiter"
                     v-model="csvDelimiter">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <label for="binary_path" class="font-weight-bold mb-3">PostgreSQL Binary Path</label>
+                  <div class="d-flex">
+                    <div class="input-group">
+                      <input type="text" class="form-control" v-model="binaryPath" :placeholder="`${action} binary path..`">
+                      <div v-if="desktopMode" class="input-group-append">
+                        <label class="btn btn-outline-secondary mb-0" type="button">
+                          Select
+                          <input type="file" @change="onFile" nwdirectory hidden>
+                        </label>
+                      </div>
+                    </div>
+                    <a class="btn btn-outline-primary ml-2" @click="validateBinaryPath" title="Validate">
+                      Validate
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -131,6 +150,7 @@ export default {
       selectedEditorTheme: window.v_theme,
       selectedCSVEncoding: window.v_csv_encoding,
       csvDelimiter: window.v_csv_delimiter,
+      binaryPath: window.binary_path,
       buttonFormDisabled: true,
       password: '',
       passwordConfirm: '',
@@ -164,6 +184,9 @@ export default {
   computed: {
     fontSizeOptions() {
       return Array(11).fill(10).map((x, y) => x + y)
+    },
+    action() {
+      return this.desktopMode ? 'Select' : 'Enter'
     }
   },
   created() {
@@ -464,6 +487,7 @@ export default {
           "password": this.password,
           "csv_encoding": this.selectedCSVEncoding,
           "csv_delimiter": this.csvDelimiter,
+          "binary_path": this.binaryPath
         })
           .then((resp) => {
             $('#modal_settings').modal('hide');
@@ -528,6 +552,23 @@ export default {
         return true;
 
       return false;
+    },
+    validateBinaryPath() {
+      axios.post('/validate_binary_path/', {
+        binary_path: this.binaryPath
+      })
+        .then((resp) => {
+          const binary_paths = Object.entries(resp.data.data)
+            .map(([key, value]) => `<p>${key}: ${value}</p>`).join('')
+          showAlert(binary_paths)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    onFile(e) {
+      const [file] = e.target.files
+      this.binaryPath = file?.path
     },
   }
 }

@@ -12,13 +12,14 @@
     <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/fa/css/all.css?v{{pgmanage_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/xterm.css">
 
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/omnidb.min.css?{{pgmanage_short_version}}">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/modal.min.css?{{pgmanage_short_version}}">
     <link id="ss_theme" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/pev2/css/style.css" />
     <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/Passtrength/css/passtrength.css">
+    <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/vue-toast-notification/css/theme-sugar.css">
 
+    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
+    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/omnidb.min.css?{{pgmanage_short_version}}">
+    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/modal.min.css?{{pgmanage_short_version}}">
     <title>PgManage</title>
   </head>
   <body>
@@ -39,6 +40,9 @@
     <settings-modal></settings-modal>
   </div>
 
+  <div id="utility-job-detail-wrap">
+    <job-detail></job-detail>
+  </div>
 
   <div class="toast" data-autohide="false" style="position: absolute; top: 0; right: 0;">
     <div class="toast-header">
@@ -306,7 +310,7 @@
               <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
-          <div id="modal_message_content" class="modal-body" style='white-space: pre-line;'>
+          <div id="modal_message_content" class="modal-body" style='white-space: pre-line; word-break: break-all;'>
           </div>
           <div class="modal-footer">
             <button id="modal_message_yes" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
@@ -617,6 +621,7 @@
     var v_tree_object;
     var v_super_user = {{ super_user }};
     var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
+    var binary_path = '{{ binary_path }}';
     </script>
     <script src="{{url_folder}}/static/assets/lib/axios@1.2.1/axios.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/vue@3.2.45/vue.global.js"></script>
@@ -635,5 +640,9 @@
     </script>
     <script src="{{url_folder}}/static/assets/js/vuejs/components/connections_modal.js"></script>
     <script src="{{url_folder}}/static/assets/js/vuejs/components/settings_modal.js"></script>
+    <script src="{{url_folder}}/static/assets/js/tab_functions/postgresql_utility_tab.js"></script>
+    <script src="{{url_folder}}/static/assets/lib/vue-toast-notification/vue-toast-notification@3.js"></script>
+    <script src="{{url_folder}}/static/assets/js/vuejs/job_detail_state.js"></script>
+    <script src="{{url_folder}}/static/assets/js/vuejs/components/job_detail_modal.js"></script>
   </body>
 </html>

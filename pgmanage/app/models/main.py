@@ -14,6 +14,7 @@ class UserDetails(models.Model):
     csv_delimiter = models.CharField(max_length=10, blank=False, default=';')
     welcome_closed = models.BooleanField(default=False)
     masterpass_check = models.CharField(max_length=256, default='')
+    binary_path = models.CharField(max_length=256, null=True)
 
 class Shortcut(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -118,3 +119,17 @@ class ConfigHistory(models.Model):
     config_snapshot = models.TextField(blank=False)
     commit_comment = models.TextField(blank=True)
     
+
+class Job(models.Model):
+    id = models.TextField(null=False, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    command = models.TextField(blank=False)
+    description = models.TextField(blank=False)
+    arguments =  models.TextField(blank=True)
+    logdir = models.TextField()
+    start_time = models.DateTimeField(null=True)
+    end_time = models.DateTimeField(null=True)
+    exit_code = models.IntegerField(null=True)
+    utility_pid = models.IntegerField(null=True)
+    process_state = models.IntegerField(null=True)
+    connection = models.ForeignKey(Connection,on_delete=models.CASCADE, null=True)

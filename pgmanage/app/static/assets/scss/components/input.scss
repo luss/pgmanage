@@ -74,6 +74,25 @@ input[type='checkbox']{
     background-color: $primaryBlue;
 }
 
+.custom-switch {
+    .custom-control-label {
+        &::before {
+            height: 0.875rem;
+            background-color: transparent;
+        }
+    
+        &:after {
+            top: calc(0.21875rem + 3px);
+            width: calc(0.875rem - 5px);
+            height: calc(0.875rem - 5px);
+        }
+    }
+
+    .custom-control-input:checked~.custom-control-label::after {
+        transform: translateX(.875rem);
+    }
+}
+
 .custom-file {
     &-label {
         padding: 6px 12px;

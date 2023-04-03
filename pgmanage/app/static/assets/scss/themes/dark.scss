@@ -533,7 +533,7 @@ SOFTWARE.
       .arrow::before {
         border-top-color: #29364E;
       }
-  }
+    }
 
     &[x-placement='bottom']{
       .arrow::before {
@@ -551,7 +551,7 @@ SOFTWARE.
       .arrow::before {
         border-right-color: #29364E;
       }
-  }
+    }
 
     &-inner {
       color: #F8FAFC;
@@ -563,6 +563,10 @@ SOFTWARE.
       ul {
         padding-left: 20px;
       }
+    }
+
+    &.show {
+      opacity: 1 !important;
     }
   }
 

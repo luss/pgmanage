@@ -525,38 +525,41 @@ SOFTWARE.
   .tooltip {
     &[x-placement='top']{
       .arrow::before {
-        border-top-color: #F1F5F9;
+        border-top-color: #c6daf3;
       }
-  }
+    }
 
     &[x-placement='bottom']{
       .arrow::before {
-        border-bottom-color: #F1F5F9;
+        border-bottom-color: #c6daf3;
       }
     }
 
     &[x-placement='left']{
       .arrow::before {
-        border-left-color: #F1F5F9;
+        border-left-color: #c6daf3;
       }
     }
 
     &[x-placement='right']{
       .arrow::before {
-        border-right-color: #F1F5F9;
+        border-right-color: #c6daf3;
       }
-  }
+    }
 
     &-inner {
       color: #1D273B;
-      background-color: #F1F5F9;
+      background-color: #c6daf3;
       border-radius: 6px;
       padding: 8px;
-      box-shadow: 0 0.5rem 1rem rgba(0,  0,  0,  0.15);
 
       ul {
         padding-left: 20px;
       }
+    }
+
+    &.show {
+      opacity: 1 !important;
     }
   }
 
