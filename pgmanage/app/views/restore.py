@@ -141,10 +141,10 @@ def create_restore(request, database):
     utility_path = None
     try:
         utility_path = get_utility_path(utility, request.user)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         return JsonResponse(
             data={
-                "data": f"'{utility_path if utility_path else utility}' file not found. Correct the Binary Path in Settings dialog."
+                "data": str(e)
             },
             status=400,
         )
@@ -196,10 +196,10 @@ def preview_command(request, database):
     utility_path = None
     try:
         utility_path = get_utility_path(utility, request.user)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         return JsonResponse(
             data={
-                "data": f"'{utility_path if utility_path else utility}' file not found. Correct the Binary Path in Settings dialog."
+                "data": str(e)
             },
             status=400,
         )
