@@ -18,6 +18,7 @@ $buttonOutlinePrimaryBg: 'buttonOutlinePrimaryBg';
 $buttonOutlineSecondaryBg: 'buttonOutlineSecondaryBg';
 $buttonOutlineSuccessBg: 'buttonOutlineSuccessBg';
 $buttonOutlineDangerBg: 'buttonOutlineDangerBg';
+$fileItemBgActive: 'fileItemBgActive';
 
 $themes: (
     light: (
@@ -38,6 +39,7 @@ $themes: (
         buttonOutlineSecondaryBg: transparent,
         buttonOutlineSuccessBg: transparent,
         buttonOutlineDangerBg: transparent,
+        fileItemBgActive: $bgSurfaceBlueLight,
     ),
     dark: (
         borderColor: $borderColorDark,
@@ -57,6 +59,7 @@ $themes: (
         buttonOutlineSecondaryBg: rgba($secondaryGrey, 0.15),
         buttonOutlineSuccessBg: rgba($successColor, 0.15),
         buttonOutlineDangerBg: rgba($dangerColor, 0.15),
+        fileItemBgActive: $bgSurfaceSecondaryDark,
     ),
 );
 

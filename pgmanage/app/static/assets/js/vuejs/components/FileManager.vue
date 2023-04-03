@@ -1,6 +1,6 @@
 <template>
   <div class="modal" :id="modalId" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-file-manager">
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title">File manager</h2>
@@ -42,11 +42,10 @@
           </div>
 
           <!-- Box format for files and folders -->
-          <div v-if="isGrid" class="d-flex p-2 flex-wrap">
+          <div v-if="isGrid" class="d-flex p-2 flex-wrap files-grid">
             <div v-for="file in files" :key="file.file_name"
-              :class="['text-center', 'border-0', 'pt-3', { 'active': file === selectedFile }]"
-              style="width: 80px;" @click="selectFileOrDir(file.file_name)"
-              role="button"
+              :class="['files-grid__item', 'text-center', 'border-0', 'pt-3', 'mr-2', { 'active': file === selectedFile }]"
+              @click="selectFileOrDir(file.file_name)"
               @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
               <div class="position-relative">
                 <i :class="['fas', 'fa-2xl', 'mr-2', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
