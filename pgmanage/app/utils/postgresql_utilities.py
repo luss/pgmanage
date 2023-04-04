@@ -15,5 +15,8 @@ def get_utility_path(utility, current_user):
         )
 
     if utility_path is None or not os.path.exists(utility_path):
-        raise FileNotFoundError
+        msg = f"<b>{utility_path if utility_path else utility}</b> not found.<br>\
+              Please make sure that you have Postgresql Client installed.<br><b>More information</b>\
+              <a href='https://pgmanage.readthedocs.io/en/latest/en/02_quick_start.html#install-guide'>Postgresql Client Installation</a>"
+        raise FileNotFoundError(msg)
     return utility_path

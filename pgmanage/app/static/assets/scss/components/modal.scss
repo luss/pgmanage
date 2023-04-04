@@ -312,3 +312,24 @@ $modalPadding: 21px;
         text-decoration: underline;
     }
 }
+
+.modal-file-manager {
+    .files-grid {
+        &__item {
+            width: 80px;
+            padding: 5px;
+            border-radius: $borderRadius;
+            cursor: pointer;
+
+            @include themify() {
+                color: themed($color);
+            }
+           
+            &.active {
+                @include themify() {
+                    background-color: themed($fileItemBgActive);
+                }
+            }
+        }
+    }
+}

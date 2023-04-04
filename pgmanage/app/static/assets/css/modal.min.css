@@ -1142,4 +1142,27 @@ input[type='checkbox'] {
   text-decoration: underline;
 }
 
+.modal-file-manager .files-grid__item {
+  width: 80px;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pgmanage-theme--light .modal-file-manager .files-grid__item {
+  color: #1D273B;
+}
+
+.pgmanage-theme--dark .modal-file-manager .files-grid__item {
+  color: #F8FAFC;
+}
+
+.pgmanage-theme--light .modal-file-manager .files-grid__item.active {
+  background-color: #E8F0F9;
+}
+
+.pgmanage-theme--dark .modal-file-manager .files-grid__item.active {
+  background-color: #29364E;
+}
+
 /*# sourceMappingURL=../../css/modal.min.css.map */
