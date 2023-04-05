@@ -128,6 +128,7 @@ base_urlpatterns = [
     re_path(r'^get_tablespaces_postgresql/', views.tree_postgresql.get_tablespaces, name='get_tablespaces'),
     re_path(r'^get_roles_postgresql/', views.tree_postgresql.get_roles, name='get_roles'),
     re_path(r'^get_extensions_postgresql/', views.tree_postgresql.get_extensions, name='get_extensions'),
+    re_path(r'^get_available_extensions_postgresql/', views.tree_postgresql.get_available_extensions, name='get_available_extensions'),
     re_path(r'^get_physicalreplicationslots_postgresql/', views.tree_postgresql.get_physicalreplicationslots, name='get_physicalreplicationslots'),
     re_path(r'^get_logicalreplicationslots_postgresql/', views.tree_postgresql.get_logicalreplicationslots, name='get_logicalreplicationslots'),
     re_path(r'^get_publications_postgresql/', views.tree_postgresql.get_publications, name='get_publications'),

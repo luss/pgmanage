@@ -1292,6 +1292,14 @@ function getTreePostgresql(p_div) {
                         .tag.create_extension);
                 }
             }, {
+
+                text: 'Create Extension UI',
+                icon: 'fas cm-all fa-edit',
+                action: function(node) {
+                    $('#createExtensionModal').modal('show')
+                }
+
+            }, {
                 text: 'Doc: Extensions',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {

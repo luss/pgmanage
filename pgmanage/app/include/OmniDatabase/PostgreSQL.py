@@ -874,6 +874,17 @@ class PostgreSQL:
             order by extname
         ''', True)
 
+    
+    @lock_required
+    def QueryAvailableExtensionsVersions(self):
+        return self.v_connection.Query('''
+                SELECT name, ARRAY_AGG(version ORDER BY version ASC) AS versions, MAX(comment) as comment
+                FROM pg_available_extension_versions
+                WHERE name NOT IN (SELECT extname FROM pg_extension)
+                GROUP BY name
+                ORDER BY name ASC;
+        ''')
+
     @lock_required
     def QueryConfiguration(self, search=None):
         where = ''

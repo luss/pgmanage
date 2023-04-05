@@ -1645,6 +1645,23 @@ def get_extensions(request, v_database):
     return JsonResponse(v_return)
 
 @user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_available_extensions(request, database):
+    available_extensions = database.QueryAvailableExtensionsVersions()
+
+    list_ext = []
+
+    for extension in available_extensions.Rows:
+        extension_data = {
+            "name": extension["name"],
+            "versions": extension["versions"],
+            "comment": extension["comment"]
+            }
+        list_ext.append(extension_data)
+    return JsonResponse({"available_extensions": list_ext})
+
+
+@user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
 def get_physicalreplicationslots(request, v_database):
 
