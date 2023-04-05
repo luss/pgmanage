@@ -26,7 +26,7 @@
                 <label for="backupCompressionRatio" class="font-weight-bold mb-1">Compression ratio</label>
                 <select id="backupCompressionRatio" class="form-control" v-model="backupOptions.compression_ratio" :disabled="isTarFormat">
                   <option value="" disabled>Select an item...</option>
-                  <option v-for="compress_ratio in comporessionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
+                  <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
                 </select>
               </div>
               <div class="form-group mb-1">
@@ -357,7 +357,7 @@ export default {
     isOptionsChanged() {
       return JSON.stringify(this.backupOptionsDefault) !== JSON.stringify(this.backupOptions)
     },
-    comporessionRatioValues() {
+    compressionRatioValues() {
       return [...Array(10).keys()]
     },
     isTarFormat() {
