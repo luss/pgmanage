@@ -1091,36 +1091,21 @@ def get_mview_definition(request, v_database):
     return JsonResponse(v_return)
 
 @user_authenticated
-@database_required(p_check_timeout = True, p_open_connection = True)
-def get_schemas(request, v_database):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_database_index = json_object['p_database_index']
-    v_tab_id = json_object['p_tab_id']
-
-    v_list_schemas = []
+@database_required_new(check_timeout = True, open_connection = True)
+def get_schemas(request, database):
+    schemas_list = []
 
     try:
-        v_schemas = v_database.QuerySchemas()
-        for v_schema in v_schemas.Rows:
-            v_schema_data = {
-                'v_name': v_schema['schema_name'],
-                'v_oid': v_schema['oid']
+        schemas = database.QuerySchemas()
+        for schema in schemas.Rows:
+            schema_data = {
+                'name': schema['schema_name'],
+                'oid': schema['oid']
             }
-            v_list_schemas.append(v_schema_data)
+            schemas_list.append(schema_data)
     except Exception as exc:
-        v_return['v_data'] = {'password_timeout': True, 'message': str(exc) }
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
-
-    v_return['v_data'] = v_list_schemas
-
-    return JsonResponse(v_return)
+        return JsonResponse(data={'data': str(exc)}, status=400)
+    return JsonResponse(data={'data': schemas_list})
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
