@@ -887,23 +887,23 @@ class PostgreSQL:
     
     @lock_required
     def QueryExtensionByName(self, name):
-        return self.v_connection.Query(f'''
-            SELECT MAX(x.oid) AS oid,
-                MAX(pg_catalog.pg_get_userbyid(extowner)) AS owner,
+        return self.v_connection.Query('''
+            SELECT x.oid AS oid,
+                pg_catalog.pg_get_userbyid(extowner) AS owner,
                 x.extname AS name,
-                MAX(n.nspname) AS schema,
+                n.nspname AS schema,
                 bool_or(x.extrelocatable) AS relocatable,
-                MAX(x.extversion) AS version,
-                MAX(e.comment) as comment,
+                x.extversion AS version,
+                e.comment as comment,
                 ARRAY_AGG(r.version
                             ORDER BY r.version ASC) AS versions
             FROM pg_catalog.pg_extension x
             LEFT JOIN pg_catalog.pg_namespace n ON x.extnamespace=n.oid
             JOIN pg_catalog.pg_available_extensions() e(name, default_version, comment) ON x.extname=e.name
             JOIN pg_available_extension_versions r on x.extname=r.name
-            WHERE x.extname = '{name}'
-            GROUP BY x.extname;
-        ''')
+            WHERE x.extname = '%s'
+            GROUP BY x.oid, x.extname, n.nspname, x.extrelocatable, x.extversion, e.comment;
+        ''' % (name,))
 
     @lock_required
     def QueryConfiguration(self, search=None):
