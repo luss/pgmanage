@@ -1296,7 +1296,7 @@ function getTreePostgresql(p_div) {
                 text: 'Create Extension UI',
                 icon: 'fas cm-all fa-edit',
                 action: function(node) {
-                    $('#createExtensionModal').modal('show')
+                    createExtensionModal(node.tree.name, node, 'Create')
                 }
 
             }, {
@@ -1313,6 +1313,14 @@ function getTreePostgresql(p_div) {
         },
         'cm_extension': {
             elements: [{
+                text: 'Alter Extension UI',
+                icon: 'fas cm-all fa-edit',
+                action: function(node) {
+                    createExtensionModal(node.tree.name, node, 'Alter')
+                }
+
+
+            }, {
                 text: 'Alter Extension',
                 icon: 'fas cm-all fa-edit',
                 action: function(node) {
@@ -1326,7 +1334,13 @@ function getTreePostgresql(p_div) {
                 action: function(node) {
                     getObjectDescriptionPostgresql(node);
                 }
-            }, {
+            },{
+                text: 'Drop Extension UI',
+                icon: 'fas cm-all fa-times',
+                action: function(node) {
+                    console.log('Drop')
+                }
+            },{
                 text: 'Drop Extension',
                 icon: 'fas cm-all fa-times',
                 action: function(node) {

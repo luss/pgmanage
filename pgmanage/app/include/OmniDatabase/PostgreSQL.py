@@ -878,11 +878,31 @@ class PostgreSQL:
     @lock_required
     def QueryAvailableExtensionsVersions(self):
         return self.v_connection.Query('''
-                SELECT name, ARRAY_AGG(version ORDER BY version ASC) AS versions, MAX(comment) as comment
+                SELECT name, ARRAY_AGG(version ORDER BY version ASC) AS versions, MAX(comment) as comment, MAX(schema) as required_schema
                 FROM pg_available_extension_versions
                 WHERE name NOT IN (SELECT extname FROM pg_extension)
                 GROUP BY name
                 ORDER BY name ASC;
+        ''')
+    
+    @lock_required
+    def QueryExtensionByName(self, name):
+        return self.v_connection.Query(f'''
+            SELECT MAX(x.oid) AS oid,
+                MAX(pg_catalog.pg_get_userbyid(extowner)) AS owner,
+                x.extname AS name,
+                MAX(n.nspname) AS schema,
+                bool_or(x.extrelocatable) AS relocatable,
+                MAX(x.extversion) AS version,
+                MAX(e.comment) as comment,
+                ARRAY_AGG(r.version
+                            ORDER BY r.version ASC) AS versions
+            FROM pg_catalog.pg_extension x
+            LEFT JOIN pg_catalog.pg_namespace n ON x.extnamespace=n.oid
+            JOIN pg_catalog.pg_available_extensions() e(name, default_version, comment) ON x.extname=e.name
+            JOIN pg_available_extension_versions r on x.extname=r.name
+            WHERE x.extname = '{name}'
+            GROUP BY x.extname;
         ''')
 
     @lock_required
