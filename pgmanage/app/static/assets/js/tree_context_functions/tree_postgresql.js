@@ -1338,7 +1338,7 @@ function getTreePostgresql(p_div) {
                 text: 'Drop Extension UI',
                 icon: 'fas cm-all fa-times',
                 action: function(node) {
-                    console.log('Drop')
+                    createExtensionModal(node.tree.name, node, 'Drop')
                 }
             },{
                 text: 'Drop Extension',

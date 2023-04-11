@@ -61,13 +61,21 @@
       </div>
     </div>
   </div>
+
+  <GenericMessageModal ref="modal" :message="`Are you sure you want to drop extension '${treeNode.text}'?`"
+    :checkboxes="[{ 'label': 'CASCADE', 'checked': false }]" :success-func="dropExtension" />
 </template>
 
 
 <script>
+import GenericMessageModal from './GenericMessageModal.vue'
+
 const { render } = Vue
 export default {
   name: 'ExtensionModal',
+  components: {
+    GenericMessageModal
+  },
   props: {
     mode: String,
     treeNode: Object
@@ -147,7 +155,17 @@ export default {
       render(null, wrapper)
       wrapper.remove()
     })
-    $('#postgresqlExtensionModal').modal('show')
+
+    $('#generic_modal_message').on('hidden.bs.modal', () => {
+      const wrapper = document.getElementById('extension-modal-wrap')
+      render(null, wrapper)
+      wrapper.remove()
+    })
+    if (this.mode !== 'Drop') {
+      $('#postgresqlExtensionModal').modal('show')
+    } else {
+      $('#generic_modal_message').modal('show')
+    }
   },
   methods: {
     getAvailableExtensions() {
@@ -213,6 +231,22 @@ export default {
         })
         .catch((error) => {
           showError(error.response.data.data)
+        })
+    },
+    dropExtension() {
+      const checkedValues = this.$refs.modal.checkboxes
+      const cascade = checkedValues[0].checked ? 'CASCADE' : ''
+      const query = `DROP EXTENSION IF EXISTS ${this.treeNode.text} ${cascade};`
+      axios.post('/save_postgresql_extension/', {
+        database_index: this.databaseIndex,
+        tab_id: this.tabId,
+        query: query
+      })
+        .then((resp) => {
+          refreshTreePostgresql(this.treeNode.parent)
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
         })
     }
 
