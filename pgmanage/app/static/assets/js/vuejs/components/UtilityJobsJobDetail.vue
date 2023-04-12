@@ -51,7 +51,7 @@ export default {
     }
   },
   mounted() {
-    $('#jobDetailModal').on('hidden.bs.modal', () => {
+    $('#jobDetailModal').on('hide.bs.modal', () => {
       clearInterval(this.detailJobWorkerId)
       this.setDefault()
       jobDetailState.clearSelectedAndHide()
@@ -66,7 +66,7 @@ export default {
       this.scrollToBottom()
     })
     setInterval(() => {
-      if (this.visible && !this.logs.length) {
+      if (this.visible && !this.logs.length && !$('#jobDetailModal').hasClass('show')) {
         $('#jobDetailModal').modal('show');
       }
     }, 1000)
