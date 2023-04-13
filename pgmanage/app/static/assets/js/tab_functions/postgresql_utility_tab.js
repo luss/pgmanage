@@ -75,6 +75,7 @@ let createUtilityTab = function (node, utility, backup_type = "objects") {
     p_name: "+",
     p_close: false,
     p_selectable: false,
+    p_isDraggable: false,
     p_clickFunction: function (e) {
       showMenuNewTab(e);
     },

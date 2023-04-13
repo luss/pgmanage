@@ -247,6 +247,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     v_currTabControl.createTab(
       {
         p_name: '+',
+        p_isDraggable: false,
         p_close: false,
         p_selectable: false,
         p_clickFunction: function(e) {

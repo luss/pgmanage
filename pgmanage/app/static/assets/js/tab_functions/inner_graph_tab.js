@@ -102,6 +102,7 @@ var v_createGraphTabFunction = function(p_name) {
     {
       p_name: '+',
       p_close: false,
+      p_isDraggable: false,
       p_selectable: false,
       p_clickFunction: function(e) {
         showMenuNewTab(e);
