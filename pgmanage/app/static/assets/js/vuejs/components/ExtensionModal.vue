@@ -150,17 +150,6 @@ export default {
       this.getExtensionDetails()
     }
     this.setupEditor()
-    $('#postgresqlExtensionModal').on('hidden.bs.modal', () => {
-      const wrapper = document.getElementById('extension-modal-wrap')
-      render(null, wrapper)
-      wrapper.remove()
-    })
-
-    $('#generic_modal_message').on('hidden.bs.modal', () => {
-      const wrapper = document.getElementById('extension-modal-wrap')
-      render(null, wrapper)
-      wrapper.remove()
-    })
     if (this.mode !== 'Drop') {
       $('#postgresqlExtensionModal').modal('show')
     } else {

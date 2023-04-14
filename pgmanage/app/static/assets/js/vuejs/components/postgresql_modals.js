@@ -11,15 +11,12 @@ const jobDetailModal = createApp({
 
 jobDetailModal.mount("#utility-job-detail-wrap");
 
+function createExtensionModal(node, mode) {
+  const wrap_div = document.getElementById("extension-modal-wrap");
 
-function createExtensionModal(div_id, node, mode) {
-  const parentDiv = document.getElementById(div_id);
-  const newDiv = document.createElement('div')
-  newDiv.id = 'extension-modal-wrap'
-  newDiv.innerHTML = `<extension-modal :mode=mode :tree-node=treeNode></extension-modal>`
-  parentDiv.appendChild(newDiv)
+  wrap_div.innerHTML = `<extension-modal :mode=mode :tree-node=treeNode></extension-modal>`;
 
-  const extensionsModal = createApp({
+  const app = createApp({
     components: {
       "extension-modal": Vue.defineAsyncComponent(() =>
         loadModule(
@@ -31,9 +28,19 @@ function createExtensionModal(div_id, node, mode) {
     data() {
       return {
         mode: mode,
-        treeNode: node
-      }
-    }
+        treeNode: node,
+      };
+    },
+    mounted() {
+      setTimeout(() => {
+        $("#postgresqlExtensionModal").on("hidden.bs.modal", () => {
+          app.unmount();
+        });
+        $("#generic_modal_message").on("hidden.bs.modal", () => {
+          app.unmount();
+        });
+      }, 500);
+    },
   });
-  extensionsModal.mount(`#extension-modal-wrap`);
+  app.mount(`#extension-modal-wrap`);
 }

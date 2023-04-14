@@ -1296,7 +1296,7 @@ function getTreePostgresql(p_div) {
                 text: 'Create Extension UI',
                 icon: 'fas cm-all fa-edit',
                 action: function(node) {
-                    createExtensionModal(node.tree.name, node, 'Create')
+                    createExtensionModal(node, 'Create')
                 }
 
             }, {
@@ -1316,7 +1316,7 @@ function getTreePostgresql(p_div) {
                 text: 'Alter Extension UI',
                 icon: 'fas cm-all fa-edit',
                 action: function(node) {
-                    createExtensionModal(node.tree.name, node, 'Alter')
+                    createExtensionModal(node, 'Alter')
                 }
 
 
@@ -1338,7 +1338,7 @@ function getTreePostgresql(p_div) {
                 text: 'Drop Extension UI',
                 icon: 'fas cm-all fa-times',
                 action: function(node) {
-                    createExtensionModal(node.tree.name, node, 'Drop')
+                    createExtensionModal(node, 'Drop')
                 }
             },{
                 text: 'Drop Extension',
