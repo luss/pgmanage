@@ -69,9 +69,9 @@ def human_to_number(h_value, h_unit=None, h_type=int):
     return h_value
 
 
-def get_settings(conn, search=None, grouped=True):
+def get_settings(conn, grouped=True):
     try:
-        tables_json = conn.QueryConfiguration(search).Jsonify()
+        tables_json = conn.QueryConfiguration().Jsonify()
     except Exception as exc:
         raise DatabaseError(exc)
     tables = json.loads(tables_json)
