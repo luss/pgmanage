@@ -1,17 +1,31 @@
 import ast
 import json
 import re
-
 from datetime import datetime
-from django.core.exceptions import ValidationError
-from django.utils.timezone import make_aware
-from django.db import DatabaseError
-from django.db.models import Q
 
 from app.models.main import ConfigHistory, Connection
+from django.core.exceptions import ValidationError
+from django.db import DatabaseError
+from django.db.models import Q
+from django.utils.timezone import make_aware
 
 
 def human_to_number(h_value, h_unit=None, h_type=int):
+    """
+    Convert a human-readable value and optional unit to its numerical equivalent.
+    Args:
+        h_value (str or int): The human-readable value to convert.
+        h_unit (str, optional): The unit of the value, if any. Valid units are B, KB,
+            MB, GB, TB, PB, EB, YB, ZB, us, ms, s, min, h, and d. Defaults to None.
+        h_type (type, optional): The type to cast the result to. Defaults to int.
+
+    Returns:
+        The numerical equivalent of the human-readable value.
+
+    Raises:
+        TypeError: If the input value cannot be converted to a string.
+        ValueError: If the input value or unit is invalid.
+    """
     units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "YB", "ZB"]
     re_unit = re.compile(r"([0-9.]+)\s*([KMGBTPEYZ]?B)$", re.IGNORECASE)
     m_value = re_unit.match(str(h_value))
@@ -25,14 +39,13 @@ def human_to_number(h_value, h_unit=None, h_type=int):
     if m_value:
         p_num = m_value.group(1)
         p_unit = m_value.group(2)
-        m = 0
-        for u in units:
-            if h_unit and h_unit.lower() == u.lower():
-                m = 0
-            if u.lower() == p_unit.lower():
-                return (int(p_num) * (1024**m)) / factor
-            else:
-                m += 1
+        multiplier = 0
+        for unit in units:
+            if h_unit and h_unit.lower() == unit.lower():
+                multiplier = 0
+            if unit.lower() == p_unit.lower():
+                return (int(p_num) * (1024**multiplier)) / factor
+            multiplier += 1
 
     # Valid time units are ms (milliseconds), s (seconds), min (minutes),
     # h (hours), and d (days
@@ -63,17 +76,49 @@ def human_to_number(h_value, h_unit=None, h_type=int):
         p_unit = m_unit.group(2)
         if mult[p_unit] > 0:
             return h_type(p_num) * mult[p_unit]
-        else:
-            return h_type(p_num) / abs(mult[p_unit])
+        return h_type(p_num) / abs(mult[p_unit])
 
     return h_value
 
 
 def get_settings(conn, search=None, grouped=True):
+    """
+    Retrieve PostgreSQL settings.
+
+    Args:
+        conn: a PostgreSQL connection object.
+        grouped: a boolean indicating whether to group the settings by category
+        or return a dictionary of settings.
+
+    Returns:
+        If grouped is True, the function returns a list of dictionaries containing the settings
+        categorized by their respective category. Each category dictionary contains
+        a "category" key and a "rows" key.
+        The "category" key represents the name of the category while the "rows" key contains
+        a list of dictionaries with the following keys:
+
+            - "name": the name of the setting.
+            - "setting": the current value of the setting.
+            - "setting_raw": the raw value of the setting.
+            - "category": the category of the setting.
+            - "unit": the unit of the setting.
+            - "vartype": the type of the setting.
+            - "min_val": the minimum value of the setting.
+            - "max_val": the maximum value of the setting.
+            - "boot_val": the boot value of the setting.
+            - "reset_val": the reset value of the setting.
+            - "enumvals": a list of enum values if the setting is an enum type.
+            - "context": the context of the setting.
+            - "desc": a description of the setting.
+            - "pending_restart": a boolean indicating whether the setting requires a restart.
+
+        If grouped is False, the function returns a dictionary with the setting names as keys and
+        their values as values.
+    """
     try:
         tables_json = conn.QueryConfiguration(search).Jsonify()
     except Exception as exc:
-        raise DatabaseError(exc)
+        raise DatabaseError(exc) from exc
     tables = json.loads(tables_json)
     ret = {}
     if grouped:
@@ -81,7 +126,6 @@ def get_settings(conn, search=None, grouped=True):
             rows = ret.setdefault(row["category"], [])
             enumvals = row["enumvals"]
             if enumvals != "":
-
                 enumvals = list(ast.literal_eval(enumvals))
 
             rows.append(
@@ -104,11 +148,27 @@ def get_settings(conn, search=None, grouped=True):
             )
 
         return [{"category": k, "rows": v} for k, v in ret.items()]
-    else:
-        return {setting["name"]: setting["setting"] for setting in tables}
+
+    return {setting["name"]: setting["setting"] for setting in tables}
 
 
 def validate_setting(setting_name, setting_val, current_settings):
+    """
+    Validate a setting value for a given setting name against a list of current settings.
+
+    Args:
+        setting_name (str): The name of the setting to validate.
+        setting_val (str): The value of the setting to validate.
+        current_settings (list): A list of dictionaries containing
+        information about current settings.
+
+    Returns:
+        tuple: A tuple containing a boolean value and an item from current_settings.
+        If the boolean value is True, the setting_val is valid for the specified setting_name,
+        and the item contains information about the setting.
+        If the boolean value is False, the setting_val is not valid for the specified setting_name,
+        and the item is None.
+    """
     do_not_check_names = ["unix_socket_permissions", "log_file_mode"]
     for pg_config_category in current_settings:
         for item in pg_config_category["rows"]:
@@ -152,6 +212,33 @@ def validate_setting(setting_name, setting_val, current_settings):
 
 
 def post_settings(request, conn, update, commit_comment=None, new_config=True):
+    """
+    Update the PostgreSQL settings for a given connection.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+        conn : A database connection object.
+
+        update (dict): A dictionary containing the settings to be updated,
+        where each key is a setting name and each value is its new value.
+
+        commit_comment (str, optional): A comment to describe the changes being made.
+            Defaults to None.
+
+        new_config (bool, optional): A flag indicating whether a new configuration
+        history should be created.
+            Defaults to True.
+
+    Returns:
+        dict: A dictionary containing the updated settings and their previous values,
+        as well as a flag indicating whether a restart is required for each setting.
+
+    Raises:
+        ValidationError: If any of the settings in the update dictionary are invalid.
+        DatabaseError: If there is an error executing the ALTER SYSTEM queries.
+
+    """
     current_settings = get_settings(conn)
     ret = {"settings": []}
     config_history = ConfigHistory.objects.filter(
@@ -173,7 +260,9 @@ def post_settings(request, conn, update, commit_comment=None, new_config=True):
                 setting_name, setting_val, current_settings
             )
         except ValueError as exc:
-            raise ValidationError(code=400, message=f"{setting_name}: Invalid setting.")
+            raise ValidationError(
+                code=400, message=f"{setting_name}: Invalid setting."
+            ) from exc
         if item["category"] == "Preset Options":
             continue
         if setting_valid:
@@ -241,6 +330,23 @@ def post_settings(request, conn, update, commit_comment=None, new_config=True):
 
 
 def get_settings_status(conn):
+    """
+    Return a dictionary indicating whether there are any settings that require a server restart to take effect.
+
+    Args:
+        conn: A database connection object.
+
+    Returns:
+        A dictionary with two keys:
+            - 'restart_pending': A boolean indicating whether there are any settings that require a server restart.
+            - 'restart_changes': A list of settings that require a server restart, in the format of dictionaries with keys:
+            - 'name': The name of the setting.
+            - 'setting': The current value of the setting.
+            - 'pending_restart': A boolean indicating whether the setting requires a server restart.
+
+    Raises:
+        DatabaseError: If there is an error accessing the database.
+    """
     settings = get_settings(conn)
     pending_restart_changes = []
     pending_restart = False
