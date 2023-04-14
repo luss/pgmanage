@@ -71,7 +71,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     }
 
     let v_icon = '<img src="' + v_url_folder + '/static/assets/images/' + v_conn.v_db_type;
-    if (v_conn.v_db_type === 'postgresql' || v_conn.v_db_type === 'oracle'|| v_conn.v_db_type === 'mariadb' || v_conn.v_db_type === 'mysql') {
+    if (v_conn.v_db_type === 'postgresql' || v_conn.v_db_type === 'oracle'|| v_conn.v_db_type === 'mariadb' || v_conn.v_db_type === 'mysql' || v_conn.v_db_type === 'sqlite') {
       v_icon += '.svg"/>';
     }
     else {
@@ -247,6 +247,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     v_currTabControl.createTab(
       {
         p_name: '+',
+        p_isDraggable: false,
         p_close: false,
         p_selectable: false,
         p_clickFunction: function(e) {

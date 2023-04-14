@@ -129,7 +129,7 @@ $modalPadding: 21px;
             @include themify() {
                 background-color: themed($surfaceBg);
             }
- 
+
             &.active {
                 @include themify() {
                     color: themed($color);
@@ -206,30 +206,40 @@ $modalPadding: 21px;
                                 mask-position: center;
                                 mask-size: 40px 40px;
                                 mask-repeat: no-repeat;
+                                -webkit-mask-position: center;
+                                -webkit-mask-size: 40px 40px;
+                                -webkit-mask-repeat: no-repeat;
+
                                 background-color: $secondaryGrey;
 
                                 &-mariadb {
                                     mask-image: url("../images/db_icons/mariadb.svg");
+                                    -webkit-mask-image: url("../images/db_icons/mariadb.svg");
                                 }
 
                                 &-mysql {
                                     mask-image: url("../images/db_icons/mysql.svg");
+                                    -webkit-mask-image: url("../images/db_icons/mysql.svg");
                                 }
 
                                 &-oracle {
                                     mask-image: url("../images/db_icons/oracle.svg");
+                                    -webkit-mask-image: url("../images/db_icons/oracle.svg");
                                 }
 
                                 &-postgresql {
                                     mask-image: url("../images/db_icons/postgresql.svg");
+                                    -webkit-mask-image: url("../images/db_icons/postgresql.svg");
                                 }
 
                                 &-sqlite {
                                     mask-image: url("../images/db_icons/sqlite.svg");
+                                    -webkit-mask-image: url("../images/db_icons/sqlite.svg");
                                 }
 
                                 &-terminal {
                                     mask-image: url("../images/db_icons/terminal.svg");
+                                    -webkit-mask-image: url("../images/db_icons/terminal.svg");
                                 }
                             }
                         }
@@ -324,7 +334,7 @@ $modalPadding: 21px;
             @include themify() {
                 color: themed($color);
             }
-           
+
             &.active {
                 @include themify() {
                     background-color: themed($fileItemBgActive);

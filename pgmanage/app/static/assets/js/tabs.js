@@ -322,7 +322,14 @@ function createTabControl({ p_div, p_hierarchy, p_layout}) {
         let sibling_pos_x_end = sibling_pos_x + sibling_pos.width;
         let sibling_pos_y = sibling_pos.y;
         let sibling_pos_y_end = sibling_pos.y + sibling_pos.height;
-        if (sibling_pos_y < drop_pos_y && drop_pos_y < sibling_pos_y_end && sibling_pos_x < drop_pos_x && drop_pos_x < sibling_pos_x_end) {
+        let is_add_mode_tab = !sibling.draggable && sibling.innerText === '+';
+        if(
+          sibling_pos_y < drop_pos_y &&
+          drop_pos_y < sibling_pos_y_end &&
+          sibling_pos_x < drop_pos_x &&
+          drop_pos_x < sibling_pos_x_end &&
+          !is_add_mode_tab
+        ) {
           var removedEl = p_tab.tabList.splice(old_index, 1)[0];
           if (drop_pos_x < sibling_pos_x_center) {
             new_index = i;
@@ -435,6 +442,8 @@ function createTabControl({ p_div, p_hierarchy, p_layout}) {
           e.preventDefault();
           v_tab.dragEndFunction(e,this);
   			}.bind(this);
+      } else {
+        v_a.setAttribute('draggable','false');
       }
 
       if (p_disabled) {

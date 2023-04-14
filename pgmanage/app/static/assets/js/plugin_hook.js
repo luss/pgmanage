@@ -533,6 +533,7 @@ function createInnerTab({ p_name = '', p_icon = '', p_select_function = null, p_
       {
         p_name: '+',
         p_close: false,
+        p_isDraggable: false,
         p_selectable: false,
         p_clickFunction: function(e) {
           showMenuNewTab(e);
@@ -591,6 +592,7 @@ function createOuterTab({ p_name = '', p_icon = '', p_select_function = null, p_
     v_connTabControl.createTab(
       {
         p_name: '+',
+        p_isDraggable: false,
         p_close: false,
         p_selectable: false,
         p_clickFunction: function(e) {

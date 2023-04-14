@@ -406,6 +406,7 @@ var v_createDebuggerTabFunction = function(p_function) {
   var v_add_tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
     p_name: '+',
     p_close: false,
+    p_isDraggable: false,
     p_selectable: false,
     p_clickFunction: function(e) {
       showMenuNewTab(e);

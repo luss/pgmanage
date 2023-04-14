@@ -79,6 +79,7 @@ var v_createWebsiteTabFunction = function(p_name, p_site) {
   var v_add_tab = v_connTabControl.selectedTab.tag.tabControl.createTab(
     {
       p_name: '+',
+      p_isDraggable: false,
       p_close: false,
       p_selectable: false,
       p_clickFunction: function(e) {
@@ -157,6 +158,7 @@ var v_createWebsiteOuterTabFunction = function(p_name, p_site, p_html, p_close_f
   v_connTabControl.createTab(
     {
       p_name: '+',
+      p_isDraggable: false,
       p_close: false,
       p_selectable: false,
       p_clickFunction: function(e) {

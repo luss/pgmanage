@@ -55,6 +55,7 @@ a:not([href]):not([tabindex]){
     scrollbar-width: thin;
     width: 2px;
   }
+  width: 100px;
 }
 
 .nav-tabs {
@@ -71,14 +72,17 @@ a:not([href]):not([tabindex]){
 
     .omnidb__tab-menu--primary .omnidb__tab-menu__link-content {
       flex-direction: column;
+      justify-content: center;
+      min-height: 60px;
     }
     .omnidb__tab-menu--primary .omnidb__tab-menu__link-name {
-      white-space: normal;
-      // width: 80px;
+      width: 100%;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .omnidb__panel {
-      padding-left: 86px;
+      padding-left: 100px;
     }
     .omnidb__panel-view--full {
       left: 100px;
@@ -123,7 +127,7 @@ a:not([href]):not([tabindex]){
   opacity: 0.25;
   position: absolute;
   right: 0px;
-  top: 25%;
+  top: 20%;
   transform: translateY(-50%);
   transition: 0.3s;
   color: white;
