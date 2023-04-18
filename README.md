@@ -42,9 +42,43 @@ cd pgmanage/pgmanage
 python3 pgmanage-server.py
 ```
 
-# PgManage 1.0Alpha
+# PgManage 1.0 Beta
 
-## Release Date: *pending*
+## Release Date: Apr 20 2023
+
+## Release Notes
+
+- New features:
+  - added backup/restore support for Postgres  
+  - first version of PgManage Handbook was published to https://pgmanage.readthedocs.io/en/latest
+
+- Major Bugs fixed:
+  - fixed .AppImage compatibility issues for newer Linux distributions which do not have libcrypt installed
+  - added logic to terminate stale back-end process if the front-end process crashes
+  - fixed application UI process memory leaks
+  
+
+- UI/UX Improvements:
+  - improved support for configuration options search in Postgres Server Configuration Management
+  - automatically readjust query editor font size when the application font size changes
+  - various application layout and UI improvements
+  - limited minimum application window size to 1024x766
+  - fixed splash screen flickering/position issues during the application startup
+  - add PgManage Handbook links to application error modal dialogs
+  - improved handling of drag-and-drop reordering for database operations tabs
+  
+- Other changes
+  - added support for configurable Postgresql Client binary path in application settings
+  - excluded SASS libraries and .sass files from the release builds
+  - include EGL/GLES libraries into app release builds
+  - pev2 upgraded to v1.7.0
+  - removed "plugins" and other obsolete menu items from the application UI
+  - removed unused files and dead code from the project
+  - shred SSH keys stored in the app during the Master Password Reset
+
+# PgManage 1.0 Alpha
+
+## Release Date: Feb 21 2023
 
 ## Release Notes
 
@@ -87,4 +121,4 @@ removed the option to make connections public in desktop variant of the app (whi
   - added postgresql 14 and 15  support
   - application data directory and db/log file naming was changed from omnidb* to pgmanage*.
 
-![](https://raw.githubusercontent.com/OmniDB/doc/master/img/omnidb_3/dashboard.png)
+![](https://pgmanage.readthedocs.io/en/latest/_images/intro.png)
