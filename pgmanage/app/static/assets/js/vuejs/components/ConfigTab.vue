@@ -233,7 +233,6 @@ export default {
         .post("/configuration/", {
           database_index: this.databaseId,
           tab_id: this.tabId,
-          query_filter: this.query_filter,
         })
         .then((response) => {
           this.data = response.data.settings;

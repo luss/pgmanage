@@ -17,10 +17,9 @@ from app.utils.conf import get_settings, post_settings, get_settings_status
 @database_required_new(check_timeout=True, open_connection=True)
 def get_configuration(request, database):
     data = json.loads(request.body) if request.body else {}
-    query_filter = data.get("query_filter", None)
     grouped = data.get("grouped", True)
     try:
-        settings = get_settings(database, query_filter, grouped)
+        settings = get_settings(database, grouped)
     except DatabaseError as e:
         return JsonResponse(data={"data": str(e)}, status=500)
     return JsonResponse({"settings": settings})
