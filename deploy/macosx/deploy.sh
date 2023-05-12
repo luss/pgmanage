@@ -66,7 +66,11 @@ sed -i '' "s/dev/$APP_VERSION/" pgmanage/custom_settings.py
 pyinstaller pgmanage-mac.spec
 pyinstaller process_executor-mac.spec
 
-mkdir pgmanage-server && mv dist/* pgmanage-server
+mkdir pgmanage-server 
+echo 'Removing signature from libpython3.8.dylib library'
+codesign --remove-signature dist/pgmanage-server/libpython3.8.dylib
+mv dist/process_executor pgmanage-server/
+mv dist/pgmanage-server/* pgmanage-server/
 
 curl -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-osx-x64.zip
 unzip nwjs-v0.69.1-osx-x64.zip

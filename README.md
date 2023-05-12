@@ -1,50 +1,80 @@
 # PgManage
 We proudly leverage all of the great work Open Source work done by the original
-(now dormant) project https://github.com/OmniDB/OmniDB 
+(now dormant) project https://github.com/OmniDB/OmniDB
 
 
 **Website & Downloads**: https://github.com/commandprompt/pgmanage
 
 **Full Documentation**: https://pgmanage.readthedocs.io/en/latest/
 
-# Run it yourself from source
-If you want or need a new feature, submit a pull request for us to consider.
+# Run your local development copy of PgManage on Ubuntu
 
-## Pre-req's for Debian/Ubuntu
+## Install the necessary packages
 ```
-sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
-```
-
-## Pre-req's for Enterprise Linux flavors
-```
-sudo yum install xxx yyy zzz
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install git libssl-dev python-protobuf build-essential
+sudo apt-get install python3.8 python3.8-dev python3.8-venv  python3-wheel libpq-dev libldap2-dev libsasl2-dev
 ```
 
-## Pre-req's for OSX using Homebrew
+## Set up app environment
+clone pgmanage repository; change to the root directory of cloned repository,  activate virtualenv:
 ```
-brew install python3 xxx yyy zzz
-```
-
-## Build instructions
-```
-git clone https://github.com/commandprompt/pgmanage
+git clone https://github.com/commandprompt/pgmanage.git
 cd pgmanage
-env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.8.10 --skip-existing
-pyenv local 3.8.10
-poetry env use 3.8
-poetry install --with dev
-poetry shell
+python3.8 -mvenv .env
+```
+## Install dependencies and run the app
+activate python virtual environment created in the previous step:
+```
+source .env/bin/activate
+pip install -r requirements.txt
 ```
 
-## Start it up
+Once all app requirements are installed cd to **pgmanage** subdirectory and start the application web service by running
 ```
-cd pgmanage/pgmanage
-python3 pgmanage-server.py
+./manage.py runserver
 ```
+Once you see that he application server is ready, open http://localhost:8000 URL in your preferred browser. Then login with **admin:admin** credentials
 
-# PgManage 1.0Alpha
 
-## Release Date: *pending*
+# PgManage 1.0 Beta
+
+## Release Date: Apr 20 2023
+
+## Release Notes
+
+- New features:
+  - added backup/restore support for Postgres
+  - first version of PgManage Handbook was published to https://pgmanage.readthedocs.io/en/latest
+
+- Major Bugs fixed:
+  - fixed .AppImage compatibility issues for newer Linux distributions which do not have libcrypt installed
+  - added logic to terminate stale back-end process if the front-end process crashes
+  - fixed application UI process memory leaks
+
+
+- UI/UX Improvements:
+  - improved support for configuration options search in Postgres Server Configuration Management
+  - automatically readjust query editor font size when the application font size changes
+  - various application layout and UI improvements
+  - limited minimum application window size to 1024x766
+  - fixed splash screen flickering/position issues during the application startup
+  - add PgManage Handbook links to application error modal dialogs
+  - improved handling of drag-and-drop reordering for database operations tabs
+
+- Other changes
+  - added support for configurable Postgresql Client binary path in application settings
+  - excluded SASS libraries and .sass files from the release builds
+  - include EGL/GLES libraries into app release builds
+  - pev2 upgraded to v1.7.0
+  - removed "plugins" and other obsolete menu items from the application UI
+  - removed unused files and dead code from the project
+  - shred SSH keys stored in the app during the Master Password Reset
+
+# PgManage 1.0 Alpha
+
+## Release Date: Feb 21 2023
 
 ## Release Notes
 
@@ -68,7 +98,7 @@ python3 pgmanage-server.py
   - made all web/cdn app dependencies local so pgmanage can work properly without an internet connection
 
 - UI/UX Improvements:
-  - reorganized connection management menus in the left menu bar 
+  - reorganized connection management menus in the left menu bar
   - fixed DDL tab auto resizing
   - the top-right utilities menu now expands on click instead of mouse-hover
   - added DDL/properties tab resize limits to prevent it from becoming impossible to grab/resize back
@@ -87,4 +117,4 @@ removed the option to make connections public in desktop variant of the app (whi
   - added postgresql 14 and 15  support
   - application data directory and db/log file naming was changed from omnidb* to pgmanage*.
 
-![](https://raw.githubusercontent.com/OmniDB/doc/master/img/omnidb_3/dashboard.png)
+![](https://pgmanage.readthedocs.io/en/latest/_images/intro.png)

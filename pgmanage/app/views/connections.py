@@ -1,19 +1,16 @@
-import json
-import os
-import time
 import io
+import json
 
 import paramiko
+from app.include import OmniDatabase
+from app.models import Connection, Group, GroupConnection, Tab, Technology
+from app.utils.crypto import decrypt, encrypt
+from app.utils.key_manager import key_manager
+from app.views.memory_objects import user_authenticated
 from django.db.models import Q
 from django.http import JsonResponse
 from sshtunnel import SSHTunnelForwarder
 
-from pgmanage import settings
-from app.include import OmniDatabase
-from app.models import Technology, Connection, Group, GroupConnection
-from app.views.memory_objects import user_authenticated
-from app.utils.crypto import encrypt, decrypt
-from app.utils.key_manager import key_manager
 
 def session_required(func):
     def containing_func(request, *args, **kwargs):
@@ -26,6 +23,7 @@ def session_required(func):
 def get_connections(request):
     response_data = {'data': [], 'status': 'success'}
 
+    session = request.session.get("pgmanage_session")
     request_data = json.loads(request.POST.get('data', '{}'))
     active_connection_ids = request_data.get('active_connection_ids',[])
 
@@ -63,8 +61,27 @@ def get_connections(request):
                     'key_set': False if conn.ssh_key.strip() == '' else True
                 }
             }
+            database_object = session.v_databases.get(conn.id)
+
+            if conn.technology.name == 'terminal':
+                details = (
+                    database_object["tunnel"]["user"]
+                    + "@"
+                    + database_object["tunnel"]["server"]
+                    + ":"
+                    + database_object["tunnel"]["port"]
+                )
+                conn_object['details1'] = details
 
             if conn.technology.name != 'terminal':
+                database = database_object.get('database')
+
+                details = database.PrintDatabaseDetails()
+                if database_object["tunnel"]["enabled"]:
+                    details += f" ({database_object['tunnel']['server']}:{database_object['tunnel']['port']})"
+                conn_object['console_help'] = database.v_console_help
+                conn_object['details1'] = database.PrintDatabaseInfo()
+                conn_object['details2'] = details
                 conn_object['conn_string'] = conn.conn_string
                 conn_object['server'] = conn.server
                 conn_object['port'] = conn.port
@@ -440,3 +457,24 @@ def delete_connection(request):
     request.session['pgmanage_session'] = session
 
     return JsonResponse(response_data)
+
+
+@user_authenticated
+def get_existing_tabs(request):
+    session = request.session.get("pgmanage_session")
+
+    existing_tabs = []
+    for tab in Tab.objects.filter(user=request.user).order_by("connection"):
+        if tab.connection.public or tab.connection.user.id == request.user.id:
+            existing_tabs.append(
+                {
+                    "index": tab.connection.id,
+                    "snippet": tab.snippet,
+                    "title": tab.title,
+                    "tab_db_id": tab.id,
+                }
+            )
+
+    request.session["pgmanage_session"] = session
+
+    return JsonResponse({"existing_tabs": existing_tabs})

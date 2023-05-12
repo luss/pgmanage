@@ -906,14 +906,10 @@ class PostgreSQL:
         ''' % (name,))
 
     @lock_required
-    def QueryConfiguration(self, search=None):
+    def QueryConfiguration(self, exclude_read_only=False):
         where = ''
-        if search:
-            where = '''
-            WHERE name ILIKE '%{0}%'
-            OR short_desc ILIKE '%{0}%'
-            OR extra_desc ILIKE '%{0}%'
-            '''.format(search)
+        if exclude_read_only:
+            where = "WHERE category != 'Preset Options'"
 
         return self.v_connection.Query('''
         SELECT name, setting,

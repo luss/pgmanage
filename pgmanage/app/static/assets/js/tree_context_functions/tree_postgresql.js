@@ -4081,7 +4081,8 @@ function getTreePostgresql(p_div) {
         null, null);
     tree.drawTree();
     setTimeout(function() {
-        tree.expandNode(node_server)
+        if (v_connTabControl.selectedTab.tag.selectedDBMS=='postgresql')
+            tree.expandNode(node_server)
     }, 200)
 
 }

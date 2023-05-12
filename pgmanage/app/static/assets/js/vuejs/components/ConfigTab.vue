@@ -104,8 +104,9 @@
           </button>
         </div>
         <div class="modal-body">
-          <p class="text-center">The following changes will be applied:</p>
-          <table class="table table-sm">
+          <p v-if="modalRevertConfig && !hasRevertValues" class="text-center">No changes to revert to.</p>
+          <p v-else class="text-center">The following changes will be applied:</p>
+          <table v-if="(modalRevertConfig && hasRevertValues) || !modalRevertConfig" class="table table-sm">
             <tr>
               <th width="50%" class="border-top-0">Name</th>
               <th width="50%" class="border-top-0">New value</th>
@@ -114,7 +115,7 @@
               <tr v-for="(setting_value, setting_name) in updateSettings" :key="setting_value">
                 <td>{{ setting_name }}</td>
                 <td>
-                  <b>{{ setting_value }}</b>
+                  <b>{{ setting_value.setting }}</b>
                 </td>
               </tr>
             </template>
@@ -122,7 +123,7 @@
               <tr v-for="(setting_value, setting_name) in configDiffData" :key="setting_value">
                 <td>{{ setting_name }}</td>
                 <td>
-                  <b>{{ setting_value }}</b>
+                  <b>{{ setting_value.setting }}</b>
                 </td>
               </tr>
             </template>
@@ -139,7 +140,7 @@
             Save configuration
           </button>
           <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-dismiss="modal"
-            @click="revertConfig">
+            @click="revertConfig" :disabled="!hasRevertValues">
             Revert configuration
           </button>
         </div>
@@ -220,6 +221,9 @@ export default {
     hasUpdateValues() {
       return !!Object.keys(this.updateSettings).length;
     },
+    hasRevertValues() {
+      return !!Object.keys(this.configDiffData).length;
+    }
   },
   mounted() {
     this.getCategories();
@@ -233,7 +237,6 @@ export default {
         .post("/configuration/", {
           database_index: this.databaseId,
           tab_id: this.tabId,
-          query_filter: this.query_filter,
         })
         .then((response) => {
           this.data = response.data.settings;
@@ -261,7 +264,7 @@ export default {
       const index = this.categories.indexOf(e.changedGroup.category);
       this.data[index] = e.changedGroup;
       if (e.changedSetting.setting !== e.changedSetting.reset_val)
-        this.updateSettings[e.changedSetting.name] = e.changedSetting.setting;
+        this.updateSettings[e.changedSetting.name] = e.changedSetting;
       else
         delete this.updateSettings[e.changedSetting.name]
     },
@@ -342,6 +345,7 @@ export default {
           if (!this.appliedSettings.restartPending && !!this.intervalId) {
             clearInterval(this.intervalId)
             this.getConfiguration()
+            this.getCategories()
           }
         })
         .catch((error) => {
@@ -368,10 +372,11 @@ export default {
           database_index: this.databaseId,
           tab_id: this.tabId,
           grouped: false,
+          exclude_read_only: true
         })
         .then((response) => {
           let diff = Object.keys(response.data.settings).reduce((diff, key) => {
-            if (this.selectedConf.config_snapshot[key] === response.data.settings[key]) return diff
+            if (this.selectedConf.config_snapshot[key]['setting'] === response.data.settings[key]['setting']) return diff
             return {
               ...diff,
               [key]: this.selectedConf.config_snapshot[key]
