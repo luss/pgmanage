@@ -2077,6 +2077,7 @@ SOFTWARE.
   content: "\200B";
 }
 
+
 .node-oracle {
   background-image: url("../images/oracle_medium.png");
 }
@@ -2096,6 +2097,7 @@ SOFTWARE.
 .node-mariadb {
   background-image: url("../images/mariadb_medium.png");
 }
+
 
 .node-mariadb::after {
   content: "\200B";

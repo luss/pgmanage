@@ -1091,36 +1091,21 @@ def get_mview_definition(request, v_database):
     return JsonResponse(v_return)
 
 @user_authenticated
-@database_required(p_check_timeout = True, p_open_connection = True)
-def get_schemas(request, v_database):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_database_index = json_object['p_database_index']
-    v_tab_id = json_object['p_tab_id']
-
-    v_list_schemas = []
+@database_required_new(check_timeout = True, open_connection = True)
+def get_schemas(request, database):
+    schemas_list = []
 
     try:
-        v_schemas = v_database.QuerySchemas()
-        for v_schema in v_schemas.Rows:
-            v_schema_data = {
-                'v_name': v_schema['schema_name'],
-                'v_oid': v_schema['oid']
+        schemas = database.QuerySchemas()
+        for schema in schemas.Rows:
+            schema_data = {
+                'name': schema['schema_name'],
+                'oid': schema['oid']
             }
-            v_list_schemas.append(v_schema_data)
+            schemas_list.append(schema_data)
     except Exception as exc:
-        v_return['v_data'] = {'password_timeout': True, 'message': str(exc) }
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
-
-    v_return['v_data'] = v_list_schemas
-
-    return JsonResponse(v_return)
+        return JsonResponse(data={'data': str(exc)}, status=500)
+    return JsonResponse(data={'data': schemas_list})
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
@@ -1643,6 +1628,53 @@ def get_extensions(request, v_database):
     v_return['v_data'] = v_list_extensions
 
     return JsonResponse(v_return)
+
+
+@user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_available_extensions(request, database):
+    available_extensions = database.QueryAvailableExtensionsVersions()
+
+    list_ext = []
+
+    for extension in available_extensions.Rows:
+        extension_data = {
+            "name": extension["name"],
+            "versions": extension["versions"],
+            "comment": extension["comment"],
+            "required_schema": extension["required_schema"]
+            }
+        list_ext.append(extension_data)
+    return JsonResponse({"available_extensions": list_ext})
+
+
+@user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_extension_details(request, database):
+    data = json.loads(request.body)
+
+    extension = database.QueryExtensionByName(data.get("ext_name"))
+
+    if not extension.Rows:
+        return JsonResponse({
+            "data": f"Extension '{data.get('ext_name')}' does not exist."
+            }, status=400)
+
+    [extension_detail] = extension.Rows
+
+    return JsonResponse(data=dict(extension_detail))
+
+
+@user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def save_extension(request, database):
+    data = json.loads(request.body)
+    try:
+        database.Execute(data.get("query"))
+    except Exception as exc:
+        return JsonResponse({"data": str(exc)}, status=500)
+    return JsonResponse({"status": "success"})
+
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)

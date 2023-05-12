@@ -266,12 +266,10 @@ span.text-muted {
 
 .pgmanage-theme--light .dropdown-menu {
   background-color: #FFFFFF;
-  border: "border";
 }
 
 .pgmanage-theme--dark .dropdown-menu {
   background-color: #1D273B;
-  border: "border";
 }
 
 .dropdown-menu-sm {
@@ -296,7 +294,7 @@ span.text-muted {
 }
 
 .dropdown-item:hover {
-  background-color: rgba(118, 127, 143, 0.15);
+  background-color: rgba(118, 127, 143, 0.04);
 }
 
 .accordion .card {

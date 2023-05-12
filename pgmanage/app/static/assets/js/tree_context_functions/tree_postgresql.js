@@ -1292,6 +1292,14 @@ function getTreePostgresql(p_div) {
                         .tag.create_extension);
                 }
             }, {
+
+                text: 'Create Extension UI',
+                icon: 'fas cm-all fa-edit',
+                action: function(node) {
+                    createExtensionModal(node, 'Create')
+                }
+
+            }, {
                 text: 'Doc: Extensions',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -1305,6 +1313,14 @@ function getTreePostgresql(p_div) {
         },
         'cm_extension': {
             elements: [{
+                text: 'Alter Extension UI',
+                icon: 'fas cm-all fa-edit',
+                action: function(node) {
+                    createExtensionModal(node, 'Alter')
+                }
+
+
+            }, {
                 text: 'Alter Extension',
                 icon: 'fas cm-all fa-edit',
                 action: function(node) {
@@ -1318,7 +1334,13 @@ function getTreePostgresql(p_div) {
                 action: function(node) {
                     getObjectDescriptionPostgresql(node);
                 }
-            }, {
+            },{
+                text: 'Drop Extension UI',
+                icon: 'fas cm-all fa-times',
+                action: function(node) {
+                    createExtensionModal(node, 'Drop')
+                }
+            },{
                 text: 'Drop Extension',
                 icon: 'fas cm-all fa-times',
                 action: function(node) {
@@ -5211,242 +5233,283 @@ function getExtensionsPostgresql(node) {
 /// </summary>
 /// <param name="node">Node object.</param>
 function getSchemasPostgresql(node) {
+  function createSpinChildNode(node) {
+    node.createChildNode("", true, "node-spin", null, null, null, false);
+  }
 
-    node.removeChildNodes();
-    node.createChildNode('', false, 'node-spin', null,
-        null);
+  node.removeChildNodes();
+  node.createChildNode("", false, "node-spin", null, null);
+  axios
+    .post("/get_schemas_postgresql/", {
+      database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      tab_id: v_connTabControl.selectedTab.id,
+    })
+    .then((resp) => {
+      if (node.childNodes.length > 0) {
+        node.removeChildNodes();
+      }
+      node.setText(`Schemas (${resp.data.data.length})`);
 
-    execAjax('/get_schemas_postgresql/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id
-        }),
-        function(p_return) {
+      node.tag.num_schemas = resp.data.data.length;
 
-            if (node.childNodes.length > 0)
-                node.removeChildNodes();
+      for (i = 0; i < resp.data.data.length; i++) {
+        let schema_name = resp.data.data[i].name;
 
-            node.setText('Schemas (' + p_return.v_data.length + ')');
+        node_schema = node.createChildNode(
+          schema_name,
+          false,
+          "fas node-all fa-layer-group node-schema",
+          {
+            type: "schema",
+            num_tables: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+            oid: resp.data.data[i].oid,
+          },
+          "cm_schema",
+          null,
+          false
+        );
 
-            node.tag.num_schemas = p_return.v_data.length;
+        let node_tables = node_schema.createChildNode(
+          "Tables",
+          false,
+          "fas node-all fa-th node-table-list",
+          {
+            type: "table_list",
+            num_tables: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_tables",
+          null,
+          false
+        );
+        createSpinChildNode(node_tables);
+        if (parseInt(getMajorVersionPostgresql(node.tree.tag.version)) >= 10) {
+          let node_ptables = node_schema.createChildNode(
+            "Partitioned Tables",
+            false,
+            "fas node-all fa-th node-ptable-list",
+            {
+              type: "partitioned_table_list",
+              num_tables: 0,
+              database: v_connTabControl.selectedTab.tag.selectedDatabase,
+              schema: schema_name,
+            },
+            "cm_partitioned_tables",
+            null,
+            false
+          );
+          createSpinChildNode(node_ptables);
+        }
 
-            for (i = 0; i < p_return.v_data.length; i++) {
+        let node_itables = node_schema.createChildNode(
+          "Inheritance Tables",
+          false,
+          "fas node-all fa-th node-itable-list",
+          {
+            type: "inherited_table_list",
+            num_tables: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_inherited_tables",
+          null,
+          false
+        );
+        createSpinChildNode(node_itables);
 
-                v_node = node.createChildNode(p_return.v_data[i].v_name,
-                    false, 'fas node-all fa-layer-group node-schema', {
-                        type: 'schema',
-                        num_tables: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name,
-                        oid: p_return.v_data[i].v_oid
-                    }, 'cm_schema', null, false);
+        let node_foreign_tables = node_schema.createChildNode(
+          "Foreign Tables",
+          false,
+          "fas node-all fa-th node-ftable-list",
+          {
+            type: "foreign_table_list",
+            num_tables: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_foreign_tables",
+          null,
+          false
+        );
+        createSpinChildNode(node_foreign_tables);
 
-                var node_tables = v_node.createChildNode('Tables', false,
-                    'fas node-all fa-th node-table-list', {
-                        type: 'table_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_tables: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_tables', null, false);
-                node_tables.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_sequences = node_schema.createChildNode(
+          "Sequences",
+          false,
+          "fas node-all fa-sort-numeric-down node-sequence-list",
+          {
+            type: "sequence_list",
+            num_sequences: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_sequences",
+          null,
+          false
+        );
+        createSpinChildNode(node_sequences);
 
-                if (parseInt(getMajorVersionPostgresql(node.tree.tag.version)) >= 10) {
-                    var node_ptables = v_node.createChildNode('Partitioned Tables', false,
-                        'fas node-all fa-th node-ptable-list', {
-                            type: 'partitioned_table_list',
-                            schema: p_return.v_data[i].v_name,
-                            num_tables: 0,
-                            database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                            schema: p_return.v_data[i].v_name
-                        }, 'cm_partitioned_tables', null, false);
-                    node_ptables.createChildNode('', true,
-                        'node-spin', null, null,
-                        null, false);
-                }
+        let node_views = node_schema.createChildNode(
+          "Views",
+          false,
+          "fas node-all fa-eye node-view-list",
+          {
+            type: "view_list",
+            num_views: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_views",
+          null,
+          false
+        );
+        createSpinChildNode(node_views);
 
-                var node_itables = v_node.createChildNode('Inheritance Tables', false,
-                    'fas node-all fa-th node-itable-list', {
-                        type: 'inherited_table_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_tables: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_inherited_tables', null, false);
-                node_itables.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        if (
+          parseFloat(getMajorVersionPostgresql(node.tree.tag.version)) >= 9.3
+        ) {
+          let node_views = node_schema.createChildNode(
+            "Materialized Views",
+            false,
+            "fas node-all fa-eye node-mview-list",
+            {
+              type: "mview_list",
+              num_views: 0,
+              database: v_connTabControl.selectedTab.tag.selectedDatabase,
+              schema: schema_name,
+            },
+            "cm_mviews",
+            null,
+            false
+          );
+          createSpinChildNode(node_views);
+        }
 
-                var node_foreign_tables = v_node.createChildNode('Foreign Tables', false,
-                    'fas node-all fa-th node-ftable-list', {
-                        type: 'foreign_table_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_tables: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_foreign_tables', null, false);
-                node_foreign_tables.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_functions = node_schema.createChildNode(
+          "Functions",
+          false,
+          "fas node-all fa-cog node-function-list",
+          {
+            type: "function_list",
+            num_functions: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_functions",
+          null,
+          false
+        );
+        createSpinChildNode(node_functions);
 
-                var node_sequences = v_node.createChildNode('Sequences',
-                    false,
-                    'fas node-all fa-sort-numeric-down node-sequence-list', {
-                        type: 'sequence_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_sequences: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_sequences', null, false);
-                node_sequences.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_triggerfunctions = node_schema.createChildNode(
+          "Trigger Functions",
+          false,
+          "fas node-all fa-cog node-tfunction-list",
+          {
+            type: "triggerfunction_list",
+            num_triggerfunctions: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_triggerfunctions",
+          null,
+          false
+        );
+        createSpinChildNode(node_triggerfunctions);
 
-                var node_views = v_node.createChildNode('Views', false,
-                    'fas node-all fa-eye node-view-list', {
-                        type: 'view_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_views: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_views', null, false);
-                node_views.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_eventtriggerfunctions = node_schema.createChildNode(
+          "Event Trigger Functions",
+          false,
+          "fas node-all fa-cog node-etfunction-list",
+          {
+            type: "eventtriggerfunction_list",
+            num_triggerfunctions: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_eventtriggerfunctions",
+          null,
+          false
+        );
+        createSpinChildNode(node_eventtriggerfunctions);
 
-                if (parseFloat(getMajorVersionPostgresql(node.tree.tag.version)) >=
-                    9.3) {
-                    var node_views = v_node.createChildNode(
-                        'Materialized Views', false,
-                        'fas node-all fa-eye node-mview-list', {
-                            type: 'mview_list',
-                            schema: p_return.v_data[i].v_name,
-                            num_views: 0,
-                            database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                            schema: p_return.v_data[i].v_name
-                        }, 'cm_mviews', null, false);
-                    node_views.createChildNode('', true,
-                        'node-spin', null,
-                        null, null, false);
-                }
+        if (parseInt(getMajorVersionPostgresql(node.tree.tag.version)) >= 11) {
+          let node_procedures = node_schema.createChildNode(
+            "Procedures",
+            false,
+            "fas node-all fa-cog node-procedure-list",
+            {
+              type: "procedure_list",
+              num_procedures: 0,
+              database: v_connTabControl.selectedTab.tag.selectedDatabase,
+              schema: schema_name,
+            },
+            "cm_procedures",
+            null,
+            false
+          );
+          createSpinChildNode(node_procedures);
+        }
 
-                var node_functions = v_node.createChildNode('Functions',
-                    false, 'fas node-all fa-cog node-function-list', {
-                        type: 'function_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_functions: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_functions', null, false);
-                node_functions.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_aggregates = node_schema.createChildNode(
+          "Aggregates",
+          false,
+          "fas node-all fa-cog node-aggregate-list",
+          {
+            type: "aggregate_list",
+            num_aggregates: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_aggregates",
+          null,
+          false
+        );
+        createSpinChildNode(node_aggregates);
 
-                var node_triggerfunctions = v_node.createChildNode(
-                    'Trigger Functions', false,
-                    'fas node-all fa-cog node-tfunction-list', {
-                        type: 'triggerfunction_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_triggerfunctions: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_triggerfunctions', null, false);
-                node_triggerfunctions.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_types = node_schema.createChildNode(
+          "Types",
+          false,
+          "fas node-all fa-square node-type-list",
+          {
+            type: "type_list",
+            num_types: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_types",
+          null,
+          false
+        );
+        createSpinChildNode(node_types);
 
-                var node_eventtriggerfunctions = v_node.createChildNode(
-                    'Event Trigger Functions', false,
-                    'fas node-all fa-cog node-etfunction-list', {
-                        type: 'eventtriggerfunction_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_triggerfunctions: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_eventtriggerfunctions', null, false);
-                node_eventtriggerfunctions.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
+        let node_domains = node_schema.createChildNode(
+          "Domains",
+          false,
+          "fas node-all fa-square node-domain-list",
+          {
+            type: "domain_list",
+            num_domains: 0,
+            database: v_connTabControl.selectedTab.tag.selectedDatabase,
+            schema: schema_name,
+          },
+          "cm_domains",
+          null,
+          false
+        );
+        createSpinChildNode(node_domains);
+      }
 
-                if (parseInt(getMajorVersionPostgresql(node.tree.tag.version)) >= 11) {
-                    var node_procedures = v_node.createChildNode('Procedures',
-                        false, 'fas node-all fa-cog node-procedure-list', {
-                            type: 'procedure_list',
-                            schema: p_return.v_data[i].v_name,
-                            num_procedures: 0,
-                            database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                            schema: p_return.v_data[i].v_name
-                        }, 'cm_procedures', null, false);
-                    node_procedures.createChildNode('', true,
-                        'node-spin', null, null,
-                        null, false);
-                }
+      node.drawChildNodes();
 
-                var node_aggregates = v_node.createChildNode(
-                    'Aggregates',
-                    false,
-                    'fas node-all fa-cog node-aggregate-list',
-                    {
-                        type: 'aggregate_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_aggregates: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    },
-                    'cm_aggregates',
-                    null,
-                    false
-                );
-
-                node_aggregates.createChildNode(
-                    '',
-                    true,
-                    'node-spin',
-                    null,
-                    null,
-                    null,
-                    false
-                );
-
-                var node_types = v_node.createChildNode('Types',
-                    false,
-                    'fas node-all fa-square node-type-list', {
-                        type: 'type_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_types: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_types', null, false);
-                node_types.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
-
-                var node_domains = v_node.createChildNode('Domains',
-                    false,
-                    'fas node-all fa-square node-domain-list', {
-                        type: 'domain_list',
-                        schema: p_return.v_data[i].v_name,
-                        num_domains: 0,
-                        database: v_connTabControl.selectedTab.tag.selectedDatabase,
-                        schema: p_return.v_data[i].v_name
-                    }, 'cm_domains', null, false);
-                node_domains.createChildNode('', true,
-                    'node-spin', null, null,
-                    null, false);
-            }
-
-            node.drawChildNodes();
-
-            afterNodeOpenedCallbackPostgreSQL(node);
-
-        },
-        function(p_return) {
-            nodeOpenErrorPostgresql(p_return, node);
-        },
-        'box',
-        false);
+      afterNodeOpenedCallbackPostgreSQL(node);
+    })
+    .catch((error) => {
+      nodeOpenErrorPostgresqlNew(error, node);
+    });
 }
 
 /// <summary>
