@@ -4,52 +4,52 @@
       <div class="modal-content">
 
         <div class="modal-header align-items-center">
-          <h3 class="modal-title">{{ modalTitle }}</h3>
+          <h2 class="modal-title font-weight-bold">{{ modalTitle }}</h2>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
 
         <div class="modal-body">
-
-          <div class="form-group row mb-1 align-items-center">
-            <label for="extensionName" class="font-weight-bold col-3">Name</label>
-            <select id="extensionName" class="form-control col-9" v-model="selectedExtension"
+          <div class="form-group mb-2">
+            <label for="extensionName" class="font-weight-bold mb-1">Name</label>
+            <select id="extensionName" class="form-control" v-model="selectedExtension"
               :disabled="mode === 'Alter'">
               <option value="" disabled>Select an item...</option>
               <option v-for="(extension, index) in availableExtensions" :value="extension" :key="index">{{ extension.name
               }}</option>
             </select>
-
           </div>
 
-          <div class="form-group row mb-1 align-items-center">
-            <label for="extensionComment" class="font-weight-bold col-3">Comment</label>
-            <textarea class="form-control col-9" id="extensionComment" disabled
+          <div class="form-group mb-2">
+            <label for="extensionComment" class="font-weight-bold mb-1">Comment</label>
+            <textarea class="form-control" id="extensionComment" disabled
               :value="selectedExtension?.comment"></textarea>
           </div>
 
-          <div class="align-items-center form-group mb-1 row">
-            <label for="extensionSchema" class="col-3 font-weight-bold">Schema</label>
-            <select id="extensionSchema" class="col-9 form-control" v-model="selectedSchema"
+          <div class="form-group mb-2">
+            <label for="extensionSchema" class="font-weight-bold mb-1">Schema</label>
+            <select id="extensionSchema" class="form-control" v-model="selectedSchema"
               :disabled="!!requiredSchema || !isRelocatable">
               <option value="" disabled="">Select an item...</option>
               <option v-for="(schema, index) in schemaList" :value="schema.name" :key="index">{{ schema.name }}</option>
             </select>
           </div>
 
-          <div class="form-group row mb-1 align-items-center">
-            <label for="extensionVersions" class="font-weight-bold col-3">Version</label>
-            <select id="extensionVersions" class="form-control col-9" v-model="selectedVersion">
+          <div class="form-group mb-2">
+            <label for="extensionVersions" class="font-weight-bold mb-1">Version</label>
+            <select id="extensionVersions" class="form-control" v-model="selectedVersion">
               <option value="" disabled>Select an item...</option>
               <option v-for="(version, index) in selectedExtension?.versions" :value="version" :key="index">{{ version }}
               </option>
             </select>
           </div>
 
-          <div id="generated_sql_div" class="mt-3" style="height: 10vh">
+          <div class="form-group mb-2">
+            <p class="font-weight-bold mb-1">Preview</p>
+            <div id="generated_sql_div" style="height: 10vh">
+            </div>
           </div>
-
         </div>
 
         <div class="modal-footer">
