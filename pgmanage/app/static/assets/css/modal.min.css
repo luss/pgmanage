@@ -266,10 +266,12 @@ span.text-muted {
 
 .pgmanage-theme--light .dropdown-menu {
   background-color: #FFFFFF;
+  border: "border";
 }
 
 .pgmanage-theme--dark .dropdown-menu {
   background-color: #1D273B;
+  border: "border";
 }
 
 .dropdown-menu-sm {
@@ -294,7 +296,7 @@ span.text-muted {
 }
 
 .dropdown-item:hover {
-  background-color: rgba(118, 127, 143, 0.04);
+  background-color: rgba(118, 127, 143, 0.15);
 }
 
 .accordion .card {
@@ -843,6 +845,14 @@ input[type='checkbox'] {
 
 .pgmanage .mx-context-menu-item:hover, .pgmanage .mx-context-menu-item.open {
   background-color: rgba(118, 127, 143, 0.15);
+}
+
+.pgmanage-theme--light .pgmanage .mx-context-menu-item .mx-right-arrow {
+  fill: #1D273B;
+}
+
+.pgmanage-theme--dark .pgmanage .mx-context-menu-item .mx-right-arrow {
+  fill: #F8FAFC;
 }
 
 .modal {

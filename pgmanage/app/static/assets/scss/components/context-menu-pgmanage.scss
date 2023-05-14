@@ -19,5 +19,11 @@
         &:hover, &.open {
             background-color: rgba($primaryMutedColor, 0.15);
         }
+
+        .mx-right-arrow {   
+            @include themify() {
+                fill: themed($color);
+            }
+        }
     }
 }
