@@ -6,7 +6,7 @@ We proudly leverage all of the great work Open Source work done by the original
 (now dormant) project https://github.com/OmniDB/OmniDB 
 
 
-**Website & Downloads**: https://github.com/commandprompt/pgmanage
+**Website & Downloads**: https://www.commandprompt.com/products/pgmanage/
 
 **Full Documentation**: https://pgmanage.readthedocs.io/en/latest/
 
