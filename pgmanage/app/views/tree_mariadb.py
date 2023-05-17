@@ -16,7 +16,7 @@ from app.views.memory_objects import *
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_tree_info(request):
+def get_tree_info(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -90,7 +90,7 @@ def get_tree_info(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_properties(request):
+def get_properties(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -124,7 +124,7 @@ def get_properties(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_tables(request):
+def get_tables(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -166,7 +166,7 @@ def get_tables(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_columns(request):
+def get_columns(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -202,7 +202,7 @@ def get_columns(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_pk(request):
+def get_pk(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -234,7 +234,7 @@ def get_pk(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_pk_columns(request):
+def get_pk_columns(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -267,7 +267,7 @@ def get_pk_columns(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_fks(request):
+def get_fks(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -302,7 +302,7 @@ def get_fks(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_fks_columns(request):
+def get_fks_columns(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -339,7 +339,7 @@ def get_fks_columns(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_uniques(request):
+def get_uniques(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -371,7 +371,7 @@ def get_uniques(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_uniques_columns(request):
+def get_uniques_columns(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -404,7 +404,7 @@ def get_uniques_columns(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_indexes(request):
+def get_indexes(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -437,7 +437,7 @@ def get_indexes(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_indexes_columns(request):
+def get_indexes_columns(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -470,7 +470,7 @@ def get_indexes_columns(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_databases(request):
+def get_databases(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -501,7 +501,7 @@ def get_databases(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_roles(request):
+def get_roles(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -532,7 +532,7 @@ def get_roles(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_functions(request):
+def get_functions(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -565,7 +565,7 @@ def get_functions(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_function_fields(request):
+def get_function_fields(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -599,7 +599,7 @@ def get_function_fields(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_function_definition(request):
+def get_function_definition(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -622,7 +622,7 @@ def get_function_definition(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_procedures(request):
+def get_procedures(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -655,7 +655,7 @@ def get_procedures(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_procedure_fields(request):
+def get_procedure_fields(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -689,7 +689,7 @@ def get_procedure_fields(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_procedure_definition(request):
+def get_procedure_definition(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -712,7 +712,7 @@ def get_procedure_definition(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_sequences(request):
+def get_sequences(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -745,7 +745,7 @@ def get_sequences(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_views(request):
+def get_views(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -778,7 +778,7 @@ def get_views(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_views_columns(request):
+def get_views_columns(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -813,7 +813,7 @@ def get_views_columns(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def get_view_definition(request):
+def get_view_definition(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -837,7 +837,7 @@ def get_view_definition(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def kill_backend(request):
+def kill_backend(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -860,7 +860,7 @@ def kill_backend(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def template_select(request):
+def template_select(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -888,7 +888,7 @@ def template_select(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def template_insert(request):
+def template_insert(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''
@@ -916,7 +916,7 @@ def template_insert(request):
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
-def template_update(request):
+def template_update(request, v_database):
 
     v_return = {}
     v_return['v_data'] = ''

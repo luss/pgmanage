@@ -1271,7 +1271,7 @@ PostgreSQL
 ------------------------------------------------------------------------
 '''
 class PostgreSQL(Generic):
-    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_application_name='spartacus', p_conn_string='', p_encoding=None):
+    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_application_name='spartacus', p_conn_string='', p_encoding=None, connection_params=None):
         if 'PostgreSQL' in v_supported_rdbms:
             self.v_host = p_host
             if p_port is None or p_port == '':
@@ -1284,6 +1284,7 @@ class PostgreSQL(Generic):
                 self.v_service = p_service
             self.v_conn_string = p_conn_string
             self.v_conn_string_parsed = urlparse(p_conn_string)
+            self.connection_params = connection_params if connection_params else {}
             self.v_user = p_user
             self.v_password = p_password
             self.v_application_name = p_application_name
@@ -1376,7 +1377,8 @@ class PostgreSQL(Generic):
         try:
             self.v_con = psycopg2.connect(
                 self.GetConnectionString(),
-                cursor_factory=psycopg2.extras.DictCursor
+                cursor_factory=psycopg2.extras.DictCursor,
+                **self.connection_params
             )
             self.v_con.autocommit = p_autocommit
             self.v_cur = self.v_con.cursor()
@@ -1866,7 +1868,7 @@ MySQL
 ------------------------------------------------------------------------
 '''
 class MySQL(Generic):
-    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_conn_string='', p_encoding=None):
+    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_conn_string='', p_encoding=None, connection_params=None):
         if 'MySQL' in v_supported_rdbms:
             self.v_host = p_host
             if p_port is None or p_port == '':
@@ -1875,6 +1877,7 @@ class MySQL(Generic):
                 self.v_port = p_port
             self.v_conn_string = p_conn_string
             self.v_conn_string_parsed = urlparse(p_conn_string)
+            self.connection_params = connection_params if connection_params else {}
             self.v_service = p_service
             self.v_user = p_user
             self.v_password = p_password
@@ -1933,7 +1936,9 @@ class MySQL(Generic):
                 user=self.v_user,
                 password=self.v_password,
                 autocommit=p_autocommit,
-                read_default_file='~/.my.cnf')
+                read_default_file='~/.my.cnf',
+                **self.connection_params
+                )
             self.v_cur = self.v_con.cursor()
             self.v_start = True
             self.v_status = 0
@@ -2248,7 +2253,7 @@ MariaDB
 ------------------------------------------------------------------------
 '''
 class MariaDB(Generic):
-    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_conn_string='', p_encoding=None):
+    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_conn_string='', p_encoding=None, connection_params=None):
         if 'MariaDB' in v_supported_rdbms:
             self.v_host = p_host
             if p_port is None or p_port == '':
@@ -2256,6 +2261,7 @@ class MariaDB(Generic):
             else:
                 self.v_port = p_port
             self.v_conn_string = p_conn_string
+            self.connection_params = connection_params if connection_params else {}
             self.v_conn_string_parsed = urlparse(p_conn_string)
             self.v_service = p_service
             self.v_user = p_user
@@ -2315,7 +2321,9 @@ class MariaDB(Generic):
                 user=self.v_user,
                 password=self.v_password,
                 autocommit=p_autocommit,
-                read_default_file='~/.my.cnf')
+                read_default_file='~/.my.cnf',
+                **self.connection_params,
+                )
             self.v_cur = self.v_con.cursor()
             self.v_start = True
             self.v_status = 0

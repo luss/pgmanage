@@ -76,11 +76,13 @@
 
               <div class="form-group col-3">
               <label for="connectionSSL" class="font-weight-bold mb-3">SSL</label>
-              <select id="connectionSSL" class="form-control" placeholder="SSL" disabled="true">
-                  <option selected>Choose...</option>
-                  <option>Option 1</option>
-                  <option>Option 2</option>
+              <select v-if="connectionLocal.technology === 'postgresql'" id="connectionSSL" class="form-control" placeholder="SSL" v-model="connectionLocal.connection_params.sslmode" :disabled="dbFormDisabled">
+                  <option v-for="mode in ssl_modes" :key="mode" :value="mode">{{ mode }}</option>
               </select>
+              <div v-else class="custom-control custom-switch mb-3">
+                  <input v-model="connectionLocal.connection_params.ssl_verify_cert" type="checkbox" class="custom-control-input" :disabled="dbFormDisabled">
+                  <label class="custom-control-label font-weight-bold">Verify certificate</label>
+              </div>
               </div>
           </div>
 
@@ -216,6 +218,7 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         connectionLocal: {
           alias: ''
         },
+        ssl_modes: ["allow", "prefer", "require", "disable", "verify-full", "verify-ca"]
       }
     },
     validations() {
@@ -331,6 +334,9 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
             password_set: false,
             key: "",
             key_set: false
+          },
+          connection_params: {
+            sslmode: 'prefer',
           }
         }
       },
@@ -457,6 +463,14 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         this.connectionLocal.tunnel = {...newVal.tunnel}
         this.v$.connectionLocal.$reset()
       },
+      'connectionLocal.technology': function (newVal, oldVal) {
+      if (newVal === 'postgresql') {
+        this.connectionLocal.connection_params.sslmode = 'prefer'
+        delete this.connectionLocal.connection_params.ssl_verify_cert
+      } else {
+        delete this.connectionLocal.connection_params.sslmode
+      }
+    },
     }
   }
 </script>
