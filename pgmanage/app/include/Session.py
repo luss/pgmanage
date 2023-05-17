@@ -216,7 +216,8 @@ class Session(object):
                     conn.id,
                     conn.alias,
                     p_conn_string = conn.conn_string,
-                    p_parse_conn_string = True
+                    p_parse_conn_string = True,
+                    connection_params=conn.connection_params
                 )
 
                 prompt_password = conn.password == ''

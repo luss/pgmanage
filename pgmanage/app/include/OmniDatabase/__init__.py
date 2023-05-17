@@ -47,15 +47,16 @@ class Generic(object):
                             p_foreignkeys=True,
                             p_application_name='PgManage',
                             p_conn_string='',
-                            p_parse_conn_string = False):
+                            p_parse_conn_string = False,
+                            connection_params=None):
 
         if p_db_type == 'postgresql':
-            return PostgreSQL(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_application_name, p_conn_string, p_parse_conn_string)
+            return PostgreSQL(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_application_name, p_conn_string, p_parse_conn_string, connection_params)
         if p_db_type == 'oracle':
             return Oracle(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string)
         if p_db_type == 'mariadb':
-            return MariaDB(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string)
+            return MariaDB(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string, connection_params)
         if p_db_type == 'mysql':
-            return MySQL(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string)
+            return MySQL(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string, connection_params)
         if p_db_type == 'sqlite':
             return SQLite(p_service, p_conn_id, p_alias, p_foreignkeys)

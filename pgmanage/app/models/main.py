@@ -43,6 +43,7 @@ class Connection(models.Model):
     use_tunnel = models.BooleanField(default=False)
     conn_string = models.TextField(blank=False, default='')
     public = models.BooleanField(default=False)
+    connection_params = models.JSONField(default=dict)
 
 class SnippetFolder(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)

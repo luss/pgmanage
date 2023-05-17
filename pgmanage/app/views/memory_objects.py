@@ -290,7 +290,7 @@ def get_database_tab_object(
             v_global_database_object.v_active_user != p_tab_object['omnidatabase'].v_active_user or
             v_global_database_object.v_connection.v_password != p_tab_object['omnidatabase'].v_connection.v_password)
         ):
-
+        connection_params = v_global_database_object.connection_params if hasattr(v_global_database_object, 'connection_params') else None
         v_database_new = OmniDatabase.Generic.InstantiateDatabase(
             v_global_database_object.v_db_type,
             v_global_database_object.v_connection.v_host,
@@ -301,7 +301,8 @@ def get_database_tab_object(
             v_global_database_object.v_conn_id,
             v_global_database_object.v_alias,
             p_conn_string = v_global_database_object.v_conn_string,
-            p_parse_conn_string = False
+            p_parse_conn_string = False,
+            connection_params=connection_params
         )
         if p_use_lock:
             v_database_new.v_lock = threading.Lock()

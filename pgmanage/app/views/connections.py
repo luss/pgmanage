@@ -59,7 +59,8 @@ def get_connections(request):
                     'password_set': False if conn.ssh_password.strip() == '' else True,
                     'key': '',
                     'key_set': False if conn.ssh_key.strip() == '' else True
-                }
+                },
+                'connection_params': conn.connection_params
             }
             database_object = session.v_databases.get(conn.id)
 
@@ -208,6 +209,8 @@ def test_connection(request):
     conn_id = conn_object['id']
     conn_type = conn_object['technology']
 
+    conn_params = conn_object['connection_params']
+
 
     password = conn_object['password'].strip()
     ssh_password = conn_object['tunnel']['password'].strip()
@@ -260,7 +263,8 @@ def test_connection(request):
             -1,
             '',
             p_conn_string=conn_object['conn_string'],
-            p_parse_conn_string=True
+            p_parse_conn_string=True,
+            connection_params=conn_params
         )
 
         # create tunnel if enabled
@@ -348,8 +352,8 @@ def save_connection(request):
                 ssh_key=tunnel_key,
                 use_tunnel=conn_object['tunnel']['enabled'],
                 conn_string=conn_object['conn_string'],
-                public=False
-
+                public=False,
+                connection_params=conn_object['connection_params']
             )
             conn.save()
         # update
@@ -378,6 +382,9 @@ def save_connection(request):
                     conn.ssh_password = encrypt(conn_object['tunnel']['password'], key)
             if conn_object['tunnel']['key'].strip() != '':
                 conn.ssh_key = encrypt(conn_object['tunnel']['key'], key)
+
+            for k, v in conn_object["connection_params"].items():
+                conn.connection_params[k] = v
 
             conn.use_tunnel = conn_object['tunnel']['enabled']
             conn.conn_string = conn_object['conn_string']
@@ -413,7 +420,8 @@ def save_connection(request):
             conn.id,
             conn.alias,
             p_conn_string=conn.conn_string,
-            p_parse_conn_string=True
+            p_parse_conn_string=True,
+            connection_params=conn.connection_params
         )
 
         prompt_password = conn.password == ''

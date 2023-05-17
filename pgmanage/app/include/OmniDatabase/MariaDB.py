@@ -52,9 +52,9 @@ MariaDB
 ------------------------------------------------------------------------
 '''
 class MariaDB:
-    def __init__(self, p_server, p_port, p_service, p_user, p_password, p_conn_id=0, p_alias='', p_conn_string='', p_parse_conn_string = False):
+    def __init__(self, p_server, p_port, p_service, p_user, p_password, p_conn_id=0, p_alias='', p_conn_string='', p_parse_conn_string = False, connection_params=None):
         self.lock = None
-
+        self.connection_params = connection_params if connection_params else {}
         self.v_alias = p_alias
         self.v_db_type = 'mariadb'
         self.v_conn_string = p_conn_string
@@ -97,7 +97,7 @@ class MariaDB:
                 self.v_conn_string_error = 'Syntax error in the connection string.'
                 None
 
-        self.v_connection = Spartacus.Database.MariaDB(self.v_active_server, self.v_active_port, self.v_active_service, self.v_active_user, self.v_password, p_conn_string)
+        self.v_connection = Spartacus.Database.MariaDB(self.v_active_server, self.v_active_port, self.v_active_service, self.v_active_user, self.v_password, p_conn_string, connection_params=self.connection_params)
 
         self.v_has_schema = True
         self.v_has_functions = True
