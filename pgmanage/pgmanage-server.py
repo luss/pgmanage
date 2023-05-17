@@ -152,10 +152,13 @@ else:
 if options.port!=None:
     listening_port = options.port
 else:
-    if hasattr(pgmanage_settings,'LISTENING_PORT'):
-        listening_port = pgmanage_settings.LISTENING_PORT
+    if options.app:
+        listening_port = random.randint(25000,32676)
     else:
-        listening_port = 8000
+        if hasattr(pgmanage_settings,'LISTENING_PORT'):
+            listening_port = pgmanage_settings.LISTENING_PORT
+        else:
+            listening_port = 8000
 
 if options.path!='':
     pgmanage.custom_settings.PATH = options.path
@@ -437,7 +440,7 @@ class DjangoApplication(object):
 
     def mount_static(self, url, root):
         config = {
-            'tools.staticdir.on': True, 
+            'tools.staticdir.on': True,
             'tools.staticdir.dir': root,
             'tools.expires.on': True,
             'tools.expires.secs': 86400
@@ -446,7 +449,7 @@ class DjangoApplication(object):
 
     def run(self,parameters):
         #cherrypy.engine.unsubscribe('graceful', cherrypy.log.reopen_files)
-
+        print(parameters)
         logging.config.dictConfig(pgmanage.settings.LOGGING)
         #cherrypy.log.error_log.propagate = False
         cherrypy.log.access_log.propagate = False
@@ -463,7 +466,7 @@ class DjangoApplication(object):
         while not check_port(port):
             print("Port {0} is busy, trying another port...".format(port),flush=True)
             logger.info("Port {0} is busy, trying another port...".format(port))
-            port = random.randint(1025,32676)
+            port = random.randint(25000,32676)
             num_attempts = num_attempts + 1
 
             if num_attempts == 20:
