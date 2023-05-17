@@ -106,11 +106,13 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
   command_history_modal +
   '<div class="row mb-1">' +
     '<div class="tab_actions omnidb__tab-actions col-12">' +
-      '<button id="bt_start_' + v_tab.id + '" class="btn btn-sm btn-primary omnidb__tab-actions__btn" title="Run" onclick="querySQL(0);"><i class="fas fa-play fa-light"></i></button>' +
+      '<button id="bt_start_' + v_tab.id + '" class="btn btn-sm btn-primary omnidb__tab-actions__btn" title="Run" onclick="v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.queryRunHandler();"><i class="fas fa-play fa-light"></i></button>' +
       '<button id="bt_indent_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Indent SQL" onclick="indentSQL();"><i class="fas fa-indent fa-light"></i></button>' +
       '<button id="bt_history_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Command History" onclick="showCommandList();"><i class="fas fa-clock-rotate-left fa-light"></i></button>' +
-      '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary omnidb__tab-actions__btn" onclick="getExplain(0)" title="Explain" style="display: none;"><i class="fas fa-chart-simple fa-light"></i></button>' +
-      '<button id="bt_analyze_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary omnidb__tab-actions__btn" onclick="getExplain(1)" title="Explain Analyze" style="display: none;"><i class="fas fa-magnifying-glass-chart fa-light"></i></button>' +
+      '<div class="btn-group ml-2 mr-2">' +
+      '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" onclick="getExplain(0)" title="Explain" style="display: none;" disabled="true"><i class="fas fa-chart-simple fa-light"></i></button>' +
+      '<button id="bt_analyze_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" onclick="getExplain(1)" title="Explain Analyze" style="display: none;" disabled="true"><i class="fas fa-magnifying-glass-chart fa-light"></i></button>' +
+      '</div>' +
       '<div class="dbms_object postgresql_object omnidb__form-check form-check form-check-inline"><input id="check_autocommit_' + v_tab.id + '" class="form-check-input" type="checkbox" checked="checked"><label class="form-check-label dbms_object postgresql_object custom_checkbox query_info" for="check_autocommit_' + v_tab.id + '">Autocommit</label></div>' +
       '<div class="dbms_object postgresql_object omnidb__tab-status"><i id="query_tab_status_' + v_tab.id + '" title="Not connected" class="fas fa-dot-circle tab-status tab-status-closed dbms_object postgresql_object omnidb__tab-status__icon"></i><span id="query_tab_status_text_' + v_tab.id + '" title="Not connected" class="tab-status-text query_info dbms_object postgresql_object ml-1">Not connected</span></div>' +
       '<button id="bt_fetch_more_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Run" style="display: none;" onclick="querySQL(1);">Fetch more</button>' +
@@ -140,6 +142,8 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
     v_curr_tabs.selectTabIndex(0);
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.currQueryTab = 'data';
     v_tab.tag.resize();
+    $(v_tab.tag.bt_explain).prop('disabled', true)
+    $(v_tab.tag.bt_analyze).prop('disabled', true)
   }
 
   // Tab selection callback for `message` tab.
@@ -148,6 +152,8 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
     v_tag.currQueryTab = 'message';
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_count_notices.style.display = 'none';
     v_tab.tag.resize();
+    $(v_tab.tag.bt_explain).prop('disabled', true)
+    $(v_tab.tag.bt_analyze).prop('disabled', true)
   }
 
   // Tab selection callback for `explain` tab.
@@ -155,8 +161,22 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
     v_curr_tabs.selectTabIndex(2);
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.currQueryTab = 'explain';
     v_tab.tag.resize();
+    $(v_tab.tag.bt_explain).prop('disabled', false)
+    $(v_tab.tag.bt_analyze).prop('disabled', false)
     // Loads or Updates all tooltips.
     $('[data-toggle="tooltip"]').tooltip({animation:true});
+  }
+
+  var queryRunOrExplain = function() {
+    if(v_connTabControl.selectedTab.tag.selectedDBMS === 'postgresql') {
+      let query = getQueryEditorValue()
+      let should_explain = query.trim().split(' ')[0].toUpperCase() === 'EXPLAIN'
+      if(should_explain) {
+        return querySQL(0, true, query, getExplainReturn, true);
+      }
+    }
+
+    querySQL(0)
   }
 
   // Creating the `data` tab.
@@ -167,6 +187,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
       v_selectDataTabFunc();
     }
   });
+
   v_data_tab.elementDiv.innerHTML =
   "<div class='p-2 omnidb__query-result-tabs__content omnidb__theme-border--primary'>" +
     "<div id='div_result_" + v_tab.id + "' class='omnidb__query-result-tabs__content' style='width: 100%; overflow: hidden;'></div>" +
@@ -188,7 +209,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
   v_messages_tab.elementA.classList.add('postgresql_object');
 
   // Creating the `explain` tab.
-  var v_explain_tab = v_curr_tabs .createTab({
+  var v_explain_tab = v_curr_tabs.createTab({
     p_name: "Explain",
     p_close: false,
     p_clickFunction: function(e) {
@@ -198,6 +219,9 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
   v_explain_tab.elementDiv.innerHTML =
   `<div class='p-2 omnidb__query-result-tabs__content omnidb__theme-border--primary'>
     <div id='div_explain_${v_tab.id}' class='omnidb__query-result-tabs__content omnidb__query-result-tabs__content--explain-default' style='width: 100%; overflow: auto;'>
+      <p class="lead text-center text-muted mt-5">
+        Nothing to visualize. Please click Explain or Analyze button on the toolbar above.
+      </p>
     </div>
   </div>`;
   v_explain_tab.elementA.classList.add('dbms_object');
@@ -353,7 +377,6 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
     bt_fetch_all: document.getElementById('bt_fetch_all_' + v_tab.id),
     bt_commit: document.getElementById('bt_commit_' + v_tab.id),
     bt_rollback: document.getElementById('bt_rollback_' + v_tab.id),
-    bt_start: document.getElementById('bt_start_' + v_tab.id),
     bt_indent: document.getElementById('bt_indent_' + v_tab.id),
     bt_explain: document.getElementById('bt_explain_' + v_tab.id),
     bt_analyze: document.getElementById('bt_analyze_' + v_tab.id),
@@ -361,6 +384,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id) {
     bt_cancel: document.getElementById('bt_cancel_' + v_tab.id),
     bt_export: document.getElementById('bt_export_' + v_tab.id),
     check_autocommit: document.getElementById('check_autocommit_' + v_tab.id),
+    queryRunHandler: queryRunOrExplain,
     resize: v_resizeFunction,
     state : 0,
     context: null,

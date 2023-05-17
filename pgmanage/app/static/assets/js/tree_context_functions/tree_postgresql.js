@@ -1088,7 +1088,7 @@ function getTreePostgresql(p_div) {
                     createUtilityTab(node, 'Restore')
                 }
             },
-            
+
             /*, {
                 text: 'Advanced Object Search',
                 icon: 'fas cm-all fa-search',
@@ -1620,7 +1620,7 @@ function getTreePostgresql(p_div) {
                                     node.tag.schema + '.' +
                                     node.text));
                         }
-                    }, 
+                    },
                     {
                         text: 'Backup',
                         icon: 'fa-solid fa-download cm-all',
@@ -2580,7 +2580,7 @@ function getTreePostgresql(p_div) {
                         )
                     );
                 }
-            }, { 
+            }, {
                 text: 'Restore',
                 icon: 'fa-solid fa-upload cm-all',
                 action: function(node) {
@@ -9245,12 +9245,16 @@ function getExplain(p_mode) {
         showAlert('Please provide a string.');
     }
     else {
-      // Component context is unset, defaults to default.
-        if (p_mode == 0) {
-          v_query = 'explain ' + v_query;
-        }
-        else if (p_mode == 1) {
-          v_query = 'explain (analyze, buffers) ' + v_query;
+        let should_prepend = v_query.trim().split(' ')[0].toUpperCase() !== 'EXPLAIN'
+        // do not prepend the query with explain stuff if it already have it
+        if(should_prepend) {
+            if (p_mode == 0) {
+                v_query = 'explain ' + v_query;
+            }
+            else if (p_mode == 1) {
+                v_query = 'explain (analyze, buffers) ' + v_query;
+            }
+
         }
 
         querySQL(0, true, v_query, getExplainReturn, true);
