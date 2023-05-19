@@ -2890,7 +2890,7 @@ Oracle
 ------------------------------------------------------------------------
 '''
 class Oracle(Generic):
-    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_conn_string='', p_encoding=None):
+    def __init__(self, p_host, p_port, p_service, p_user, p_password, p_conn_string='', p_encoding=None, connection_params=None):
         if 'Oracle' in v_supported_rdbms:
             self.v_host = p_host
             if p_host is not None and (p_port is None or p_port == ''):
@@ -2899,6 +2899,7 @@ class Oracle(Generic):
                 self.v_port = p_port
             self.v_conn_string = p_conn_string
             self.v_conn_string_parsed = urlparse(p_conn_string)
+            self.connection_params = connection_params if connection_params else {}
             if p_service is None or p_service == '':
                 self.v_service = 'xe'
             else:
@@ -2948,7 +2949,9 @@ class Oracle(Generic):
                 )
     def Open(self, p_autocommit=True):
         try:
-            self.v_con = oracledb.connect(self.GetConnectionString())
+            self.v_con = oracledb.connect(
+                self.GetConnectionString(),
+                **self.connection_params)
             self.v_cur = self.v_con.cursor()
             self.v_start = True
         except oracledb.Error as exc:

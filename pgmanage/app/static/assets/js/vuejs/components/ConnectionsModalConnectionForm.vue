@@ -76,13 +76,16 @@
 
               <div class="form-group col-3">
               <label for="connectionSSL" class="font-weight-bold mb-3">SSL</label>
-              <select v-if="connectionLocal.technology === 'postgresql'" id="connectionSSL" class="form-control" placeholder="SSL" v-model="connectionLocal.connection_params.sslmode" :disabled="dbFormDisabled">
-                  <option v-for="mode in ssl_modes" :key="mode" :value="mode">{{ mode }}</option>
-              </select>
-              <div v-else class="custom-control custom-switch mb-3">
-                  <input v-model="connectionLocal.connection_params.ssl_verify_cert" type="checkbox" class="custom-control-input" :disabled="dbFormDisabled">
-                  <label class="custom-control-label font-weight-bold">Verify certificate</label>
-              </div>
+                <select v-if="connectionLocal.technology === 'postgresql'" id="connectionSSL" class="form-control" v-model="connectionLocal.connection_params.sslmode" :disabled="dbFormDisabled">
+                    <option v-for="mode in sslModes" :key="mode" :value="mode">{{ mode }}</option>
+                </select>
+                <select v-else-if="connectionLocal.technology === 'oracle'" id="connectionSSL" class="form-control" v-model="connectionLocal.connection_params.protocol" :disabled="dbFormDisabled">
+                    <option v-for="mode in sslModes" :key="mode" :value="mode">{{ mode }}</option>
+                </select>
+              
+                <select v-else id="connectionSSL" class="form-control" :value='tempMode' @change="changeSelect" :disabled="dbFormDisabled">
+                    <option v-for="mode in sslModes" :key="mode.text" :value="mode.value">{{ mode.text }}</option>
+                </select>
               </div>
           </div>
 
@@ -218,7 +221,14 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         connectionLocal: {
           alias: ''
         },
-        ssl_modes: ["allow", "prefer", "require", "disable", "verify-full", "verify-ca"]
+        postgresql_ssl_modes: ["allow", "prefer", "require", "disable", "verify-full", "verify-ca"],
+        mysql_mariadb_modes: [
+          { text: 'disable', value: 'ssl_disabled'},
+          { text: 'require', value: 'ssl' },
+          { text: 'verify certificate', value: "ssl_verify_cert" },
+          { text: 'verify server identity', value: "ssl_verify_identity" }],
+        oracle_modes: ['tcp', 'tcps'],
+        tempMode: "ssl"
       }
     },
     validations() {
@@ -335,9 +345,7 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
             key: "",
             key_set: false
           },
-          connection_params: {
-            sslmode: 'prefer',
-          }
+          connection_params: {}
         }
       },
       technologies: Array,
@@ -402,9 +410,29 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         !!this.connectionLocal.password ||
         !!this.connectionLocal.service ||
         ['terminal', 'sqlite'].includes(this.connectionLocal.technology))
+      },
+      sslModes() {
+      if (this.connectionLocal.technology === 'postgresql') {
+        return this.postgresql_ssl_modes
+      } else if (this.connectionLocal.technology === 'oracle') {
+        return this.oracle_modes
+      } else if (['mysql', 'mariadb'].includes(this.connectionLocal.technology)) {
+        return this.mysql_mariadb_modes
+      } else {
+        return []
       }
+    }
     },
     methods: {
+      changeSelect(e){
+        const value = e.target.value;
+        if (value === 'ssl'){
+          this.connectionLocal.connection_params = {"ssl": {"ssl": true}}
+        } else {
+          this.connectionLocal.connection_params = {[value]: true}
+        }
+        this.tempMode = value;
+      },
       dispatchConnectionSelected(connection) {
         let event = new CustomEvent('connection:selected', { detail: connection })
         document.dispatchEvent(event)
@@ -464,12 +492,20 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         this.v$.connectionLocal.$reset()
       },
       'connectionLocal.technology': function (newVal, oldVal) {
-      if (newVal === 'postgresql') {
-        this.connectionLocal.connection_params.sslmode = 'prefer'
-        delete this.connectionLocal.connection_params.ssl_verify_cert
-      } else {
-        delete this.connectionLocal.connection_params.sslmode
-      }
+        if (oldVal === undefined || this.connectionLocal.alias !== 'New Connection') {
+          this.tempMode  = Object.keys(this.connectionLocal.connection_params)[0]
+          return
+        }
+        if (newVal === 'postgresql') {
+          this.connectionLocal.connection_params =  {sslmode: 'prefer'}
+        } else if (newVal === 'oracle') {
+          this.connectionLocal.connection_params = {protocol: "tcps"}
+        } else if (['mysql', 'mariadb'].includes(newVal)){
+          this.connectionLocal.connection_params = {'ssl': {'ssl': true}}
+          this.tempMode = 'ssl'
+        } else {
+          this.connectionLocal.connection_params = {}
+        }
     },
     }
   }
