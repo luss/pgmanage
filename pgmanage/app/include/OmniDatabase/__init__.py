@@ -53,7 +53,7 @@ class Generic(object):
         if p_db_type == 'postgresql':
             return PostgreSQL(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_application_name, p_conn_string, p_parse_conn_string, connection_params)
         if p_db_type == 'oracle':
-            return Oracle(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string)
+            return Oracle(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string, connection_params)
         if p_db_type == 'mariadb':
             return MariaDB(p_server, p_port, p_service, p_user, p_password, p_conn_id, p_alias, p_conn_string, p_parse_conn_string, connection_params)
         if p_db_type == 'mysql':

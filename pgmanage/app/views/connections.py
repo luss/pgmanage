@@ -382,10 +382,13 @@ def save_connection(request):
                     conn.ssh_password = encrypt(conn_object['tunnel']['password'], key)
             if conn_object['tunnel']['key'].strip() != '':
                 conn.ssh_key = encrypt(conn_object['tunnel']['key'], key)
+            
+            if conn.technology.name in ['mariadb', 'mysql']:
+                conn.connection_params = {}
 
             for k, v in conn_object["connection_params"].items():
                 conn.connection_params[k] = v
-
+            
             conn.use_tunnel = conn_object['tunnel']['enabled']
             conn.conn_string = conn_object['conn_string']
             conn.save()
