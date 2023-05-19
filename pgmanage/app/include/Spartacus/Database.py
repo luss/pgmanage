@@ -64,7 +64,7 @@ try:
 except ImportError:
     pass
 try:
-    import cx_Oracle
+    import oracledb
     v_supported_rdbms.append('Oracle')
 except ImportError:
     pass
@@ -2946,20 +2946,12 @@ class Oracle(Generic):
                     self.v_port,
                     self.v_service.replace("'","\\'")
                 )
-    def Handler(self, p_cursor, p_name, p_type, p_size, p_precision, p_scale):
-        if p_type == cx_Oracle.NUMBER:
-            return p_cursor.var(str, size = 100, arraysize = p_cursor.arraysize, outconverter = decimal.Decimal)
-        elif p_type == cx_Oracle.CLOB:
-            return p_cursor.var(cx_Oracle.LONG_STRING, arraysize = p_cursor.arraysize)
-        elif p_type == cx_Oracle.BLOB:
-            return p_cursor.var(cx_Oracle.LONG_BINARY, arraysize = p_cursor.arraysize)
     def Open(self, p_autocommit=True):
         try:
-            self.v_con = cx_Oracle.connect(self.GetConnectionString())
-            self.v_con.outputtypehandler = self.Handler
+            self.v_con = oracledb.connect(self.GetConnectionString())
             self.v_cur = self.v_con.cursor()
             self.v_start = True
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -2983,7 +2975,7 @@ class Oracle(Generic):
             return v_table
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3001,7 +2993,7 @@ class Oracle(Generic):
             self.v_cur.execute(p_sql)
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3025,7 +3017,7 @@ class Oracle(Generic):
             return s
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3041,7 +3033,7 @@ class Oracle(Generic):
                     self.v_cur = None
                 self.v_con.close()
                 self.v_con = None
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3058,7 +3050,7 @@ class Oracle(Generic):
                     self.v_cur = None
                 self.v_con.close()
                 self.v_con = None
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3069,7 +3061,7 @@ class Oracle(Generic):
             self.Execute("alter system kill session '{0}' immediate".format(p_pid))
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3097,7 +3089,7 @@ class Oracle(Generic):
             return v_fields
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3116,7 +3108,7 @@ class Oracle(Generic):
                 return self.v_cur.rowcount
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3132,7 +3124,7 @@ class Oracle(Generic):
                     return 0
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3164,7 +3156,7 @@ class Oracle(Generic):
                 return v_table
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))
@@ -3186,7 +3178,7 @@ class Oracle(Generic):
             self.Execute('insert into ' + p_tablename + '(' + ','.join(v_columnames) + ') values ' + ','.join(v_values) + '')
         except Spartacus.Database.Exception as exc:
             raise exc
-        except cx_Oracle.Error as exc:
+        except oracledb.Error as exc:
             raise Spartacus.Database.Exception(str(exc))
         except Exception as exc:
             raise Spartacus.Database.Exception(str(exc))

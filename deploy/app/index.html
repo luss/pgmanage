@@ -442,12 +442,100 @@
   try {
 
     var gui = require('nw.gui');
-    let v_window = gui.Window.get();
+    let win = gui.Window.get();
     let django = null;
     let v_loading_data_container = document.getElementById('loading_interface');
     let v_loading_data_content = document.getElementById('loading');
     let v_login_wrap_body = document.getElementById('login_wrap_body');
     let v_webview = document.getElementById('view');
+
+    var winState;
+    var currWinMode;
+    var resizeTimeout;
+    var isMaximizationEvent = false;
+    // extra height added in linux x64 gnome-shell env, use it as workaround
+    var deltaHeight = gui.App.manifest.window.frame ? 0 : 'disabled';
+
+    function initWindowState() {
+        winState = JSON.parse(localStorage.windowState || 'null');
+
+        if (winState) {
+            currWinMode = winState.mode;
+            if (currWinMode === 'maximized') {
+                win.maximize();
+            } else {
+                restoreWindowState();
+            }
+        } else {
+            currWinMode = 'normal';
+            dumpWindowState();
+        }
+
+        win.show();
+    }
+
+    function dumpWindowState() {
+        if (!winState) {
+            winState = {};
+        }
+
+        // we don't want to save minimized state, only maximized or normal
+        if (currWinMode === 'maximized') {
+            winState.mode = 'maximized';
+        } else {
+            winState.mode = 'normal';
+        }
+
+        // when window is maximized you want to preserve normal
+        // window dimensions to restore them later (even between sessions)
+        if (currWinMode === 'normal') {
+            winState.x = win.x;
+            winState.y = win.y;
+            winState.width = win.width;
+            winState.height = win.height;
+
+            // save delta only of it is not zero
+            if (deltaHeight !== 'disabled' && deltaHeight !== 0 && currWinMode !== 'maximized') {
+                winState.deltaHeight = deltaHeight;
+            }
+        }
+    }
+
+    function restoreWindowState() {
+        // deltaHeight already saved, so just restore it and adjust window height
+        if (deltaHeight !== 'disabled' && typeof winState.deltaHeight !== 'undefined') {
+            deltaHeight = winState.deltaHeight
+            winState.height = winState.height - deltaHeight
+        }
+        //Make sure that the window is displayed somewhere on a screen that is connected to the PC.
+        //Imagine you run the program on a secondary screen connected to a laptop - and then the next time you start the
+        //program the screen is not connected...
+        gui.Screen.Init();
+        var screens = gui.Screen.screens;
+        var locationIsOnAScreen = false;
+        for (var i = 0; i < screens.length; i++) {
+            var screen = screens[i];
+            if (winState.x > screen.bounds.x && winState.x < screen.bounds.x + screen.bounds.width) {
+                if (winState.y > screen.bounds.y && winState.y < screen.bounds.y + screen.bounds.height) {
+                    console.debug("Location of window (" + winState.x + "," + winState.y + ") is on screen " + JSON.stringify(screen));
+                    locationIsOnAScreen = true;
+                }
+            }
+        }
+
+        if (!locationIsOnAScreen) {
+            win.setPosition("center");
+        }
+        else {
+            win.resizeTo(winState.width, winState.height);
+            win.moveTo(winState.x, winState.y);
+        }
+    }
+
+    function saveWindowState() {
+        dumpWindowState();
+        localStorage['windowState'] = JSON.stringify(winState);
+    }
 
     // handle newwindow messages from the webview
     // allows for opening of webapp links in the default system browser
@@ -472,15 +560,39 @@
     const url = require('url')
 
     // Prepare loading interface
-    v_window.width = 600;
-    v_window.height = 600;
+    win.width = 600;
+    win.height = 600;
 
-    v_window.x = Math.floor((window.screen.availWidth/2) - (v_window.width/2));
-    v_window.y = Math.floor((window.screen.availHeight/2) - (v_window.height/2));
-    v_window.show()
+    win.x = Math.floor((window.screen.availWidth/2) - (win.width/2));
+    win.y = Math.floor((window.screen.availHeight/2) - (win.height/2));
+    win.show()
     v_loading_data_container.style.display = '';
 
-    v_window.on('close', function() {
+    win.on('maximize', function () {
+        isMaximizationEvent = true;
+        currWinMode = 'maximized';
+    });
+
+    win.on('unmaximize', function () {
+        currWinMode = 'normal';
+        restoreWindowState();
+    });
+
+    win.on('minimize', function () {
+        currWinMode = 'minimized';
+    });
+
+    win.on('restore', function () {
+        currWinMode = 'normal';
+    });
+
+    win.on('close', function() {
+        try {
+            saveWindowState();
+        } catch(err) {
+            console.log("winstateError: " + err);
+        }
+
         if (django!=null) {
           try {
             process.kill(django.pid);
@@ -491,7 +603,7 @@
         nw.App.quit();
     });
 
-    v_window.on('closed', function() {
+    win.on('closed', function() {
       if (django!=null) {
           process.kill(django.pid)
       }
@@ -530,19 +642,11 @@
           else {
             v_loading_data_content.innerHTML += 'Opening PGManage...<br/>';
             (function(value) { setTimeout( function() {
-              //loading_interface.style.display = 'none';
               v_loading_data_container.style.display = 'none';
-              v_window.maximize();
-              v_window.setMinimumSize(1024, 768);
-              /*v_window.width = 1280;
-              v_window.height = 1024;
-
-              v_window.x = Math.floor((window.screen.availWidth/2) - (v_window.width/2));
-              v_window.y = Math.floor((window.screen.availHeight/2) - (v_window.height/2));*/
+              win.setMinimumSize(1024, 768)
+              initWindowState()
 
               document.getElementById('bar_top').style.display = '';
-
-
               v_webview.style.display = '';
               v_webview.src = value;
             },2000);
@@ -565,53 +669,26 @@
       simulate_startup(v_window, simulate_startup_list, v_loading_data_container, v_loading_data_content, v_webview);
     }, 1100);*/
 
-
-
     // GUI controls
     function guiMinimize() {
-      v_window.minimize();
+      win.minimize();
     }
     function guiToggleFullscreen() {
       var v_is_maximized = (screen.availWidth - window.innerWidth === 0);
       if (v_is_maximized) {
-        v_window.restore();
+        win.restore();
       }
       else {
-        v_window.maximize();
+        win.maximize();
       }
     }
     function guiClose() {
-      v_window.close();
+      win.close();
     }
-    // var guiTimeoutDrag;
-    // function guiAllowDrag() {
-    //   document.getElementsByTagName('html')[0].classList.add('webkit-drag');
-    //   document.body.style['color'] = 'red !important';
-    // }
-    // function guiClearTimeoutDrag() {
-    //   clearTimeout(guiTimeoutDrag);
-    //   setTimeout(function(){
-    //     guiStopAllowDrag();
-    //   },550);
-    // }
-    // function guiSetTimeoutDrag() {
-    //   guiTimeoutDrag = setTimeout(function(){
-    //     guiAllowDrag();
-    //   }, 500);
-    // }
-    // function guiStopAllowDrag() {
-    //   document.getElementsByTagName('html')[0].classList.remove('webkit-drag');
-    //   document.body.style['color'] = '';
-    // }
-    //
-    // window.addEventListener('mousedown',function(){guiSetTimeoutDrag();});
-    // window.addEventListener('mouseup',function(){guiClearTimeoutDrag();});
 
   }
   catch(e) {
     document.write(e);
   }
-
-
   </script>
 </html>
