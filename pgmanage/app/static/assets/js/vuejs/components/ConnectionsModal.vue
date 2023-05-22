@@ -81,7 +81,6 @@
                   @connection:test="testConnection"
                   :initialConnection="selectedConnection"
                   :technologies="technologies"
-                  :groups="groups"
                   :visible="activeForm == 'connection'"
                 />
           </div>
@@ -108,16 +107,13 @@ export default {
     'ConnectionsModalConnectionForm': Vue.defineAsyncComponent(() => loadModule('/static/assets/js/vuejs/components/ConnectionsModalConnectionForm.vue', options)),
   },
   computed: {
-    groups() {
-      return connectionsStore.groups
-    },
     connections() {
       return connectionsStore.connections
     },
     // adds group's connections to its .connections property
     // returns array of resulting groups
     groupedConnections() {
-      let groups = this.groups.map(group => {
+      let groups = connectionsStore.groups.map(group => {
         const groupClone = {...group}
         groupClone.connections = this.connections
           .filter(conn => group.conn_list.includes(conn.id))
@@ -128,7 +124,7 @@ export default {
       return groups;
     },
     ungroupedConnections() {
-      let grouped_connection_ids = this.groups.map(group => group.conn_list).flat()
+      let grouped_connection_ids = connectionsStore.groups.map(group => group.conn_list).flat()
       return this.connections
         .filter(conn => !grouped_connection_ids.includes(conn.id))
         .sort((a, b) => (a.name > b.name) ? 1 : -1)

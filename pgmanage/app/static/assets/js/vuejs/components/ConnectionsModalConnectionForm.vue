@@ -38,7 +38,7 @@
               <label for="connectionGroup" class="font-weight-bold mb-3">Group</label>
               <select v-model="connectionLocal.group" id="connectionGroup" class="form-control" placeholder="Connection group">
                   <option value=""></option>
-                  <option v-for="(group, index) in groups"
+                  <option v-for="(group, index) in connectionGroups"
                     :key=index
                     :value="group.id">
                       {{group.name}}
@@ -82,7 +82,7 @@
                 <select v-else-if="connectionLocal.technology === 'oracle'" id="connectionSSL" class="form-control" v-model="connectionLocal.connection_params.protocol" :disabled="dbFormDisabled">
                     <option v-for="mode in sslModes" :key="mode" :value="mode">{{ mode }}</option>
                 </select>
-              
+
                 <select v-else id="connectionSSL" class="form-control" :value='tempMode' @change="changeSelect" :disabled="dbFormDisabled">
                     <option v-for="mode in sslModes" :key="mode.text" :value="mode.value">{{ mode.text }}</option>
                 </select>
@@ -316,7 +316,6 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
     },
     props: {
       visible: Boolean,
-      groups: Object,
       initialConnection: {
         type: Object,
         required: true,
@@ -349,7 +348,6 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         }
       },
       technologies: Array,
-      groups: Array
     },
     computed: {
       placeholder() {
@@ -412,16 +410,19 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         ['terminal', 'sqlite'].includes(this.connectionLocal.technology))
       },
       sslModes() {
-      if (this.connectionLocal.technology === 'postgresql') {
-        return this.postgresql_ssl_modes
-      } else if (this.connectionLocal.technology === 'oracle') {
-        return this.oracle_modes
-      } else if (['mysql', 'mariadb'].includes(this.connectionLocal.technology)) {
-        return this.mysql_mariadb_modes
-      } else {
-        return []
+        if (this.connectionLocal.technology === 'postgresql') {
+          return this.postgresql_ssl_modes
+        } else if (this.connectionLocal.technology === 'oracle') {
+          return this.oracle_modes
+        } else if (['mysql', 'mariadb'].includes(this.connectionLocal.technology)) {
+          return this.mysql_mariadb_modes
+        } else {
+          return []
+        }
+      },
+      connectionGroups() {
+        return connectionsStore.groups
       }
-    }
     },
     methods: {
       changeSelect(e){
