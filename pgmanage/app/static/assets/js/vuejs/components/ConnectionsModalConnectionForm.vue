@@ -356,28 +356,28 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         const placeholderMap = {
           'postgresql': {
             'server': 'ex: 127.0.0.1',
-            'port': 'ex: 5432',
+            'port': '5432',
             'service': 'ex: postgres',
             'user': 'ex: postgres',
             'conn_string': 'ex: postgresql://postgres@localhost:5432/postgres'
           },
           'mysql': {
             'server': 'ex: 127.0.0.1',
-            'port': 'ex: 3306',
+            'port': '3306',
             'service': 'ex: db',
             'user': 'ex: root',
             'conn_string': 'ex: mysql://root@localhost:3306/db'
           },
           'mariadb': {
             'server': 'ex: 127.0.0.1',
-            'port': 'ex: 3306',
+            'port': '3306',
             'service': 'ex: db',
             'user': 'ex: root',
             'conn_string': 'ex: mysql://root@localhost:3306/db'
           },
           'oracle': {
             'server': 'ex: 127.0.0.1',
-            'port': 'ex: 1521',
+            'port': '1521',
             'service': 'ex: xe',
             'user': 'ex: system',
             'conn_string': 'ex: oracle://system@localhost:1521/xe'
@@ -506,6 +506,8 @@ const { required, between, maxLength, helpers } = window.VuelidateValidators
         } else {
           this.connectionLocal.connection_params = {}
         }
+        if (newVal)
+          this.connectionLocal.port = this.placeholder.port
     },
     }
   }
