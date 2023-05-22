@@ -2,6 +2,22 @@
 
 from django.db import migrations, models
 
+def set_default_connection_params(apps, schema_editor):
+    # We can't import the Person model directly as it may be a newer
+    # version than this migration expects. We use the historical version.
+    Connection = apps.get_model("app", "Connection")
+
+    default_params = {
+        "postgresql": {"sslmode": "prefer"},
+        "mysql": {"ssl": {"ssl": True}},
+        "mariadb": {"ssl": {"ssl": True}},
+        "oracle": {"protocol": "tcps"}
+    }
+
+    for conn in Connection.objects.all():
+        conn.connection_params = default_params.get(conn.technology.name, {})
+        conn.save()
+
 
 class Migration(migrations.Migration):
 
@@ -15,4 +31,5 @@ class Migration(migrations.Migration):
             name='connection_params',
             field=models.JSONField(default=dict),
         ),
+        migrations.RunPython(set_default_connection_params, migrations.RunPython.noop)
     ]
