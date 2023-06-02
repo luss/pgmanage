@@ -144,6 +144,7 @@ function saveMasterPass() {
 		execAjax('/master_password/',
         JSON.stringify({"master_password": v_pwd.value}),
 				function(p_return) {
+          conn_app.mount("#connections-modal-wrap");
 					showAlert('Master password created.');
 				});
 	}
