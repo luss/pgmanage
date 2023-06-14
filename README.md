@@ -1,42 +1,49 @@
 # PgManage
+PgManage is a Postgres management GUI, though we will be adding features for
+developers the initial focus is on the "management" of Postgres.
+
 We proudly leverage all of the great work Open Source work done by the original
 (now dormant) project https://github.com/OmniDB/OmniDB
 
 
-**Website & Downloads**: https://github.com/commandprompt/pgmanage
+**Website & Downloads**: https://www.commandprompt.com/products/pgmanage/
 
 **Full Documentation**: https://pgmanage.readthedocs.io/en/latest/
 
-# Run your local development copy of PgManage on Ubuntu
+# Run it yourself from source
+If you want or need a new feature, submit a pull request for us to consider.
 
-## Install the necessary packages
+## Pre-req's for Debian/Ubuntu
 ```
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt-get update
-sudo apt-get install git libssl-dev python-protobuf build-essential
-sudo apt-get install python3.8 python3.8-dev python3.8-venv  python3-wheel libpq-dev libldap2-dev libsasl2-dev
+sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
 ```
 
-## Set up app environment
-clone pgmanage repository; change to the root directory of cloned repository,  activate virtualenv:
+## Pre-req's for Enterprise Linux flavors
 ```
-git clone https://github.com/commandprompt/pgmanage.git
+sudo yum install xxx yyy zzz
+```
+
+## Pre-req's for OSX using Homebrew
+```
+brew install python3 xxx yyy zzz
+```
+
+## Build instructions
+```
+git clone https://github.com/commandprompt/pgmanage
 cd pgmanage
-python3.8 -mvenv .env
-```
-## Install dependencies and run the app
-activate python virtual environment created in the previous step:
-```
-source .env/bin/activate
-pip install -r requirements.txt
+env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.8.10 --skip-existing
+pyenv local 3.8.10
+poetry env use 3.8
+poetry install --with dev
+poetry shell
 ```
 
-Once all app requirements are installed cd to **pgmanage** subdirectory and start the application web service by running
+## Start it up
 ```
-./manage.py runserver
+cd pgmanage/pgmanage
+python3 pgmanage-server.py
 ```
-Once you see that he application server is ready, open http://localhost:8000 URL in your preferred browser. Then login with **admin:admin** credentials
-
 
 # PgManage 1.0 Beta
 
