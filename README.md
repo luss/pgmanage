@@ -10,41 +10,68 @@ We proudly leverage all of the great work Open Source work done by the original
 
 **Full Documentation**: https://pgmanage.readthedocs.io/en/latest/
 
-# Run it yourself from source
-If you want or need a new feature, submit a pull request for us to consider.
+# Run your local development copy of PgManage on Ubuntu
 
-## Pre-req's for Debian/Ubuntu
+## Install the necessary packages
 ```
-sudo apt install python3-dev python3-venv python3-wheel libpq-dev libldap2-dev libsasl2-dev
-```
-
-## Pre-req's for Enterprise Linux flavors
-```
-sudo yum install xxx yyy zzz
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install git libssl-dev python-protobuf build-essential
+sudo apt-get install python3.8 python3.8-dev python3.8-venv  python3-wheel libpq-dev libldap2-dev libsasl2-dev
 ```
 
-## Pre-req's for OSX using Homebrew
+## Set up app environment
+clone pgmanage repository; change to the root directory of cloned repository,  activate virtualenv:
 ```
-brew install python3 xxx yyy zzz
-```
-
-## Build instructions
-```
-git clone https://github.com/commandprompt/pgmanage
+git clone https://github.com/commandprompt/pgmanage.git
 cd pgmanage
-env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.8.10 --skip-existing
-pyenv local 3.8.10
-poetry env use 3.8
-poetry install --with dev
-poetry shell
+python3.8 -mvenv .env
+```
+## Install dependencies and run the app
+activate python virtual environment created in the previous step:
+```
+source .env/bin/activate
+pip install -r requirements.txt
 ```
 
-## Start it up
+Once all app requirements are installed cd to **pgmanage** subdirectory and start the application web service by running
 ```
-cd pgmanage/pgmanage
-python3 pgmanage-server.py
+./manage.py runserver
 ```
+Once you see that he application server is ready, open http://localhost:8000 URL in your preferred browser. Then login with **admin:admin** credentials
 
+# PgManage 1.0 Beta 2
+
+## Release Date: Jun 15 2023
+
+## Release Notes
+
+ - New features:
+   - ability to disable CSV header when exporting data grid contents
+   - added UI for Postgres extension management
+   - new hierarchical connections menu
+   - use random TCP port number for the application back-end process so Pgmanage does not occupy ports commonly used by other applications
+   - ability to select SSL connection options in Connection Management dialog
+   - remember and restore application window position and size when the app starts
+   - added configurable date/time display format in the application settings dialog
+   - restore the last used database and query tabs when pgmanage starts
+
+ - Major Bugs fixed:
+   - if the query entered by the user contains explain keyword, clicking on explain/analyze button will no longer prepend the query with an extra explain keyword (previously this bug resulted in syntactically incorrect query)
+   
+ - UI/UX Improvements:
+    - ability to work with multiple databases within a DB session without needing to select the "active" database
+    - if query entered by the user contains explain keyword, the explain tab will be opened automatically when user clicks the "Run query" button
+    - explain and analyze buttons are now grouped together and separated from other query buttons
+    - pre-set database connection TCP port in the Connection Management dialog based on selected database type
+    - add visually matching themes for query editor
+  
+ - Other changes
+    - django has been updated from 2.2 to 3.2
+    - code clean-up and refactoring
+    - moved application shared data into globally accessible Pinia store
+    - replace cx_Oracle library with oracledb
+    
 # PgManage 1.0 Beta
 
 ## Release Date: Apr 20 2023
