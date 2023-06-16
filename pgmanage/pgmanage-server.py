@@ -449,7 +449,6 @@ class DjangoApplication(object):
 
     def run(self,parameters):
         #cherrypy.engine.unsubscribe('graceful', cherrypy.log.reopen_files)
-        print(parameters)
         logging.config.dictConfig(pgmanage.settings.LOGGING)
         #cherrypy.log.error_log.propagate = False
         cherrypy.log.access_log.propagate = False
@@ -539,7 +538,7 @@ try:
             'listening_port'      : listening_port,
             'is_ssl'              : is_ssl,
             'ssl_certificate_file': ssl_certificate_file,
-            'ssl_key_file'        : ssl_key_file
+            'ssl_key_file'        : ssl_key_fileq
         }
     )
 except KeyboardInterrupt:
