@@ -538,7 +538,7 @@ try:
             'listening_port'      : listening_port,
             'is_ssl'              : is_ssl,
             'ssl_certificate_file': ssl_certificate_file,
-            'ssl_key_file'        : ssl_key_fileq
+            'ssl_key_file'        : ssl_key_file
         }
     )
 except KeyboardInterrupt:
