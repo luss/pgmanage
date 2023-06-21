@@ -68,6 +68,7 @@ Once you see that he application server is ready, open http://localhost:8000 URL
   
  - Other changes
     - django has been updated from 2.2 to 3.2
+    - bundled python version changed from 3.8 to 3.9
     - code clean-up and refactoring
     - moved application shared data into globally accessible Pinia store
     - replace cx_Oracle library with oracledb
