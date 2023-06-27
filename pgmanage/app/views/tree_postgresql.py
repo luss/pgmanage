@@ -165,24 +165,18 @@ def get_tree_info(request, v_database):
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
 def get_database_objects(request, v_database):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_database_index = json_object['p_database_index']
-    v_tab_id = json_object['p_tab_id']
+    response_data = {'data': None, 'status': 'success'}
+    unsupported_versions = ['1.0', '1.1', '1.2', '1.3']
+    version_filter = lambda extension: extension[0] == 'pg_cron' and extension[2] not in unsupported_versions
 
     try:
-        v_return['v_data'] = {}
+        extensions = v_database.QueryExtensions().Rows
+        has_pg_cron = len(list(filter(version_filter, extensions))) > 0
+        response_data['data'] = {'has_pg_cron': has_pg_cron}
     except Exception as exc:
-        v_return['v_data'] = {'password_timeout': True, 'message': str(exc) }
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
+        response_data['status'] = 'failed'
 
-    return JsonResponse(v_return)
+    return JsonResponse(response_data)
 
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
@@ -1116,7 +1110,10 @@ def get_databases(request, v_database):
     v_return['v_error'] = False
     v_return['v_error_id'] = -1
 
-    json_object = json.loads(request.POST.get('data', None))
+    if request.content_type == 'application/json':
+        json_object = json.loads(request.body)
+    else:
+        json_object = json.loads(request.POST.get("data", None))
     v_database_index = json_object['p_database_index']
     v_tab_id = json_object['p_tab_id']
 
@@ -1617,7 +1614,8 @@ def get_extensions(request, v_database):
         for v_extension in v_extensions.Rows:
             v_extension_data = {
                 'v_name': v_extension['extension_name'],
-                'v_oid': v_extension['oid']
+                'v_oid': v_extension['oid'],
+                'v_version': v_extension['extversion']
             }
             v_list_extensions.append(v_extension_data)
     except Exception as exc:
