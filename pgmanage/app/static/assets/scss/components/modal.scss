@@ -17,8 +17,9 @@ $theme-map: null; //important! do not delete this
 @import '../common/ui-elements';
 @import '../components/toasts';
 @import '../components/context-menu-pgmanage';
+@import '../components/cron-light';
 
-$modalPadding: 21px;
+$modalPadding: 24px;
 
 .modal {
     font-family: $fontFamily;
@@ -77,6 +78,8 @@ $modalPadding: 21px;
     &-footer {
         position: relative;
         z-index: 2;
+        padding: 12px $modalPadding;
+        min-height: 3.5rem;
 
         @include themify() {
             background-color: themed($surfaceBg);

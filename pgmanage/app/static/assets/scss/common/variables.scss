@@ -4,6 +4,7 @@ $primaryLight: #F8FAFC;
 $primaryColor: #1D273B;
 $primaryMutedColor: #767f8f;
 $secondaryGrey: #616876;
+$white:#FFFFFF;
 $borderRadius: 6px;
 $boxShadow: 0 0 0 4px rgba(32, 107, 196, .25);
 $dropdownBoxShadow: 0 0.5rem 1rem rgba(0,  0,  0,  0.15);
@@ -20,7 +21,7 @@ $lineHeight: 1.4;
 //light mode
 $bgLight: #F1F5F9;
 $fontColorLight: $primaryColor;
-$bgSurfaceLight: #FFFFFF;
+$bgSurfaceLight: $white;
 $bgSurfaceSecondaryLight: $primaryLight;
 $borderColorLight: #E6E7E9;
 $borderLight: 1px solid #E6E7E9;

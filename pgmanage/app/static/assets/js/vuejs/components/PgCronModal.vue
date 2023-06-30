@@ -21,13 +21,13 @@
                 aria-controls="job_statistics" aria-selected="false">Job Statistics</a>
             </li>
           </ul>
-          <div class="tab-content p-3">
+          <div class="tab-content p-3  flex-grow-1">
             <!-- Job main tab -->
             <div class="tab-pane fade show active" id="job_schedule" role="tabpanel"
                 aria-labelledby="job_schedule-tab">
               <div class="form-row">
                 <div class="form-group col-6 mb-2">
-                  <label for="job_name" class="font-weight-bold mb-1">Job Name</label>
+                  <label for="job_name" class="font-weight-bold mb-2">Job Name</label>
                   <input
                     v-model="jobName" id="job_name" type="text" :disabled="jobId"
                     :class="['form-control', { 'is-invalid': v$.jobName.$invalid }]">
@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="form-group col-6 mb-2">
-                  <label for="in_database" class="font-weight-bold mb-1">Run In Database</label>
+                  <label for="in_database" class="font-weight-bold mb-2">Run In Database</label>
                   <select v-model="inDatabase" :disabled="jobId" id="in_database" class="form-control">
                       <option value=""></option>
                       <option v-for="(database, index) in databases"
@@ -52,15 +52,17 @@
               </div>
 
               <div class="form-group mb-2">
-                <label class="font-weight-bold mb-1">Run At</label>
-                <div @click.capture="clickProxy">
+                <label class="font-weight-bold mb-2">Run At</label>
+                <div
+                  @click.capture="clickProxy"
+                  :class="[{ 'vcron-disabled': manualInput }]">
                   <cron-light v-model="schedule" @error="scheduleError=$event"></cron-light>
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-4">
-                  <label for="schedule_override" class="font-weight-bold mb-1">Cron Expression</label>
+                  <label for="schedule_override" class="font-weight-bold mb-2">Cron Expression</label>
                   <input
                     v-model="scheduleOverride" id="schedule_override" type="text" :disabled="!manualInput"
                     :class="['form-control', { 'is-invalid': scheduleError }]">
@@ -71,7 +73,7 @@
                   </div>
                 </div>
                 <div class="form-group col-4 d-flex align-items-end">
-                  <div class="custom-control custom-switch mb-1">
+                  <div class="custom-control custom-switch mb-2">
                     <input v-model="manualInput" id="manual_switch" type="checkbox" class="custom-control-input" >
                     <label class="custom-control-label font-weight-bold" for="manual_switch">Define Manually</label>
                   </div>
@@ -79,8 +81,8 @@
               </div>
 
               <div class="form-group mb-2">
-                <p class="font-weight-bold mb-1">Command to Run</p>
-                <div id="job_command" style="height: 10vh">
+                <p class="font-weight-bold mb-2">Command to Run</p>
+                <div id="job_command" style="height: 20vh">
                 </div>
                 <div :class="[{ 'is-invalid': v$.command.$invalid }]"></div>
                 <div class="[{ 'is-invalid': v$.command.$invalid }]" class="invalid-feedback">
@@ -93,7 +95,7 @@
 
             <!-- Job stats tab -->
             <div v-if="mode==='Edit'" class="tab-pane fade show" id="job_statistics" role="tabpanel"
-                aria-labelledby="job_statistics-tab">
+                aria-labelledby="job_statistics-tab" style="height: 50vh">
                 <div v-if="jobLogs.length">
                   <div class='job-statistics-tab__header d-flex justify-content-between align-items-center pb-3'>
                     <h3 class="mb-0">{{jobStatsHeader}}</h3>
@@ -110,8 +112,8 @@
         </div>
 
         <div class="modal-footer mt-auto justify-content-between">
-          <ConfirmableButton v-if="mode==='Edit'" :callbackFunc="deleteJob" class="btn btn-danger mr-2" />
-          <button type="button" class="btn btn-primary mr-2 ml-auto"
+          <ConfirmableButton v-if="mode==='Edit'" :callbackFunc="deleteJob" class="btn btn-danger m-0" />
+          <button type="button" class="btn btn-primary m-0 ml-auto"
             @click="saveJob">
             Save
           </button>
@@ -122,6 +124,20 @@
 
 </template>
 
+<style>
+  .modal-content {
+    min-height: calc(100vh - 200px);
+  }
+
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-footer {
+    z-index: unset;
+  }
+</style>
 
 <script>
 const { required, maxLength } = window.VuelidateValidators
@@ -310,7 +326,7 @@ export default {
               columns : grid_columns,
               colHeaders : true,
               rowHeaders : false,
-              height: 260,
+              height: '41vh',
               width: '100%',
               stretchH: 'last',
               licenseKey: 'non-commercial-and-evaluation' // for non-commercial use only
