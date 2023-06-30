@@ -2,14 +2,14 @@
   <div class="form-row">
     <div class="form-group col-2">
       <form class="form" role="search" @submit.prevent>
-        <label class="font-weight-bold mb-3" for="selectServer">Search</label>
+        <label class="font-weight-bold mb-2" for="selectServer">Search</label>
         <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
           :disabled="v$.$invalid" placeholder="Find in settings" />
       </form>
     </div>
 
     <div class="form-group col-3">
-      <label class="font-weight-bold mb-3" for="selectConfCat">Category</label>
+      <label class="font-weight-bold mb-2" for="selectConfCat">Category</label>
       <select class="form-control text-truncate pr-4" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
         <option v-for="(cat, index) in categories" :value="cat" :key="index">
           {{ cat }}
@@ -18,7 +18,7 @@
     </div>
 
     <div class="form-group col-3">
-      <label class="font-weight-bold mb-3" for="selectConf">Config History</label>
+      <label class="font-weight-bold mb-2" for="selectConf">Config History</label>
       <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
         <option disabled value="">Please select one</option>
         <option v-for="(config, index) in configHistory" :value="config" :key="index"
@@ -129,7 +129,7 @@
             </template>
           </table>
           <div v-if="!modalRevertConfig" class="form-group">
-            <label for="commit_message" class="font-weight-bold mb-3">Commit Comment</label>
+            <label for="commit_message" class="font-weight-bold mb-2">Commit Comment</label>
             <input v-model="commitComment" id="commit_message" class="form-control"
               placeholder="Short description of your changes(optional)" />
           </div>

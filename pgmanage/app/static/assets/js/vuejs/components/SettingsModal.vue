@@ -48,7 +48,7 @@
             <div class="tab-pane fade" id="settings_options" role="tabpanel" aria-labelledby="settings_options-tab">
               <div class="form-row">
                 <div class="form-group col-6">
-                  <label for="sel_editor_theme" class="font-weight-bold mb-3">Theme</label>
+                  <label for="sel_editor_theme" class="font-weight-bold mb-2">Theme</label>
                   <select id="sel_editor_theme" class="form-control" @change="changeEditorTheme"
                     v-model="selectedEditorTheme">
                     <option value="light">Light</option>
@@ -56,7 +56,7 @@
                   </select>
                 </div>
                 <div class="form-group col-6">
-                  <label for="sel_interface_font_size" class="font-weight-bold mb-3">Font Size</label>
+                  <label for="sel_interface_font_size" class="font-weight-bold mb-2">Font Size</label>
                   <select id="sel_interface_font_size" class="form-control" @change="changeInterfaceFontSize"
                     v-model="selectedFontSize">
                     <option v-for="font_size in fontSizeOptions" :key="font_size" :value="font_size">{{ font_size }}
@@ -67,14 +67,14 @@
 
               <div class="form-row">
                 <div class="form-group col-6">
-                  <label for="sel_csv_encoding" class="font-weight-bold mb-3">CSV Encoding</label>
+                  <label for="sel_csv_encoding" class="font-weight-bold mb-2">CSV Encoding</label>
                   <select id="sel_csv_encoding" class="form-control" v-model="selectedCSVEncoding">
                     <option v-for="encoding in encodingValues" :key="encoding" :value="encoding">{{ encoding }}</option>
                   </select>
                 </div>
 
                 <div class="form-group col-6">
-                  <label for="txt_csv_delimiter" class="font-weight-bold mb-3">CSV Delimiter</label>
+                  <label for="txt_csv_delimiter" class="font-weight-bold mb-2">CSV Delimiter</label>
                   <input type="text" class="form-control" id="txt_csv_delimiter" placeholder="Delimiter"
                     v-model="csvDelimiter">
                 </div>
@@ -82,7 +82,7 @@
 
               <div class="form-row">
                 <div class="form-group col-6">
-                  <label for="date_format" class="font-weight-bold mb-3">Date format</label>
+                  <label for="date_format" class="font-weight-bold mb-2">Date format</label>
                   <select id="date_format" class="form-control" v-model="selectedDateFormat">
                     <option v-for="dateFormat in dateFormats" :key="dateFormat" :value="dateFormat">{{ dateFormat }}
                     </option>
@@ -93,12 +93,12 @@
                   <label class="font-weight-bold mb3">Preview</label>
                   <p class="font-weight-bold mt-3"> {{ formattedDatePreview }}</p>
                 </div>
-                
+
               </div>
 
               <div class="form-row">
                 <div class="form-group col-12">
-                  <label for="binary_path" class="font-weight-bold mb-3">PostgreSQL Binary Path</label>
+                  <label for="binary_path" class="font-weight-bold mb-2">PostgreSQL Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
                       <input type="text" class="form-control" v-model="binaryPath"
@@ -119,7 +119,7 @@
 
               <div v-if="!isWindowsOS" class="form-row">
                 <div class="form-group col-12">
-                  <label for="pigz_path" class="font-weight-bold mb-3">Pigz Binary Path</label>
+                  <label for="pigz_path" class="font-weight-bold mb-2">Pigz Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
                       <input type="text" class="form-control" v-model="pigzPath"
@@ -146,12 +146,12 @@
             <div class="tab-pane fade" id="settings_password" role="tabpanel" aria-labelledby="settings_password-tab">
               <div class="form-row">
                 <div class="form-group col-6">
-                  <label for="txt_new_pwd" class="font-weight-bold mb-3">New Password</label>
+                  <label for="txt_new_pwd" class="font-weight-bold mb-2">New Password</label>
                   <input v-model="password" id="txt_new_pwd" type="password" class="form-control" @input="checkPassword"
                     minlength="8" required>
                 </div>
                 <div class="form-group col-6">
-                  <label for="txt_confirm_new_pwd" class="font-weight-bold mb-3">Confirm</label>
+                  <label for="txt_confirm_new_pwd" class="font-weight-bold mb-2">Confirm</label>
                   <input ref="passwordConfirm" v-model="passwordConfirm" id="txt_confirm_new_pwd" type="password"
                     class="form-control" @input="checkPassword" minlength="8" required>
                   <div class="invalid-tooltip">

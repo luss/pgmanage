@@ -3,11 +3,11 @@
   <div class="modal-connections__forms position-absolute w-100">
     <div class="modal-connections__forms_group group-edit-form position-absolute">
       <div class="form-group mb-3">
-        <label for="groupName" class="font-weight-bold mb-3">Group Name</label>
+        <label for="groupName" class="font-weight-bold mb-2">Group Name</label>
         <input v-model="groupLocal.name" type="text" class="form-control" id="groupName" placeholder="Group name">
       </div>
 
-      <label class="font-weight-bold mb-3">Group connections</label>
+      <label class="font-weight-bold mb-2">Group connections</label>
       <div class="group-edit-form__list group-list d-flex flex-wrap">
         <div v-for="(connection, index) in candidateConnections" :key=index class="group-list__item">
           <input
