@@ -489,8 +489,22 @@ function getTreeSqlite(p_div) {
         }
     };
 
-    var tree = createTree(p_div, '#fcfdfd', context_menu);
-    v_connTabControl.selectedTab.tag.tree = tree;
+    // var tree = createTree(p_div, '#fcfdfd', context_menu);
+    // v_connTabControl.selectedTab.tag.tree = tree;
+
+    const div_tree = document.getElementById(p_div);
+    div_tree.innerHTML ='<sqlite-tree></sqlite-tree>'
+    const app = createApp({
+        components: {
+            "sqlite-tree": Vue.defineAsyncComponent(() =>
+              loadModule(
+                "../static/assets/js/vuejs/components/SqliteTree.vue",
+                options
+              )
+            ),
+          },
+    })
+    app.mount(`#${p_div}`)
 
     let v_autocomplete_switch_status = (v_connTabControl.selectedTab.tag.enable_autocomplete !== false) ? ' checked ' : '';
 
@@ -502,65 +516,65 @@ function getTreeSqlite(p_div) {
     	'    <label for="autocomplete_toggler_' + v_connTabControl.selectedTab.tag.tab_id + '" class="omnidb__switch--label"><span><i class="fas fa-spell-check"></i></span></label>' +
 		'</div>';
 
-    tree.nodeAfterOpenEvent = function(node) {
-        refreshTreeSqlite(node);
+    // tree.nodeAfterOpenEvent = function(node) {
+    //     refreshTreeSqlite(node);
 
-        // Adjusting scroll position of tree
-        try {
-            let v_first_child_toggle = node.elementUl.childNodes[0].childNodes[0].childNodes[0].childNodes[0];
-            let pos_x = v_first_child_toggle.offsetLeft - 24;
-            let pos_y = v_first_child_toggle.offsetTop - 64;
-            v_connTabControl.selectedTab.tag.divTree.scrollTo({left: pos_x,
-                                                               top: pos_y,
-                                                               behavior: 'smooth'});
-        }
-        catch(e) {
-            // Do nothing
-        }
-    }
+    //     // Adjusting scroll position of tree
+    //     try {
+    //         let v_first_child_toggle = node.elementUl.childNodes[0].childNodes[0].childNodes[0].childNodes[0];
+    //         let pos_x = v_first_child_toggle.offsetLeft - 24;
+    //         let pos_y = v_first_child_toggle.offsetTop - 64;
+    //         v_connTabControl.selectedTab.tag.divTree.scrollTo({left: pos_x,
+    //                                                            top: pos_y,
+    //                                                            behavior: 'smooth'});
+    //     }
+    //     catch(e) {
+    //         // Do nothing
+    //     }
+    // }
 
-    tree.clickNodeEvent = function(node) {
-        if (v_connTabControl.selectedTab.tag.treeTabsVisible) {
-            getPropertiesSqlite(node);
-        }
-        else {
-            // Do nothing
-        }
-    }
+    // tree.clickNodeEvent = function(node) {
+    //     if (v_connTabControl.selectedTab.tag.treeTabsVisible) {
+    //         getPropertiesSqlite(node);
+    //     }
+    //     else {
+    //         // Do nothing
+    //     }
+    // }
 
-    tree.beforeContextMenuEvent = function(node, callback) {
-        var v_elements = [];
+    // tree.beforeContextMenuEvent = function(node, callback) {
+    //     var v_elements = [];
 
-        //Hooks
-        if (v_connTabControl.tag.hooks.sqliteTreeContextMenu.length > 0) {
-            for (var i = 0; i < v_connTabControl.tag.hooks.sqliteTreeContextMenu.length; i++) {
-                v_elements = v_elements.concat(v_connTabControl.tag.hooks.sqliteTreeContextMenu[i](node));
-            }
-        }
+    //     //Hooks
+    //     if (v_connTabControl.tag.hooks.sqliteTreeContextMenu.length > 0) {
+    //         for (var i = 0; i < v_connTabControl.tag.hooks.sqliteTreeContextMenu.length; i++) {
+    //             v_elements = v_elements.concat(v_connTabControl.tag.hooks.sqliteTreeContextMenu[i](node));
+    //         }
+    //     }
 
-        callback(v_elements);
-    }
+    //     callback(v_elements);
+    // }
 
-    var node_server = tree.createNode(
-        'SQLite',
-        false,
-        'node-sqlite',
-        null,
-        {
-            type: 'server'
-        },
-        'cm_server'
-    );
+    // var node_server = tree.createNode(
+    //     'SQLite',
+    //     false,
+    //     'node-sqlite',
+    //     null,
+    //     {
+    //         type: 'server'
+    //     },
+    //     'cm_server'
+    // );
 
-    node_server.createChildNode(
-        '',
-        true,
-        'node-spin',
-        null,
-        null
-    );
+    // node_server.createChildNode(
+    //     '',
+    //     true,
+    //     'node-spin',
+    //     null,
+    //     null
+    // );
 
-    tree.drawTree();
+    // tree.drawTree();
 }
 
 /// <summary>
