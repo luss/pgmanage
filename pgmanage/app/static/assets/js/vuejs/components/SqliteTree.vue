@@ -43,7 +43,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -53,7 +53,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -70,7 +70,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -82,7 +82,7 @@ export default {
                 label: "Query Data",
                 icon: "fas cm-all fa-search",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   TemplateSelectSqlite(node.title, "t");
                 },
               },
@@ -90,7 +90,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   v_startEditData(node.title);
                 },
               },
@@ -98,7 +98,7 @@ export default {
                 label: "Insert Record",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   TemplateInsertSqlite(node.title);
                 },
               },
@@ -106,7 +106,7 @@ export default {
                 label: "Update Records",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   TemplateUpdateSqlite(node.title);
                 },
               },
@@ -114,7 +114,7 @@ export default {
                 label: "Delete Records",
                 icon: "fas cm-all fa-times",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Delete Records",
                     this.templates.delete.replace("#table_name#", node.title)
@@ -131,7 +131,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Alter Table",
                     this.templates.alter_table.replace(
@@ -145,7 +145,7 @@ export default {
                 label: "Drop Table",
                 icon: "fas cm-all fa-times",
                 onClick: () => {
-                  const node = this.$refs.tree.getSelected()[0];
+                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Drop Table",
                     this.templates.drop_table.replace(
@@ -163,12 +163,14 @@ export default {
             label: "Create Column",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
-              tabSQLTemplate("Create Column",
-                  this.templates.create_column.replace(
-                    "#table_name#",
-                    this.getParentNode(node).title
-                  ));
+              const node = this.getSelectedNode();
+              tabSQLTemplate(
+                "Create Column",
+                this.templates.create_column.replace(
+                  "#table_name#",
+                  this.getParentNode(node).title
+                )
+              );
             },
           },
         ],
@@ -178,7 +180,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -188,7 +190,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -198,7 +200,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -208,7 +210,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -218,7 +220,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -228,7 +230,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -238,7 +240,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -246,7 +248,7 @@ export default {
             label: "Create Index",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Index",
                 this.templates.create_index.replace(
@@ -262,7 +264,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -271,7 +273,7 @@ export default {
             icon: "fas cm-all fa-edit",
             onClick: () => {
               // Fix THIS
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Reindex",
                 this.templates.reindex.replace(
@@ -287,7 +289,7 @@ export default {
             label: "Drop Index",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               // Fix THIS
               tabSQLTemplate(
                 "Drop Index",
@@ -306,7 +308,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -314,7 +316,7 @@ export default {
             label: "Create Trigger",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Trigger",
                 this.templates.create_trigger.replace(
@@ -330,7 +332,7 @@ export default {
             label: "Drop Trigger",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Trigger",
                 this.templates.drop_trigger
@@ -348,7 +350,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -365,7 +367,7 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               this.refreshTreeSqlite(node);
             },
           },
@@ -373,7 +375,7 @@ export default {
             label: "Query Data",
             icon: "fas cm-all fa-search",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
 
               TemplateSelectSqlite(node.title, "v");
             },
@@ -382,7 +384,7 @@ export default {
             label: "Drop View",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.$refs.tree.getSelected()[0];
+              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop View",
                 this.templates.drop_view.replace("#view_name#", node.title)
@@ -544,17 +546,14 @@ export default {
             type: "column_list",
             contextMenu: "cm_columns",
           });
-          // FIX THIS
-          const columns_node = this.$refs.tree.getSelected()[0].children[0];
+          const columns_node = this.getFirstChildNode(node);
           resp.data.reduceRight((_, el) => {
             this.insertNode(columns_node, el.column_name, {
               icon: "fas node-all fa-columns node-column",
               type: "table_field",
               contextMenu: "cm_column",
             });
-            // how to get it better?
-            const table_field =
-              this.$refs.tree.getSelected()[0].children[0].children[0];
+            const table_field = this.getFirstChildNode(columns_node);
 
             this.insertNode(
               table_field,
@@ -783,7 +782,7 @@ export default {
             title: `Indexes (${resp.data.length})`,
             children: [],
           });
-
+          // add suffix to fix replace issue
           resp.data.forEach((el) => {
             this.insertNode(node, `${el.index_name} (${el.uniqueness})`, {
               icon: "fas node-all fa-thumbtack node-index",
@@ -899,7 +898,7 @@ export default {
         })
         .then((resp) => {
           this.removeChildNodes(node);
-          
+
           this.insertNode(node, "Triggers", {
             icon: "fas node-all fa-bolt node-trigger",
             type: "trigger_list",
@@ -908,17 +907,15 @@ export default {
           this.insertNode(node, `Columns (${resp.data.length})`, {
             icon: "fas node-all fa-columns node-column",
           });
-          // FIX THIS
-          const columns_node = this.$refs.tree.getSelected()[0].children[0];
+          const columns_node = this.getFirstChildNode(node);
 
           resp.data.reduceRight((_, el) => {
             this.insertNode(columns_node, el.column_name, {
               icon: "fas node-all fa-columns node-column",
               type: "table_field",
             });
+            const table_field = this.getFirstChildNode(columns_node);
 
-            const table_field =
-              this.$refs.tree.getSelected()[0].children[0].children[0];
             this.insertNode(
               table_field,
               `Type: ${el.data_type}`,
@@ -959,8 +956,15 @@ export default {
       );
     },
     getParentNode(node) {
-      const parent_node = this.$refs.tree.getNode(node.path.slice(0, -1));
-      return parent_node;
+      const parentNode = this.$refs.tree.getNode(node.path.slice(0, -1));
+      return parentNode;
+    },
+    getSelectedNode() {
+      return this.$refs.tree.getSelected()[0];
+    },
+    getFirstChildNode(node) {
+      const actualNode = this.$refs.tree.getNode(node.path);
+      return actualNode.children[0];
     },
   },
 };
