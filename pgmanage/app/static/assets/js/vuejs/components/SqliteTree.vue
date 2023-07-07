@@ -18,6 +18,7 @@
 
 <script>
 const { PowerTree } = window["VuePowerTree"];
+
 export default {
   name: "SqliteTree",
   components: {
@@ -37,28 +38,21 @@ export default {
           },
         },
       ],
-      contextMenu: {
-        cm_server: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
+    };
+  },
+  computed: {
+    cmRefreshObject() {
+      return {
+        label: "Refresh",
+        icon: "fas cm-all fa-sync-alt",
+        onClick: this.refreshNode,
+      };
+    },
+    contextMenu() {
+      return {
+        cm_server: [this.cmRefreshObject],
         cm_tables: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Create Table",
             icon: "fas cm-all fa-edit",
@@ -68,15 +62,7 @@ export default {
           },
         ],
         cm_table: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Data Actions",
             icon: "fas cm-all fa-list",
@@ -162,6 +148,7 @@ export default {
           },
         ],
         cm_columns: [
+          this.cmRefreshObject,
           {
             label: "Create Column",
             icon: "fas cm-all fa-edit",
@@ -178,82 +165,14 @@ export default {
           },
         ],
         cm_column: [],
-        cm_pks: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
-        cm_pk: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
-        cm_fks: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
-        cm_fk: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
-        cm_uniques: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
-        cm_unique: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
-        ],
+        cm_pks: [this.cmRefreshObject],
+        cm_pk: [this.cmRefreshObject],
+        cm_fks: [this.cmRefreshObject],
+        cm_fk: [this.cmRefreshObject],
+        cm_uniques: [this.cmRefreshObject],
+        cm_unique: [this.cmRefreshObject],
         cm_indexes: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Create Index",
             icon: "fas cm-all fa-edit",
@@ -270,15 +189,7 @@ export default {
           },
         ],
         cm_index: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Reindex",
             icon: "fas cm-all fa-edit",
@@ -315,15 +226,7 @@ export default {
           },
         ],
         cm_triggers: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Create Trigger",
             icon: "fas cm-all fa-edit",
@@ -358,15 +261,7 @@ export default {
           },
         ],
         cm_views: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Create View",
             icon: "fas cm-all fa-edit",
@@ -376,15 +271,7 @@ export default {
           },
         ],
         cm_view: [
-          {
-            label: "Refresh",
-            icon: "fas cm-all fa-sync-alt",
-            onClick: () => {
-              const node = this.getSelectedNode();
-              this.expandNode(node);
-              this.refreshTreeSqlite(node);
-            },
-          },
+          this.cmRefreshObject,
           {
             label: "Query Data",
             icon: "fas cm-all fa-search",
@@ -406,10 +293,9 @@ export default {
             },
           },
         ],
-      },
-    };
+      };
+    },
   },
-  mounted() { },
   methods: {
     onToggle(node, e) {
       this.$refs.tree.select(node.path);
@@ -953,6 +839,11 @@ export default {
     },
     expandNode(node) {
       this.$refs.tree.updateNode(node.path, { isExpanded: true });
+    },
+    refreshNode() {
+      const node = this.getSelectedNode();
+      this.expandNode(node);
+      this.refreshTreeSqlite(node);
     },
   },
 };
