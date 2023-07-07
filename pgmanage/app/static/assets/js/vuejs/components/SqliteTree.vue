@@ -1,5 +1,6 @@
 <template>
-  <PowerTree ref="tree" v-model="nodes" @toggle="onToggle" @nodecontextmenu="onContextMenu" :allow-multiselect="false">
+  <PowerTree ref="tree" v-model="nodes" @nodedblclick="doubleClickNode" @toggle="onToggle"
+    @nodecontextmenu="onContextMenu" :allow-multiselect="false">
     <template v-slot:toggle="{ node }">
       <i v-if="node.isExpanded" class="exp_col fas fa-chevron-down"></i>
       <i v-if="!node.isExpanded" class="exp_col fas fa-chevron-right"></i>
@@ -311,6 +312,10 @@ export default {
       this.$refs.tree.select(node.path);
       if (node.isExpanded) return;
       this.refreshTreeSqlite(node);
+    },
+    doubleClickNode(node, e) {
+      this.onToggle(node);
+      this.toggleNode(node);
     },
     onContextMenu(node, e) {
       this.$refs.tree.select(node.path);
@@ -835,6 +840,9 @@ export default {
     },
     expandNode(node) {
       this.$refs.tree.updateNode(node.path, { isExpanded: true });
+    },
+    toggleNode(node) {
+      this.$refs.tree.updateNode(node.path, { isExpanded: !node.isExpanded });
     },
     refreshNode() {
       const node = this.getSelectedNode();
