@@ -1,61 +1,50 @@
 <template>
-<PowerTree ref="tree" v-model="nodes" @nodeclick="onNodeClick">
+  <PowerTree ref="tree" v-model="nodes" @toggle="onToggle" @nodecontextmenu="onContextMenu" :allow-multiselect="false">
+    <template v-slot:toggle="{ node }">
+      <i v-if="node.isExpanded" class="exp_col fas fa-chevron-down"></i>
+      <i v-if="!node.isExpanded" class="exp_col fas fa-chevron-right"></i>
+    </template>
 
-</PowerTree>
-
+    <template v-slot:title="{ node }">
+      <span class="item-icon">
+        <i :class="['icon_tree', node.data.icon]"></i>
+      </span>
+      <span>
+        {{ node.title }}
+      </span>
+    </template>
+  </PowerTree>
 </template>
 
 <script>
-let nodes = [
-{title: 'Item1', isLeaf: true},
-    {title: 'Item2', isLeaf: true, data: { visible: false }},
-    {title: 'Folder1'},
-    {
-      title: 'Folder2', isExpanded: true, children: [
-        {title: 'Item3', isLeaf: true},
-        {title: 'Item4', isLeaf: true},
-        {
-          title: 'Folder3', children: [
-            {title: 'Item5', isLeaf: true}
-          ]
-        }
-      ]
-    },
-    {title: 'Folder5', isExpanded: false},
-    {title: 'Item6', isLeaf: true},
-    {title: 'Item7', isLeaf: true, data: { visible: false }},
-    {
-      title: 'Folder6', children: [
-        {
-          title: 'Folder7', children: [
-            {title: 'Item8', isLeaf: true},
-            {title: 'Item9', isLeaf: true}
-          ]
-        }
-      ]
-    }
-  ];
-const {PowerTree} = window['VuePowerTree']
+const { PowerTree } = window["VuePowerTree"];
 export default {
-  name: 'SqliteTree',
+  name: "SqliteTree",
   components: {
     PowerTree,
   },
   data() {
     return {
-      nodes: nodes,
+      nodes: [
+        {
+          title: "Sqlite",
+          isExpanded: false,
+          isDraggable: false,
+          data: {
+            icon: "node-sqlite",
+            type: "server",
+            contextMenu: "cm_server",
+          },
+        },
+      ],
       contextMenu: {
         cm_server: [
           {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              if (this.selectedNode.children.length == 1) {
-                this.refreshTreeSqlite(node);
-              } else {
-                this.selectedNode.treeNodeSpec.state.expanded =
-                  !this.selectedNode.treeNodeSpec.state.expanded;
-              }
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
             },
           },
         ],
@@ -64,12 +53,8 @@ export default {
             label: "Refresh",
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
-              if (this.selectedNode.children.length == 1) {
-                this.refreshTreeSqlite(node);
-              } else {
-                this.selectedNode.treeNodeSpec.state.expanded =
-                  !this.selectedNode.treeNodeSpec.state.expanded;
-              }
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
             },
           },
           {
@@ -80,15 +65,903 @@ export default {
             },
           },
         ],
+        cm_table: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+          {
+            label: "Data Actions",
+            icon: "fas cm-all fa-list",
+            children: [
+              {
+                label: "Query Data",
+                icon: "fas cm-all fa-search",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  TemplateSelectSqlite(node.title, "t");
+                },
+              },
+              {
+                label: "Edit Data",
+                icon: "fas cm-all fa-table",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  v_startEditData(node.title);
+                },
+              },
+              {
+                label: "Insert Record",
+                icon: "fas cm-all fa-edit",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  TemplateInsertSqlite(node.title);
+                },
+              },
+              {
+                label: "Update Records",
+                icon: "fas cm-all fa-edit",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  TemplateUpdateSqlite(node.title);
+                },
+              },
+              {
+                label: "Delete Records",
+                icon: "fas cm-all fa-times",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  tabSQLTemplate(
+                    "Delete Records",
+                    this.templates.delete.replace("#table_name#", node.title)
+                  );
+                },
+              },
+            ],
+          },
+          {
+            label: "Table Actions",
+            icon: "fas cm-all fa-list",
+            children: [
+              {
+                label: "Alter Table",
+                icon: "fas cm-all fa-edit",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  tabSQLTemplate(
+                    "Alter Table",
+                    this.templates.alter_table.replace(
+                      "#table_name#",
+                      node.title
+                    )
+                  );
+                },
+              },
+              {
+                label: "Drop Table",
+                icon: "fas cm-all fa-times",
+                onClick: () => {
+                  const node = this.$refs.tree.getSelected()[0];
+                  tabSQLTemplate(
+                    "Drop Table",
+                    this.templates.drop_table.replace(
+                      "#table_name#",
+                      node.title
+                    )
+                  );
+                },
+              },
+            ],
+          },
+        ],
+        cm_columns: [
+          {
+            label: "Create Column",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              tabSQLTemplate("Create Column",
+                  this.templates.create_column.replace(
+                    "#table_name#",
+                    this.getParentNode(node).title
+                  ));
+            },
+          },
+        ],
+        cm_column: [],
+        cm_pks: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+        ],
+        cm_pk: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+        ],
+        cm_fks: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+        ],
+        cm_fk: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+        ],
+        cm_uniques: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+        ],
+        cm_unique: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+        ],
+        cm_indexes: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+          {
+            label: "Create Index",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              tabSQLTemplate(
+                "Create Index",
+                this.templates.create_index.replace(
+                  "#table_name#",
+                  this.getParentNode(node).title
+                )
+              );
+            },
+          },
+        ],
+        cm_index: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+          {
+            label: "Reindex",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              // Fix THIS
+              const node = this.$refs.tree.getSelected()[0];
+              tabSQLTemplate(
+                "Reindex",
+                this.templates.reindex.replace(
+                  "#index_name#",
+                  node.title
+                    .replace(" (Unique)", "")
+                    .replace(" (Non Unique)", "")
+                )
+              );
+            },
+          },
+          {
+            label: "Drop Index",
+            icon: "fas cm-all fa-times",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              // Fix THIS
+              tabSQLTemplate(
+                "Drop Index",
+                this.templates.drop_index.replace(
+                  "#index_name#",
+                  node.title
+                    .replace(" (Unique)", "")
+                    .replace(" (Non Unique)", "")
+                )
+              );
+            },
+          },
+        ],
+        cm_triggers: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+          {
+            label: "Create Trigger",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              tabSQLTemplate(
+                "Create Trigger",
+                this.templates.create_trigger.replace(
+                  "#table_name#",
+                  this.getParentNode(node).title
+                )
+              );
+            },
+          },
+        ],
+        cm_trigger: [
+          {
+            label: "Drop Trigger",
+            icon: "fas cm-all fa-times",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              tabSQLTemplate(
+                "Drop Trigger",
+                this.templates.drop_trigger
+                  .replace(
+                    "#table_name#",
+                    this.getParentNode(this.getParentNode(node)).title
+                  )
+                  .replace("#trigger_name#", node.title)
+              );
+            },
+          },
+        ],
+        cm_views: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+          {
+            label: "Create View",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              tabSQLTemplate("Create View", this.templates.create_view);
+            },
+          },
+        ],
+        cm_view: [
+          {
+            label: "Refresh",
+            icon: "fas cm-all fa-sync-alt",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              this.refreshTreeSqlite(node);
+            },
+          },
+          {
+            label: "Query Data",
+            icon: "fas cm-all fa-search",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+
+              TemplateSelectSqlite(node.title, "v");
+            },
+          },
+          {
+            label: "Drop View",
+            icon: "fas cm-all fa-times",
+            onClick: () => {
+              const node = this.$refs.tree.getSelected()[0];
+              tabSQLTemplate(
+                "Drop View",
+                this.templates.drop_view.replace("#view_name#", node.title)
+              );
+            },
+          },
+        ],
       },
-    }
+    };
   },
+  mounted() { },
   methods: {
-    onNodeClick(node, e) {
-      const title = '<i class="icon_tree node-sqlite">Item5</i>'
-      this.$refs.tree.insert({node: node, placement: 'inside'}, {title: title, isLeaf: true})
-      
-    }
-  }
-}
+    onToggle(node, e) {
+      this.$refs.tree.select(node.path);
+      if (node.isExpanded) return;
+      this.refreshTreeSqlite(node);
+    },
+    onContextMenu(node, e) {
+      this.$refs.tree.select(node.path);
+      e.preventDefault();
+      window["vue3-context-menu"].default.showContextMenu({
+        theme: "pgmanage",
+        x: e.x,
+        y: e.y,
+        zIndex: 1000,
+        minWidth: 230,
+        items: this.contextMenu[node.data.contextMenu],
+      });
+    },
+    refreshTreeSqlite(node) {
+      if (node.data.type == "server") {
+        this.getTreeDetailsSqlite(node);
+      } else if (node.data.type == "table_list") {
+        this.getTablesSqlite(node);
+      } else if (node.data.type == "table") {
+        this.getColumnsSqlite(node);
+      } else if (node.data.type == "primary_key") {
+        this.getPKSqlite(node);
+      } else if (node.data.type == "pk") {
+        this.getPKColumnsSqlite(node);
+      } else if (node.data.type == "foreign_keys") {
+        this.getFKsSqlite(node);
+      } else if (node.data.type == "foreign_key") {
+        this.getFKsColumnsSqlite(node);
+      } else if (node.data.type == "uniques") {
+        this.getUniquesSqlite(node);
+      } else if (node.data.type == "unique") {
+        this.getUniquesColumnsSqlite(node);
+      } else if (node.data.type == "indexes") {
+        this.getIndexesSqlite(node);
+      } else if (node.data.type == "index") {
+        this.getIndexesColumnsSqlite(node);
+      } else if (node.data.type == "trigger_list") {
+        this.getTriggersSqlite(node);
+      } else if (node.data.type == "view_list") {
+        this.getViewsSqlite(node);
+      } else if (node.data.type == "view") {
+        this.getViewsColumnsSqlite(node);
+      }
+    },
+    getTreeDetailsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_tree_info_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: resp.data.version,
+            children: [],
+          });
+          this.templates = resp.data;
+
+          this.insertNode(node, "Views", {
+            icon: "fas node-all fa-eye node-view-list",
+            type: "view_list",
+            contextMenu: "cm_views",
+          });
+          this.insertNode(node, "Tables", {
+            icon: "fas node-all fa-th node-table-list",
+            type: "table_list",
+            contextMenu: "cm_tables",
+          });
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getTablesSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_tables_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Tables (${resp.data.length})`,
+            children: [],
+          });
+
+          resp.data.forEach((el) => {
+            this.insertNode(node, el, {
+              icon: "fas node-all fa-table node-table",
+              type: "table",
+              contextMenu: "cm_table",
+            });
+          });
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getColumnsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_columns_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: node.title,
+        })
+        .then((resp) => {
+          this.removeChildNodes(node);
+
+          this.insertNode(node, "Triggers", {
+            icon: "fas node-all fa-bolt node-trigger",
+            type: "trigger_list",
+            contextMenu: "cm_triggers",
+          });
+          this.insertNode(node, "Indexes", {
+            icon: "fas node-all fa-thumbtack node-index",
+            type: "indexes",
+            contextMenu: "cm_indexes",
+          });
+          this.insertNode(node, "Uniques", {
+            icon: "fas node-all fa-key node-unique",
+            type: "uniques",
+            contextMenu: "cm_uniques",
+          });
+          this.insertNode(node, "Foreign Keys", {
+            icon: "fas node-all fa-key node-fkey",
+            type: "foreign_keys",
+            contextMenu: "cm_fks",
+          });
+          this.insertNode(node, "Primary Key", {
+            icon: "fas node-all fa-key node-pkey",
+            type: "primary_key",
+            contextMenu: "cm_pks",
+          });
+          this.insertNode(node, `Columns (${resp.data.length})`, {
+            icon: "fas node-all fa-columns node-column",
+            type: "column_list",
+            contextMenu: "cm_columns",
+          });
+          // FIX THIS
+          const columns_node = this.$refs.tree.getSelected()[0].children[0];
+          resp.data.reduceRight((_, el) => {
+            this.insertNode(columns_node, el.column_name, {
+              icon: "fas node-all fa-columns node-column",
+              type: "table_field",
+              contextMenu: "cm_column",
+            });
+            // how to get it better?
+            const table_field =
+              this.$refs.tree.getSelected()[0].children[0].children[0];
+
+            this.insertNode(
+              table_field,
+              `Nullable: ${el.nullable}`,
+              {
+                icon: "fas node-all fa-ellipsis-h node-bullet",
+              },
+              true
+            );
+            this.insertNode(
+              table_field,
+              `Type: ${el.data_type}`,
+              {
+                icon: "fas node-all fa-ellipsis-h node-bullet",
+              },
+              true
+            );
+          }, null);
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getPKSqlite(node) {
+      const parent_node = this.getParentNode(node);
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_pk_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: parent_node.title,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Primary Key (${resp.data.length})`,
+            children: [],
+          });
+
+          resp.data.forEach((el) => {
+            this.insertNode(node, el, {
+              icon: "fas node-all fa-key node-pkey",
+              type: "pk",
+              contextMenu: "cm_pk",
+            });
+          });
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getPKColumnsSqlite(node) {
+      const table_node = this.getParentNode(this.getParentNode(node));
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_pk_columns_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: table_node.title,
+        })
+        .then((resp) => {
+          this.removeChildNodes(node);
+          resp.data.forEach((el) => {
+            this.insertNode(
+              node,
+              el,
+              {
+                icon: "fas node-all fa-columns node-column",
+              },
+              true
+            );
+          });
+        });
+    },
+    getFKsSqlite(node) {
+      const parent_node = this.getParentNode(node);
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_fks_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: parent_node.title,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Foreign Keys (${resp.data.length})`,
+            children: [],
+          });
+          resp.data.reduceRight((_, el) => {
+            this.insertNode(node, el, {
+              icon: "fas node-all fa-key node-fkey",
+              type: "foreign_key",
+              contextMenu: "cm_fk",
+            });
+          }, null);
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getFKsColumnsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      const table_node = this.getParentNode(this.getParentNode(node));
+      axios
+        .post("/get_fks_columns_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: table_node.title,
+          fkey: node.title,
+        })
+        .then((resp) => {
+          this.removeChildNodes(node);
+          //Fix icon insert
+          this.insertNode(
+            node,
+            `${resp.data.column_name} <i class='fas node-all fa-arrow-right'></i> ${resp.data.r_column_name}`,
+            {
+              icon: "fas node-all fa-columns node-column",
+            }
+          ),
+            true;
+          this.insertNode(
+            node,
+            `Update Rule: ${resp.data.update_rule}`,
+            {
+              icon: "fas node-all fa-ellipsis-h node-bullet",
+            },
+            true
+          );
+          this.insertNode(
+            node,
+            `Delete Rule: ${resp.data.delete_rule}`,
+            {
+              icon: "fas node-all fa-ellipsis-h node-bullet",
+            },
+            true
+          );
+          this.insertNode(
+            node,
+            `Referenced Table: ${resp.data.r_table_name}`,
+            {
+              icon: "fas node-all fa-table node-table",
+            },
+            true
+          );
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getUniquesSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_uniques_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: this.getParentNode(node).title,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Uniques (${resp.data.length})`,
+            children: [],
+          });
+          resp.data.forEach((el) => {
+            this.insertNode(node, el, {
+              icon: "fas node-all fa-key node-unique",
+              type: "unique",
+              contextMenu: "cm_unique",
+            });
+          });
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getUniquesColumnsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      const table_node = this.getParentNode(this.getParentNode(node));
+      axios
+        .post("/get_uniques_columns_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: table_node.title,
+          unique: node.title,
+        })
+        .then((resp) => {
+          this.removeChildNodes(node);
+          resp.data.forEach((el) => {
+            this.insertNode(
+              node,
+              el,
+              {
+                icon: "fas node-all fa-columns node-column",
+              },
+              true
+            );
+          });
+        })
+        .catch((error) => {
+          showEror(error.response.data.data);
+        });
+    },
+    getIndexesSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_indexes_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: this.getParentNode(node).title,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Indexes (${resp.data.length})`,
+            children: [],
+          });
+
+          resp.data.forEach((el) => {
+            this.insertNode(node, `${el.index_name} (${el.uniqueness})`, {
+              icon: "fas node-all fa-thumbtack node-index",
+              type: "index",
+              contextMenu: "cm_index",
+            });
+          });
+        })
+        .catch((error) => {
+          showEror(error.response.data.data);
+        });
+    },
+    getIndexesColumnsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      const table_node = this.getParentNode(this.getParentNode(node));
+      //FIX INDEX
+      axios
+        .post("/get_indexes_columns_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: table_node.title,
+          index: node.title
+            .replace(" (Non Unique)", "")
+            .replace(" (Unique)", ""),
+        })
+        .then((resp) => {
+          this.removeChildNodes(node);
+          resp.data.forEach((el) => {
+            this.insertNode(
+              node,
+              el,
+              {
+                icon: "fas node-all fa-columns node-column",
+              },
+              true
+            );
+          });
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getTriggersSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_triggers_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: this.getParentNode(node).title,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Triggers (${resp.data.length})`,
+            children: [],
+          });
+
+          resp.data.forEach((el) => {
+            this.insertNode(
+              node,
+              el,
+              {
+                icon: "fas node-all fa-bolt node-trigger",
+                type: "trigger",
+                contextMenu: "cm_trigger",
+              },
+              true
+            );
+          });
+        })
+        .catch((erorr) => {
+          showError(error.response.data.data);
+        });
+    },
+    getViewsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_views_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+        })
+        .then((resp) => {
+          this.$refs.tree.updateNode(node.path, {
+            title: `Views (${resp.data.length})`,
+            children: [],
+          });
+          resp.data.forEach((element) => {
+            this.insertNode(node, element, {
+              icon: "fas node-all fa-eye node-view",
+              type: "view",
+              contextMenu: "cm_view",
+            });
+          });
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    getViewsColumnsSqlite(node) {
+      this.removeChildNodes(node);
+      this.insertSpinnerNode(node);
+      axios
+        .post("/get_views_columns_sqlite/", {
+          database_index:
+            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          tab_id: window.v_connTabControl.selectedTab.id,
+          table: node.title,
+        })
+        .then((resp) => {
+          this.removeChildNodes(node);
+          
+          this.insertNode(node, "Triggers", {
+            icon: "fas node-all fa-bolt node-trigger",
+            type: "trigger_list",
+            contextMenu: "cm_view_triggers",
+          });
+          this.insertNode(node, `Columns (${resp.data.length})`, {
+            icon: "fas node-all fa-columns node-column",
+          });
+          // FIX THIS
+          const columns_node = this.$refs.tree.getSelected()[0].children[0];
+
+          resp.data.reduceRight((_, el) => {
+            this.insertNode(columns_node, el.column_name, {
+              icon: "fas node-all fa-columns node-column",
+              type: "table_field",
+            });
+
+            const table_field =
+              this.$refs.tree.getSelected()[0].children[0].children[0];
+            this.insertNode(
+              table_field,
+              `Type: ${el.data_type}`,
+              {
+                icon: "fas node-all fa-ellipsis-h node-bullet",
+              },
+              true
+            );
+          }, null);
+        })
+        .catch((error) => {
+          showError(error.response.data.data);
+        });
+    },
+    removeChildNodes(node) {
+      this.$refs.tree.updateNode(node.path, { children: [] });
+    },
+    insertSpinnerNode(node) {
+      this.insertNode(
+        node,
+        "",
+        {
+          icon: "node-spin",
+        },
+        true
+      );
+    },
+    insertNode(node, title, data, isLeaf = false) {
+      this.$refs.tree.insert(
+        { node: node, placement: "inside" },
+        {
+          title: title,
+          isLeaf: isLeaf,
+          isExpanded: false,
+          isDraggable: false,
+          data: data,
+        }
+      );
+    },
+    getParentNode(node) {
+      const parent_node = this.$refs.tree.getNode(node.path.slice(0, -1));
+      return parent_node;
+    },
+  },
+};
 </script>

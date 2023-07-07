@@ -1838,40 +1838,6 @@ function getViewsColumnsSqlite(node) {
     );
 }
 
-/// <summary>
-/// Retrieving view definition.
-/// </summary>
-/// <param name="node">Node object.</param>
-function getViewDefinitionSqlite(node) {
-    execAjax('/get_view_definition_sqlite/',
-        JSON.stringify({
-            'p_database_index': v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            'p_tab_id': v_connTabControl.selectedTab.id,
-            'p_view': node.text
-        }),
-        function(p_return) {
-            v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(p_return.v_data);
-            v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-            v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(0, 0, true);
-            //v_connTabControl.selectedTab.tag.tabControl.selectedTab.renameTab(node.text);
-            renameTabConfirm(v_connTabControl.selectedTab.tag.tabControl.selectedTab, node.text);
-
-            var v_div_result = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_result;
-
-            if (v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.ht != null) {
-                v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.ht.destroy();
-                v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.ht = null;
-            }
-
-            v_div_result.innerHTML = '';
-        },
-        function(p_return) {
-            nodeOpenErrorSqlite(p_return, node);
-        },
-        'box',
-        true
-    );
-}
 
 /// <summary>
 /// Retrieving Triggers.
