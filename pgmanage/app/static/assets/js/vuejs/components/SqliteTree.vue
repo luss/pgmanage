@@ -44,6 +44,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -54,6 +55,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -71,6 +73,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -181,6 +184,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -191,6 +195,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -201,6 +206,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -211,6 +217,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -221,6 +228,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -231,6 +239,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -241,6 +250,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -265,6 +275,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -309,6 +320,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -351,6 +363,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -368,6 +381,7 @@ export default {
             icon: "fas cm-all fa-sync-alt",
             onClick: () => {
               const node = this.getSelectedNode();
+              this.expandNode(node);
               this.refreshTreeSqlite(node);
             },
           },
@@ -415,6 +429,7 @@ export default {
       });
     },
     refreshTreeSqlite(node) {
+      if (node.children.length == 0) this.insertSpinnerNode(node);
       if (node.data.type == "server") {
         this.getTreeDetailsSqlite(node);
       } else if (node.data.type == "table_list") {
@@ -446,8 +461,6 @@ export default {
       }
     },
     getTreeDetailsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_tree_info_sqlite/", {
           database_index:
@@ -455,9 +468,9 @@ export default {
           tab_id: window.v_connTabControl.selectedTab.id,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: resp.data.version,
-            children: [],
           });
           this.templates = resp.data;
 
@@ -477,8 +490,6 @@ export default {
         });
     },
     getTablesSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_tables_sqlite/", {
           database_index:
@@ -486,9 +497,9 @@ export default {
           tab_id: window.v_connTabControl.selectedTab.id,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Tables (${resp.data.length})`,
-            children: [],
           });
 
           resp.data.forEach((el) => {
@@ -504,8 +515,6 @@ export default {
         });
     },
     getColumnsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_columns_sqlite/", {
           database_index:
@@ -578,20 +587,17 @@ export default {
         });
     },
     getPKSqlite(node) {
-      const parent_node = this.getParentNode(node);
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_pk_sqlite/", {
           database_index:
             window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
           tab_id: window.v_connTabControl.selectedTab.id,
-          table: parent_node.title,
+          table: this.getParentNode(node).title,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Primary Key (${resp.data.length})`,
-            children: [],
           });
 
           resp.data.forEach((el) => {
@@ -608,8 +614,6 @@ export default {
     },
     getPKColumnsSqlite(node) {
       const table_node = this.getParentNode(this.getParentNode(node));
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_pk_columns_sqlite/", {
           database_index:
@@ -632,20 +636,17 @@ export default {
         });
     },
     getFKsSqlite(node) {
-      const parent_node = this.getParentNode(node);
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_fks_sqlite/", {
           database_index:
             window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
           tab_id: window.v_connTabControl.selectedTab.id,
-          table: parent_node.title,
+          table: this.getParentNode(node).title,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Foreign Keys (${resp.data.length})`,
-            children: [],
           });
           resp.data.reduceRight((_, el) => {
             this.insertNode(node, el, {
@@ -660,8 +661,6 @@ export default {
         });
     },
     getFKsColumnsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       const table_node = this.getParentNode(this.getParentNode(node));
       axios
         .post("/get_fks_columns_sqlite/", {
@@ -712,8 +711,6 @@ export default {
         });
     },
     getUniquesSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_uniques_sqlite/", {
           database_index:
@@ -722,9 +719,9 @@ export default {
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Uniques (${resp.data.length})`,
-            children: [],
           });
           resp.data.forEach((el) => {
             this.insertNode(node, el, {
@@ -739,8 +736,6 @@ export default {
         });
     },
     getUniquesColumnsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       const table_node = this.getParentNode(this.getParentNode(node));
       axios
         .post("/get_uniques_columns_sqlite/", {
@@ -768,8 +763,6 @@ export default {
         });
     },
     getIndexesSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_indexes_sqlite/", {
           database_index:
@@ -778,9 +771,9 @@ export default {
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Indexes (${resp.data.length})`,
-            children: [],
           });
           // add suffix to fix replace issue
           resp.data.forEach((el) => {
@@ -796,8 +789,6 @@ export default {
         });
     },
     getIndexesColumnsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       const table_node = this.getParentNode(this.getParentNode(node));
       //FIX INDEX
       axios
@@ -828,8 +819,6 @@ export default {
         });
     },
     getTriggersSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_triggers_sqlite/", {
           database_index:
@@ -838,9 +827,9 @@ export default {
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Triggers (${resp.data.length})`,
-            children: [],
           });
 
           resp.data.forEach((el) => {
@@ -861,8 +850,6 @@ export default {
         });
     },
     getViewsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_views_sqlite/", {
           database_index:
@@ -870,9 +857,9 @@ export default {
           tab_id: window.v_connTabControl.selectedTab.id,
         })
         .then((resp) => {
+          this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
             title: `Views (${resp.data.length})`,
-            children: [],
           });
           resp.data.forEach((element) => {
             this.insertNode(node, element, {
@@ -887,8 +874,6 @@ export default {
         });
     },
     getViewsColumnsSqlite(node) {
-      this.removeChildNodes(node);
-      this.insertSpinnerNode(node);
       axios
         .post("/get_views_columns_sqlite/", {
           database_index:
@@ -965,6 +950,9 @@ export default {
     getFirstChildNode(node) {
       const actualNode = this.$refs.tree.getNode(node.path);
       return actualNode.children[0];
+    },
+    expandNode(node) {
+      this.$refs.tree.updateNode(node.path, { isExpanded: true });
     },
   },
 };
