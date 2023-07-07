@@ -24,6 +24,16 @@ export default {
   components: {
     PowerTree,
   },
+  props: {
+    databaseIndex: {
+      type: Number,
+      required: true,
+    },
+    tabId: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       nodes: [
@@ -349,9 +359,8 @@ export default {
     getTreeDetailsSqlite(node) {
       axios
         .post("/get_tree_info_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
         })
         .then((resp) => {
           this.removeChildNodes(node);
@@ -378,9 +387,8 @@ export default {
     getTablesSqlite(node) {
       axios
         .post("/get_tables_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
         })
         .then((resp) => {
           this.removeChildNodes(node);
@@ -403,9 +411,8 @@ export default {
     getColumnsSqlite(node) {
       axios
         .post("/get_columns_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: node.title,
         })
         .then((resp) => {
@@ -475,9 +482,8 @@ export default {
     getPKSqlite(node) {
       axios
         .post("/get_pk_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -502,9 +508,8 @@ export default {
       const table_node = this.getParentNode(this.getParentNode(node));
       axios
         .post("/get_pk_columns_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: table_node.title,
         })
         .then((resp) => {
@@ -524,9 +529,8 @@ export default {
     getFKsSqlite(node) {
       axios
         .post("/get_fks_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -550,9 +554,8 @@ export default {
       const table_node = this.getParentNode(this.getParentNode(node));
       axios
         .post("/get_fks_columns_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: table_node.title,
           fkey: node.title,
         })
@@ -599,9 +602,8 @@ export default {
     getUniquesSqlite(node) {
       axios
         .post("/get_uniques_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -625,9 +627,8 @@ export default {
       const table_node = this.getParentNode(this.getParentNode(node));
       axios
         .post("/get_uniques_columns_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: table_node.title,
           unique: node.title,
         })
@@ -651,9 +652,8 @@ export default {
     getIndexesSqlite(node) {
       axios
         .post("/get_indexes_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -679,9 +679,8 @@ export default {
       //FIX INDEX
       axios
         .post("/get_indexes_columns_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: table_node.title,
           index: node.title
             .replace(" (Non Unique)", "")
@@ -707,9 +706,8 @@ export default {
     getTriggersSqlite(node) {
       axios
         .post("/get_triggers_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -738,9 +736,8 @@ export default {
     getViewsSqlite(node) {
       axios
         .post("/get_views_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
         })
         .then((resp) => {
           this.removeChildNodes(node);
@@ -762,9 +759,8 @@ export default {
     getViewsColumnsSqlite(node) {
       axios
         .post("/get_views_columns_sqlite/", {
-          database_index:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tab_id: window.v_connTabControl.selectedTab.id,
+          database_index: this.databaseIndex,
+          tab_id: this.tabId,
           table: node.title,
         })
         .then((resp) => {

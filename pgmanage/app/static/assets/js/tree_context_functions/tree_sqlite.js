@@ -493,7 +493,7 @@ function getTreeSqlite(p_div) {
     // v_connTabControl.selectedTab.tag.tree = tree;
 
     const div_tree = document.getElementById(p_div);
-    div_tree.innerHTML ='<sqlite-tree></sqlite-tree>'
+    div_tree.innerHTML ='<sqlite-tree :database-index="databaseIndex" :tab-id="tabId"></sqlite-tree>'
     const app = createApp({
         components: {
             "sqlite-tree": Vue.defineAsyncComponent(() =>
@@ -502,6 +502,12 @@ function getTreeSqlite(p_div) {
                 options
               )
             ),
+          },
+        data() {
+            return {
+              databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+              tabId: window.v_connTabControl.selectedTab.id,
+            };
           },
     })
     app.mount(`#${p_div}`)
