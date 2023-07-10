@@ -498,7 +498,7 @@ function getTreeSqlite(p_div) {
         components: {
             "sqlite-tree": Vue.defineAsyncComponent(() =>
               loadModule(
-                "../static/assets/js/vuejs/components/SqliteTree.vue",
+                "../static/assets/js/vuejs/components/TreeSqlite.vue",
                 options
               )
             ),
