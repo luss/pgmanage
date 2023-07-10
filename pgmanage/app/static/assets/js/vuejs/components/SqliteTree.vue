@@ -1,6 +1,6 @@
 <template>
   <PowerTree ref="tree" v-model="nodes" @nodedblclick="doubleClickNode" @toggle="onToggle"
-    @nodecontextmenu="onContextMenu" :allow-multiselect="false">
+    @nodecontextmenu="onContextMenu" :allow-multiselect="false" @nodeclick="onClickHandler">
     <template v-slot:toggle="{ node }">
       <i v-if="node.isExpanded" class="exp_col fas fa-chevron-down"></i>
       <i v-if="!node.isExpanded" class="exp_col fas fa-chevron-right"></i>
@@ -209,10 +209,7 @@ export default {
               const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Reindex",
-                this.templates.reindex.replace(
-                  "#index_name#",
-                  node.title
-                )
+                this.templates.reindex.replace("#index_name#", node.title)
               );
             },
           },
@@ -223,10 +220,7 @@ export default {
               const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Index",
-                this.templates.drop_index.replace(
-                  "#index_name#",
-                  node.title
-                )
+                this.templates.drop_index.replace("#index_name#", node.title)
               );
             },
           },
@@ -303,11 +297,20 @@ export default {
     },
   },
   methods: {
+    onClickHandler(node, e) {
+      // fix this not to use window
+      if (window.v_connTabControl.selectedTab.tag.treeTabsVisible)
+        this.getPropertiesSqlite(node);
+    },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);
       if (node.isExpanded) return;
       this.refreshTreeSqlite(node);
-      this.getNodeEl(node.path).scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"})
+      this.getNodeEl(node.path).scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: "smooth",
+      });
     },
     doubleClickNode(node, e) {
       if (node.isLeaf) return;
@@ -356,6 +359,36 @@ export default {
         this.getViewsSqlite(node);
       } else if (node.data.type == "view") {
         this.getViewsColumnsSqlite(node);
+      }
+    },
+    getPropertiesSqlite(node) {
+      let table;
+      switch (node.data.type) {
+        case "table_field":
+          table = this.getParentNode(this.getParentNode(node)).title;
+        case "unique":
+          table = this.getParentNode(this.getParentNode(node)).title;
+        default:
+          table = null;
+      }
+      const handledTypes = [
+        "table",
+        "table_field",
+        "view",
+        "trigger",
+        "index",
+        "pk",
+        "foreign_key",
+        "unique",
+      ];
+      if (handledTypes.includes(node.data.type)) {
+        getPropertiesNew("/get_properties_sqlite/", {
+          table: table,
+          object: node.title,
+          type: node.data.type,
+        });
+      } else {
+        clearProperties();
       }
     },
     getTreeDetailsSqlite(node) {
@@ -668,7 +701,7 @@ export default {
               icon: "fas node-all fa-thumbtack node-index",
               type: "index",
               contextMenu: "cm_index",
-              uniqueness: el.uniqueness
+              uniqueness: el.uniqueness,
             });
           });
         })
@@ -833,7 +866,9 @@ export default {
       return actualNode.children[0];
     },
     getNodeEl(path) {
-      return this.$refs.tree.$el.querySelector(`[path="${JSON.stringify(path)}"]`);
+      return this.$refs.tree.$el.querySelector(
+        `[path="${JSON.stringify(path)}"]`
+      );
     },
     expandNode(node) {
       this.$refs.tree.updateNode(node.path, { isExpanded: true });
@@ -848,9 +883,9 @@ export default {
     },
     formatTitle(node) {
       if (node.data.uniqueness !== undefined) {
-        return `${node.title} (${node.data.uniqueness})`
+        return `${node.title} (${node.data.uniqueness})`;
       }
-      return node.title
+      return node.title;
     },
   },
 };

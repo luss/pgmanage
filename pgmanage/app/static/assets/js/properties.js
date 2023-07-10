@@ -69,17 +69,49 @@ function getProperties(p_view, p_data) {
 
 }
 
+function getPropertiesNew(view, data) {
+  let tab_tag = v_connTabControl.selectedTab.tag;
+  $(tab_tag.divLoading).fadeIn(100);
+  axios
+    .post(view, {
+      database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      tab_id: v_connTabControl.selectedTab.id,
+      data: data,
+    })
+    .then((resp) => {
+      tab_tag.gridProperties.loadData(resp.data.properties);
+      tab_tag.ddlEditor.setValue(resp.data.ddl);
+      tab_tag.ddlEditor.clearSelection();
+      tab_tag.ddlEditor.gotoLine(0, 0, true);
+      $(tab_tag.divLoading).fadeOut(100);
+      tab_tag.gridPropertiesCleared = false;
+    })
+    .catch((error) => {
+      if (error.response.data.password_timeout) {
+        showPasswordPrompt(
+          v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+          function () {
+            getProperties(view, data);
+          },
+          null,
+          error.response.data.data
+        );
+      } else {
+        showError(error.response.data.data);
+      }
+    });
+}
 /// <summary>
 /// Clear property grid.
 /// </summary>
 function clearProperties() {
-  var v_tab_tag = v_connTabControl.selectedTab.tag;
-  if (!v_tab_tag.gridPropertiesCleared) {
-    v_tab_tag.gridProperties.loadData([]);
-    v_tab_tag.gridPropertiesCleared = true;
+  var tab_tag = v_connTabControl.selectedTab.tag;
+  if (!tab_tag.gridPropertiesCleared) {
+    tab_tag.gridProperties.loadData([]);
+    tab_tag.gridPropertiesCleared = true;
 
-		v_tab_tag.ddlEditor.setValue('');
-		v_tab_tag.ddlEditor.clearSelection();
-		v_tab_tag.ddlEditor.gotoLine(0, 0, true);
+		tab_tag.ddlEditor.setValue('');
+		tab_tag.ddlEditor.clearSelection();
+		tab_tag.ddlEditor.gotoLine(0, 0, true);
   }
 }
