@@ -10,7 +10,8 @@
       <span class="item-icon">
         <i :class="['icon_tree', node.data.icon]"></i>
       </span>
-      <span>
+      <span v-if="node.data.raw_html" v-html="node.title"> </span>
+      <span v-else>
         {{ node.title }}
       </span>
     </template>
@@ -566,15 +567,15 @@ export default {
         })
         .then((resp) => {
           this.removeChildNodes(node);
-          //Fix icon insert
           this.insertNode(
             node,
             `${resp.data.column_name} <i class='fas node-all fa-arrow-right'></i> ${resp.data.r_column_name}`,
             {
               icon: "fas node-all fa-columns node-column",
-            }
-          ),
-            true;
+              raw_html: true,
+            },
+            true
+          );
           this.insertNode(
             node,
             `Update Rule: ${resp.data.update_rule}`,
