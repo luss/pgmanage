@@ -12,7 +12,7 @@
       </span>
       <span v-if="node.data.raw_html" v-html="node.title"> </span>
       <span v-else>
-        {{ node.title }}
+        {{ formatTitle(node) }}
       </span>
     </template>
   </PowerTree>
@@ -206,15 +206,12 @@ export default {
             label: "Reindex",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix THIS
               const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Reindex",
                 this.templates.reindex.replace(
                   "#index_name#",
                   node.title
-                    .replace(" (Unique)", "")
-                    .replace(" (Non Unique)", "")
                 )
               );
             },
@@ -224,14 +221,11 @@ export default {
             icon: "fas cm-all fa-times",
             onClick: () => {
               const node = this.getSelectedNode();
-              // Fix THIS
               tabSQLTemplate(
                 "Drop Index",
                 this.templates.drop_index.replace(
                   "#index_name#",
                   node.title
-                    .replace(" (Unique)", "")
-                    .replace(" (Non Unique)", "")
                 )
               );
             },
@@ -669,12 +663,12 @@ export default {
           this.$refs.tree.updateNode(node.path, {
             title: `Indexes (${resp.data.length})`,
           });
-          // add suffix to fix replace issue
           resp.data.forEach((el) => {
-            this.insertNode(node, `${el.index_name} (${el.uniqueness})`, {
+            this.insertNode(node, `${el.index_name}`, {
               icon: "fas node-all fa-thumbtack node-index",
               type: "index",
               contextMenu: "cm_index",
+              uniqueness: el.uniqueness
             });
           });
         })
@@ -684,15 +678,12 @@ export default {
     },
     getIndexesColumnsSqlite(node) {
       const table_node = this.getParentNode(this.getParentNode(node));
-      //FIX INDEX
       axios
         .post("/get_indexes_columns_sqlite/", {
           database_index: this.databaseIndex,
           tab_id: this.tabId,
           table: table_node.title,
-          index: node.title
-            .replace(" (Non Unique)", "")
-            .replace(" (Unique)", ""),
+          index: node.title,
         })
         .then((resp) => {
           this.removeChildNodes(node);
@@ -854,6 +845,12 @@ export default {
       const node = this.getSelectedNode();
       this.expandNode(node);
       this.refreshTreeSqlite(node);
+    },
+    formatTitle(node) {
+      if (node.data.uniqueness !== undefined) {
+        return `${node.title} (${node.data.uniqueness})`
+      }
+      return node.title
     },
   },
 };
