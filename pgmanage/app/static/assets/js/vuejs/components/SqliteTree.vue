@@ -313,6 +313,7 @@ export default {
       this.$refs.tree.select(node.path);
       if (node.isExpanded) return;
       this.refreshTreeSqlite(node);
+      this.getNodeEl(node.path).scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"})
     },
     doubleClickNode(node, e) {
       if (node.isLeaf) return;
@@ -839,6 +840,9 @@ export default {
     getFirstChildNode(node) {
       const actualNode = this.$refs.tree.getNode(node.path);
       return actualNode.children[0];
+    },
+    getNodeEl(path) {
+      return this.$refs.tree.$el.querySelector(`[path="${JSON.stringify(path)}"]`);
     },
     expandNode(node) {
       this.$refs.tree.updateNode(node.path, { isExpanded: true });
