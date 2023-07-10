@@ -315,6 +315,7 @@ export default {
       this.refreshTreeSqlite(node);
     },
     doubleClickNode(node, e) {
+      if (node.isLeaf) return;
       this.onToggle(node);
       this.toggleNode(node);
     },
