@@ -292,7 +292,7 @@ export default {
     },
   },
   methods: {
-    refreshTreeSqlite(node) {
+    refreshTree(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
       if (node.data.type == "server") {
         this.getTreeDetailsSqlite(node);

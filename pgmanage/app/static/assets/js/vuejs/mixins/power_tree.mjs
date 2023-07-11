@@ -17,7 +17,7 @@ export default {
     onToggle(node, e) {
       this.$refs.tree.select(node.path);
       if (node.isExpanded) return;
-      this.refreshTreeSqlite(node);
+      this.refreshTree(node);
       this.getNodeEl(node.path).scrollIntoView({
         block: "start",
         inline: "nearest",
@@ -91,7 +91,7 @@ export default {
     refreshNode() {
       const node = this.getSelectedNode();
       this.expandNode(node);
-      this.refreshTreeSqlite(node);
+      this.refreshTree(node);
     },
     formatTitle(node) {
       if (node.data.uniqueness !== undefined) {
