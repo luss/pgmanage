@@ -246,10 +246,6 @@ export default {
               tabSQLTemplate(
                 "Drop Trigger",
                 this.templates.drop_trigger
-                  .replace(
-                    "#table_name#",
-                    this.getParentNode(this.getParentNode(node)).title
-                  )
                   .replace("#trigger_name#", node.title)
               );
             },
@@ -328,9 +324,9 @@ export default {
       let table;
       switch (node.data.type) {
         case "table_field":
-          table = this.getParentNode(this.getParentNode(node)).title;
+          table = this.getParentNodeDeep(node, 2).title;
         case "unique":
-          table = this.getParentNode(this.getParentNode(node)).title;
+          table = this.getParentNodeDeep(node, 2).title;
         default:
           table = null;
       }
@@ -503,7 +499,7 @@ export default {
         });
     },
     getPKColumnsSqlite(node) {
-      const table_node = this.getParentNode(this.getParentNode(node));
+      const table_node = this.getParentNodeDeep(node, 2);
       axios
         .post("/get_pk_columns_sqlite/", {
           database_index: this.databaseIndex,
@@ -549,7 +545,7 @@ export default {
         });
     },
     getFKsColumnsSqlite(node) {
-      const table_node = this.getParentNode(this.getParentNode(node));
+      const table_node = this.getParentNodeDeep(node, 2);
       axios
         .post("/get_fks_columns_sqlite/", {
           database_index: this.databaseIndex,
@@ -622,7 +618,7 @@ export default {
         });
     },
     getUniquesColumnsSqlite(node) {
-      const table_node = this.getParentNode(this.getParentNode(node));
+      const table_node = this.getParentNodeDeep(node, 2);
       axios
         .post("/get_uniques_columns_sqlite/", {
           database_index: this.databaseIndex,
@@ -673,7 +669,7 @@ export default {
         });
     },
     getIndexesColumnsSqlite(node) {
-      const table_node = this.getParentNode(this.getParentNode(node));
+      const table_node = this.getParentNodeDeep(node, 2);
       axios
         .post("/get_indexes_columns_sqlite/", {
           database_index: this.databaseIndex,

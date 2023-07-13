@@ -70,6 +70,14 @@ export default {
       const parentNode = this.$refs.tree.getNode(node.path.slice(0, -1));
       return parentNode;
     },
+    getParentNodeDeep(node, depth = 1) {
+      if (depth <= 0) {
+        return node;
+      }
+    
+      const parentNode = this.getParentNode(node);
+      return this.getParentNodeDeep(parentNode, depth - 1);
+    },
     getSelectedNode() {
       return this.$refs.tree.getSelected()[0];
     },
