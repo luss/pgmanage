@@ -375,7 +375,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getTablesSqlite(node) {
@@ -399,7 +399,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getColumnsSqlite(node) {
@@ -470,7 +470,7 @@ export default {
           }, null);
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getPKSqlite(node) {
@@ -495,7 +495,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getPKColumnsSqlite(node) {
@@ -541,7 +541,7 @@ export default {
           }, null);
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getFKsColumnsSqlite(node) {
@@ -590,7 +590,7 @@ export default {
           );
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getUniquesSqlite(node) {
@@ -614,7 +614,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getUniquesColumnsSqlite(node) {
@@ -691,7 +691,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getTriggersSqlite(node) {
@@ -720,8 +720,8 @@ export default {
             );
           });
         })
-        .catch((erorr) => {
-          showError(error.response.data.data);
+        .catch((error) => {
+          this.nodeOpenError(error, node);
         });
     },
     getViewsSqlite(node) {
@@ -744,7 +744,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getViewsColumnsSqlite(node) {
@@ -785,7 +785,7 @@ export default {
           }, null);
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
   },

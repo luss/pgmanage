@@ -13,6 +13,10 @@ export default {
       // fix this not to use window
       if (window.v_connTabControl.selectedTab.tag.treeTabsVisible)
         this.getProperties(node);
+
+      if (node.data.type == "error") {
+        showError(node.data.message);
+      }
     },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);
@@ -74,7 +78,7 @@ export default {
       if (depth <= 0) {
         return node;
       }
-    
+
       const parentNode = this.getParentNode(node);
       return this.getParentNodeDeep(parentNode, depth - 1);
     },
@@ -106,6 +110,31 @@ export default {
         return `${node.title} (${node.data.uniqueness})`;
       }
       return node.title;
+    },
+    nodeOpenError(error_response, node) {
+      if (error_response.response.data?.password_timeout) {
+        showPasswordPrompt(
+          this.database_index,
+          () => {
+            this.refreshNode();
+          },
+          null,
+          error_response.response.data.data
+        );
+      } else {
+        this.removeChildNodes(node);
+
+        this.insertNode(
+          node,
+          "View Detail",
+          {
+            icon: "fas fa-times node-error",
+            type: "error",
+            message: error_response.response.data.data,
+          },
+          true
+        );
+      }
     },
   },
 };
