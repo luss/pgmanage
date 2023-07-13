@@ -12,7 +12,7 @@ export default {
     onClickHandler(node, e) {
       // fix this not to use window
       if (window.v_connTabControl.selectedTab.tag.treeTabsVisible)
-        this.getPropertiesSqlite(node);
+        this.getProperties(node);
     },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);

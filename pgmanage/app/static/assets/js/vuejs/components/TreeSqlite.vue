@@ -324,7 +324,7 @@ export default {
         this.getViewsColumnsSqlite(node);
       }
     },
-    getPropertiesSqlite(node) {
+    getProperties(node) {
       let table;
       switch (node.data.type) {
         case "table_field":
