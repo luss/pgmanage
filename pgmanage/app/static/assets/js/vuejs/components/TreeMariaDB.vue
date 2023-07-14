@@ -681,6 +681,21 @@ export default {
       };
     },
   },
+  mounted() {
+    this.api = axios.create({
+      transformRequest: [
+        (data) => {
+          const transformedData = {
+            ...data,
+            database_index: this.databaseIndex,
+            tab_id: this.tabId,
+          };
+          return transformedData;
+        },
+        ...axios.defaults.transformRequest,
+      ],
+    });
+  },
   methods: {
     refreshTree(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
@@ -748,11 +763,8 @@ export default {
       }
     },
     getTreeDetailsMariadb(node) {
-      axios
-        .post("/get_tree_info_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-        })
+      this.api
+        .post("/get_tree_info_mariadb/")
         .then((resp) => {
           this.removeChildNodes(node);
 
@@ -805,11 +817,8 @@ export default {
         });
     },
     getDatabasesMariadb(node) {
-      axios
-        .post("/get_databases_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-        })
+      this.api
+        .post("/get_databases_mariadb/")
         .then((resp) => {
           this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
@@ -862,10 +871,8 @@ export default {
       });
     },
     getTablesMariadb(node) {
-      axios
+      this.api
         .post("/get_tables_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -889,10 +896,8 @@ export default {
         });
     },
     getColumnsMariadb(node) {
-      axios
+      this.api
         .post("/get_columns_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNodeDeep(node, 2).title,
           table: node.title,
         })
@@ -960,10 +965,8 @@ export default {
         });
     },
     getPKMariadb(node) {
-      axios
+      this.api
         .post("/get_pk_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
           schema: this.getParentNodeDeep(node, 3).title,
         })
@@ -986,10 +989,8 @@ export default {
         });
     },
     getPKColumnsMariadb(node) {
-      axios
+      this.api
         .post("/get_pk_columns_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           key: node.title,
           table: this.getParentNodeDeep(node, 2).title,
           schema: this.getParentNodeDeep(node, 4).title,
@@ -1013,10 +1014,8 @@ export default {
         });
     },
     getFKsMariadb(node) {
-      axios
+      this.api
         .post("/get_fks_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
           schema: this.getParentNodeDeep(node, 3).title,
         })
@@ -1040,10 +1039,8 @@ export default {
         });
     },
     getFKsColumnsMariadb(node) {
-      axios
+      this.api
         .post("/get_fks_columns_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           fkey: node.title,
           table: this.getParentNodeDeep(node, 2).title,
           schema: this.getParentNodeDeep(node, 4).title,
@@ -1090,10 +1087,8 @@ export default {
         });
     },
     getUniquesMariadb(node) {
-      axios
+      this.api
         .post("/get_uniques_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
           schema: this.getParentNodeDeep(node, 3).title,
         })
@@ -1117,10 +1112,8 @@ export default {
         });
     },
     getUniquesColumnsMariadb(node) {
-      axios
+      this.api
         .post("/get_uniques_columns_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           unique: node.title,
           table: this.getParentNodeDeep(node, 2).title,
           schema: this.getParentNodeDeep(node, 4).title,
@@ -1143,10 +1136,8 @@ export default {
         });
     },
     getIndexesMariadb(node) {
-      axios
+      this.api
         .post("/get_indexes_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
           schema: this.getParentNodeDeep(node, 3).title,
         })
@@ -1170,10 +1161,8 @@ export default {
         });
     },
     getIndexesColumnsMariadb(node) {
-      axios
+      this.api
         .post("/get_indexes_columns_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           index: node.title,
           table: this.getParentNodeDeep(node, 2).title,
           schema: this.getParentNodeDeep(node, 4).title,
@@ -1197,10 +1186,8 @@ export default {
         });
     },
     getSequencesMariadb(node) {
-      axios
+      this.api
         .post("/get_sequences_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -1227,10 +1214,8 @@ export default {
         });
     },
     getViewsMariadb(node) {
-      axios
+      this.api
         .post("/get_views_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -1252,10 +1237,8 @@ export default {
         });
     },
     getViewsColumnsMariadb(node) {
-      axios
+      this.api
         .post("/get_views_columns_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNodeDeep(node, 2).title,
           table: node.title,
         })
@@ -1290,10 +1273,8 @@ export default {
         });
     },
     getViewDefinitionMariadb(node) {
-      axios
+      this.api
         .post("/get_view_definition_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           view: node.title,
           schema: this.getParentNodeDeep(node, 2).title,
         })
@@ -1314,10 +1295,8 @@ export default {
         });
     },
     getFunctionsMariadb(node) {
-      axios
+      this.api
         .post("/get_functions_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -1341,10 +1320,8 @@ export default {
         });
     },
     getFunctionFieldsMariadb(node) {
-      axios
+      this.api
         .post("/get_function_fields_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNodeDeep(node, 2).title,
           function: node.data.id,
         })
@@ -1387,10 +1364,8 @@ export default {
         });
     },
     getFunctionDefinitionMariadb(node) {
-      axios
+      this.api
         .post("/get_function_definition_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           function: node.data.id,
         })
         .then((resp) => {
@@ -1410,10 +1385,8 @@ export default {
         });
     },
     getProceduresMariadb(node) {
-      axios
+      this.api
         .post("/get_procedures_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -1437,10 +1410,8 @@ export default {
         });
     },
     getProcedureFieldsMariadb(node) {
-      axios
+      this.api
         .post("/get_procedure_fields_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           schema: this.getParentNodeDeep(node, 2).title,
           procedure: node.data.id,
         })
@@ -1483,10 +1454,8 @@ export default {
         });
     },
     getProcedureDefinitionMariadb(node) {
-      axios
+      this.api
         .post("/get_procedure_definition_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           procedure: node.data.id,
         })
         .then((resp) => {
@@ -1506,11 +1475,8 @@ export default {
         });
     },
     getRolesMariadb(node) {
-      axios
-        .post("/get_roles_mariadb/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-        })
+      this.api
+        .post("/get_roles_mariadb/")
         .then((resp) => {
           this.removeChildNodes(node);
 

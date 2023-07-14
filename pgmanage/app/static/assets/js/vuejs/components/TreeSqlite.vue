@@ -245,8 +245,10 @@ export default {
               const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Trigger",
-                this.templates.drop_trigger
-                  .replace("#trigger_name#", node.title)
+                this.templates.drop_trigger.replace(
+                  "#trigger_name#",
+                  node.title
+                )
               );
             },
           },
@@ -286,6 +288,21 @@ export default {
         ],
       };
     },
+  },
+  mounted() {
+    this.api = axios.create({
+      transformRequest: [
+        (data) => {
+          const transformedData = {
+            ...data,
+            database_index: this.databaseIndex,
+            tab_id: this.tabId,
+          };
+          return transformedData;
+        },
+        ...axios.defaults.transformRequest,
+      ],
+    });
   },
   methods: {
     refreshTree(node) {
@@ -351,11 +368,8 @@ export default {
       }
     },
     getTreeDetailsSqlite(node) {
-      axios
-        .post("/get_tree_info_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-        })
+      this.api
+        .post("/get_tree_info_sqlite/")
         .then((resp) => {
           this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
@@ -379,11 +393,8 @@ export default {
         });
     },
     getTablesSqlite(node) {
-      axios
-        .post("/get_tables_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-        })
+      this.api
+        .post("/get_tables_sqlite/")
         .then((resp) => {
           this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
@@ -403,10 +414,8 @@ export default {
         });
     },
     getColumnsSqlite(node) {
-      axios
+      this.api
         .post("/get_columns_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: node.title,
         })
         .then((resp) => {
@@ -474,10 +483,8 @@ export default {
         });
     },
     getPKSqlite(node) {
-      axios
+      this.api
         .post("/get_pk_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -499,12 +506,9 @@ export default {
         });
     },
     getPKColumnsSqlite(node) {
-      const table_node = this.getParentNodeDeep(node, 2);
-      axios
+      this.api
         .post("/get_pk_columns_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-          table: table_node.title,
+          table: this.getParentNodeDeep(node, 2).title,
         })
         .then((resp) => {
           this.removeChildNodes(node);
@@ -521,10 +525,8 @@ export default {
         });
     },
     getFKsSqlite(node) {
-      axios
+      this.api
         .post("/get_fks_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -545,12 +547,9 @@ export default {
         });
     },
     getFKsColumnsSqlite(node) {
-      const table_node = this.getParentNodeDeep(node, 2);
-      axios
+      this.api
         .post("/get_fks_columns_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-          table: table_node.title,
+          table: this.getParentNodeDeep(node, 2).title,
           fkey: node.title,
         })
         .then((resp) => {
@@ -594,10 +593,8 @@ export default {
         });
     },
     getUniquesSqlite(node) {
-      axios
+      this.api
         .post("/get_uniques_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -618,12 +615,9 @@ export default {
         });
     },
     getUniquesColumnsSqlite(node) {
-      const table_node = this.getParentNodeDeep(node, 2);
-      axios
+      this.api
         .post("/get_uniques_columns_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-          table: table_node.title,
+          table: this.getParentNodeDeep(node, 2).title,
           unique: node.title,
         })
         .then((resp) => {
@@ -644,10 +638,8 @@ export default {
         });
     },
     getIndexesSqlite(node) {
-      axios
+      this.api
         .post("/get_indexes_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -669,12 +661,9 @@ export default {
         });
     },
     getIndexesColumnsSqlite(node) {
-      const table_node = this.getParentNodeDeep(node, 2);
-      axios
+      this.api
         .post("/get_indexes_columns_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-          table: table_node.title,
+          table: this.getParentNodeDeep(node, 2).title,
           index: node.title,
         })
         .then((resp) => {
@@ -695,10 +684,8 @@ export default {
         });
     },
     getTriggersSqlite(node) {
-      axios
+      this.api
         .post("/get_triggers_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: this.getParentNode(node).title,
         })
         .then((resp) => {
@@ -725,11 +712,8 @@ export default {
         });
     },
     getViewsSqlite(node) {
-      axios
-        .post("/get_views_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
-        })
+      this.api
+        .post("/get_views_sqlite/")
         .then((resp) => {
           this.removeChildNodes(node);
           this.$refs.tree.updateNode(node.path, {
@@ -748,10 +732,8 @@ export default {
         });
     },
     getViewsColumnsSqlite(node) {
-      axios
+      this.api
         .post("/get_views_columns_sqlite/", {
-          database_index: this.databaseIndex,
-          tab_id: this.tabId,
           table: node.title,
         })
         .then((resp) => {
