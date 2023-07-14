@@ -343,6 +343,9 @@ function getTreeMariadb(p_div) {
     });
     app.mount(`#${p_div}`);
 
+    // save tree referece in the tab, it will be later used to destroy tree instance on tab close
+    v_connTabControl.selectedTab.tree = app
+
     let autocomplete_switch_status =
       v_connTabControl.selectedTab.tag.enable_autocomplete !== false
         ? " checked "

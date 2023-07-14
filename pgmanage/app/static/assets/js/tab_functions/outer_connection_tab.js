@@ -124,6 +124,9 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
             if (v_tabs_to_remove.length>0) {
               createRequest(v_queryRequestCodes.CloseTab, v_tabs_to_remove);
             }
+            if (!!v_this_tab.tree) {
+              v_this_tab.tree.unmount()
+            }
             v_this_tab.removeTab();
           });
       },
