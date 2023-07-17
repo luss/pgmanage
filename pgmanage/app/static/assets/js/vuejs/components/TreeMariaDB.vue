@@ -76,18 +76,18 @@ export default {
                 label: "Simple Graph",
                 icon: "fab cm-all fa-hubspot",
                 onClick: () => {
-                  const node = this.getSelectedNode();
-                  window.v_connTabControl.tag.createGraphTab(node.title);
-                  drawGraph(false, node.title);
+                  window.v_connTabControl.tag.createGraphTab(
+                    this.selectedNode.title
+                  );
+                  drawGraph(false, this.selectedNode.title);
                 },
               },
               {
                 label: "Complete Graph",
                 icon: "fab cm-all fa-hubspot",
                 onClick: () => {
-                  const node = this.getSelectedNode();
-                  v_connTabControl.tag.createGraphTab(node.title);
-                  drawGraph(true, node.title);
+                  v_connTabControl.tag.createGraphTab(this.selectedNode.title);
+                  drawGraph(true, this.selectedNode.title);
                 },
               },
             ],
@@ -96,12 +96,11 @@ export default {
             label: "Alter Database",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Alter Database",
                 this.templates.alter_database.replace(
                   "#database_name#",
-                  node.title
+                  this.selectedNode.title
                 )
               );
             },
@@ -110,12 +109,11 @@ export default {
             label: "Drop Database",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Database",
                 this.templates.drop_database.replace(
                   "#database_name#",
-                  node.title
+                  this.selectedNode.title
                 )
               );
             },
@@ -127,12 +125,11 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Table",
                 this.templates.create_table.replace(
                   "#schema_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -148,10 +145,9 @@ export default {
                 label: "Query Data",
                 icon: "fas cm-all fa-search",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   TemplateSelectMariadb(
-                    this.getParentNodeDeep(node, 2).title,
-                    node.title
+                    this.getParentNodeDeep(this.selectedNode, 2).title,
+                    this.selectedNode.title
                   );
                 },
               },
@@ -159,10 +155,9 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   v_startEditData(
-                    node.title,
-                    this.getParentNodeDeep(node, 2).title
+                    this.selectedNode.title,
+                    this.getParentNodeDeep(this.selectedNode, 2).title
                   );
                 },
               },
@@ -170,10 +165,9 @@ export default {
                 label: "Insert Record",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   TemplateInsertMariadb(
-                    this.getParentNodeDeep(node, 2).title,
-                    node.title
+                    this.getParentNodeDeep(this.selectedNode, 2).title,
+                    this.selectedNode.title
                   );
                 },
               },
@@ -181,10 +175,9 @@ export default {
                 label: "Update Records",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   TemplateUpdateMariadb(
-                    this.getParentNodeDeep(node, 2).title,
-                    node.title
+                    this.getParentNodeDeep(this.selectedNode, 2).title,
+                    this.selectedNode.title
                   );
                 },
               },
@@ -192,12 +185,12 @@ export default {
                 label: "Delete Records",
                 icon: "fas cm-all fa-times",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Delete Records",
                     this.templates.delete.replace(
                       "#table_name#",
-                      `${this.getParentNodeDeep(node, 2).title}.${node.title}`
+                      `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
+                      }`
                     )
                   );
                 },
@@ -212,12 +205,12 @@ export default {
                 label: "Alter Table (SQL)",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Alter Table",
                     this.templates.alter_table.replace(
                       "#table_name#",
-                      `${this.getParentNodeDeep(node, 2).title}.${node.title}`
+                      `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
+                      }`
                     )
                   );
                 },
@@ -226,12 +219,12 @@ export default {
                 label: "Drop Table",
                 icon: "fas cm-all fa-times",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Drop Table",
                     this.templates.drop_table.replace(
                       "#table_name#",
-                      `${this.getParentNodeDeep(node, 2).title}.${node.title}`
+                      `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
+                      }`
                     )
                   );
                 },
@@ -244,12 +237,11 @@ export default {
             label: "Create Column",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Field",
                 this.templates.create_column.replace(
                   "#table_name#",
-                  `${this.getParentNodeDeep(node, 3).title}.${this.getParentNode(node).title
+                  `${this.getParentNodeDeep(this.selectedNode, 3).title}.${this.getParentNode(this.selectedNode).title
                   }`
                 )
               );
@@ -261,16 +253,15 @@ export default {
             label: "Alter Column",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Alter Column",
                 this.templates.alter_column
                   .replace(
                     "#table_name#",
-                    `${this.getParentNodeDeep(node, 4).title}.${this.getParentNodeDeep(node, 2).title
+                    `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title
                     }`
                   )
-                  .replace(/#column_name#/g, node.title)
+                  .replace(/#column_name#/g, this.selectedNode.title)
               );
             },
           },
@@ -278,16 +269,15 @@ export default {
             label: "Drop Column",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Column",
                 this.templates.alter_column
                   .replace(
                     "#table_name#",
-                    `${this.getParentNodeDeep(node, 4).title}.${this.getParentNodeDeep(node, 2).title
+                    `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title
                     }`
                   )
-                  .replace(/#column_name#/g, node.title)
+                  .replace(/#column_name#/g, this.selectedNode.title)
               );
             },
           },
@@ -298,12 +288,11 @@ export default {
             label: "Create Primary Key",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Primary Key",
                 this.templates.create_primarykey.replace(
                   "#table_name#",
-                  `${this.getParentNodeDeep(node, 3).title}.${this.getParentNode(node).title
+                  `${this.getParentNodeDeep(this.selectedNode, 3).title}.${this.getParentNode(this.selectedNode).title
                   }`
                 )
               );
@@ -316,16 +305,15 @@ export default {
             label: "Drop Primary Key",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Primary Key",
                 this.templates.drop_primarykey
                   .replace(
                     "#table_name#",
-                    `${this.getParentNodeDeep(node, 4).title}.${this.getParentNodeDeep(node, 2).title
+                    `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title
                     }`
                   )
-                  .replace("#constraint_name#", node.title)
+                  .replace("#constraint_name#", this.selectedNode.title)
               );
             },
           },
@@ -336,12 +324,11 @@ export default {
             label: "Create Foreign Key",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Foreign Key",
                 this.templates.create_foreignkey.replace(
                   "#table_name#",
-                  `${this.getParentNodeDeep(node, 3).title}.${this.getParentNode(node).title
+                  `${this.getParentNodeDeep(this.selectedNode, 3).title}.${this.getParentNode(this.selectedNode).title
                   }`
                 )
               );
@@ -354,16 +341,15 @@ export default {
             label: "Drop Foreign Key",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Foreign Key",
                 this.templates.drop_foreignkey
                   .replace(
                     "#table_name#",
-                    `${this.getParentNodeDeep(node, 4).title}.${this.getParentNodeDeep(node, 2).title
+                    `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title
                     }`
                   )
-                  .replace("#constraint_name#", node.title)
+                  .replace("#constraint_name#", this.selectedNode.title)
               );
             },
           },
@@ -374,12 +360,11 @@ export default {
             label: "Create Unique",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Unique",
                 this.templates.create_unique.replace(
                   "#table_name#",
-                  `${this.getParentNodeDeep(node, 3).title}.${this.getParentNode(node).title
+                  `${this.getParentNodeDeep(this.selectedNode, 3).title}.${this.getParentNode(this.selectedNode).title
                   }`
                 )
               );
@@ -392,16 +377,15 @@ export default {
             label: "Drop Unique",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Unique",
                 this.templates.drop_unique
                   .replace(
                     "#table_name#",
-                    `${this.getParentNodeDeep(node, 4).title}.${this.getParentNodeDeep(node, 2).title
+                    `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title
                     }`
                   )
-                  .replace("#constraint_name#", node.title)
+                  .replace("#constraint_name#", this.selectedNode.title)
               );
             },
           },
@@ -412,12 +396,11 @@ export default {
             label: "Create Index",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Index",
                 this.templates.create_index.replace(
                   "#table_name#",
-                  `${this.getParentNodeDeep(node, 3).title}.${this.getParentNode(node).title
+                  `${this.getParentNodeDeep(this.selectedNode, 3).title}.${this.getParentNode(this.selectedNode).title
                   }`
                 )
               );
@@ -430,12 +413,12 @@ export default {
             label: "Drop Index",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Index",
                 this.templates.drop_index.replace(
                   "#index_name#",
-                  `${this.getParentNodeDeep(node, 4).title}.${node.title}`
+                  `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.selectedNode.title
+                  }`
                 )
               );
             },
@@ -447,12 +430,11 @@ export default {
             label: "Create Sequence",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Sequence",
                 this.templates.create_sequence.replace(
                   "#schema_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -463,12 +445,12 @@ export default {
             label: "Alter Sequence",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Alter Sequence",
                 this.templates.alter_sequence.replace(
                   "#sequence_name#",
-                  `${this.getParentNodeDeep(node, 2).title}.${node.title}`
+                  `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
+                  }`
                 )
               );
             },
@@ -477,12 +459,12 @@ export default {
             label: "Drop Sequence",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Sequence",
                 this.templates.drop_sequence.replace(
                   "#sequence_name#",
-                  `${this.getParentNodeDeep(node, 2).title}.${node.title}`
+                  `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
+                  }`
                 )
               );
             },
@@ -494,12 +476,11 @@ export default {
             label: "Create View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create View",
                 this.templates.create_view.replace(
                   "#schema_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -512,12 +493,11 @@ export default {
             icon: "fas cm-all fa-search",
             onClick: () => {
               // FIX this to use TemplateSelectMariadb
-              const node = this.getSelectedNode();
               let table_name;
-              table_name = `${this.getParentNodeDeep(node, 2).title}.${node.title
-                }`;
+              table_name = `${this.getParentNodeDeep(this.selectedNode, 2).title
+                }.${this.selectedNode.title}`;
 
-              v_connTabControl.tag.createQueryTab(node.title);
+              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
 
               v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
                 `-- Querying Data\nselect t.*\nfrom ${table_name} t`
@@ -525,7 +505,7 @@ export default {
               v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
               renameTabConfirm(
                 v_connTabControl.selectedTab.tag.tabControl.selectedTab,
-                node.title
+                this.selectedNode.title
               );
 
               querySQL(0);
@@ -535,22 +515,21 @@ export default {
             label: "Edit View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(node.title);
-              this.getViewDefinitionMariadb(node);
+              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
+              this.getViewDefinitionMariadb(this.selectedNode);
             },
           },
           {
             label: "Drop View",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop View",
                 this.templates.drop_view.replace(
                   "#view_name#",
-                  `${this.getParentNodeDeep(node, 2).title}.${node.title}`
+                  `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
+                  }`
                 )
               );
             },
@@ -562,12 +541,11 @@ export default {
             label: "Create Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Function",
                 this.templates.create_function.replace(
                   "#schema_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -579,22 +557,20 @@ export default {
             label: "Edit Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               //Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(node.title);
-              this.getFunctionDefinitionMariadb(node);
+              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
+              this.getFunctionDefinitionMariadb(this.selectedNode);
             },
           },
           {
             label: "Drop Function",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Function",
                 this.templates.drop_function.replace(
                   "#function_name#",
-                  node.data.id
+                  this.selectedNode.data.id
                 )
               );
             },
@@ -606,12 +582,11 @@ export default {
             label: "Create Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Procedure",
                 this.templates.create_procedure.replace(
                   "#schema_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -623,22 +598,20 @@ export default {
             label: "Edit Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(node.title);
-              this.getProcedureDefinitionMariadb(node);
+              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
+              this.getProcedureDefinitionMariadb(this.selectedNode);
             },
           },
           {
             label: "Drop Procedure",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Procedure",
                 this.templates.drop_procedure.replace(
                   "#function_name#",
-                  node.data.id
+                  this.selectedNode.data.id
                 )
               );
             },
@@ -659,10 +632,12 @@ export default {
             label: "Alter Role",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Alter Role",
-                this.templates.alter_role.replace("#role_name#", node.title)
+                this.templates.alter_role.replace(
+                  "#role_name#",
+                  this.selectedNode.title
+                )
               );
             },
           },
@@ -670,10 +645,12 @@ export default {
             label: "Drop Role",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Role",
-                this.templates.drop_role.replace("#role_name#", node.title)
+                this.templates.drop_role.replace(
+                  "#role_name#",
+                  this.selectedNode.title
+                )
               );
             },
           },

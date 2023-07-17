@@ -7,6 +7,9 @@ export default {
         onClick: this.refreshNode,
       };
     },
+    selectedNode() {
+      return this.getSelectedNode()
+    }
   },
   methods: {
     onClickHandler(node, e) {

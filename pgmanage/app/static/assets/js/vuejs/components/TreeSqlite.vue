@@ -78,42 +78,40 @@ export default {
                 label: "Query Data",
                 icon: "fas cm-all fa-search",
                 onClick: () => {
-                  const node = this.getSelectedNode();
-                  TemplateSelectSqlite(node.title, "t");
+                  TemplateSelectSqlite(this.selectedNode.title, "t");
                 },
               },
               {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  const node = this.getSelectedNode();
-                  v_startEditData(node.title);
+                  v_startEditData(this.selectedNode.title);
                 },
               },
               {
                 label: "Insert Record",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.getSelectedNode();
-                  TemplateInsertSqlite(node.title);
+                  TemplateInsertSqlite(this.selectedNode.title);
                 },
               },
               {
                 label: "Update Records",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.getSelectedNode();
-                  TemplateUpdateSqlite(node.title);
+                  TemplateUpdateSqlite(this.selectedNode.title);
                 },
               },
               {
                 label: "Delete Records",
                 icon: "fas cm-all fa-times",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Delete Records",
-                    this.templates.delete.replace("#table_name#", node.title)
+                    this.templates.delete.replace(
+                      "#table_name#",
+                      this.selectedNode.title
+                    )
                   );
                 },
               },
@@ -127,12 +125,11 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Alter Table",
                     this.templates.alter_table.replace(
                       "#table_name#",
-                      node.title
+                      this.selectedNode.title
                     )
                   );
                 },
@@ -141,12 +138,11 @@ export default {
                 label: "Drop Table",
                 icon: "fas cm-all fa-times",
                 onClick: () => {
-                  const node = this.getSelectedNode();
                   tabSQLTemplate(
                     "Drop Table",
                     this.templates.drop_table.replace(
                       "#table_name#",
-                      node.title
+                      this.selectedNode.title
                     )
                   );
                 },
@@ -160,12 +156,11 @@ export default {
             label: "Create Column",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Column",
                 this.templates.create_column.replace(
                   "#table_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -184,12 +179,11 @@ export default {
             label: "Create Index",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Index",
                 this.templates.create_index.replace(
                   "#table_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -201,10 +195,12 @@ export default {
             label: "Reindex",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Reindex",
-                this.templates.reindex.replace("#index_name#", node.title)
+                this.templates.reindex.replace(
+                  "#index_name#",
+                  this.selectedNode.title
+                )
               );
             },
           },
@@ -212,10 +208,12 @@ export default {
             label: "Drop Index",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Index",
-                this.templates.drop_index.replace("#index_name#", node.title)
+                this.templates.drop_index.replace(
+                  "#index_name#",
+                  this.selectedNode.title
+                )
               );
             },
           },
@@ -226,12 +224,11 @@ export default {
             label: "Create Trigger",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Create Trigger",
                 this.templates.create_trigger.replace(
                   "#table_name#",
-                  this.getParentNode(node).title
+                  this.getParentNode(this.selectedNode).title
                 )
               );
             },
@@ -242,12 +239,11 @@ export default {
             label: "Drop Trigger",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop Trigger",
                 this.templates.drop_trigger.replace(
                   "#trigger_name#",
-                  node.title
+                  this.selectedNode.title
                 )
               );
             },
@@ -269,19 +265,19 @@ export default {
             label: "Query Data",
             icon: "fas cm-all fa-search",
             onClick: () => {
-              const node = this.getSelectedNode();
-
-              TemplateSelectSqlite(node.title, "v");
+              TemplateSelectSqlite(this.selectedNode.title, "v");
             },
           },
           {
             label: "Drop View",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              const node = this.getSelectedNode();
               tabSQLTemplate(
                 "Drop View",
-                this.templates.drop_view.replace("#view_name#", node.title)
+                this.templates.drop_view.replace(
+                  "#view_name#",
+                  this.selectedNode.title
+                )
               );
             },
           },
