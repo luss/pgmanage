@@ -271,7 +271,7 @@ export default {
             onClick: () => {
               tabSQLTemplate(
                 "Drop Column",
-                this.templates.alter_column
+                this.templates.drop_column 
                   .replace(
                     "#table_name#",
                     `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title
