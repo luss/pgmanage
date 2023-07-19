@@ -11,6 +11,21 @@ export default {
       return this.getSelectedNode()
     }
   },
+  mounted() {
+    this.api = axios.create({
+      transformRequest: [
+        (data) => {
+          const transformedData = {
+            ...data,
+            database_index: this.databaseIndex,
+            tab_id: this.tabId,
+          };
+          return transformedData;
+        },
+        ...axios.defaults.transformRequest,
+      ],
+    });
+  },
   methods: {
     onClickHandler(node, e) {
       // fix this not to use window

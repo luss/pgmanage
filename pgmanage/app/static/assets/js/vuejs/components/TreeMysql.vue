@@ -612,21 +612,6 @@ export default {
       };
     },
   },
-  mounted() {
-    this.api = axios.create({
-      transformRequest: [
-        (data) => {
-          const transformedData = {
-            ...data,
-            database_index: this.databaseIndex,
-            tab_id: this.tabId,
-          };
-          return transformedData;
-        },
-        ...axios.defaults.transformRequest,
-      ],
-    });
-  },
   methods: {
     refreshTree(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
