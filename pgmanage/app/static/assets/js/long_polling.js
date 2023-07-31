@@ -158,7 +158,12 @@ function polling_response(p_message) {
         }
         if (!v_message.v_data.v_chunks || v_message.v_data.v_last_block || v_message.v_error) {
           v_message.v_data.v_data = [];
-          querySQLReturn(v_message,p_context);
+          if(p_context.simple && p_context.callback!=null) { //used by schema editor only, dont run any legacy rendering for simple requests
+            p_context.callback(p_message)
+          } else {
+            querySQLReturn(v_message,p_context);
+          }
+
           //Remove context
           removeContext(p_context_code);
         }

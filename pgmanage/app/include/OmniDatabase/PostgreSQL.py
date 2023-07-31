@@ -1103,6 +1103,45 @@ class PostgreSQL:
         '''.format(v_filter), True)
 
     @lock_required
+    def QueryTableDefinition(self, table=None, schema=None):
+        in_schema = schema if schema else self.v_schema
+
+        return self.v_connection.Query('''
+            SELECT
+            table_schema,
+            table_name,
+            column_name,
+            is_nullable,
+            ordinal_position,
+            column_default,
+            CASE
+                WHEN character_maximum_length is not null  and udt_name != 'text'
+                THEN CONCAT(udt_name, concat('(', concat(character_maximum_length::varchar(255), ')')))
+                WHEN numeric_precision is not null
+                    THEN CONCAT(udt_name, concat('(', concat(numeric_precision::varchar(255),',',numeric_scale::varchar(255), ')')))
+                WHEN datetime_precision is not null AND udt_name != 'date' THEN
+                CONCAT(udt_name, concat('(', concat(datetime_precision::varchar(255), ')')))
+                ELSE udt_name
+            END as data_type
+            FROM information_schema.columns
+            WHERE table_schema = '{0}' AND table_name = '{1}'
+            ORDER BY ordinal_position
+        '''.format(in_schema, table), True)
+
+    @lock_required
+    def QueryTablePKColumns(self, table=None, schema=None):
+        in_schema = schema if schema else self.v_schema
+
+        return self.v_connection.Query('''
+            SELECT a.attname as column_name
+            FROM   pg_index i
+            JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                                AND a.attnum = ANY(i.indkey)
+            WHERE  i.indrelid = '{0}.{1}'::regclass
+            AND    i.indisprimary;
+        '''.format(in_schema, table), True)
+
+    @lock_required
     def QueryTablesForeignKeys(self, p_table=None, p_all_schemas=False, p_schema=None):
         v_filter = ''
         if not p_all_schemas:

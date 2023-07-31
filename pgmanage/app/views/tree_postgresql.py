@@ -260,6 +260,32 @@ def get_columns(request, v_database):
 
     return JsonResponse(v_return)
 
+
+@user_authenticated
+@database_required_new(check_timeout = True, open_connection = True)
+def get_table_definition(request, v_database):
+    data = request.data
+    table = data['table']
+    schema = data['schema']
+
+    columns = []
+    try:
+        q_primaries = v_database.QueryTablePKColumns(table, schema)
+        pk_column_names = [x[0] for x in q_primaries.Rows]
+        q_definition = v_database.QueryTableDefinition(table, schema)
+        for col in q_definition.Rows:
+            column_data = {
+                'name': col['column_name'],
+                'data_type': col['data_type'],
+                'default_value': col['column_default'],
+                'nullable': col['is_nullable'] != 'NO',
+                'is_primary': col['column_name'] in pk_column_names
+            }
+            columns.append(column_data)
+    except Exception as exc:
+        return JsonResponse(data={'data': str(exc)}, status=500)
+    return JsonResponse(data={'data': columns})
+
 @user_authenticated
 @database_required(p_check_timeout = True, p_open_connection = True)
 def get_pk(request, v_database):
@@ -289,7 +315,7 @@ def get_pk(request, v_database):
 @database_required(p_check_timeout = True, p_open_connection = True)
 def get_pk_columns(request, v_database):
     v_return = create_response_template()
-    
+
     data = request.data
     v_pkey = data['p_key']
     v_table = data['p_table']

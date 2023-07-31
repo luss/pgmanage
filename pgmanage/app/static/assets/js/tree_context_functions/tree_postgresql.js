@@ -1038,14 +1038,11 @@ function getTreePostgresql(p_div) {
                     }
                 }
                 , {
-                    text: 'Doc: Databases',
+                    text: 'CREATE UI',
                     icon: 'fas cm-all fa-globe-americas',
                     action: function(node) {
-                        v_connTabControl.tag.openWebSite(
-                            'Documentation: Databases',
-                            'https://www.postgresql.org/docs/' +
-                            getMajorVersionPostgresql(node.tree.tag.version) +
-                            '/static/managing-databases.html');
+                        // FIXME: temp menu item, remove later
+                        createSchemaEditorTab()
                     }
                 }
             ]
@@ -1467,6 +1464,12 @@ function getTreePostgresql(p_div) {
                             '#schema_name#', node.tag.schema));
                 }
             }, {
+                text: 'Create Table UI',
+                icon: 'fas cm-all fa-edit',
+                action: function(node) {
+                    createSchemaEditorTab(node, 'create', 'postgres')
+                }
+            }, {
                 text: 'Doc: Basics',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -1602,6 +1605,13 @@ function getTreePostgresql(p_div) {
                                 .alter_table.replace(
                                     '#table_name#', node.tag.schema
                                     + '.' + node.text));
+                        }
+
+                    }, {
+                        text: 'Alter Table UI',
+                        icon: 'fas cm-all fa-edit',
+                        action: function(node) {
+                            createSchemaEditorTab(node, 'alter', 'postgres')
                         }
                     }, {
                         text: 'Edit Comment',
