@@ -129,6 +129,14 @@ export default {
     },
   },
   methods: {
+    doubleClickNode(node, e) {
+      if (node.isLeaf) {
+        this.startEditSnippetText(node);
+        return;
+      }
+      this.onToggle(node);
+      this.toggleNode(node);
+    },
     refreshTree(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
       if (node.data.type === "node") {
