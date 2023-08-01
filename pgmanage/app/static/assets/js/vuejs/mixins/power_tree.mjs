@@ -52,7 +52,11 @@ export default {
     })
 
     // Temporary solution, use Pinia store later
-    v_connTabControl.selectedTab.tag.tree = this
+    if (this.getRootNode().title === 'Snippets') {
+      v_connTabControl.snippet_tree = this
+    } else {
+      v_connTabControl.selectedTab.tag.tree = this
+    }
   },
   methods: {
     onClickHandler(node, e) {
