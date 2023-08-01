@@ -72,15 +72,6 @@ var v_createSnippetTextTabFunction = function(p_snippet = null) {
   v_tab_loading_span.id = 'tab_loading_' + v_tab.id;
   var v_tab_check_span = document.getElementById('tab_check');
   v_tab_check_span.id = 'tab_check_' + v_tab.id;
-  //var v_tab_close_span = document.getElementById('tab_close');
-  //v_tab_close_span.id = 'tab_close_' + v_tab.id;
-  //v_tab_close_span.onclick = function(e) {
-  //  var v_current_tab = v_tab;
-  //  beforeCloseTab(e,
-  //    function() {
-  //      closeSnippetTab(v_current_tab);
-  //    });
-  //};
 
   var v_html =
   '<div id="txt_snippet_' + v_tab.id + '" style="width: 100%; height: 200px; border: 1px solid #c3c3c3;"></div>' +

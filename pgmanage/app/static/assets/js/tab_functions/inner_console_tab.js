@@ -154,11 +154,11 @@ var v_createConsoleTabFunction = function() {
     event.stopPropagation();
     event.preventDefault();
 
-    var v_option_list = [
+    let option_list = [
       {
-        text: 'Copy',
+        label: 'Copy',
         icon: 'fas cm-all fa-terminal',
-        action: function() {
+        onClick: function() {
           // Getting the value
           var copy_text = v_editor1.getValue();
           // Calling copy to clipboard.
@@ -166,32 +166,28 @@ var v_createConsoleTabFunction = function() {
         }
       },
       {
-        text: 'Save as snippet',
+        label: 'Save as snippet',
         icon: 'fas cm-all fa-save',
-        submenu: {
-          elements: buildSnippetContextMenuObjects('save', v_connTabControl.tag.globalSnippets, v_editor1)
-        }
+        children: buildSnippetContextMenuObjects('save', v_connTabControl.tag.globalSnippets, v_editor1)
       }
     ];
 
     if (v_connTabControl.tag.globalSnippets.files.length != 0 || v_connTabControl.tag.globalSnippets.folders.length != 0)
-      v_option_list.push(
+      option_list.push(
         {
-          text: 'Use snippet',
+          label: 'Use snippet',
           icon: 'fas cm-all fa-file-code',
-          submenu: {
-            elements: buildSnippetContextMenuObjects('load', v_connTabControl.tag.globalSnippets, v_editor1)
-          }
+          children: buildSnippetContextMenuObjects('load', v_connTabControl.tag.globalSnippets, v_editor1)
         }
       )
-    customMenu(
-      {
-        x:event.clientX+5,
-        y:event.clientY+5
-      },
-      v_option_list,
-      null
-    );
+      window["vue3-context-menu"].default.showContextMenu({
+        theme: "pgmanage",
+        x: event.x,
+        y: event.y,
+        zIndex: 1000,
+        minWidth: 230,
+        items: option_list,
+      });
   });
 
   v_editor1.focus();
