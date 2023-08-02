@@ -339,7 +339,7 @@ export default {
         "unique",
       ];
       if (handledTypes.includes(node.data.type)) {
-        getPropertiesNew("/get_properties_sqlite/", {
+        getProperties("/get_properties_sqlite/", {
           table: table,
           object: node.title,
           type: node.data.type,

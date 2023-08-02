@@ -29,7 +29,7 @@ SOFTWARE.
 /// <summary>
 /// Retrieving tree.
 /// </summary>
-function getTreeMysql(p_div) {
+function getTreeMysql(div) {
 
     var context_menu = {
         'cm_databases': {
@@ -309,7 +309,7 @@ function getTreeMysql(p_div) {
         },
     };
 
-    const div_tree = document.getElementById(p_div);
+    const div_tree = document.getElementById(div);
     div_tree.innerHTML =
       '<tree-mysql :database-index="databaseIndex" :tab-id="tabId"></tree-mysql>';
     const app = createApp({
@@ -329,7 +329,7 @@ function getTreeMysql(p_div) {
         };
       },
     });
-    app.mount(`#${p_div}`);
+    app.mount(`#${div}`);
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app

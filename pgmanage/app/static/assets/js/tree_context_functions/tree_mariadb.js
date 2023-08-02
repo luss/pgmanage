@@ -29,7 +29,7 @@ SOFTWARE.
 /// <summary>
 /// Retrieving tree.
 /// </summary>
-function getTreeMariadb(p_div) {
+function getTreeMariadb(div) {
 
     var context_menu = {
         'cm_databases': {
@@ -321,7 +321,7 @@ function getTreeMariadb(p_div) {
         },
     };
 
-    const div_tree = document.getElementById(p_div);
+    const div_tree = document.getElementById(div);
     div_tree.innerHTML =
       '<tree-mariadb :database-index="databaseIndex" :tab-id="tabId"></tree-mariadb>';
     const app = createApp({
@@ -341,7 +341,7 @@ function getTreeMariadb(p_div) {
         };
       },
     });
-    app.mount(`#${p_div}`);
+    app.mount(`#${div}`);
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app

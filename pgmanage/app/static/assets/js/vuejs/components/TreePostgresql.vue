@@ -3247,7 +3247,7 @@ export default {
       }
 
       if (handledTypes.includes(node.data.type)) {
-        getPropertiesNew("/get_properties_postgresql/", {
+        getProperties("/get_properties_postgresql/", {
           schema: schema,
           table: table,
           object: object,

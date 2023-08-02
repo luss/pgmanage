@@ -27,8 +27,7 @@ def get_tree_info(request, database):
             "drop_trigger": database.TemplateDropTrigger().v_text,
         }
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
     return JsonResponse(data=data)
 
 
@@ -39,8 +38,7 @@ def get_tables(request, database):
         tables = database.QueryTables()
         tables_list = [table["table_name"] for table in tables.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=tables_list, safe=False)
 
@@ -65,8 +63,7 @@ def get_columns(request, database):
 
             list_columns.append(column_data)
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_columns, safe=False)
 
@@ -80,8 +77,7 @@ def get_pk(request, database):
         pks = database.QueryTablesPrimaryKeys(table)
         list_pk = [pk["constraint_name"] for pk in pks.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_pk, safe=False)
 
@@ -95,8 +91,7 @@ def get_pk_columns(request, database):
         pk = database.QueryTablesPrimaryKeysColumns(table)
         list_pk = [row["column_name"] for row in pk.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_pk, safe=False)
 
@@ -110,8 +105,7 @@ def get_fks(request, database):
         fks = database.QueryTablesForeignKeys(table)
         list_fk = [fk["constraint_name"] for fk in fks.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_fk, safe=False)
 
@@ -127,8 +121,7 @@ def get_fks_columns(request, database):
         fks = database.QueryTablesForeignKeysColumns(fkey, table)
         fk = fks.Rows.pop() if fks.Rows else {}
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=fk)
 
@@ -142,8 +135,7 @@ def get_uniques(request, database):
         uniques = database.QueryTablesUniques(table)
         list_uniques = [unique["constraint_name"] for unique in uniques.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_uniques, safe=False)
 
@@ -159,8 +151,7 @@ def get_uniques_columns(request, database):
         uniques = database.QueryTablesUniquesColumns(v_unique, v_table)
         list_uniques = [unique["column_name"] for unique in uniques.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_uniques, safe=False)
 
@@ -182,8 +173,7 @@ def get_indexes(request, database):
             }
             list_indexes.append(index_data)
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_indexes, safe=False)
 
@@ -199,8 +189,7 @@ def get_indexes_columns(request, database):
         indexes = database.QueryTablesIndexesColumns(index, table)
         list_indexes = [index["column_name"] for index in indexes.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_indexes, safe=False)
 
@@ -212,8 +201,7 @@ def get_views(request, database):
         views = database.QueryViews()
         views_list = [view["table_name"] for view in views.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
     return JsonResponse(data=views_list, safe=False)
 
 
@@ -236,8 +224,7 @@ def get_views_columns(request, database):
 
             list_columns.append(v_column_data)
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_columns, safe=False)
 
@@ -251,8 +238,7 @@ def get_triggers(request, database):
         triggers = database.QueryTablesTriggers(table)
         list_triggers = [trigger["trigger_name"] for trigger in triggers.Rows]
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_triggers, safe=False)
 
@@ -330,7 +316,6 @@ def get_properties(request, database):
 
         ddl = database.GetDDL(data["table"], data["object"], data["type"])
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data={"properties": list_properties, "ddl": ddl})

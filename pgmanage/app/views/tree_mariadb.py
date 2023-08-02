@@ -59,8 +59,7 @@ def get_tree_info(request, database):
             "delete": database.TemplateDelete().v_text,
         }
     except Exception as exc:
-        data = {"password_timeout": False, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
     return JsonResponse(data=data)
 
 
@@ -84,8 +83,7 @@ def get_properties(request, database):
             data["schema"], data["table"], data["object"], data["type"]
         )
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data={"properties": list_properties, "ddl": ddl})
 
@@ -99,8 +97,7 @@ def get_tables(request, database):
         tables = database.QueryTables(False, schema)
         list_tables = [table["table_name"] for table in tables.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
     return JsonResponse(data=list_tables, safe=False)
 
 
@@ -124,8 +121,7 @@ def get_columns(request, database):
             }
             list_columns.append(column_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_columns, safe=False)
 
@@ -139,8 +135,7 @@ def get_pk(request, database):
         pks = database.QueryTablesPrimaryKeys(table, False, schema)
         list_pk = [pk["constraint_name"] for pk in pks.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_pk, safe=False)
 
@@ -157,8 +152,7 @@ def get_pk_columns(request, database):
         pks = database.QueryTablesPrimaryKeysColumns(v_pkey, v_table, False, v_schema)
         list_pk = [row["column_name"] for row in pks.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_pk, safe=False)
 
@@ -174,8 +168,7 @@ def get_fks(request, database):
         fks = database.QueryTablesForeignKeys(table, False, schema)
         list_fk = [fk["constraint_name"] for fk in fks.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_fk, safe=False)
 
@@ -192,8 +185,7 @@ def get_fks_columns(request, database):
         fks = database.QueryTablesForeignKeysColumns(fkey, table, False, schema)
         fk = fks.Rows.pop() if fks.Rows else {}
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=fk)
 
@@ -209,8 +201,7 @@ def get_uniques(request, database):
         uniques = database.QueryTablesUniques(table, False, schema)
         list_uniques = [unique["constraint_name"] for unique in uniques.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_uniques, safe=False)
 
@@ -227,8 +218,7 @@ def get_uniques_columns(request, database):
         uniques = database.QueryTablesUniquesColumns(unique, table, False, schema)
         list_uniques = [unique["column_name"] for unique in uniques.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_uniques, safe=False)
 
@@ -251,8 +241,7 @@ def get_indexes(request, database):
             }
             list_indexes.append(index_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_indexes, safe=False)
 
@@ -269,8 +258,7 @@ def get_indexes_columns(request, database):
         indexes = database.QueryTablesIndexesColumns(index, table, False, schema)
         list_indexes = [index["column_name"] for index in indexes.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_indexes, safe=False)
 
@@ -282,8 +270,7 @@ def get_databases(request, database):
         databases = database.QueryDatabases()
         list_databases = [db[0] for db in databases.Rows]
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_databases, safe=False)
 
@@ -299,8 +286,7 @@ def get_roles(request, database):
             role_data = {"name": role["role_name"]}
             list_roles.append(role_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_roles, safe=False)
 
@@ -318,8 +304,7 @@ def get_functions(request, database):
             function_data = {"name": function["name"], "id": function["id"]}
             list_functions.append(function_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_functions, safe=False)
 
@@ -339,8 +324,7 @@ def get_function_fields(request, database):
             field_data = {"name": field["name"], "type": field["type"]}
             list_fields.append(field_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_fields, safe=False)
 
@@ -353,8 +337,7 @@ def get_function_definition(request, database):
     try:
         function_definition = database.GetFunctionDefinition(function)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse({"data": function_definition})
 
@@ -372,8 +355,7 @@ def get_procedures(request, database):
             function_data = {"name": function["name"], "id": function["id"]}
             list_functions.append(function_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_functions, safe=False)
 
@@ -393,8 +375,7 @@ def get_procedure_fields(request, database):
             field_data = {"name": field["name"], "type": field["type"]}
             list_fields.append(field_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_fields, safe=False)
 
@@ -407,8 +388,7 @@ def get_procedure_definition(request, database):
     try:
         procedure_definition = database.GetProcedureDefinition(procedure)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse({"data": procedure_definition})
 
@@ -426,8 +406,7 @@ def get_sequences(request, database):
             sequence_data = {"sequence_name": sequence["sequence_name"]}
             list_sequences.append(sequence_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_sequences, safe=False)
 
@@ -447,8 +426,7 @@ def get_views(request, database):
             }
             list_tables.append(table_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_tables, safe=False)
 
@@ -471,8 +449,7 @@ def get_views_columns(request, database):
             }
             list_columns.append(column_data)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data=list_columns, safe=False)
 
@@ -487,8 +464,7 @@ def get_view_definition(request, database):
     try:
         view_definition = database.GetViewDefinition(view, schema)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse({"data": view_definition})
 
@@ -501,8 +477,7 @@ def kill_backend(request, database):
     try:
         database.Terminate(pid)
     except Exception as exc:
-        data = {"password_timeout": True, "data": str(exc)}
-        return JsonResponse(data=data, status=500)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return HttpResponse(status=204)
 

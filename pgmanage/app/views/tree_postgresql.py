@@ -764,11 +764,11 @@ def get_databases(request, database):
 
 @user_authenticated
 @database_required_new(check_timeout=True, open_connection=True)
-def get_tablespaces(request, v_database):
+def get_tablespaces(request, database):
     list_tablespaces = []
 
     try:
-        tablespaces = v_database.QueryTablespaces()
+        tablespaces = database.QueryTablespaces()
         for tablespace in tablespaces.Rows:
             tablespace_data = {
                 "name": tablespace["tablespace_name"],
@@ -1168,13 +1168,13 @@ def get_publications(request, database):
 
 @user_authenticated
 @database_required_new(check_timeout=True, open_connection=True)
-def get_publication_tables(request, v_database):
+def get_publication_tables(request, database):
     pub = request.data["pub"]
 
     list_tables = []
 
     try:
-        tables = v_database.QueryPublicationTables(pub)
+        tables = database.QueryPublicationTables(pub)
         for table in tables.Rows:
             table_data = {"name": table["table_name"]}
             list_tables.append(table_data)

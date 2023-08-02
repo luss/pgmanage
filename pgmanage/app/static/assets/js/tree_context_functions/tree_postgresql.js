@@ -1000,7 +1000,7 @@ function tabAdvancedObjectSearch(node) {
 /// <summary>
 /// Retrieving tree.
 /// </summary>
-function getTreePostgresql(p_div) {
+function getTreePostgresql(div) {
 
     var context_menu = {
         'cm_database': {
@@ -1047,7 +1047,7 @@ function getTreePostgresql(p_div) {
         },
     };
 
-    const div_tree = document.getElementById(p_div);
+    const div_tree = document.getElementById(div);
     div_tree.innerHTML =
       '<tree-postgresql :database-index="databaseIndex" :tab-id="tabId"></tree-postgresql>';
     const app = createApp({
@@ -1067,7 +1067,7 @@ function getTreePostgresql(p_div) {
         };
       },
     });
-    app.mount(`#${p_div}`);
+    app.mount(`#${div}`);
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
@@ -1086,86 +1086,7 @@ function getTreePostgresql(p_div) {
                 </span>
             </label>
 		</div>`;
-
-    // tree.beforeContextMenuEvent = function(node, callback) {
-
-    //     var v_elements = [];
-    //     //Hooks
-    //     if (v_connTabControl.tag.hooks.postgresqlTreeContextMenu.length>0) {
-    //       for (var i=0; i<v_connTabControl.tag.hooks.postgresqlTreeContextMenu.length; i++)
-    //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.postgresqlTreeContextMenu[i](node));
-    //     }
-
-    //     var v_customCallback = function() {
-    //       callback(v_elements);
-    //     }
-    //     checkCurrentDatabase(node, false, v_customCallback);
-    // }
 }
-
-function checkCurrentDatabase(p_node, p_complete_check, p_callback_continue,
-    p_callback_stop) {
-    if ((p_node.tag != null && p_node.tag.database != null && p_node.tag.database !=
-            v_connTabControl.selectedTab.tag.selectedDatabase) && (
-            p_complete_check || (!p_complete_check && p_node.tag.type !=
-                'database'))) {
-        let isAllowed  = checkBeforeChangeDatabase(p_callback_stop)
-        if (isAllowed){
-            execAjax('/change_active_database/',
-                JSON.stringify({
-                    "p_database_index": v_connTabControl
-                        .selectedTab.tag.selectedDatabaseIndex,
-                    "p_tab_id": v_connTabControl.selectedTab
-                        .id,
-                    "p_database": p_node.tag.database
-                }),
-                function(p_return) {
-
-                        v_connTabControl.selectedTab.tag.divDetails
-                            .innerHTML =
-                            '<i class="fas fa-server mr-1"></i>selected DB: <b>' + p_node
-                            .tag.database + '</b>';
-
-                        v_connTabControl.selectedTab.tag.selectedDatabaseNode
-                            .clearNodeBold();
-                        //searching new selected database node
-                        var v_list_database_nodes = p_node.tree
-                            .childNodes[0].childNodes[0].childNodes;
-                        for (var i = 0; i <
-                            v_list_database_nodes.length; i++
-                        ) {
-                            if (p_node.tag.database ==
-                                v_list_database_nodes[i].text
-                                .replace(/"/g, '')) {
-                                v_list_database_nodes[i].setNodeBold();
-                                v_connTabControl.selectedTab
-                                    .tag.selectedDatabase =
-                                    p_node.tag.database;
-                                v_connTabControl.selectedTab
-                                    .tag.selectedDatabaseNode =
-                                    v_list_database_nodes[i];
-
-                                if (v_connTabControl.selectedTab.tag.selectedTitle!='')
-                                        v_connTabControl.selectedTab.tag.tabTitle.innerHTML = '<img src="' + v_url_folder + '/static/assets/images/' + v_connTabControl.selectedTab.tag.selectedDBMS + '_medium.png"/> ' + v_connTabControl.selectedTab.tag.selectedTitle + ' - ' + v_connTabControl.selectedTab.tag.selectedDatabase;
-                                    else
-                                        v_connTabControl.selectedTab.tag.tabTitle.innerHTML = '<img src="' + v_url_folder + '/static/assets/images/' + v_connTabControl.selectedTab.tag.selectedDBMS + '_medium.png"/> ' + v_connTabControl.selectedTab.tag.selectedDatabase;
-                            }
-
-                        }
-                        if (p_callback_continue)
-                            p_callback_continue();
-
-                },
-                function(p_return) {
-                    nodeOpenErrorPostgresql(p_return, node);
-                },
-                'box');
-        }
-    } else
-        p_callback_continue();
-}
-
-
 
 function afterNodeOpenedCallbackPostgreSQL(node) {
   //Hooks
@@ -1366,62 +1287,6 @@ function TemplateCallProcedurePostgresql(p_schema, p_procedure, p_procedureid) {
         },
         'box',
         true);
-}
-
-function nodeOpenErrorPostgresql(p_return, p_node) {
-    if (p_return.v_data.password_timeout) {
-        p_node.collapseNode();
-        showPasswordPrompt(
-            v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            function() {
-                p_node.expandNode();
-            },
-            null,
-            p_return.v_data.message
-        );
-    } else {
-
-        if (p_node.childNodes.length > 0)
-            p_node.removeChildNodes();
-
-        v_node = p_node.createChildNode(
-            "Error - <a class='a_link' onclick='showError(&quot;" +
-            p_return.v_data.message.replace(/\n/g, "<br/>").replace(/'/g, '') +
-            "&quot;)'>View Detail</a>", false,
-            'fas fa-times node-error', {
-                type: 'error',
-                message: p_return.v_data
-            }, null);
-    }
-
-}
-
-function nodeOpenErrorPostgresqlNew(error_response, node) {
-    if (error_response.response.data?.password_timeout) {
-        node.collapseNode();
-        showPasswordPrompt(
-            v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            function() {
-                node.expandNode();
-            },
-            null,
-            error_response.response.data.data
-        );
-    } else {
-
-        if (node.childNodes.length > 0)
-            node.removeChildNodes();
-
-        node.createChildNode(
-            "Error - <a class='a_link' onclick='showError(&quot;" +
-            error_response.response.data.data.replace(/\n/g, "<br/>").replace(/"/g, '') +
-            "&quot;)'>View Detail</a>", false,
-            'fas fa-times node-error', {
-                type: 'error',
-                message: error_response.response.data.data
-            }, null);
-    }
-
 }
 
 function getMajorVersionPostgresql(p_version) {

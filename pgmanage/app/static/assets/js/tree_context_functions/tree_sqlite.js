@@ -29,12 +29,12 @@ SOFTWARE.
 /// <summary>
 /// Retrieving tree.
 /// </summary>
-function getTreeSqlite(p_div) {
-    const div_tree = document.getElementById(p_div);
-    div_tree.innerHTML ='<sqlite-tree :database-index="databaseIndex" :tab-id="tabId"></sqlite-tree>'
+function getTreeSqlite(div) {
+    const div_tree = document.getElementById(div);
+    div_tree.innerHTML ='<tree-sqlite :database-index="databaseIndex" :tab-id="tabId"></tree-sqlite>'
     const app = createApp({
         components: {
-            "sqlite-tree": Vue.defineAsyncComponent(() =>
+            "tree-sqlite": Vue.defineAsyncComponent(() =>
               loadModule(
                 "../static/assets/js/vuejs/components/TreeSqlite.vue",
                 options
@@ -48,7 +48,7 @@ function getTreeSqlite(p_div) {
             };
           },
     })
-    app.mount(`#${p_div}`)
+    app.mount(`#${div}`)
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app

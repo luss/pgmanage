@@ -29,7 +29,7 @@ SOFTWARE.
 /// <summary>
 /// Retrieving tree.
 /// </summary>
-function getTreeOracle(p_div) {
+function getTreeOracle(div) {
 
     var context_menu = {
         'cm_tablespaces': {
@@ -489,7 +489,7 @@ function getTreeOracle(p_div) {
             }]
         },*/
     };
-    const div_tree = document.getElementById(p_div);
+    const div_tree = document.getElementById(div);
     div_tree.innerHTML =
       '<tree-oracle :database-index="databaseIndex" :tab-id="tabId"></tree-oracle>';
     const app = createApp({
@@ -509,7 +509,7 @@ function getTreeOracle(p_div) {
         };
       },
     });
-    app.mount(`#${p_div}`);
+    app.mount(`#${div}`);
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
@@ -548,102 +548,6 @@ function getTreeOracle(p_div) {
 
 }
 
-/// <summary>
-/// Retrieving properties.
-/// </summary>
-/// <param name="node">Node object.</param>
-function getPropertiesOracle(node) {
-    if (node.tag != undefined)
-        if (node.tag.type == 'role') {
-          getProperties('/get_properties_oracle/',
-            {
-              p_schema: null,
-              p_table: null,
-              p_object: node.text,
-              p_type: node.tag.type
-            });
-        } else if (node.tag.type == 'tablespace') {
-          getProperties('/get_properties_oracle/',
-            {
-              p_schema: null,
-              p_table: null,
-              p_object: node.text,
-              p_type: node.tag.type
-            });
-        } else if (node.tag.type == 'table') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'sequence') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'view') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'mview') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'function') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'procedure') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'trigger') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: node.parent.parent.text,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else if (node.tag.type == 'triggerfunction') {
-        getProperties('/get_properties_oracle/',
-          {
-            p_schema: null,
-            p_table: null,
-            p_object: node.text,
-            p_type: node.tag.type
-          });
-      } else {
-        clearProperties();
-      }
-
-      //Hooks
-      if (v_connTabControl.tag.hooks.oracleTreeNodeClick.length>0) {
-        for (var i=0; i<v_connTabControl.tag.hooks.oracleTreeNodeClick.length; i++)
-          v_connTabControl.tag.hooks.oracleTreeNodeClick[i](node);
-      }
-}
 
 /// <summary>
 /// Refreshing tree node.
@@ -1442,46 +1346,38 @@ function TemplateUpdateOracle(p_schema, p_table) {
     return tmp.join('.')
 }*/
 
-function oracleTerminateBackendConfirm(p_pid) {
-    execAjax('/kill_backend_oracle/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-"p_tab_id": v_connTabControl.selectedTab.id,
-            "p_pid": p_pid
-        }),
-        function(p_return) {
-
-            refreshMonitoring();
-
-        },
-        function(p_return) {
-            if (p_return.v_data.password_timeout) {
-                showPasswordPrompt(
-                    v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-                    function() {
-                        oracleTerminateBackendConfirm(p_pid);
-                    },
-                    null,
-                    p_return.v_data.message
-                );
-            } else {
-                showError(p_return.v_data);
-            }
-        },
-        'box',
-        true);
-
+function oracleTerminateBackendConfirm(pid) {
+    axios.post(
+        "/kill_backend_oracle/", {
+            database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+            tab_id: v_connTabControl.selectedTab.id,
+            pid: pid,
+        }
+    )
+    .then((resp) => {
+        refreshMonitoring();
+    })
+    .catch((error) => {
+        if (error.response.data?.password_timeout) {
+            showPasswordPrompt(
+              v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+              function () {
+                oracleTerminateBackendConfirm(pid);
+              },
+              null,
+              error.response.data.data
+            );
+          } else {
+            showError(error.response.data.data);
+          }
+    })
 }
 
-function oracleTerminateBackend(p_row) {
-
-    var v_pid = p_row[1] + ',' + p_row[2];
-
-    showConfirm('Are you sure you want to terminate session ' + v_pid + '?',
+function oracleTerminateBackend(row) {
+    let pid = `${row[1]},${row[2]}`;
+    createMessageModal(`Are you sure you want to terminate session ${pid}?`,
         function() {
-
-            oracleTerminateBackendConfirm(v_pid);
-
+            oracleTerminateBackendConfirm(pid);
         });
 
 }

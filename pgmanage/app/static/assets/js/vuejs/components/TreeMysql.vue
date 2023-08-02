@@ -660,7 +660,7 @@ export default {
     getProperties(node) {
       const handledTypes = ["table", "view", "function", "procedure"];
       if (handledTypes.includes(node.data.type)) {
-        getPropertiesNew("/get_properties_mysql/", {
+        getProperties("/get_properties_mysql/", {
           schema: this.getParentNodeDeep(node, 2).title,
           table: null,
           object: node.title,

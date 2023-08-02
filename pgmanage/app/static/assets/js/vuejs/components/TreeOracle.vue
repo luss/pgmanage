@@ -671,7 +671,6 @@ export default {
   methods: {
     refreshTree(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
-
       if (node.data.type == "server") {
         this.getTreeDetailsOracle(node);
       } else if (node.data.type == "database") {
@@ -738,7 +737,7 @@ export default {
       ];
 
       if (handledTypes.includes(node.data.type)) {
-        getPropertiesNew("/get_properties_oracle/", {
+        getProperties("/get_properties_oracle/", {
           table: table,
           object: node.title,
           type: node.data.type,

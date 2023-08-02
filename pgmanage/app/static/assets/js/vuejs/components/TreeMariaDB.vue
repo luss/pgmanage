@@ -714,7 +714,7 @@ export default {
         "procedure",
       ];
       if (handledTypes.includes(node.data.type)) {
-        getPropertiesNew("/get_properties_mariadb/", {
+        getProperties("/get_properties_mariadb/", {
           schema: this.getParentNodeDeep(node, 2).title,
           table: null,
           object: node.title,

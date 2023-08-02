@@ -29,47 +29,7 @@ SOFTWARE.
 /// <summary>
 /// Retrieving Properties.
 /// </summary>
-function getProperties(p_view, p_data) {
-
-	var v_tab_tag = v_connTabControl.selectedTab.tag;
-	$(v_tab_tag.divLoading).fadeIn(100);
-
-	execAjax(p_view,
-      JSON.stringify({"p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-											"p_tab_id": v_connTabControl.selectedTab.id,
-                      "p_data": p_data}),
-			function(p_return) {
-
-        v_tab_tag.gridProperties.loadData(p_return.v_data.properties);
-				v_tab_tag.ddlEditor.setValue(p_return.v_data.ddl);
-				v_tab_tag.ddlEditor.clearSelection();
-				v_tab_tag.ddlEditor.gotoLine(0, 0, true);
-				$(v_tab_tag.divLoading).fadeOut(100);
-        v_tab_tag.gridPropertiesCleared = false;
-
-			},
-			function(p_return) {
-				$(v_tab_tag.divLoading).fadeOut(100);
-				if (p_return.v_data.password_timeout) {
-					showPasswordPrompt(
-						v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-						function() {
-							getProperties(p_view, p_data);
-						},
-						null,
-						p_return.v_data.message
-					);
-				}
-				else {
-					showError(p_return.v_data);
-				}
-			},
-			'box',
-			false);
-
-}
-
-function getPropertiesNew(view, data) {
+function getProperties(view, data) {
   let tab_tag = v_connTabControl.selectedTab.tag;
   $(tab_tag.divLoading).fadeIn(100);
   axios
@@ -110,8 +70,8 @@ function clearProperties() {
     tab_tag.gridProperties.loadData([]);
     tab_tag.gridPropertiesCleared = true;
 
-		tab_tag.ddlEditor.setValue('');
-		tab_tag.ddlEditor.clearSelection();
-		tab_tag.ddlEditor.gotoLine(0, 0, true);
+    tab_tag.ddlEditor.setValue("");
+    tab_tag.ddlEditor.clearSelection();
+    tab_tag.ddlEditor.gotoLine(0, 0, true);
   }
 }
