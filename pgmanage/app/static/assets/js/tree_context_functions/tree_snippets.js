@@ -27,532 +27,211 @@ SOFTWARE.
 */
 
 function getAllSnippets() {
-  execAjax('/get_all_snippets/',
-			JSON.stringify({}),
-			function(p_return) {
-
-        v_connTabControl.tag.globalSnippets = p_return;
-
-			},
-			null,
-			'box',
-			false);
+  axios.get("/get_all_snippets/").then((resp) => {
+    v_connTabControl.tag.globalSnippets = resp.data;
+  })
+  .catch((error) => {
+    console.log(error)
+  })
 }
 
 /// <summary>
 /// Retrieving tree.
 /// </summary>
-function getTreeSnippets(p_div) {
-
-  var context_menu = {
-    'cm_node_root' : {
-      elements : [
-        {
-          text : 'Refresh',
-          icon: 'fas cm-all fa-sync-alt',
-          action : function(node) {
-            if (node.childNodes==0)
-              refreshTreeSnippets(node);
-            else {
-              node.collapseNode();
-              node.expandNode();
-            }
-          }
-        },
-        {
-          text : 'New Folder',
-          icon: 'fas cm-all fa-folder-plus',
-          action : function(node) {
-            newNodeSnippet(node,'node');
-          }
-        },
-        {
-          text : 'New Snippet',
-          icon: 'fas cm-all fa-file-circle-plus',
-          action : function(node) {
-            newNodeSnippet(node,'snippet');
-          }
-        }
-      ]
+function getTreeSnippets(div) {
+  const div_tree = document.getElementById(div);
+  div_tree.innerHTML =
+    '<tree-snippets :snippet-tag="snippetTag"></tree-snippets>';
+  const app = createApp({
+    components: {
+      "tree-snippets": Vue.defineAsyncComponent(() =>
+        loadModule(
+          "../static/assets/js/vuejs/components/TreeSnippets.vue",
+          options
+        )
+      ),
     },
-    'cm_node' : {
-      elements : [
-        {
-          text : 'Refresh',
-          icon: 'fas cm-all fa-sync-alt',
-          action : function(node) {
-            if (node.childNodes==0)
-              refreshTreeSnippets(node);
-            else {
-              node.collapseNode();
-              node.expandNode();
-            }
-          }
-        },
-        {
-          text : 'New Folder',
-          icon: 'fas cm-all fa-folder-plus',
-          action : function(node) {
-            newNodeSnippet(node,'node');
-          }
-        },
-        {
-          text : 'New Snippet',
-          icon: 'fas cm-all fa-file-circle-plus',
-          action : function(node) {
-            newNodeSnippet(node,'snippet');
-          }
-        },
-        {
-          text : 'Rename Folder',
-          icon: 'fas cm-all fa-i-cursor',
-          action : function(node) {
-            renameNodeSnippet(node);
-          }
-        },
-        {
-          text : 'Delete Folder',
-          icon: 'fas cm-all fa-times',
-          action : function(node) {
-            deleteNodeSnippet(node);
-          }
-        }
-      ]
+    data() {
+      return {
+        snippetTag: v_connTabControl.snippet_tag,
+      };
     },
-    'cm_snippet' : {
-      elements : [
-        {
-          text : 'Edit',
-          icon: 'fas cm-all fa-edit',
-          action : function(node) {
-            startEditSnippetText(node);
-          }
-        },
-        {
-          text : 'Rename',
-          icon: 'fas cm-all fa-i-cursor',
-          action : function(node) {
-            renameNodeSnippet(node);
-          }
-        },
-        {
-          text : 'Delete',
-          icon: 'fas cm-all fa-times',
-          action : function(node) {
-            deleteNodeSnippet(node);
-          }
-        }
-      ]
-    }
-  };
-
-  var tree = createTree(p_div,'#fcfdfd',context_menu);
-  tree.tag = {
-  }
-
-
-  tree.nodeAfterOpenEvent = function(node) {
-    refreshTreeSnippets(node);
-  }
-
-  var node1 = tree.createNode('Snippets',false,'fas node-all fa-list-alt node-snippet-list',null,{ type: 'node', id:null},'cm_node_root');
-  node1.createChildNode('',true,'node-spin',null,null);
-
-  tree.drawTree();
-  v_connTabControl.snippet_tree = tree;
-
-}
-
-/// <summary>
-/// Refreshing tree node.
-/// </summary>
-/// <param name="node">Node object.</param>
-function refreshTreeSnippets(node) {
-	if (node.tag!=undefined)
-    if (node.tag.type=='node') {
-      getChildSnippetNodes(node);
-    }
-}
-
-/// <summary>
-/// Retrieving snippet nodes.
-/// </summary>
-/// <param name="node">Node object.</param>
-function getChildSnippetNodes(node) {
-
-	node.removeChildNodes();
-	node.createChildNode('',false,'node-spin',null,null);
-
-
-	execAjax('/get_node_children/',
-			JSON.stringify({"p_sn_id_parent": node.tag.id}),
-			function(p_return) {
-
-				if (node.childNodes.length > 0)
-					node.removeChildNodes();
-
-				for (i=0; i<p_return.v_data.v_list_nodes.length; i++) {
-          var v_node = node.createChildNode(p_return.v_data.v_list_nodes[i].v_name,false,'fas node-all fa-folder node-snippet-folder',{ type: 'node', id: p_return.v_data.v_list_nodes[i].v_id, id_parent: node.tag.id, name: p_return.v_data.v_list_nodes[i].v_name},'cm_node');
-          v_node.createChildNode('',true,'node-spin',null,null);
-        }
-
-        for (i=0; i<p_return.v_data.v_list_texts.length; i++) {
-          var v_node = node.createChildNode(p_return.v_data.v_list_texts[i].v_name,false,'far node-all fa-file-code node-snippet-snippet',{ type: 'snippet', id: p_return.v_data.v_list_texts[i].v_id, id_parent: node.tag.id, name: p_return.v_data.v_list_texts[i].v_name},'cm_snippet');
-          v_node.doubleClickNodeEvent = function(p_node) {
-            startEditSnippetText(p_node);
-          }
-        }
-
-			},
-			null,
-			'box',
-			false);
-}
-
-/// <summary>
-/// Removes tab.
-/// </summary>
-/// <param name="p_tab">Tab object.</param>
-function closeSnippetTab(p_tab) {
-
-  p_tab.removeTab();
-  if (p_tab.tag.ht!=null) {
-  	p_tab.tag.ht.destroy();
-  	p_tab.tag.div_result.innerHTML = '';
-  }
-
-  if (p_tab.tag.editor!=null)
-  	p_tab.tag.editor.destroy();
-
+  });
+  app.mount(`#${div}`);
 }
 
 function saveSnippetText(event) {
-
-  var v_callback = function(p_return_object) {
-    v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject = p_return_object;
-    v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_title_span.innerHTML = p_return_object.name;
-  }
-
-  //var v_snippet_tab_list = v_connTabControl.snippet_tag.tabControl.tabList;
-
-  if (v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject.id != null) {
-    var v_save_object = {
-      v_id: v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject.id,
-      v_name : v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject.name,
-      v_parent : v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject.parent
-    }
+  let callback = function (return_object) {
+    v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject =
+      return_object;
+    v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_title_span.innerHTML =
+      return_object.name;
+  };
+  let snippet_object =
+    v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject;
+  if (snippet_object.id !== null) {
+    let save_object = {
+      id: snippet_object.id,
+      name: snippet_object.name,
+      parent: snippet_object.parent,
+    };
     saveSnippetTextConfirm(
-      v_save_object,
+      save_object,
       v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor.getValue(),
-      v_callback
-    )
-  }
-  else {
-    customMenu(
-      {
-        x:event.clientX+5,
-        y:event.clientY+5
-      },
-      buildSnippetContextMenuObjects('save',
-                                     v_connTabControl.tag.globalSnippets,
-                                     v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor,
-                                     v_callback
-                                   ),
-      null
+      callback
     );
-
-
+  } else {
+    window["vue3-context-menu"].default.showContextMenu({
+      theme: 'pgmanage',
+      x: event.x,
+      y: event.y,
+      zIndex: 1000,
+      minWidth: 230,
+      items: buildSnippetContextMenuObjects(
+        "save",
+        v_connTabControl.tag.globalSnippets,
+        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor,
+        callback
+      )
+    })
   }
 }
 
-function snippetTreeFindNode(p_id, p_current_node) {
-  var v_node = null;
+function snippetTreeFindNode(id, current_node) {
+  let node = null;
 
-  for (var i=0; i < p_current_node.childNodes.length; i++) {
-    if (p_current_node.childNodes[i].tag.id == p_id)
-      return p_current_node.childNodes[i];
-    else {
-      v_node = snippetTreeFindNode(p_id, p_current_node.childNodes[i]);
-      if (v_node!=null)
-        return v_node;
+  current_node.children.forEach((el) => {
+    if (el.data.id === id) {
+      return el;
+    } else {
+      node = snippetTreeFindNode(id, el);
+      if (node !== null) return node;
     }
-  }
-  return v_node;
+  });
+
+  return node;
 }
 
-function saveSnippetTextConfirm(p_save_object, p_text, p_callback) {
-  execAjax(
-    '/save_snippet_text/',
-    JSON.stringify({"p_id": p_save_object.v_id,
-                   "p_parent": p_save_object.v_parent,
-                   "p_name": p_save_object.v_name,
-                   "p_text": p_text
-                 }),
-    function(p_return) {
-      var v_node = null;
-      if (p_return.v_data.parent==null) {
-        v_node = v_connTabControl.snippet_tree.childNodes[0];
+function saveSnippetTextConfirm(save_object, text, callback) {
+  axios
+    .post("/save_snippet_text/", {
+      id: save_object.id,
+      parent_id: save_object.parent,
+      name: save_object.name,
+      text: text,
+    })
+    .then((resp) => {
+      let node = null;
+      if (resp.data.parent === null) {
+        node = v_connTabControl.snippet_tree.getRootNode();
+      } else {
+        node = snippetTreeFindNode(
+          resp.data.parent,
+          v_connTabControl.snippet_tree.getRootNode()
+        );
       }
-      else {
-        v_node = snippetTreeFindNode(p_return.v_data.parent, v_connTabControl.snippet_tree.childNodes[0]);
-      }
-
-      if (v_node!=null) {
-        if (v_node.childNodes==0)
-          refreshTreeSnippets(v_node);
-        else {
-          v_node.collapseNode();
-          v_node.expandNode();
-        }
+      if (node != null) {
+        v_connTabControl.snippet_tree.refreshTree(node);
       }
 
-      if (p_callback!=null)
-        p_callback(p_return.v_data);
+      if (callback != null) {
+        callback(resp.data);
+      }
 
-      showAlert('Snippet saved.');
+      showAlert("Snippet saved.");
 
       getAllSnippets();
-    },
-    null,
-    'box'
-  );
+    });
 }
 
-function newNodeSnippet(p_node,p_mode) {
-  var v_placeholder = 'Snippet Name';
-  if (p_mode=='node')
-    v_placeholder = 'Node Name';
-
-  showConfirm(
-    '<input id="element_name" class="form-control" placeholder="' + v_placeholder + '" style="width: 100%;">',
-    function() {
-           execAjax('/new_node_snippet/',
-         			JSON.stringify({"p_sn_id_parent": p_node.tag.id,
-                              "p_mode": p_mode,
-                              "p_name": document.getElementById('element_name').value}),
-         			function(p_return) {
-                 refreshTreeSnippets(p_node);
-
-                 getAllSnippets();
-         			},
-         			null,
-         			'box');
-
-    },
-    null,
-    function() {
-      var v_input = document.getElementById('element_name');
-      v_input.focus();
-      v_input.selectionStart = 0;
-      v_input.selectionEnd = 10000;
-    }
-  );
-
-  var v_input = document.getElementById('element_name');
-	v_input.onkeydown = function() {
-		if (event.keyCode == 13)
-			document.getElementById('modal_message_ok').click();
-		else if (event.keyCode == 27)
-			document.getElementById('modal_message_cancel').click();
-	}
+function executeSnippet(id, editor) {
+  axios
+    .post("/get_snippet_text/", {
+      snippet_id: id,
+    })
+    .then((resp) => {
+      editor.insert(resp.data.data);
+      editor.clearSelection();
+    });
 }
 
-function renameNodeSnippet(p_node) {
+function buildSnippetContextMenuObjects(mode, object, editor, callback) {
+  let elements = [];
 
-  showConfirm(
-    '<input id="element_name" class="form-control" value="' + p_node.text + '" style="width: 100%;">',
-    function() {
-      execAjax('/rename_node_snippet/',
-      	JSON.stringify({"p_id": p_node.tag.id,
-                      "p_mode": p_node.tag.type,
-                      "p_name": document.getElementById('element_name').value}),
-      	function(p_return) {
-         refreshTreeSnippets(p_node.parent);
-
-         getAllSnippets();
-      	},
-      	null,
-      	'box'
-      );
-    },
-    null,
-    function() {
-      var v_input = document.getElementById('element_name');
-      v_input.focus();
-      v_input.selectionStart = 0;
-      v_input.selectionEnd = 10000;
-    }
-  );
-
-  var v_input = document.getElementById('element_name');
-	v_input.onkeydown = function() {
-		if (event.keyCode == 13)
-			document.getElementById('modal_message_ok').click();
-		else if (event.keyCode == 27)
-			document.getElementById('modal_message_cancel').click();
-	}
-}
-
-function deleteNodeSnippet(p_node) {
-
-  showConfirm(
-    'Are you sure you want to delete this ' + p_node.tag.type + '?',
-    function() {
-      execAjax('/delete_node_snippet/',
-    		JSON.stringify({"p_id": p_node.tag.id,
-                      "p_mode": p_node.tag.type}),
-    		function(p_return) {
-         refreshTreeSnippets(p_node.parent);
-
-         getAllSnippets();
-    		},
-    		null,
-    		'box'
-      );
-    },
-    null,
-    function() {
-      var v_input = document.getElementById('modal_message_ok');
-      v_input.focus();
-    }
-  );
-}
-
-function startEditSnippetText(p_node) {
-  // Checking if there is a tab for this snippet.
-  var v_snippet_tab_list = v_connTabControl.snippet_tag.tabControl.tabList;
-  var v_avaiable_tab = false;
-  for (let i = 0; i < v_snippet_tab_list.length; i++) {
-    var v_snippet_tab_snippet_object = v_snippet_tab_list[i].tag.snippetObject;
-    if (typeof v_snippet_tab_snippet_object === 'object') {
-      if (v_snippet_tab_snippet_object.id === p_node.tag.id) {
-        v_avaiable_tab = v_snippet_tab_list[i];
-      }
-    }
+  if (mode == "save") {
+    elements.push({
+      label: "New Snippet",
+      icon: "fas cm-all fa-save",
+      onClick: function () {
+        showConfirm(
+          '<input id="element_name" class="form-control" placeholder="Snippet Name" style="width: 100%;">',
+          function () {
+            saveSnippetTextConfirm(
+              {
+                id: null,
+                name: document.getElementById("element_name").value,
+                parent: object.id,
+              },
+              editor.getValue(),
+              callback
+            );
+          },
+          null,
+          function () {
+            let input = document.getElementById("element_name");
+            input.focus();
+            input.selectionStart = 0;
+            input.selectionEnd = 10000;
+          }
+        );
+      },
+    });
   }
 
-  if (v_avaiable_tab) {
-    v_connTabControl.snippet_tag.tabControl.selectTab(v_avaiable_tab);
-  }
-  else {
-    v_connTabControl.tag.createSnippetTextTab(p_node.tag);
-  }
+  for (let i = 0; i < object.files.length; i++)
+    (function (i) {
+      let file = object.files[i];
 
-  execAjax('/get_snippet_text/',
-			JSON.stringify({"p_st_id": p_node.tag.id}),
-			function(p_return) {
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor.setValue(p_return.v_data);
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor.clearSelection();
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor.gotoLine(0, 0, true);
-
-			},
-			null,
-			'box');
-}
-
-function executeSnippet(p_id,p_editor) {
-	execAjax('/get_snippet_text/',
-			JSON.stringify({"p_st_id": p_id}),
-			function(p_return) {
-				p_editor.insert(p_return.v_data);
-				p_editor.clearSelection();
-			},
-			null,
-			'box');
-}
-
-function buildSnippetContextMenuObjects(p_mode, p_object, p_editor, p_callback) {
-
-  var v_elements = [];
-
-  if (p_mode == 'save') {
-    v_elements.push(
-      {
-        text: 'New Snippet',
-        icon: 'fas cm-all fa-save',
-        action: function() {
-          showConfirm(
-            '<input id="element_name" class="form-control" placeholder="Snippet Name" style="width: 100%;">',
-            function() {
-              saveSnippetTextConfirm(
-                {
-                  v_id: null,
-                  v_name : document.getElementById('element_name').value,
-                  v_parent: p_object.id
-                },
-                p_editor.getValue(),
-                p_callback
-              );
-            },
-            null,
-            function() {
-              var v_input = document.getElementById('element_name');
-              v_input.focus();
-              v_input.selectionStart = 0;
-              v_input.selectionEnd = 10000;
-            }
-          );
-          var v_input = document.getElementById('element_name');
-        	v_input.onkeydown = function() {
-        		if (event.keyCode == 13)
-        			document.getElementById('modal_message_ok').click();
-        		else if (event.keyCode == 27)
-        			document.getElementById('modal_message_cancel').click();
-        	}
-        }
-      }
-    );
-  }
-
-  for (var i=0; i<p_object.files.length; i++) (function(i){
-    var v_file = p_object.files[i];
-
-    if (p_mode == 'save')
-      v_elements.push(
-        {
-          text: '<b>OVERWRITE</b> ' + v_file.name,
-          icon: 'fas cm-all fa-align-left',
-          action: function() {
-            showConfirm("<b>WARNING</b>, are you sure you want to overwrite file '" + v_file.name + "'?",
-	            function() {
+      if (mode == "save")
+        elements.push({
+          label: `Overwrite ${file.name}`,
+          icon: "fas cm-all fa-align-left",
+          onClick: function () {
+            showConfirm(
+              `<b>WARNING</b>, are you sure you want to overwrite file ${file.name}?`,
+              function () {
                 saveSnippetTextConfirm(
                   {
-                    v_id: v_file.id,
-                    v_name : null,
-                    v_parent: null
+                    id: file.id,
+                    name: null,
+                    parent: null,
                   },
-                  p_editor.getValue(),
-                  p_callback
+                  editor.getValue(),
+                  callback
                 );
-	            }
+              }
             );
-          }
-        }
-      );
-    else
-      v_elements.push(
-        {
-          text: v_file.name,
-          icon: 'fas cm-all fa-align-left',
-          action: function() {
-              executeSnippet(v_file.id, p_editor)
-          }
-        }
-      );
-  })(i);
+          },
+        });
+      else
+        elements.push({
+          label: file.name,
+          icon: "fas cm-all fa-align-left",
+          onClick: function () {
+            executeSnippet(file.id, editor);
+          },
+        });
+    })(i);
 
-  for (var i=0; i<p_object.folders.length; i++) (function(i){
-    var v_folder = p_object.folders[i];
-    v_elements.push(
-      {
-        text: v_folder.name,
-        icon: 'fas cm-all fa-folder',
-        submenu: {
-          elements: buildSnippetContextMenuObjects(p_mode, v_folder, p_editor, p_callback)
-        }
-      }
-    );
-  })(i);
+  for (let i = 0; i < object.folders.length; i++)
+    (function (i) {
+      let folder = object.folders[i];
+      elements.push({
+        label: folder.name,
+        icon: "fas cm-all fa-folder",
+        children: buildSnippetContextMenuObjects(mode, folder, editor, callback),
+      });
+    })(i);
 
-  return v_elements;
+  return elements;
 }

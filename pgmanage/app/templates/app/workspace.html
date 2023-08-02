@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/omnidb.min.css?{{pgmanage_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/modal.min.css?{{pgmanage_short_version}}">
+    <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/vue-power-tree/dist/style.css">
     <title>PgManage</title>
   </head>
   <body>
@@ -546,7 +547,6 @@
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/moment/moment.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/daterangepicker/daterangepicker.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_snippets.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_monitor.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_postgresql.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_oracle.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_mariadb.js?v{{pgmanage_short_version}}"></script>
@@ -652,12 +652,12 @@
         return response;
       }, error => {
         if (error.response.status === 401) {
-          debugger
           showAlert('User not authenticated, please reload the page.');
         }
         return Promise.reject(error);
       });
     </script>
+    <script src="{{url_folder}}/static/assets/lib/mitt@3.0.1/dist/mitt.umd.js"></script>
     <script src="{{url_folder}}/static/assets/js/vuejs/components/connections_modal.js"></script>
     <script src="{{url_folder}}/static/assets/js/vuejs/components/settings_modal.js"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/postgresql_utility_tab.js"></script>
@@ -669,5 +669,6 @@
     <script src="{{url_folder}}/static/assets/lib/mustache/mustache.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/@vue-js-cron/core/dist/core.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/@vue-js-cron/light/dist/light.min.js"></script>
+    <script src="{{url_folder}}/static/assets/lib/vue-power-tree/dist/vue-power-tree.umd.js"></script>
   </body>
 </html>

@@ -286,12 +286,10 @@ base_urlpatterns = [
     re_path(r'^get_triggers_sqlite/', views.tree_sqlite.get_triggers, name='get_triggers'),
     re_path(r'^get_views_sqlite/', views.tree_sqlite.get_views, name='get_views'),
     re_path(r'^get_views_columns_sqlite/', views.tree_sqlite.get_views_columns, name='get_views_columns'),
-    re_path(r'^get_view_definition_sqlite/', views.tree_sqlite.get_view_definition, name='get_view_definition'),
     re_path(r'^get_properties_sqlite/', views.tree_sqlite.get_properties, name='get_properties'),
     re_path(r'^template_select_sqlite/', views.tree_sqlite.template_select, name='template_select'),
     re_path(r'^template_insert_sqlite/', views.tree_sqlite.template_insert, name='template_insert'),
     re_path(r'^template_update_sqlite/', views.tree_sqlite.template_update, name='template_update'),
-    re_path(r'^get_sqlite_version/', views.tree_sqlite.get_version, name='get_version'),
 
     #MONITORING SYSTEM
     re_path(r'^test_monitor_script/', views.monitor_dashboard.test_monitor_script, name='test_monitor_script'),
