@@ -25,9 +25,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { getTreeSnippets } from '../tree_context_functions/tree_snippets'
+import { resizeSnippetPanel } from '../workspace'
 
 var toggleSnippetPanel = function(p_set_state = false) {
-  v_element = $('#' + v_connTabControl.snippet_tag.divPanel.getAttribute('id'));
+  let v_element = $('#' + v_connTabControl.snippet_tag.divPanel.getAttribute('id'));
   var v_snippet_tag = v_connTabControl.snippet_tag;
 
   let v_set_state = p_set_state;
@@ -64,7 +66,7 @@ var v_createSnippetPanelFunction = function(p_index) {
   var v_html =
   "<div id='" + v_tab.id + "_panel_snippet' class='omnidb__panel omnidb__panel--snippet'>" +
 
-    "<button type='button' onclick='toggleSnippetPanel()' class='px-4 btn btn-secondary omnidb__panel__toggler'><i class='fas fa-arrows-alt-v'></i></button>" +
+    "<button type='button' class='px-4 btn btn-secondary omnidb__panel__toggler'><i class='fas fa-arrows-alt-v'></i></button>" +
 
     "<div class='container-fluid h-100' style='position: relative;'>" +
       "<div id='" + v_tab.id + "_snippet_div_layout_grid' class='row h-100'>" +
@@ -91,6 +93,9 @@ var v_createSnippetPanelFunction = function(p_index) {
   v_connTabControl.snippet_div.id = v_tab.id + '_snippet';
   v_connTabControl.snippet_div.innerHTML = v_html;
   document.getElementById(v_connTabControl.id).append(v_connTabControl.snippet_div);
+
+  let toggle_button = document.querySelector(`#${v_tab.id}_panel_snippet > button`)
+  toggle_button.onclick = function() { toggleSnippetPanel() }
 
   var v_currTabControl = createTabControl({
     p_div: v_tab.id + '_snippet_tabs',
@@ -145,3 +150,5 @@ var v_createSnippetPanelFunction = function(p_index) {
   //},10);
 
 }
+
+export { v_createSnippetPanelFunction }

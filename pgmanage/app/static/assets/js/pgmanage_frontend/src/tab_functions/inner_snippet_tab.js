@@ -25,7 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { refreshHeights } from '../workspace'
+import { refreshHeights , indentSQL, removeTab} from '../workspace'
+import { saveSnippetText } from '../tree_context_functions/tree_snippets'
+import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createSnippetTextTabFunction = function(p_snippet = null) {
 
@@ -78,13 +80,24 @@ var v_createSnippetTextTabFunction = function(p_snippet = null) {
   '<div id="txt_snippet_' + v_tab.id + '" style="width: 100%; height: 200px; border: 1px solid #c3c3c3;"></div>' +
   '<div class="row mt-2">' +
     '<div class="tab_actions omnidb__tab-actions col-12">' +
-      '<button id="bt_indent_' + v_tab.id + '" class="btn btn-secondary omnidb__tab-actions__btn" title="Indent SQL" onclick="indentSQL(' + "'" + 'snippet' + "'" + ');"><i class="fas fa-indent mr-2"></i>indent</button>' +
-      '<button id="bt_save_' + v_tab.id + '" class="btn btn-primary omnidb__tab-actions__btn" title="Save" style="margin-top: 5px; margin-bottom: 5px; margin-right: 5px; display: inline-block;" onclick="saveSnippetText(event);"><i class="fas fa-save mr-2"></i>save</button>' +
+      '<button id="bt_indent_' + v_tab.id + '" class="btn btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent mr-2"></i>indent</button>' +
+      '<button id="bt_save_' + v_tab.id + '" class="btn btn-primary omnidb__tab-actions__btn" title="Save" style="margin-top: 5px; margin-bottom: 5px; margin-right: 5px; display: inline-block;"><i class="fas fa-save mr-2"></i>save</button>' +
     '</div>' +
   '</div>';
 
   var v_div = document.getElementById('div_' + v_tab.id);
   v_div.innerHTML = v_html;
+
+  // Assign onclick handlers after the buttons are added to the DOM
+  let indentButton = document.getElementById(`bt_indent_${v_tab.id}`);
+  indentButton.onclick = function() {
+    indentSQL('snippet');
+  };
+
+  let saveButton = document.getElementById(`bt_save_${v_tab.id}`);
+  saveButton.onclick = function(event) {
+    saveSnippetText(event);
+  };
 
   var v_txt_snippet = document.getElementById('txt_snippet_' + v_tab.id);
 

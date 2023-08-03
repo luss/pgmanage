@@ -28,6 +28,7 @@ SOFTWARE.
 import { initCreateTabFunctions } from './create_tab_functions'
 import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
 import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
+import { getAllSnippets } from './tree_context_functions/tree_snippets'
 
 /// <summary>
 /// Startup function.
@@ -1392,4 +1393,15 @@ function toggleConnectionAutocomplete(p_toggler_id) {
   v_connTabControl.selectedTab.tag.enable_autocomplete = (checked);
 }
 
-export { refreshHeights, changeDatabase, adjustQueryTabObjects, renameTab, refreshTreeHeight, removeTab, showMenuNewTab, toggleTreeTabsContainer}
+export {
+  refreshHeights,
+  changeDatabase,
+  adjustQueryTabObjects,
+  renameTab,
+  refreshTreeHeight,
+  removeTab,
+  showMenuNewTab,
+  toggleTreeTabsContainer,
+  resizeSnippetPanel,
+  indentSQL,
+};

@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { createApp } from 'vue'
+import TreeSnippets from '../components/TreeSnippets.vue'
+
 function getAllSnippets() {
   axios.get("/get_all_snippets/").then((resp) => {
     v_connTabControl.tag.globalSnippets = resp.data;
@@ -44,12 +47,7 @@ function getTreeSnippets(div) {
     '<tree-snippets :snippet-tag="snippetTag"></tree-snippets>';
   const app = createApp({
     components: {
-      "tree-snippets": Vue.defineAsyncComponent(() =>
-        loadModule(
-          "../static/assets/js/vuejs/components/TreeSnippets.vue",
-          options
-        )
-      ),
+      "tree-snippets": TreeSnippets
     },
     data() {
       return {
@@ -235,3 +233,5 @@ function buildSnippetContextMenuObjects(mode, object, editor, callback) {
 
   return elements;
 }
+
+export { getTreeSnippets, getAllSnippets, saveSnippetText }

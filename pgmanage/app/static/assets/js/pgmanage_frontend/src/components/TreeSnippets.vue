@@ -19,8 +19,9 @@
 </template>
 
 <script>
-import TreeMixin from "../mixins/power_tree.mjs";
-const { PowerTree } = window["VuePowerTree"];
+import TreeMixin from "../mixins/power_tree.js";
+import { PowerTree } from "@onekiloparsec/vue-power-tree";
+import { getAllSnippets } from '../tree_context_functions/tree_snippets'
 
 export default {
   name: "TreeSnippets",
@@ -283,7 +284,6 @@ export default {
           snippet_id: node.data.id,
         })
         .then((resp) => {
-          console.log(resp);
           v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editor.setValue(
             resp.data.data
           );
