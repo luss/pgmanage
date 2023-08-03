@@ -9,9 +9,12 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "unplugin-vue-components": "^0.25.1",
     "vite": "^4.4.5"
   },
   "dependencies": {
-    "@vitejs/plugin-vue": "^4.2.3"
+    "@onekiloparsec/vue-power-tree": "github:onekiloparsec/vue-power-tree",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vue": "^3.2.45"
   }
 }

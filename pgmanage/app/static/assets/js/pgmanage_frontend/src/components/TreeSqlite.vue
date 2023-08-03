@@ -19,13 +19,17 @@
 </template>
 
 <script>
-import TreeMixin from "../mixins/power_tree.mjs";
-const { PowerTree } = window["VuePowerTree"];
-
+import TreeMixin from "../mixins/power_tree.js";
+import { PowerTree } from "@onekiloparsec/vue-power-tree";
+import {
+  TemplateSelectSqlite,
+  TemplateInsertSqlite,
+  TemplateUpdateSqlite,
+} from "../tree_context_functions/tree_sqlite";
 export default {
   name: "TreeSqlite",
   components: {
-    PowerTree,
+    PowerTree: PowerTree,
   },
   mixins: [TreeMixin],
   props: {

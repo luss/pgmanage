@@ -25,6 +25,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { adjustQueryTabObjects, removeTab, showMenuNewTab } from '../workspace'
+import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createConsoleTabFunction = function() {
 
@@ -330,3 +332,5 @@ var v_createConsoleTabFunction = function() {
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.consoleHistory.grid.render();
   });
 }
+
+export {v_createConsoleTabFunction}

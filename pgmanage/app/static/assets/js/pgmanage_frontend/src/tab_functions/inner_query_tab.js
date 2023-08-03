@@ -25,6 +25,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { adjustQueryTabObjects, renameTab, removeTab,  showMenuNewTab } from '../workspace'
+import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
@@ -449,3 +451,5 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.grid.render();
   });
 }
+
+export { v_createQueryTabFunction }

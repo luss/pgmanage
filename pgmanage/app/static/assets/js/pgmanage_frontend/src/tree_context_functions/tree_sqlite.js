@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { createApp } from 'vue'
+import TreeSqlite from '../components/TreeSqlite.vue'
+
 /// <summary>
 /// Retrieving tree.
 /// </summary>
@@ -33,14 +36,9 @@ function getTreeSqlite(div) {
     const div_tree = document.getElementById(div);
     div_tree.innerHTML ='<tree-sqlite :database-index="databaseIndex" :tab-id="tabId"></tree-sqlite>'
     const app = createApp({
-        components: {
-            "tree-sqlite": Vue.defineAsyncComponent(() =>
-              loadModule(
-                "../static/assets/js/vuejs/components/TreeSqlite.vue",
-                options
-              )
-            ),
-          },
+      components: {
+        "tree-sqlite": TreeSqlite
+      },
         data() {
             return {
               databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
@@ -198,3 +196,5 @@ function truncateText(text, maxLength) {
       return truncatedText;
     }
   }
+
+export { getTreeSqlite, TemplateSelectSqlite, TemplateInsertSqlite, TemplateUpdateSqlite }

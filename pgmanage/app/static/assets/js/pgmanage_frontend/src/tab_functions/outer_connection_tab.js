@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer } from '../workspace'
+import { beforeCloseTab } from '../create_tab_functions'
+
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
   if (connectionsStore.connections.length==0) {
@@ -180,7 +183,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
                   '  </div>' +
                   '</div>' +
                 '</div>' +
-                '<button type="button" onclick="toggleTreeTabsContainer(' + "'tree_tabs_parent_" + v_tab.id + "','" + v_tab.id + "_left_resize_line_horizontal'" + ')" class="btn btn-secondary omnidb__tree-tabs__toggler"><i class="fas fa-arrows-alt-v"></i></button>' +
+                '<button type="button"  class="btn btn-secondary omnidb__tree-tabs__toggler"><i class="fas fa-arrows-alt-v"></i></button>' +
                 '<div id="tree_tabs_' + v_tab.id + '" class="omnidb__tree-tabs__container" style="position: relative;"></div>' +
               '</div>' +
             '</div>' +
@@ -196,17 +199,19 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
       '</div>' +//.row
 
     '</div>';
-
     // var v_tab_title_span = document.getElementById('tab_title');
     // v_tab_title_span.id = 'tab_title_' + v_tab.id;
     var v_tab_title_span = $(v_tab.elementA).find('.omnidb__tab-menu__link-name');
     if (v_tab_title_span) {
       v_tab_title_span.attr('id', 'tab_title_' + v_tab.id);
     }
-
-
+    
+    
     v_tab.elementDiv.innerHTML = v_html;
-
+    
+    let toggle_button = document.querySelector(`#tree_tabs_parent_${v_tab.id} button`)
+    toggle_button.onclick = function() {toggleTreeTabsContainer(`tree_tabs_parent_${v_tab.id}`, `${v_tab.id}_left_resize_line_horizontal`)}
+    // onclick="toggleTreeTabsContainer(' + "'tree_tabs_parent_" + v_tab.id + "','" + v_tab.id + "_left_resize_line_horizontal'" + ')"
     // Tab control under the tree
     var v_treeTabs = createTabControl({ p_div: 'tree_tabs_' + v_tab.id });
 
@@ -409,3 +414,5 @@ function refreshOuterConnectionHeights() {
     // }
   }
 }
+
+export { v_createConnTabFunction, refreshOuterConnectionHeights }

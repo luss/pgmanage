@@ -553,7 +553,6 @@
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_oracle.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_mariadb.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_mysql.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/js/tree_context_functions/tree_sqlite.js?v{{pgmanage_short_version}}"></script>
 
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/renderers.js?v{{pgmanage_short_version}}"></script>
 
@@ -566,23 +565,18 @@
     <script src="{{url_folder}}/static/assets/js/passwords.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/properties.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tabs.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/tab_functions/outer_connection_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/outer_terminal_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/outer_welcome_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/inner_edit_data_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/inner_graph_tab.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/tab_functions/inner_snippet_tab.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/tab_functions/inner_query_tab.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/tab_functions/inner_console_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/inner_debugger_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/inner_monitoring_dashboard_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/inner_monitoring_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tab_functions/website_tab.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tree_context_functions/edit_data.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/create_tab_functions.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/monitoring.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/workspace.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/plugin_hook.js?v{{pgmanage_short_version}}"></script>
+    {% vite_asset 'src/main.js' %}
+    <script defer src="{{url_folder}}/static/assets/js/plugin_hook.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/users.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/shortcuts.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/command_history.js?v{{pgmanage_short_version}}"></script>
@@ -672,6 +666,5 @@
     <script src="{{url_folder}}/static/assets/lib/@vue-js-cron/core/dist/core.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/@vue-js-cron/light/dist/light.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/vue-power-tree/dist/vue-power-tree.umd.js"></script>
-    {% vite_asset 'src/main.js' %}
   </body>
 </html>

@@ -25,6 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { initCreateTabFunctions } from './create_tab_functions'
+import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
+import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
 
 /// <summary>
 /// Startup function.
@@ -1379,7 +1382,7 @@ function uiCopyTextToClipboard(p_value) {
   document.execCommand("copy");
   // Remove and delete the temporary textarea.
   document.body.removeChild(v_text_area);
-  delete v_text_area;
+  v_text_area = null
   // Prompting an alert.
   showAlert('<b>Text copied:</b> \n<div class="mt-2 p-2 border-1 omnidb__theme-bg--light"><code>' + p_value + '</code></div>');
 }
@@ -1388,3 +1391,5 @@ function toggleConnectionAutocomplete(p_toggler_id) {
   let checked = document.getElementById(p_toggler_id).checked;
   v_connTabControl.selectedTab.tag.enable_autocomplete = (checked);
 }
+
+export { refreshHeights, changeDatabase, adjustQueryTabObjects, renameTab, refreshTreeHeight, removeTab, showMenuNewTab, toggleTreeTabsContainer}

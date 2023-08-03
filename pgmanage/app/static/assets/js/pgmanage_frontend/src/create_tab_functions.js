@@ -25,6 +25,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { v_createSnippetTextTabFunction } from './tab_functions/inner_snippet_tab'
+import { v_createConnTabFunction } from './tab_functions/outer_connection_tab'
+import { v_createQueryTabFunction } from './tab_functions/inner_query_tab'
+import { v_createConsoleTabFunction } from './tab_functions/inner_console_tab'
 
 function initCreateTabFunctions() {
 
@@ -459,3 +463,5 @@ function beforeCloseTab(e,p_confirm_function) {
 		p_confirm_function();
 	}
 }
+
+export { initCreateTabFunctions, beforeCloseTab }
