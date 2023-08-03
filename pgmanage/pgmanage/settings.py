@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_vite',
 ]
 
 if DEBUG:
@@ -190,3 +191,11 @@ CH_CMDS_PER_PAGE               = 20
 PWD_TIMEOUT_TOTAL              = 1800
 PWD_TIMEOUT_REFRESH            = 300
 THREAD_POOL_MAX_WORKERS        = 2
+
+DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, 'assets', 'js', 'src')
+
+STATICFILES_DIRS = [
+    os.path.join(DJANGO_VITE_ASSETS_PATH, "dist"),
+]
+
+DJANGO_VITE_DEV_MODE = DEBUG

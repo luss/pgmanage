@@ -1,6 +1,8 @@
+{% load django_vite %}
 <!doctype html>
 <html lang="en">
   <head>
+    {% vite_hmr_client %}
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -670,5 +672,6 @@
     <script src="{{url_folder}}/static/assets/lib/@vue-js-cron/core/dist/core.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/@vue-js-cron/light/dist/light.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/vue-power-tree/dist/vue-power-tree.umd.js"></script>
+    {% vite_asset 'src/main.js' %}
   </body>
 </html>
