@@ -36,6 +36,7 @@ import { getTreeOracle } from './tree_context_functions/tree_oracle'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
+import { settingsModalInit } from './settings_modal.js'
 /// <summary>
 /// Startup function.
 /// </summary>
@@ -122,6 +123,7 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip({animation:true});
 
   connectionsModalInit()
+  settingsModalInit()
 });
 
 function queueChangeActiveDatabaseThreadSafe(p_data) {
