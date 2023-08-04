@@ -151,6 +151,7 @@
 
 <script>
 import ConfigTabGroup from "./ConfigTabGroup.vue";
+import { useVuelidate } from '@vuelidate/core'
 
 export default {
   name: "Config",
@@ -159,7 +160,7 @@ export default {
   },
   setup() {
     return {
-      v$: Vuelidate.useVuelidate()
+      v$: useVuelidate()
     }
   },
   data() {

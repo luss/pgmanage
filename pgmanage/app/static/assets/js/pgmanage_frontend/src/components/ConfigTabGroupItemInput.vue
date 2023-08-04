@@ -44,12 +44,13 @@
 </template>
 
 <script>
-const { required, requiredUnless, minValue, maxValue, helpers } = window.VuelidateValidators
+import { useVuelidate } from '@vuelidate/core'
+import { required, requiredUnless, minValue, maxValue, helpers } from '@vuelidate/validators'
 
 export default {
   setup() {
     return {
-      v$: Vuelidate.useVuelidate({ $lazy: true })
+      v$: useVuelidate({ $lazy: true })
     }
   },
   props: {
