@@ -29,6 +29,7 @@ import { createApp } from 'vue'
 import TreeMysql from '../components/TreeMysql.vue'
 import { renameTabConfirm } from '../workspace';
 import { tabSQLTemplate } from './tree_postgresql';
+import { createMessageModal } from '../notification_control'
 
 /// <summary>
 /// Retrieving tree.

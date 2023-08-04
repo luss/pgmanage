@@ -1,9 +1,8 @@
 import { useToast } from 'vue-toast-notification';
-
+import { emitter } from '../emitter'
 export default {
   data() {
     return {
-      // emitter: emitter,
       selectedDatabase: window.v_connTabControl.selectedTab.tag.selectedDatabase,
     }
   },
@@ -45,14 +44,13 @@ export default {
 
     this.$toast = useToast();
 
-    // FIXME: add mitt library for this to work
-    // this.emitter.on('refreshNode', (e) => {
-    //   this.refreshTree(e.node);
-    // })
+    emitter.on('refreshNode', (e) => {
+      this.refreshTree(e.node);
+    })
 
-    // this.emitter.on('removeNode', (e) => {
-    //   this.removeNode(e.node)
-    // })
+    emitter.on('removeNode', (e) => {
+      this.removeNode(e.node)
+    })
 
     // Temporary solution, use Pinia store later
     if (this.getRootNode().title === 'Snippets') {

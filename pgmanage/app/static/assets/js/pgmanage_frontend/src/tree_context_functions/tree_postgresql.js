@@ -28,7 +28,7 @@ SOFTWARE.
 
 import { createApp } from 'vue';
 import TreePostgresql from '../components/TreePostgresql.vue'
-
+import { createMessageModal } from '../notification_control'
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(

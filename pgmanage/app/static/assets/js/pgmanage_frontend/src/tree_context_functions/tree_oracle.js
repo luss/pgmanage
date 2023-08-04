@@ -30,6 +30,7 @@ import { createApp } from "vue";
 import TreeOracle from '../components/TreeOracle.vue'
 import { tabSQLTemplate } from './tree_postgresql'
 import { renameTabConfirm } from '../workspace'
+import { createMessageModal } from '../notification_control'
 
 /// <summary>
 /// Retrieving tree.

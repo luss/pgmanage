@@ -69,8 +69,8 @@
 
 <script>
 import GenericMessageModal from './GenericMessageModal.vue'
+import { emitter } from '../emitter'
 
-const { render } = Vue
 export default {
   name: 'ExtensionModal',
   components: {

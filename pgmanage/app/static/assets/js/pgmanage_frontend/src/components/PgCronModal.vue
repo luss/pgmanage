@@ -85,7 +85,7 @@
                 <div id="job_command" style="height: 20vh">
                 </div>
                 <div :class="[{ 'is-invalid': v$.command.$invalid }]"></div>
-                <div class="[{ 'is-invalid': v$.command.$invalid }]" class="invalid-feedback">
+                <div :class="[{ 'is-invalid': v$.command.$invalid }]" class="invalid-feedback">
                   <span v-for="error of v$.command.$errors" :key="error.$uid">
                     {{ error.$message }}
                   </span>
@@ -124,7 +124,7 @@
 
 </template>
 
-<style>
+<style scoped>
   .modal-content {
     min-height: calc(100vh - 200px);
   }
@@ -140,8 +140,11 @@
 </style>
 
 <script>
-const { required, maxLength } = window.VuelidateValidators
+
 import ConfirmableButton from './ConfirmableButton.vue'
+import { required, maxLength } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
+import { emitter } from '../emitter'
 
 export default {
   name: 'PgCronModal',
@@ -188,7 +191,7 @@ export default {
   },
 
   setup() {
-    return { v$: Vuelidate.useVuelidate({ $lazy: true }) }
+    return { v$: useVuelidate({ $lazy: true }) }
   },
 
   computed: {

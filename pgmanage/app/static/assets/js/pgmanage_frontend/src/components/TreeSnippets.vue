@@ -22,6 +22,7 @@
 import TreeMixin from "../mixins/power_tree.js";
 import { PowerTree } from "@onekiloparsec/vue-power-tree";
 import { getAllSnippets } from '../tree_context_functions/tree_snippets'
+import { createMessageModal } from '../notification_control'
 
 export default {
   name: "TreeSnippets",
