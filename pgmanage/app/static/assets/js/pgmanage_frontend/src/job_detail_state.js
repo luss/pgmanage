@@ -1,5 +1,4 @@
-const { reactive } = Vue;
-
+import { reactive } from "vue";
 const jobDetailState = reactive({
   visible: false,
   selectedJob: {},
@@ -15,3 +14,5 @@ const jobDetailState = reactive({
     this.selectedJob.duration = duration;
   },
 });
+
+export { jobDetailState }

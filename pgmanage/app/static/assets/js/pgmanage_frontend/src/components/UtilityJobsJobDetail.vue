@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { jobDetailState } from '../job_detail_state'
+
 export default {
   name: 'JobDetail',
   data() {
