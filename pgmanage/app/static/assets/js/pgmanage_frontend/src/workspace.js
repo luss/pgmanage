@@ -30,6 +30,7 @@ import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
 import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
 import { getAllSnippets } from './tree_context_functions/tree_snippets'
 import { getTreePostgresql } from './tree_context_functions/tree_postgresql'
+import { getTreeMysql } from './tree_context_functions/tree_mysql'
 
 /// <summary>
 /// Startup function.
@@ -1406,5 +1407,7 @@ export {
   resizeSnippetPanel,
   indentSQL,
   checkTabStatus,
-  checkBeforeChangeDatabase
+  checkBeforeChangeDatabase,
+  renameTabConfirm,
+  monitoringAction
 };

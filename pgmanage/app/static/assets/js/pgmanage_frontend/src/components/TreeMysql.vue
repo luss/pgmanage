@@ -19,9 +19,15 @@
 </template>
 
 <script>
-import TreeMixin from "../mixins/power_tree.mjs";
-const { PowerTree } = window["VuePowerTree"];
-
+import TreeMixin from "../mixins/power_tree.js";
+import { PowerTree } from "@onekiloparsec/vue-power-tree";
+import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
+import {
+  TemplateSelectMysql,
+  TemplateInsertMysql,
+  TemplateUpdateMysql,
+} from "../tree_context_functions/tree_mysql";
+import { renameTabConfirm } from "../workspace";
 export default {
   name: "TreeMySQL",
   components: {
@@ -271,7 +277,7 @@ export default {
             onClick: () => {
               tabSQLTemplate(
                 "Drop Column",
-                this.templates.drop_column 
+                this.templates.drop_column
                   .replace(
                     "#table_name#",
                     `${this.getParentNodeDeep(this.selectedNode, 4).title}.${this.getParentNodeDeep(this.selectedNode, 2).title

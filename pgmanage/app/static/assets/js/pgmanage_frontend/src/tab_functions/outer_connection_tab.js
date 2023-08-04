@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer, checkTabStatus} from '../workspace'
+import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer, checkTabStatus, refreshHeights} from '../workspace'
 import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
