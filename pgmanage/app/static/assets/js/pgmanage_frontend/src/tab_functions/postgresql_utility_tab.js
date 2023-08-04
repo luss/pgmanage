@@ -1,8 +1,20 @@
-let createUtilityTab = function (node, utility, backup_type = "objects") {
+import { createApp } from "vue";
+import { beforeCloseTab } from "../create_tab_functions";
+import { removeTab, showMenuNewTab } from "../workspace";
+import BackupTab from "../components/BackupTab.vue";
+import RestoreTab from "../components/RestoreTab.vue";
+
+export let createUtilityTab = function (
+  node,
+  utility,
+  backup_type = "objects"
+) {
   // Removing last tab of the inner tab list
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
   let utility_title =
-    backup_type === "objects" ? `(${node.data.type}:${node.title})` : backup_type;
+    backup_type === "objects"
+      ? `(${node.data.type}:${node.title})`
+      : backup_type;
   let tab_name = `${utility} ${utility_title}`;
   let mode = utility.toLowerCase();
 
@@ -31,9 +43,11 @@ let createUtilityTab = function (node, utility, backup_type = "objects") {
   };
   tab.tag = tag;
 
-  const { createApp } = Vue;
-
   const app = createApp({
+    components: {
+      BackupTab,
+      RestoreTab,
+    },
     data() {
       return {
         currentUtility: utility,
@@ -44,12 +58,7 @@ let createUtilityTab = function (node, utility, backup_type = "objects") {
     computed: {
       currentComp() {
         const currentComponent = this.currentUtility;
-        return Vue.defineAsyncComponent(() =>
-          loadModule(
-            `../static/assets/js/vuejs/components/${currentComponent}Tab.vue`,
-            options
-          )
-        );
+        return `${currentComponent}Tab`;
       },
       currentProps() {
         if (this.currentUtility === "Backup") {

@@ -28,7 +28,7 @@ import { PowerTree } from "@onekiloparsec/vue-power-tree";
 import { checkBeforeChangeDatabase } from "../workspace";
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 import { createConfTab } from "../tab_functions/conf_tab"
-
+import { createUtilityTab } from '../tab_functions/postgresql_utility_tab'
 export default {
   name: "TreePostgresql",
   components: {

@@ -378,11 +378,9 @@ export default {
         data: this.restoreOptions
       })
         .then((resp) => {
-          console.log(resp)
           this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
         })
         .catch((error) => {
-          console.log(error)
           showError(error.response.data.data)
         })
     },
@@ -406,11 +404,9 @@ export default {
         data: this.restoreOptions,
       })
         .then((resp) => {
-          console.log(resp)
           showAlert(resp.data.command.cmd)
         })
         .catch((error) => {
-          console.log(error)
           showError(error.response.data.data);
 
         })

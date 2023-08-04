@@ -451,7 +451,7 @@ export default {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
         })
         .catch((error) => {
-          console.log(error)
+          showError(error.response.data.data);
         })
     },
     saveBackup() {
@@ -462,11 +462,9 @@ export default {
         backup_type: this.type
       })
         .then((resp) => {
-          console.log(resp)
           this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
         })
         .catch((error) => {
-          console.log(error)
           showError(error.response.data.data);
 
         })
@@ -492,11 +490,9 @@ export default {
         backup_type: this.type
       })
         .then((resp) => {
-          console.log(resp)
           showAlert(resp.data.command.cmd)
         })
         .catch((error) => {
-          console.log(error)
           showError(error.response.data.data);
 
         })

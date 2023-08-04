@@ -75,7 +75,6 @@ export default {
     getJobList() {
       axios.get('/bgprocess/')
         .then((resp) => {
-          console.log(resp)
           this.jobList = resp.data.data.map((j) => {
             let processState = this.evaluateProcessState(j);
             return {

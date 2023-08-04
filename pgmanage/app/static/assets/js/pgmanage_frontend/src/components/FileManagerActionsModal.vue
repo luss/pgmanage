@@ -109,7 +109,6 @@ export default {
         })
         .catch((error) => {
           showError(error.response.data.data)
-          console.log(error)
         })
     },
     create(event, type) {
@@ -123,7 +122,6 @@ export default {
         })
         .catch((error) => {
           showError(error.response.data.data)
-          console.log(error)
         })
     },
     delete() {
@@ -134,7 +132,6 @@ export default {
           this.$emit('actionDone')
         })
         .catch((error) => {
-          console.log(error)
           showError(error.response.data.data);
         })
     },
