@@ -1,3 +1,5 @@
+import { useToast } from 'vue-toast-notification';
+
 export default {
   data() {
     return {
@@ -41,7 +43,7 @@ export default {
       return Promise.reject(error);
     });
 
-    this.$toast = VueToast.useToast();
+    this.$toast = useToast();
 
     // FIXME: add mitt library for this to work
     // this.emitter.on('refreshNode', (e) => {

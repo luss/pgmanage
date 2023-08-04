@@ -3,6 +3,7 @@ import { beforeCloseTab } from "../create_tab_functions";
 import { removeTab, showMenuNewTab } from "../workspace";
 import BackupTab from "../components/BackupTab.vue";
 import RestoreTab from "../components/RestoreTab.vue";
+import ToastPlugin from 'vue-toast-notification';
 
 export let createUtilityTab = function (
   node,
@@ -72,7 +73,7 @@ export let createUtilityTab = function (
       },
     },
   });
-  app.use(VueToast.ToastPlugin, {
+  app.use(ToastPlugin, {
     duration: 0,
   });
 
