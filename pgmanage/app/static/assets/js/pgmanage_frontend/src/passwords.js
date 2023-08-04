@@ -166,7 +166,6 @@ function showMasterPassPrompt(p_message) {
     execAjax('/master_password/',
       JSON.stringify({"master_password": v_modal_password_input.value}),
       function(p_return) {
-        debugger
         conn_app.mount("#connections-modal-wrap");
       },
       function(p_return) {
