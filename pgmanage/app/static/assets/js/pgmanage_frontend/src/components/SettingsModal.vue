@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import { refreshHeights } from '../workspace'
 
 export default {
   name: 'SettingsModal',
