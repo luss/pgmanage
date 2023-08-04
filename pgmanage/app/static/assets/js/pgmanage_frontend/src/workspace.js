@@ -33,6 +33,9 @@ import { getTreePostgresql } from './tree_context_functions/tree_postgresql'
 import { getTreeMysql } from './tree_context_functions/tree_mysql'
 import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
 import { getTreeOracle } from './tree_context_functions/tree_oracle'
+import { connectionsModalInit, conn_app} from './connections_modal.js'
+import { connectionsStore } from './stores/connections.js'
+import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 /// <summary>
 /// Startup function.
 /// </summary>
@@ -85,6 +88,7 @@ $(function () {
   // Creating the snippets panel.
   v_connTabControl.tag.createSnippetPanel();
 
+  passwordModalsInit()
   // Ask for master password
   if (master_key === 'new') {
     showNewMasterPassPrompt(`Please set your master password. It will be used to secure your connection credentials.`);
@@ -117,6 +121,7 @@ $(function () {
   // Loads or Updates all tooltips.
   $('[data-toggle="tooltip"]').tooltip({animation:true});
 
+  connectionsModalInit()
 });
 
 function queueChangeActiveDatabaseThreadSafe(p_data) {

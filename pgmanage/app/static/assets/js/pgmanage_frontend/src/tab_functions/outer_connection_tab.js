@@ -28,6 +28,7 @@ SOFTWARE.
 
 import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer, checkTabStatus, refreshHeights} from '../workspace'
 import { beforeCloseTab } from '../create_tab_functions'
+import { connectionsStore } from '../stores/connections.js'
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
@@ -205,10 +206,10 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     if (v_tab_title_span) {
       v_tab_title_span.attr('id', 'tab_title_' + v_tab.id);
     }
-    
-    
+
+
     v_tab.elementDiv.innerHTML = v_html;
-    
+
     let toggle_button = document.querySelector(`#tree_tabs_parent_${v_tab.id} button`)
     toggle_button.onclick = function() {toggleTreeTabsContainer(`tree_tabs_parent_${v_tab.id}`, `${v_tab.id}_left_resize_line_horizontal`)}
     // onclick="toggleTreeTabsContainer(' + "'tree_tabs_parent_" + v_tab.id + "','" + v_tab.id + "_left_resize_line_horizontal'" + ')"
