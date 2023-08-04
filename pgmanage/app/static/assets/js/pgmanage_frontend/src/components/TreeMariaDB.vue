@@ -18,8 +18,15 @@
   </PowerTree>
 </template>
 <script>
-import TreeMixin from "../mixins/power_tree.mjs";
-const { PowerTree } = window["VuePowerTree"];
+import TreeMixin from "../mixins/power_tree.js";
+import { PowerTree } from "@onekiloparsec/vue-power-tree";
+import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
+import {
+  TemplateSelectMariadb,
+  TemplateInsertMariadb,
+  TemplateUpdateMariadb,
+} from "../tree_context_functions/tree_mariadb";
+import { renameTabConfirm } from "../workspace";
 export default {
   name: "TreeMariaDB",
   components: {
@@ -838,7 +845,6 @@ export default {
           schema: this.getParentNode(node).title,
         })
         .then((resp) => {
-          console.log(resp);
           this.removeChildNodes(node);
 
           this.$refs.tree.updateNode(node.path, {

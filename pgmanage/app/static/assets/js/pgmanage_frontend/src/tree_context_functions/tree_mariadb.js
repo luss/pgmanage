@@ -25,7 +25,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+import { createApp } from 'vue'
+import TreeMariaDB from '../components/TreeMariaDB.vue'
+import { renameTabConfirm } from '../workspace'
+import { tabSQLTemplate } from './tree_postgresql'
 /// <summary>
 /// Retrieving tree.
 /// </summary>
@@ -326,12 +329,7 @@ function getTreeMariadb(div) {
       '<tree-mariadb :database-index="databaseIndex" :tab-id="tabId"></tree-mariadb>';
     const app = createApp({
       components: {
-        "tree-mariadb": Vue.defineAsyncComponent(() =>
-          loadModule(
-            "../static/assets/js/vuejs/components/TreeMariaDB.vue",
-            options
-          )
-        ),
+        "tree-mariadb": TreeMariaDB
       },
       data() {
         return {
@@ -967,3 +965,5 @@ function mariadbTerminateBackend(p_row) {
     }
   );
 }
+
+export { getTreeMariadb, TemplateSelectMariadb, TemplateInsertMariadb,  TemplateUpdateMariadb}

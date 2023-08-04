@@ -31,6 +31,7 @@ import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_
 import { getAllSnippets } from './tree_context_functions/tree_snippets'
 import { getTreePostgresql } from './tree_context_functions/tree_postgresql'
 import { getTreeMysql } from './tree_context_functions/tree_mysql'
+import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
 
 /// <summary>
 /// Startup function.
