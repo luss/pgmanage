@@ -26,6 +26,9 @@ import {
   TemplateInsertSqlite,
   TemplateUpdateSqlite,
 } from "../tree_context_functions/tree_sqlite";
+
+import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
+
 export default {
   name: "TreeSqlite",
   components: {

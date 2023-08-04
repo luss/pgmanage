@@ -23,8 +23,10 @@
 </template>
 
 <script>
-import TreeMixin from "../mixins/power_tree.mjs";
-const { PowerTree } = window["VuePowerTree"];
+import TreeMixin from "../mixins/power_tree.js";
+import { PowerTree } from "@onekiloparsec/vue-power-tree";
+import { checkBeforeChangeDatabase } from "../workspace";
+import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 
 export default {
   name: "TreePostgresql",
@@ -3118,7 +3120,9 @@ export default {
         node,
         true,
         () => {
-          this.refreshTreePostgresqlConfirm(node);
+          setTimeout(() => {
+            this.refreshTreePostgresqlConfirm(node);
+          }, 100);
         },
         () => {
           this.toggleNode(node);
@@ -3772,13 +3776,18 @@ export default {
           const columns_node = this.getFirstChildNode(node);
 
           resp.data.reduceRight((_, el) => {
-            this.insertNode(columns_node, el.column_name, {
-              icon: "fas node-all fa-columns node-column",
-              type: "table_field",
-              contextMenu: "cm_column",
-              schema: node.data.schema,
-              position: el.position,
-            }, null);
+            this.insertNode(
+              columns_node,
+              el.column_name,
+              {
+                icon: "fas node-all fa-columns node-column",
+                type: "table_field",
+                contextMenu: "cm_column",
+                schema: node.data.schema,
+                position: el.position,
+              },
+              null
+            );
             const table_field = this.getFirstChildNode(columns_node);
 
             this.insertNode(
@@ -4547,12 +4556,17 @@ export default {
           const foreign_columns_node = this.getFirstChildNode(node);
 
           resp.data.reduceRight((_, el) => {
-            this.insertNode(foreign_columns_node, el.column_name, {
-              icon: "fas node-all fa-columns node-column",
-              type: "foreign_table_field",
-              contextMenu: "cm_foreign_column",
-              schema: node.data.schema,
-            }, null);
+            this.insertNode(
+              foreign_columns_node,
+              el.column_name,
+              {
+                icon: "fas node-all fa-columns node-column",
+                type: "foreign_table_field",
+                contextMenu: "cm_foreign_column",
+                schema: node.data.schema,
+              },
+              null
+            );
             const foreign_table_field =
               this.getFirstChildNode(foreign_columns_node);
 
@@ -4682,11 +4696,16 @@ export default {
           const columns_node = this.getFirstChildNode(node);
 
           resp.data.reduceRight((_, el) => {
-            this.insertNode(columns_node, el.column_name, {
-              icon: "fas node-all fa-columns node-column",
-              type: "table_field",
-              schema: node.data.schema,
-            }, null);
+            this.insertNode(
+              columns_node,
+              el.column_name,
+              {
+                icon: "fas node-all fa-columns node-column",
+                type: "table_field",
+                schema: node.data.schema,
+              },
+              null
+            );
             const table_field = this.getFirstChildNode(columns_node);
 
             this.insertNode(
@@ -4783,11 +4802,16 @@ export default {
           const columns_node = this.getFirstChildNode(node);
 
           resp.data.reduceRight((_, el) => {
-            this.insertNode(columns_node, el.column_name, {
-              icon: "fas node-all fa-columns node-column",
-              type: "table_field",
-              schema: node.data.schema,
-            }, null);
+            this.insertNode(
+              columns_node,
+              el.column_name,
+              {
+                icon: "fas node-all fa-columns node-column",
+                type: "table_field",
+                schema: node.data.schema,
+              },
+              null
+            );
             const table_field = this.getFirstChildNode(columns_node);
 
             this.insertNode(

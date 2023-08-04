@@ -28,6 +28,7 @@ SOFTWARE.
 
 import { createApp } from 'vue'
 import TreeSqlite from '../components/TreeSqlite.vue'
+import { tabSQLTemplate } from './tree_postgresql'
 
 /// <summary>
 /// Retrieving tree.

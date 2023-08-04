@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { createApp } from 'vue';
+import TreePostgresql from '../components/TreePostgresql.vue'
+
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
@@ -1052,12 +1055,7 @@ function getTreePostgresql(div) {
       '<tree-postgresql :database-index="databaseIndex" :tab-id="tabId"></tree-postgresql>';
     const app = createApp({
       components: {
-        "tree-postgresql": Vue.defineAsyncComponent(() =>
-          loadModule(
-            "../static/assets/js/vuejs/components/TreePostgresql.vue",
-            options
-          )
-        ),
+        "tree-postgresql": TreePostgresql
       },
       data() {
         return {
@@ -1390,3 +1388,5 @@ function getExplainReturn(p_data) {
 
     refreshHeights();
 }
+
+export { getTreePostgresql, tabSQLTemplate }
