@@ -19,9 +19,15 @@
 </template>
 
 <script>
-import TreeMixin from "../mixins/power_tree.mjs";
-const { PowerTree } = window["VuePowerTree"];
-
+import TreeMixin from "../mixins/power_tree.js";
+import { PowerTree } from "@onekiloparsec/vue-power-tree";
+import { renameTabConfirm } from "../workspace";
+import {
+  TemplateUpdateOracle,
+  TemplateInsertOracle,
+  TemplateSelectOracle,
+} from "../tree_context_functions/tree_oracle";
+import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 export default {
   name: "TreeOracle",
   components: {

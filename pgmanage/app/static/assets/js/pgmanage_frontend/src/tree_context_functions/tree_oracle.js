@@ -26,6 +26,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { createApp } from "vue";
+import TreeOracle from '../components/TreeOracle.vue'
+import { tabSQLTemplate } from './tree_postgresql'
+import { renameTabConfirm } from '../workspace'
+
 /// <summary>
 /// Retrieving tree.
 /// </summary>
@@ -494,12 +499,7 @@ function getTreeOracle(div) {
       '<tree-oracle :database-index="databaseIndex" :tab-id="tabId"></tree-oracle>';
     const app = createApp({
       components: {
-        "tree-oracle": Vue.defineAsyncComponent(() =>
-          loadModule(
-            "../static/assets/js/vuejs/components/TreeOracle.vue",
-            options
-          )
-        ),
+        "tree-oracle": TreeOracle
       },
       data() {
         return {
@@ -1381,3 +1381,5 @@ function oracleTerminateBackend(row) {
         });
 
 }
+
+export { getTreeOracle, TemplateUpdateOracle, TemplateInsertOracle, TemplateSelectOracle}

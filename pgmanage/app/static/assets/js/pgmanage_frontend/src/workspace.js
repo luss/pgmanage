@@ -32,7 +32,7 @@ import { getAllSnippets } from './tree_context_functions/tree_snippets'
 import { getTreePostgresql } from './tree_context_functions/tree_postgresql'
 import { getTreeMysql } from './tree_context_functions/tree_mysql'
 import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
-
+import { getTreeOracle } from './tree_context_functions/tree_oracle'
 /// <summary>
 /// Startup function.
 /// </summary>
