@@ -17,10 +17,6 @@ input {
     }  
 }
 
-input[type='checkbox']{
-    background-color: $primaryBlue;
-}
-
 .form-group {
     .form-control {
         border-radius: $borderRadius;
@@ -54,9 +50,11 @@ input[type='checkbox']{
         -moz-appearance: none;
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a5a9b1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
         background-repeat: no-repeat;
-        background-position-x: calc(100% - 10px);
+        background-position-x: calc(100% - 7px);
         background-position-y: 50%;
         background-size: 15px 15px;
+        padding-right: 1.5rem;
+        cursor: pointer;
     }
 
     .invalid-tooltip {
@@ -116,5 +114,25 @@ input[type='checkbox']{
                 background-color: themed($customFileButtonBg);
             }
         }
+    }
+}
+
+input[type='checkbox'].custom-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border-radius: $borderRadius;
+    box-shadow: $checkboxBoxShadow;
+
+    @include themify {
+        background-color: themed($inputBg) !important;
+    }
+
+    &:checked {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8.5l2.5 2.5l5.5 -5.5'/%3e%3c/svg%3e");
+        background-color: $primaryBlue !important;
     }
 }

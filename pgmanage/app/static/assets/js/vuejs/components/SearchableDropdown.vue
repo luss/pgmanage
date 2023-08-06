@@ -1,8 +1,8 @@
 <template>
-  <div class="dropdown" v-if="options">
+  <div class="dropdown dropdown-searchable" v-if="options">
 
     <!-- Dropdown Input -->
-    <input class="dropdown-input form-control"
+    <input class="dropdown-searchable__input form-control pr-4"
       :name="name"
       @focus="showOptions()"
       @blur="exit()"
@@ -14,10 +14,10 @@
       ref="input" />
 
     <!-- Dropdown Menu -->
-    <div class="dropdown-content"
+    <div class="dropdown-searchable__content"
       v-show="optionsShown">
       <div
-        class="dropdown-item"
+        class="dropdown-searchable__content_item"
         @mousedown="selectOption(option)"
         v-for="(option, index) in filteredOptions"
         :key="index">
@@ -136,53 +136,3 @@
     }
   };
 </script>
-
-
-<style scoped>
-.dropdown {
-  position: relative;
-  display: block;
-  margin: auto;
-}
-.dropdown .dropdown-input {
-  background: #fff;
-  cursor: pointer;
-  border: 1px solid #e7ecf5;
-  border-radius: 3px;
-  color: #333;
-  display: block;
-  font-size: .875rem;
-  padding: 6px;
-  min-width: 250px;
-  max-width: 250px;
-}
-.dropdown .dropdown-input:hover {
-  background: #f8f8fa;
-}
-.dropdown .dropdown-content {
-  position: absolute;
-  background-color: #fff;
-  min-width: 248px;
-  max-width: 248px;
-  max-height: 248px;
-  border: 1px solid #e7ecf5;
-  box-shadow: 0px -8px 34px 0px rgba(0, 0, 0, 0.05);
-  overflow: auto;
-  z-index: 200;
-}
-.dropdown .dropdown-content .dropdown-item {
-  color: inherit;
-  font-size: 0.875em;
-  line-height: 1em;
-  padding: 8px;
-  text-decoration: none;
-  display: block;
-  cursor: pointer;
-}
-.dropdown .dropdown-content .dropdown-item:hover {
-  background-color: #e7ecf5;
-}
-.dropdown .dropdown:hover .dropdowncontent {
-  display: block;
-}
-</style>

@@ -1,6 +1,5 @@
 <template>
-<!-- FIXME: add scrolling support for cases when there is a lot of columns -->
-  <span>
+  <div class="schema-editor-scrollable p-1 pr-2">
     <div class="form-row">
       <div class="form-group col-2">
           <label class="font-weight-bold mb-2" for="tableNameInput">Table Name</label>
@@ -15,31 +14,37 @@
           </option>
         </select>
       </div>
-      <div class="form-group col">
-        <button :disabled="!hasChanges || queryIsRunning" @click='applyChanges' class="float-right btn btn-sm btn-success mt-4">
+      <div class="form-group col d-flex align-items-end">
+        <button :disabled="!hasChanges || queryIsRunning" @click='applyChanges' type="button"
+          class="btn btn-success mt-4 ml-auto">
           Apply Changes
         </button>
       </div>
     </div>
 
-    <div class="row">
+    <div class="form-row">
       <div class="col">
-        <label class="font-weight-bold mb-2" >Columns</label>
+        <label class="font-weight-bold mb-2 mr-2">Columns</label>
+
+      <!-- TODO -->
+      <!-- <button @click='addColumn' class="btn btn-icon btn-icon-success" title="Add column">
+        <i class="fa-solid fa-circle-plus fa-xl"></i>
+      </button> -->
       </div>
     </div>
+
     <ColumnList
       :initialColumns="localTable.columns"
       :dataTypes="dataTypes"
       :commentable="commentable"
-      :mode="this.mode"
+      :mode="getMode"
       @columns:changed="changeColumns" />
 
     <div class="form-group mb-2">
-      <p class="font-weight-bold mb-2">Generated SQL</p>
-      <div ref="editor" style="height: 30vh">
+        <p class="font-weight-bold mb-2">Generated SQL</p>
+        <div ref="editor" style="height: 30vh"></div>
     </div>
-
-  </span>
+  </div>
 </template>
 
 <script>
@@ -97,7 +102,6 @@ export default {
     // we do not connect to any db from Knex, just setting
     // the correct SQL dialect with this option
     this.knex = window.require('knex')({ client: this.dialect })
-
     this.loadDialectData(this.dialect)
     this.setupEditor()
     if(this.$props.mode==='alter') {
@@ -328,6 +332,9 @@ export default {
     commentable() {
       return this.mode !== 'alter' && this.dialectData.hasComments
     },
+    getMode() {
+      return this.mode
+    }
   },
   watch: {
     generatedSQL() {
@@ -361,13 +368,10 @@ export default {
   }
 };
 </script>
-<style >
-  .row-new {
-    background-color: #0080001a !important;
-  }
 
-  .row-deleted {
-    background-color: #ff00000d !important;
+<style scoped>
+  .schema-editor-scrollable {
+    height: calc(100vh - 60px);
+    overflow: hidden auto;
   }
-
 </style>

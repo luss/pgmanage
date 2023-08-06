@@ -1,77 +1,92 @@
 <template>
-<span>
-  <div class="card mb-2">
-    <div class="card-body p-0">
-      <ul class="list-group list-group-flush form-group rounded-0">
-        <li class="list-group-item d-flex row no-gutters font-weight-bold">
-          <div class="col-3">Name</div>
-          <div class="col-2">Type</div>
-          <div class="col-3">Default</div>
-          <div class="col-1">Nullable</div>
-          <div class="col-1">Primary Key</div>
-          <div v-if="commentable" class="col">Comment</div>
-          <div class="col">Actions</div>
-        </li>
-        <li v-for="(column, index) in columns" :key="column.index"
-        :class="['list-group-item d-flex row no-gutters', { 'row-deleted': column.deleted }, { 'row-new': column.new }]">
-              <div class="col-3">
-                  <input v-model="column.name" class="form-control mb-0" placeholder="column name..." />
-              </div>
+  <div class="mb-2">
+    <div class="d-flex form-row font-weight-bold text-muted schema-editor__header">
+      <div :class="commentable ? 'col-2' : 'col-3'">
+        <p class="h6">Name</p>
+      </div>
+      <div :class="commentable ? 'col-2' : 'col-3'">
+        <p class="h6">Type</p>
+      </div>
+      <div :class="commentable ? 'col-2' : 'col-3'">
+        <p class="h6">Default</p>
+      </div>
+      <div class="col-1">
+        <p class="h6">Nullable</p>
+      </div>
+      <div class="col-1">
+        <p class="h6">Primary Key</p>
+      </div>
+      <div v-if="commentable" class="col-3">
+        <p class="h6">Comment</p>
+      </div>
+      <div class="col">
+        <p class="h6">Actions</p>
+      </div>
+    </div>
+    <div v-for="(column, index) in columns" :key="column.index"
+        :class="['schema-editor__column d-flex form-row flex-nowrap form-group no-gutters', 
+          { 'schema-editor__column-deleted': column.deleted }, 
+          { 'schema-editor__column-new': column.new }]">
+          <div :class="commentable ? 'col-2' : 'col-3'">
+              <input type="text" v-model="column.name" class="form-control mb-0" placeholder="column name..." />
+          </div>
 
-              <div class="col-2">
-                <SearchableDropdown
-                  placeholder="type to search"
-                  :options="dataTypes"
-                  :default="{ name: 'integer' }"
-                  :maxItem=20
-                  v-model="column.dataType"
-                />
-              </div>
+          <div :class="commentable ? 'col-2' : 'col-3'">
+            <SearchableDropdown
+              placeholder="type to search"
+              :options="dataTypes"
+              :default="{ name: 'integer' }"
+              :maxItem=20
+              v-model="column.dataType"
+            />
+          </div>
 
-              <div class="col-3">
-                <input v-model="column.defaultValue" class="form-control mb-0" placeholder="NULL" />
-              </div>
+          <div :class="commentable ? 'col-2' : 'col-3'">
+            <input type='text' v-model="column.defaultValue" class="form-control mb-0" placeholder="NULL" />
+          </div>
 
-              <div class="col-1">
-                <input type='checkbox' v-model="column.nullable" class="form-control mb-0" />
-              </div>
+          <div class="col-1 d-flex align-items-center">
+            <input type='checkbox' class="custom-checkbox" v-model="column.nullable"/>
+          </div>
 
-              <div class="col-1">
-                <input type='checkbox' v-model="column.isPK" class="form-control mb-0" />
-              </div>
-              <div v-if="commentable" class="col">
-                <input v-model="column.comment" class="form-control mb-0" placeholder="column comment.." />
-              </div>
-              <div class="col">
-                <button v-if="!column.deleted" @click='removeColumn(index)' class="float-right btn btn-outline-danger">
-                  <i class="fas fa-circle-xmark"></i>
-                </button>
+          <div class="col-1 d-flex align-items-center">
+            <input type='checkbox' class="custom-checkbox" v-model="column.isPK" />
+          </div>
 
-                <button v-if="column.deleted && !column.new" @click='column.deleted = false' class="float-right btn btn-outline-success">
-                  <i class="fas fa-rotate-left"></i>
-                </button>
+          <div v-if="commentable" class="col-3">
+            <input v-model="column.comment" class="form-control mb-0" 
+            type="text" 
+            placeholder="column comment.." />
+          </div>
 
-                <button v-if="this.movable(column)" @click='moveColumnUp(index)' class="float-right btn btn-outline-secondary">
-                  <i class="fas fa-circle-up"></i>
-                </button>
+          <div :class="['col d-flex mr-2', this.movable(column) ? 'justify-content-between': 'justify-content-end']">
+            <button v-if="column.deleted && !column.new" @click='column.deleted = false' type="button" 
+              class="btn btn-icon btn-icon-success" title="Revert">
+              <i class="fas fa-rotate-left"></i>
+            </button>
 
-                <button v-if="this.movable(column)" @click='moveColumnDown(index)' class="float-right btn btn-outline-secondary">
-                  <i class="fas fa-circle-down"></i>
-                </button>
-              </div>
-        </li>
-        <li class="list-group-item d-flex row no-gutters font-weight-bold">
-          <div class="col">
-            <button @click='addColumn' class="float-right btn btn-sm btn-outline-success">
-              Add Column
+            <button v-if="this.movable(column)" @click='moveColumnUp(index)' 
+              class="btn btn-icon btn-icon-secondary" title="Move column up" type="button">
+              <i class="fas fa-circle-up"></i>
+            </button>
+
+            <button v-if="this.movable(column)" @click='moveColumnDown(index)' 
+              class="btn btn-icon btn-icon-secondary" title="Move column down" type="button">
+              <i class="fas fa-circle-down"></i>
+            </button>
+
+            <button v-if="!column.deleted" @click='removeColumn(index)' type="button"
+              class="btn btn-icon btn-icon-danger" title="Remove column">
+              <i class="fas fa-circle-xmark"></i>
             </button>
           </div>
-        </li>
-      </ul>
-
+    </div>
+    <div class="d-flex row no-gutters font-weight-bold mt-2">
+      <button @click='addColumn' class="btn btn-outline-success ml-auto">
+        Add Column
+      </button>
     </div>
   </div>
-  </span>
 </template>
 
 <script>
