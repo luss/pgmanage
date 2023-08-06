@@ -23,14 +23,14 @@
                 </select>
               </div>
               <div v-if="isObjectsType" class="form-row mt-1">
-                <div class="form-group col-6">
+                <div class="form-group col-6 d-flex flex-column justify-content-end">
                   <label for="backupCompressionRatio" class="font-weight-bold mb-1">Compression ratio</label>
                   <select id="backupCompressionRatio" class="form-control" v-model="backupOptions.compression_ratio" :disabled="isTarFormat">
                     <option value="" disabled>Select an item...</option>
                     <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
                   </select>
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-6 d-flex flex-column justify-content-end">
                   <label for="backupNumberOfJobs" class="font-weight-bold mb-1">Number of jobs</label>
                   <select id="backupNumberOfJobs" class="form-control" v-model="backupOptions.number_of_jobs" :disabled="!isDirectoryFormat">
                     <option value="" disabled>Select an item...</option>
@@ -63,14 +63,14 @@
               </div>
 
               <div class="form-row mt-1" :class="(backupOptions.pigz) ? 'collapse show':'collapse'">
-                <div class="form-group col-6">
+                <div class="form-group col-6 d-flex flex-column justify-content-end">
                   <label for="backupPigzCompressionRatio" class="font-weight-bold mb-1">Compression ratio</label>
                   <select id="backupPigzCompressionRatio" class="form-control" v-model="backupOptions.pigz_compression_ratio">
                     <option value="" disabled>Select an item...</option>
                     <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
                   </select>
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-6 d-flex flex-column justify-content-end">
                   <label for="backupPigzNumberOfJobs" class="font-weight-bold mb-1">Number of jobs</label>
                   <select id="backupPigzNumberOfJobs" class="form-control" v-model="backupOptions.pigz_number_of_jobs">
                     <option v-for="number_of_jobs in pigzNumberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
