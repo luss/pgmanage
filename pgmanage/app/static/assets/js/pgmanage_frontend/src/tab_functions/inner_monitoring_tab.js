@@ -1,30 +1,5 @@
-/*
-This file is part of OmniDB.
-OmniDB is open-source software, distributed "AS IS" under the MIT license in the hope that it will be useful.
-
-The MIT License (MIT)
-
-Portions Copyright (c) 2015-2020, The OmniDB Team
-Portions Copyright (c) 2017-2020, 2ndQuadrant Limited
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+import { monitoringAction, renameTab, removeTab, showMenuNewTab } from '../workspace'
+import { beforeCloseTab } from "../create_tab_functions"
 
 var v_createMonitoringTabFunction = function(p_name, p_query, p_actions) {
 
@@ -190,7 +165,7 @@ function refreshMonitoring(p_tab_tag) {
               else {
                 p_tab_tag.actions[j].icon += ' omnidb__theme-icon--primary';
               }
-              v_actions_html += '<div class="text-center"><i class="' + p_tab_tag.actions[j].icon + '" onclick="monitoringAction(' + i + ',&apos;' + p_tab_tag.actions[j].action + '&apos;)"></div>';
+              v_actions_html += `<div class="text-center"><i class="actionable_icon ${p_tab_tag.actions[j].icon}" data-action="${p_tab_tag.actions[j].action}" data-idx="${i}"></div>`;
             }
             v_data.v_data[i].unshift(v_actions_html);
           }
@@ -222,7 +197,7 @@ function refreshMonitoring(p_tab_tag) {
           fillHandle:false,
           //copyRowsLimit : 1000000000,
           //copyColsLimit : 1000000000,
-                    copyPaste: {pasteMode: '', rowsLimit: 1000000000, columnsLimit: 1000000000},
+          copyPaste: {pasteMode: '', rowsLimit: 1000000000, columnsLimit: 1000000000},
           manualColumnResize: true,
           contextMenu: {
             callback: function (key, options) {
@@ -246,9 +221,13 @@ function refreshMonitoring(p_tab_tag) {
             else
               cellProperties.renderer = whiteHtmlRenderer;
             return cellProperties;
-          }
+          },
         });
-
+        setTimeout(function() {
+          $('.actionable_icon').on('click', function(el) {
+            monitoringAction(el.target.dataset.idx,el.target.dataset.action);
+          })
+        }, 500)
       },
       function(p_return) {
         if (p_return.v_data.password_timeout) {
@@ -269,3 +248,5 @@ function refreshMonitoring(p_tab_tag) {
       true);
 
 }
+
+export { v_createMonitoringTabFunction }

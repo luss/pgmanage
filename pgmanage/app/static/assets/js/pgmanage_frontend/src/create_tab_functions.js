@@ -31,7 +31,9 @@ import { v_createQueryTabFunction } from './tab_functions/inner_query_tab'
 import { v_createConsoleTabFunction } from './tab_functions/inner_console_tab'
 import { v_createSnippetPanelFunction } from './panel_functions/outer_snippet_panel'
 import { createEditDataTabFunction } from './tab_functions/inner_edit_data_tab'
-
+import { v_createMonitoringTabFunction } from './tab_functions/inner_monitoring_tab'
+import { v_createMonitorDashboardTabFunction, v_createNewMonitorUnitTabFunction } from './tab_functions/inner_monitoring_dashboard_tab'
+// import { v_createNewMonitorUnitTabFunction }
 function initCreateTabFunctions() {
 
 
