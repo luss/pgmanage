@@ -289,16 +289,6 @@ function confirmSignout() {
 
 }
 
-/// <summary>
-/// Shows website in outer tab.
-/// </summary>
-function showWebsite(p_name, p_url) {
-
-	if (v_connTabControl)
-		$('#modal_about').modal('hide');
-		v_connTabControl.tag.createWebsiteOuterTab(p_name,p_url);
-
-}
 
 /// <summary>
 /// Displays edit cell window.
