@@ -25,7 +25,7 @@
 <script>
 import TreeMixin from "../mixins/power_tree.js";
 import { PowerTree } from "@onekiloparsec/vue-power-tree";
-import { checkBeforeChangeDatabase } from "../workspace";
+import { checkBeforeChangeDatabase, drawGraph } from "../workspace";
 import {
   tabSQLTemplate,
   TemplateSelectPostgresql,

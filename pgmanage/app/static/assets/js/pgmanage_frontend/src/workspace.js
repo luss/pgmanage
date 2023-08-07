@@ -255,8 +255,8 @@ function drawGraph(p_all, p_schema) {
 										"p_complete": p_all,
 										"p_schema": p_schema}),
 		function(p_return) {
-      v_nodes = [];
-      v_edges = [];
+      let v_nodes = [];
+      let v_edges = [];
 
       for (var i=0; i<p_return.v_data.v_nodes.length; i++)
       {
@@ -1405,6 +1405,7 @@ function toggleConnectionAutocomplete(p_toggler_id) {
 export {
   refreshHeights,
   changeDatabase,
+  drawGraph,
   adjustQueryTabObjects,
   renameTab,
   refreshTreeHeight,

@@ -26,7 +26,9 @@ import {
   TemplateInsertMariadb,
   TemplateUpdateMariadb,
 } from "../tree_context_functions/tree_mariadb";
-import { renameTabConfirm } from "../workspace";
+
+import { drawGraph, renameTabConfirm } from "../workspace";
+
 export default {
   name: "TreeMariaDB",
   components: {

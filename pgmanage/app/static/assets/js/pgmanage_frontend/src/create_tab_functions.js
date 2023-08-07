@@ -33,9 +33,9 @@ import { v_createSnippetPanelFunction } from './panel_functions/outer_snippet_pa
 import { createEditDataTabFunction } from './tab_functions/inner_edit_data_tab'
 import { v_createMonitoringTabFunction } from './tab_functions/inner_monitoring_tab'
 import { v_createMonitorDashboardTabFunction, v_createNewMonitorUnitTabFunction } from './tab_functions/inner_monitoring_dashboard_tab'
-// import { v_createNewMonitorUnitTabFunction }
 import { createOuterTerminalTabFunction } from './tab_functions/outer_terminal_tab'
 import { createWelcomeTabFunction } from './tab_functions/outer_welcome_tab'
+import { v_createGraphTabFunction } from './tab_functions/inner_graph_tab'
 function initCreateTabFunctions() {
 
 
