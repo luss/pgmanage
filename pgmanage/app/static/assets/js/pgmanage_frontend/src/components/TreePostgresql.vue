@@ -26,11 +26,16 @@
 import TreeMixin from "../mixins/power_tree.js";
 import { PowerTree } from "@onekiloparsec/vue-power-tree";
 import { checkBeforeChangeDatabase } from "../workspace";
-import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { createConfTab } from "../tab_functions/conf_tab"
-import { createUtilityTab } from '../tab_functions/postgresql_utility_tab'
-import { createExtensionModal, createPgCronModal } from './postgresql_modals'
-import { createMessageModal } from '../notification_control'
+import {
+  tabSQLTemplate,
+  TemplateSelectPostgresql,
+  TemplateUpdatePostgresql,
+  TemplateInsertPostgresql,
+} from "../tree_context_functions/tree_postgresql";
+import { createConfTab } from "../tab_functions/conf_tab";
+import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
+import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
+import { createMessageModal } from "../notification_control";
 export default {
   name: "TreePostgresql",
   components: {

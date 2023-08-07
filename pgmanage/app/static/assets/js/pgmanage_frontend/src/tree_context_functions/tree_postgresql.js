@@ -1397,4 +1397,4 @@ function getExplainReturn(p_data) {
     refreshHeights();
 }
 
-export { getTreePostgresql, tabSQLTemplate }
+export { getTreePostgresql, tabSQLTemplate, TemplateSelectPostgresql, TemplateUpdatePostgresql, TemplateInsertPostgresql }
