@@ -25,8 +25,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
-var v_createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Terminal', p_details = false) {
+import { refreshHeights } from "../workspace";
+let createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Terminal', p_details = false) {
 
   // v_connTabControl.removeLastTab();
 
@@ -124,3 +124,5 @@ var v_createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Termi
   },10);
 
 };
+
+export { createOuterTerminalTabFunction }

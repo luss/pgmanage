@@ -34,6 +34,8 @@ import { createEditDataTabFunction } from './tab_functions/inner_edit_data_tab'
 import { v_createMonitoringTabFunction } from './tab_functions/inner_monitoring_tab'
 import { v_createMonitorDashboardTabFunction, v_createNewMonitorUnitTabFunction } from './tab_functions/inner_monitoring_dashboard_tab'
 // import { v_createNewMonitorUnitTabFunction }
+import { createOuterTerminalTabFunction } from './tab_functions/outer_terminal_tab'
+import { createWelcomeTabFunction } from './tab_functions/outer_welcome_tab'
 function initCreateTabFunctions() {
 
 
@@ -410,7 +412,7 @@ function initCreateTabFunctions() {
   v_connTabControl.tag.createSnippetTextTab = v_createSnippetTextTabFunction;
 
 	// Functions to create welcome tab globally
-	v_connTabControl.tag.createWelcomeTab = v_createWelcomeTabFunction;
+	v_connTabControl.tag.createWelcomeTab = createWelcomeTabFunction;
 
   // Functions to create tabs inside a connection tab
 	v_connTabControl.tag.createQueryTab = v_createQueryTabFunction;
@@ -424,7 +426,7 @@ function initCreateTabFunctions() {
   v_connTabControl.tag.createGraphTab = v_createGraphTabFunction;
   v_connTabControl.tag.createMonitoringTab = v_createMonitoringTabFunction;
   v_connTabControl.tag.createDebuggerTab = v_createDebuggerTabFunction;
-  v_connTabControl.tag.createOuterTerminalTab = v_createOuterTerminalTabFunction;
+  v_connTabControl.tag.createOuterTerminalTab = createOuterTerminalTabFunction;
 
   // Functions to create tabs inside monitor tab
   //v_connTabControl.tag.createNewMonitorNodeTab = v_createNewMonitorNodeTabFunction;
