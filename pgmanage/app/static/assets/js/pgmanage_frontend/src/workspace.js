@@ -37,6 +37,8 @@ import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { settingsModalInit } from './settings_modal.js'
+
+let v_start_height;
 /// <summary>
 /// Startup function.
 /// </summary>
@@ -589,7 +591,7 @@ var resizeSnippetPanel = async function(p_left_pos_x = false) {
 /// Resize SQL editor and result div.
 /// </summary>
 function resizeTreeVertical(event) {
-	var v_verticalLine = document.createElement('div');
+	let v_verticalLine = document.createElement('div');
 	v_verticalLine.id = 'vertical-resize-line';
   v_connTabControl.selectedTab.tag.divLeft.appendChild(v_verticalLine);
 
@@ -597,7 +599,7 @@ function resizeTreeVertical(event) {
 		'mousemove',
 		getVerticalLinePosition
 	)
-  node = event.target.parentElement.nextElementSibling
+  let node = event.target.parentElement.nextElementSibling
   if ($(`#${node.id}`).hasClass('omnidb__tree-tabs--not-in-view')) {
     if ($(`#${node.id}`).css('flex-basis') !== 'auto') {
       $(`#${node.id}`).css('flex-basis', 'auto');
@@ -1418,5 +1420,6 @@ export {
   renameTabConfirm,
   monitoringAction,
   toggleExpandToPanelView,
-  resizeConnectionHorizontal
+  resizeConnectionHorizontal,
+  resizeTreeVertical
 };

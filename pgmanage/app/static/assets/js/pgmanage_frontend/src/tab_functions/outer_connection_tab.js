@@ -26,9 +26,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer, checkTabStatus, refreshHeights, resizeConnectionHorizontal} from '../workspace'
-import { beforeCloseTab } from '../create_tab_functions'
-import { connectionsStore } from '../stores/connections.js'
+import {
+  changeDatabase,
+  refreshTreeHeight,
+  toggleTreeTabsContainer,
+  checkTabStatus,
+  refreshHeights,
+  resizeConnectionHorizontal,
+  resizeTreeVertical,
+} from "../workspace";
+import { beforeCloseTab } from "../create_tab_functions";
+import { connectionsStore } from "../stores/connections.js";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
@@ -174,7 +182,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
             '<div class="omnidb__workspace__content-left">' +
               '<div id="' + v_tab.id + '_details" class="omnidb__workspace__connection-details"></div>' +
               '<div id="' + v_tab.id + '_tree" style="overflow: auto; flex-grow: 1; transition: scroll 0.3s;"></div>' +
-              '<div id="' + v_tab.id + '_left_resize_line_horizontal" class="omnidb__resize-line__container--horizontal" onmousedown="resizeTreeVertical(event)"><div class="resize_line_horizontal"></div><div style="height:5px;"></div></div>' +
+              '<div id="' + v_tab.id + '_left_resize_line_horizontal" class="omnidb__resize-line__container--horizontal"><div class="resize_line_horizontal"></div><div style="height:5px;"></div></div>' +
               '<div id="tree_tabs_parent_' + v_tab.id + '" class="omnidb__tree-tabs--not-in-view omnidb__tree-tabs" style="position: relative;flex-shrink: 0;">' +
                 '<div id="' + v_tab.id + '_loading" class="div_loading" style="z-index: 1000;">' +
                   '<div class="div_loading_cover"></div>' +
@@ -215,6 +223,9 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
 
     let resize_vertical = document.getElementById(`${v_tab.id}_left_resize_line_vertical`)
     resize_vertical.onmousedown = (event) => { resizeConnectionHorizontal(event) }
+
+    let resize_horizontal = document.getElementById(`${v_tab.id}_left_resize_line_horizontal`)
+    resize_horizontal.onmousedown = (event) => { resizeTreeVertical(event) }
 
     // Tab control under the tree
     var v_treeTabs = createTabControl({ p_div: 'tree_tabs_' + v_tab.id });
