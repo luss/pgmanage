@@ -29,7 +29,9 @@ SOFTWARE.
 import { createApp } from 'vue';
 import TreePostgresql from '../components/TreePostgresql.vue'
 import { createMessageModal } from '../notification_control'
-import { toggleConnectionAutocomplete } from '../workspace'
+import { toggleConnectionAutocomplete, refreshHeights } from '../workspace'
+import { Plan } from "pev2"
+import "pev2/dist/style.css"
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
@@ -1373,23 +1375,32 @@ function getExplain(p_mode) {
 }
 
 function getExplainReturn(p_data) {
+    let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 
-    var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-
-    v_tab_tag.selectExplainTabFunc();
+    tab_tag.selectExplainTabFunc();
     if (p_data.v_error) {
-        v_tab_tag.div_explain.innerHTML = `<div class="error_text">${p_data.v_data.message}</div>`;
+        tab_tag.div_explain.innerHTML = `<div class="error_text">${p_data.v_data.message}</div>`;
     } else {
 
         // Adjusting data.
-        var v_explain_text = p_data.v_data.v_data.join('\n');
+        let explain_text = p_data.v_data.v_data.join('\n');
 
         if (v_explain_control.context === 'default') {
           v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_explain.style.display = 'block';
-          if (v_explain_text.length > 0) {
-            let v_query = getQueryEditorValue();
-            v_tab_tag.div_explain.innerHTML= `<pev2 class="h-100" :plan-source="plan" :plan-query="query" />`;
-            vueExplain(v_tab_tag.div_explain.id, v_query, v_explain_text);
+          if (explain_text.length > 0) {
+            let query = getQueryEditorValue();
+            tab_tag.div_explain.innerHTML= `<pev2 class="h-100" :plan-source="plan" :plan-query="query" />`;
+
+            const app = createApp({
+                data() {
+                  return {
+                    plan: explain_text,
+                    query: query,
+                  }
+                },
+              })
+            app.component("pev2", Plan);
+            app.mount(`#${tab_tag.div_explain.id}`)
             }
         }
     }
@@ -1397,4 +1408,12 @@ function getExplainReturn(p_data) {
     refreshHeights();
 }
 
-export { getTreePostgresql, tabSQLTemplate, TemplateSelectPostgresql, TemplateUpdatePostgresql, TemplateInsertPostgresql }
+export {
+  getTreePostgresql,
+  tabSQLTemplate,
+  TemplateSelectPostgresql,
+  TemplateUpdatePostgresql,
+  TemplateInsertPostgresql,
+  getExplain,
+  getExplainReturn,
+};

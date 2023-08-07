@@ -35,6 +35,7 @@ import {
   resizeVertical,
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
+import { getExplain, getExplainReturn } from "../tree_context_functions/tree_postgresql";
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
@@ -120,8 +121,8 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
       '<button id="bt_indent_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent fa-light"></i></button>' +
       '<button id="bt_history_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Command History" onclick="showCommandList();"><i class="fas fa-clock-rotate-left fa-light"></i></button>' +
       '<div class="btn-group ml-2 mr-2">' +
-      '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" onclick="getExplain(0)" title="Explain" style="display: none;" disabled="true"><i class="fas fa-chart-simple fa-light"></i></button>' +
-      '<button id="bt_analyze_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" onclick="getExplain(1)" title="Explain Analyze" style="display: none;" disabled="true"><i class="fas fa-magnifying-glass-chart fa-light"></i></button>' +
+      '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" title="Explain" style="display: none;" disabled="true"><i class="fas fa-chart-simple fa-light"></i></button>' +
+      '<button id="bt_analyze_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" title="Explain Analyze" style="display: none;" disabled="true"><i class="fas fa-magnifying-glass-chart fa-light"></i></button>' +
       '</div>' +
       '<div class="dbms_object postgresql_object omnidb__form-check form-check form-check-inline"><input id="check_autocommit_' + v_tab.id + '" class="form-check-input" type="checkbox" checked="checked"><label class="form-check-label dbms_object postgresql_object custom_checkbox query_info" for="check_autocommit_' + v_tab.id + '">Autocommit</label></div>' +
       '<div class="dbms_object postgresql_object omnidb__tab-status"><i id="query_tab_status_' + v_tab.id + '" title="Not connected" class="fas fa-dot-circle tab-status tab-status-closed dbms_object postgresql_object omnidb__tab-status__icon"></i><span id="query_tab_status_text_' + v_tab.id + '" title="Not connected" class="tab-status-text query_info dbms_object postgresql_object ml-1">Not connected</span></div>' +
@@ -152,6 +153,12 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
 
   let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
   horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
+
+  let btn_explain = document.getElementById(`bt_explain_${v_tab.id}`)
+  btn_explain.onclick = function() { getExplain(0) }
+
+  let btn_analyze = document.getElementById(`bt_analyze_${v_tab.id}`)
+  btn_analyze.onclick = function() { getExplain(1) }
   
   // Creating tab list at the bottom of the query tab.
   var v_curr_tabs = createTabControl({ p_div: 'query_result_tabs_' + v_tab.id });

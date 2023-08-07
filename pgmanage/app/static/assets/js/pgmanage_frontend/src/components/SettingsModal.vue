@@ -172,6 +172,7 @@
 
 <script>
 import { refreshHeights } from '../workspace'
+import { getExplain } from '../tree_context_functions/tree_postgresql'
 
 export default {
   name: 'SettingsModal',
