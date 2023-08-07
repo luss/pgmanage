@@ -37,7 +37,7 @@ import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { settingsModalInit } from './settings_modal.js'
-
+import { format } from 'sql-formatter'
 let v_start_height;
 /// <summary>
 /// Startup function.
@@ -961,8 +961,6 @@ function checkTabStatus(v_tab) {
 function indentSQL(mode = false) {
   var tab_tag = null;
 	let editor = null;
-
-  let format = window.sqlFormatter.format
 
   let dialect = v_connTabControl.selectedTab.tag.selectedDBMS
   let format_options = {
