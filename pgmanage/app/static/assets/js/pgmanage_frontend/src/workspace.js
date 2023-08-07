@@ -1421,5 +1421,6 @@ export {
   resizeConnectionHorizontal,
   resizeTreeVertical,
   resizeVertical,
-  resizeSnippetHorizontal
+  resizeSnippetHorizontal,
+  toggleConnectionAutocomplete
 };

@@ -27,7 +27,7 @@ SOFTWARE.
 */
 import { createApp } from 'vue'
 import TreeMariaDB from '../components/TreeMariaDB.vue'
-import { renameTabConfirm } from '../workspace'
+import { renameTabConfirm,  toggleConnectionAutocomplete } from '../workspace'
 import { tabSQLTemplate } from './tree_postgresql'
 import { createMessageModal } from '../notification_control'
 /// <summary>
@@ -349,17 +349,19 @@ function getTreeMariadb(div) {
       v_connTabControl.selectedTab.tag.enable_autocomplete !== false
         ? " checked "
         : "";
+    let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
     v_connTabControl.selectedTab.tag.divDetails.innerHTML = `<i class="fas fa-server mr-1"></i>selected DB: 
         <b>${v_connTabControl.selectedTab.tag.selectedDatabase}</b>
         <div class="omnidb__switch omnidb__switch--sm float-right" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>">
-    	    <input type="checkbox" ${autocomplete_switch_status} id="autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}" class="omnidb__switch--input" onchange="toggleConnectionAutocomplete(\'autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}\')">
-    	    <label for="autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}" class="omnidb__switch--label">
+    	    <input type="checkbox" ${autocomplete_switch_status} id="${autocomplete_btn_id}" class="omnidb__switch--input" onchange="toggleConnectionAutocomplete(\'autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}\')">
+    	    <label for="${autocomplete_btn_id}" class="omnidb__switch--label">
                 <span>
                     <i class="fas fa-spell-check"></i>
                 </span>
             </label>
 		</div>`;
-
+    let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
+    autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
     // tree.beforeContextMenuEvent = function(node, callback) {
 
     //     var v_elements = [];
