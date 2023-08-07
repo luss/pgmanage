@@ -30,6 +30,7 @@ import { v_createConnTabFunction } from './tab_functions/outer_connection_tab'
 import { v_createQueryTabFunction } from './tab_functions/inner_query_tab'
 import { v_createConsoleTabFunction } from './tab_functions/inner_console_tab'
 import { v_createSnippetPanelFunction } from './panel_functions/outer_snippet_panel'
+import { createEditDataTabFunction } from './tab_functions/inner_edit_data_tab'
 
 function initCreateTabFunctions() {
 
@@ -417,7 +418,7 @@ function initCreateTabFunctions() {
   v_connTabControl.tag.createNewMonitorUnitTab = v_createNewMonitorUnitTabFunction;
   v_connTabControl.tag.createMonitorDashboardTab = v_createMonitorDashboardTabFunction;
   v_connTabControl.tag.openWebSite = openWebSiteTabFunction;
-	v_connTabControl.tag.createEditDataTab = v_createEditDataTabFunction;
+	v_connTabControl.tag.createEditDataTab = createEditDataTabFunction;
   v_connTabControl.tag.createGraphTab = v_createGraphTabFunction;
   v_connTabControl.tag.createMonitoringTab = v_createMonitoringTabFunction;
   v_connTabControl.tag.createDebuggerTab = v_createDebuggerTabFunction;

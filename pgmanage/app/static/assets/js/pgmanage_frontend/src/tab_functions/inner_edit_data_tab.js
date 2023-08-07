@@ -25,8 +25,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { beforeCloseTab } from "../create_tab_functions";
+import { renameTab, removeTab, resizeVertical} from "../workspace";
 
-var v_createEditDataTabFunction = function(p_table) {
+let createEditDataTabFunction = function(p_table) {
 
   var v_name = 'Query';
   if (p_table)
@@ -97,7 +99,7 @@ var v_createEditDataTabFunction = function(p_table) {
     "</div>" +
   "</div>" +
   "<div id='txt_filter_data_" + v_tab.id + "' style=' width: 100%; height: 100px;border: 1px solid #c3c3c3;'></div>" +
-  "<div class='omnidb__resize-line__container--horizontal' onmousedown='resizeVertical(event)'><div class='resize_line_horizontal'></div><div style='height:5px;'></div></div>" +
+  "<div id='" + v_tab.id + "_resize_horizontal' class='omnidb__resize-line__container--horizontal' ><div class='resize_line_horizontal'></div><div style='height:5px;'></div></div>" +
   "<div class='row mb-1'>" +
     "<div class='tab_actions omnidb__tab-actions col-12'>" +
       "<button id='bt_start_" + v_tab.id + "' class='btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run' onclick='queryEditData();'><i class='fas fa-play'></i></button>" +
@@ -112,6 +114,10 @@ var v_createEditDataTabFunction = function(p_table) {
   "</div>";
 
   v_tab.elementDiv.innerHTML = v_html;
+
+  let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
+  horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
+
 
   var v_height  = window.innerHeight - $('#div_edit_data_data_' + v_tab.id).offset().top - 20;
 
@@ -269,3 +275,5 @@ var v_createEditDataTabFunction = function(p_table) {
   },10);
 
 };
+
+export { createEditDataTabFunction }
