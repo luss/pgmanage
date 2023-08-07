@@ -1071,7 +1071,7 @@ function getTreePostgresql(div) {
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
-
+    let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
     let autocomplete_switch_status =
       v_connTabControl.selectedTab.tag.enable_autocomplete !== false
         ? " checked "
