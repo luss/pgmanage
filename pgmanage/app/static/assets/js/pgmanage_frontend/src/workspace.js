@@ -678,7 +678,6 @@ function resizeConnectionHorizontal(event) {
 		horizontalLinePosition
 	)
 
-	v_start_width = event.x;
 	document.body.addEventListener("mouseup", resizeConnectionHorizontalEnd);
 
 }
@@ -1418,5 +1417,6 @@ export {
   checkBeforeChangeDatabase,
   renameTabConfirm,
   monitoringAction,
-  toggleExpandToPanelView
+  toggleExpandToPanelView,
+  resizeConnectionHorizontal
 };

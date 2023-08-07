@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer, checkTabStatus, refreshHeights} from '../workspace'
+import { changeDatabase, refreshTreeHeight, toggleTreeTabsContainer, checkTabStatus, refreshHeights, resizeConnectionHorizontal} from '../workspace'
 import { beforeCloseTab } from '../create_tab_functions'
 import { connectionsStore } from '../stores/connections.js'
 
@@ -189,7 +189,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="omnidb__resize-line__container--vertical" onmousedown="resizeConnectionHorizontal(event)"><div class="resize_line_vertical"></div></div>' +
+          '<div id="' + v_tab.id + '_left_resize_line_vertical" class="omnidb__resize-line__container--vertical"><div class="resize_line_vertical"></div></div>' +
         '</div>' +//.div_left
         '<div id="' + v_tab.id + '_div_right" class="omnidb__workspace__div-right col" style="position: relative;">' +
           // "<div class='row'>" +
@@ -212,7 +212,10 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
 
     let toggle_button = document.querySelector(`#tree_tabs_parent_${v_tab.id} button`)
     toggle_button.onclick = function() {toggleTreeTabsContainer(`tree_tabs_parent_${v_tab.id}`, `${v_tab.id}_left_resize_line_horizontal`)}
-    // onclick="toggleTreeTabsContainer(' + "'tree_tabs_parent_" + v_tab.id + "','" + v_tab.id + "_left_resize_line_horizontal'" + ')"
+
+    let resize_vertical = document.getElementById(`${v_tab.id}_left_resize_line_vertical`)
+    resize_vertical.onmousedown = (event) => { resizeConnectionHorizontal(event) }
+
     // Tab control under the tree
     var v_treeTabs = createTabControl({ p_div: 'tree_tabs_' + v_tab.id });
 
