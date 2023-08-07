@@ -33,7 +33,7 @@ import {
   resizeVertical,
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
-
+import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 var v_createConsoleTabFunction = function() {
 
   // Removing last tab of the inner tab list
