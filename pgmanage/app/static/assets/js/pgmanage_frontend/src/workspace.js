@@ -1371,7 +1371,6 @@ function updateExplainComponent() {
 
 
 function monitoringAction(p_row_index, p_function) {
-  debugger
   let handlerFn = p_function === 'postgresqlTerminateBackend' ? postgresqlTerminateBackend : mysqlTerminateBackend
 	var v_row_data = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.ht.getDataAtRow(p_row_index);
 	v_row_data.shift();
