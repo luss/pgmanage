@@ -25,7 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { adjustQueryTabObjects, renameTab, removeTab,  showMenuNewTab } from '../workspace'
+import { adjustQueryTabObjects, renameTab, removeTab,  showMenuNewTab, toggleExpandToPanelView } from '../workspace'
 import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
@@ -128,7 +128,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
     '</div>' +
   '</div>' +
   '<div id="query_result_tabs_container' + v_tab.id + '" class="omnidb__query-result-tabs">' +
-    '<button style="position:absolute;top:0.25rem;right:0.25rem;" type="button" class="btn btn-sm btn-secondary" onclick=toggleExpandToPanelView("query_result_tabs_container' + v_tab.id + '")><i class="fas fa-expand"></i></button>' +
+    '<button id="bt_fullscreen_' + v_tab.id + '" style="position:absolute;top:0.25rem;right:0.25rem;" type="button" class="btn btn-sm btn-secondary" ><i class="fas fa-expand"></i></button>' +
     '<div id="query_result_tabs_' + v_tab.id + '">' +
     '</div>' +
   '</div>';
@@ -136,6 +136,8 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
   // Updating the html.
   v_tab.elementDiv.innerHTML = v_html;
 
+  let fullscreen_btn = document.getElementById(`bt_fullscreen_${v_tab.id}`)
+  fullscreen_btn.onclick = function() { toggleExpandToPanelView(`query_result_tabs_container${v_tab.id}`)}
   // Creating tab list at the bottom of the query tab.
   var v_curr_tabs = createTabControl({ p_div: 'query_result_tabs_' + v_tab.id });
 

@@ -1417,5 +1417,6 @@ export {
   checkTabStatus,
   checkBeforeChangeDatabase,
   renameTabConfirm,
-  monitoringAction
+  monitoringAction,
+  toggleExpandToPanelView
 };
