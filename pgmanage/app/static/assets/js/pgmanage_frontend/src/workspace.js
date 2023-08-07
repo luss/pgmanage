@@ -740,7 +740,7 @@ function resizeConnectionHorizontalEnd(event) {
 /// </summary>
 function resizeSnippetHorizontal(event) {
   event.preventDefault();
-	var v_horizontalLine = document.createElement('div');
+	let v_horizontalLine = document.createElement('div');
 	v_horizontalLine.id = 'horizontal-resize-line';
 	v_connTabControl.snippet_tag.divPanel.appendChild(v_horizontalLine);
 
@@ -749,9 +749,7 @@ function resizeSnippetHorizontal(event) {
 		horizontalLinePosition
 	)
 
-	v_start_width = event.x;
 	document.body.addEventListener("mouseup", resizeSnippetHorizontalEnd);
-
 }
 
 /// <summary>
@@ -1422,5 +1420,6 @@ export {
   toggleExpandToPanelView,
   resizeConnectionHorizontal,
   resizeTreeVertical,
-  resizeVertical
+  resizeVertical,
+  resizeSnippetHorizontal
 };

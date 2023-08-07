@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { getTreeSnippets } from '../tree_context_functions/tree_snippets'
-import { resizeSnippetPanel } from '../workspace'
+import { resizeSnippetPanel, resizeSnippetHorizontal } from '../workspace'
 
 var toggleSnippetPanel = function(p_set_state = false) {
   let v_element = $('#' + v_connTabControl.snippet_tag.divPanel.getAttribute('id'));
@@ -76,7 +76,7 @@ var v_createSnippetPanelFunction = function(p_index) {
               "<div id='" + v_tab.id + "_snippet_tree' style='overflow: auto; flex-grow: 1; transition: scroll 0.3s;'></div>" +
             "</div>" +
           "</div>" +
-          "<div class='omnidb__resize-line__container--vertical' onmousedown='resizeSnippetHorizontal(event)'><div class='resize_line_vertical'></div></div>" +
+          "<div id='" + v_tab.id + "_snippet_resize_line_vertical' class='omnidb__resize-line__container--vertical'><div class='resize_line_vertical'></div></div>" +
         "</div>" +//.div_left
         "<div id='" + v_tab.id + "_snippet_div_right' class='omnidb__snippets__div-right col pt-0' style='position: relative;'>" +
           // "<div class='row'>" +
@@ -96,6 +96,9 @@ var v_createSnippetPanelFunction = function(p_index) {
 
   let toggle_button = document.querySelector(`#${v_tab.id}_panel_snippet > button`)
   toggle_button.onclick = function() { toggleSnippetPanel() }
+
+  let resize_vertical = document.getElementById(`${v_tab.id}_snippet_resize_line_vertical`)
+  resize_vertical.onmousedown = (event) => { resizeSnippetHorizontal(event) }
 
   var v_currTabControl = createTabControl({
     p_div: v_tab.id + '_snippet_tabs',
