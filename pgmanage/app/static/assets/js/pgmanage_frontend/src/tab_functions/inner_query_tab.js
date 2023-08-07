@@ -36,6 +36,7 @@ import {
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
 import { getExplain, getExplainReturn } from "../tree_context_functions/tree_postgresql";
+import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
@@ -154,12 +155,15 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
   let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
   horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
 
+<<<<<<< HEAD
   let btn_explain = document.getElementById(`bt_explain_${v_tab.id}`)
   btn_explain.onclick = function() { getExplain(0) }
 
   let btn_analyze = document.getElementById(`bt_analyze_${v_tab.id}`)
   btn_analyze.onclick = function() { getExplain(1) }
-  
+
+=======
+>>>>>>> 6a731891 (fixes snippets context menu)
   // Creating tab list at the bottom of the query tab.
   var v_curr_tabs = createTabControl({ p_div: 'query_result_tabs_' + v_tab.id });
 

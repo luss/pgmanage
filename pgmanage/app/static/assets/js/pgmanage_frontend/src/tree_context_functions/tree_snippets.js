@@ -234,4 +234,4 @@ function buildSnippetContextMenuObjects(mode, object, editor, callback) {
   return elements;
 }
 
-export { getTreeSnippets, getAllSnippets, saveSnippetText }
+export { buildSnippetContextMenuObjects, getTreeSnippets, getAllSnippets, saveSnippetText }
