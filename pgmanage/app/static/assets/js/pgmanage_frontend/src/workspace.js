@@ -29,8 +29,8 @@ import { initCreateTabFunctions } from './create_tab_functions'
 import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
 import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
 import { getAllSnippets } from './tree_context_functions/tree_snippets'
-import { getTreePostgresql } from './tree_context_functions/tree_postgresql'
-import { getTreeMysql } from './tree_context_functions/tree_mysql'
+import { getTreePostgresql, postgresqlTerminateBackend } from './tree_context_functions/tree_postgresql'
+import { getTreeMysql, mysqlTerminateBackend } from './tree_context_functions/tree_mysql'
 import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
 import { getTreeOracle } from './tree_context_functions/tree_oracle'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
@@ -1371,11 +1371,12 @@ function updateExplainComponent() {
 
 
 function monitoringAction(p_row_index, p_function) {
-	var v_fn = window[p_function];
+  debugger
+  let handlerFn = p_function === 'postgresqlTerminateBackend' ? postgresqlTerminateBackend : mysqlTerminateBackend
 	var v_row_data = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.ht.getDataAtRow(p_row_index);
 	v_row_data.shift();
-	if(typeof v_fn === 'function') {
-		v_fn(v_row_data);
+	if(typeof handlerFn === 'function') {
+		handlerFn(v_row_data);
 	}
 }
 
