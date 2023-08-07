@@ -25,8 +25,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { adjustQueryTabObjects, removeTab, showMenuNewTab, indentSQL } from '../workspace'
-import { beforeCloseTab } from '../create_tab_functions'
+import {
+  adjustQueryTabObjects,
+  removeTab,
+  showMenuNewTab,
+  indentSQL,
+  resizeVertical,
+} from "../workspace";
+import { beforeCloseTab } from "../create_tab_functions";
 
 var v_createConsoleTabFunction = function() {
 
@@ -90,7 +96,7 @@ var v_createConsoleTabFunction = function() {
 
   var v_html =
   "<div id='txt_console_" + v_tab.id + "' class='omnidb__txt-console' style=' width: 100%; height: 120px;'></div>" +
-  "<div class='omnidb__resize-line__container--horizontal' onmousedown='resizeVertical(event)'><div class='resize_line_horizontal'></div><div style='height:5px;'></div></div>" +
+  "<div id='" + v_tab.id + "_resize_horizontal' class='omnidb__resize-line__container--horizontal'><div class='resize_line_horizontal'></div><div style='height:5px;'></div></div>" +
   console_history_modal +
   "<div class='row mb-1'>" +
     "<div class='tab_actions omnidb__tab-actions col-12'>" +
@@ -116,6 +122,9 @@ var v_createConsoleTabFunction = function() {
 
   let indent_btn = document.getElementById(`bt_indent_${v_tab.id}`)
   indent_btn.onclick = function() { indentSQL() }
+
+  let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
+  horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
 
   var langTools = ace.require("ace/ext/language_tools");
   var v_editor1 = ace.edit('txt_input_' + v_tab.id);

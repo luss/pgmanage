@@ -778,7 +778,7 @@ function resizeSnippetHorizontalEnd(event) {
 /// </summary>
 function resizeVertical(event) {
   event.preventDefault();
-	var v_verticalLine = document.createElement('div');
+	let v_verticalLine = document.createElement('div');
 	v_verticalLine.id = 'vertical-resize-line';
 	v_connTabControl.selectedTab.tag.divRight.appendChild(v_verticalLine);
 
@@ -1421,5 +1421,6 @@ export {
   monitoringAction,
   toggleExpandToPanelView,
   resizeConnectionHorizontal,
-  resizeTreeVertical
+  resizeTreeVertical,
+  resizeVertical
 };
