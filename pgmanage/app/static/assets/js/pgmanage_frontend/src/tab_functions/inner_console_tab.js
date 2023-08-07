@@ -25,7 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { adjustQueryTabObjects, removeTab, showMenuNewTab } from '../workspace'
+import { adjustQueryTabObjects, removeTab, showMenuNewTab, indentSQL } from '../workspace'
 import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createConsoleTabFunction = function() {
@@ -95,7 +95,7 @@ var v_createConsoleTabFunction = function() {
   "<div class='row mb-1'>" +
     "<div class='tab_actions omnidb__tab-actions col-12'>" +
       "<button id='bt_start_" + v_tab.id + "' class='btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run' onclick='consoleSQL(false);'><i class='fas fa-play fa-light'></i></button>" +
-      "<button id='bt_indent_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Indent SQL' onclick='indentSQL();'><i class='fas fa-indent fa-light'></i></button>" +
+      "<button id='bt_indent_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Indent SQL'><i class='fas fa-indent fa-light'></i></button>" +
       "<button id='bt_clear_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Clear Console' onclick='clearConsole();'><i class='fas fa-broom fa-light'></i></button>" +
       "<button id='bt_history_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Command History' onclick='showConsoleHistory();'><i class='fas fa-clock-rotate-left fa-light'></i></button>" +
       "<div class='dbms_object postgresql_object omnidb__form-check form-check form-check-inline'><input id='check_autocommit_" + v_tab.id + "' class='form-check-input' type='checkbox' checked='checked'><label class='form-check-label dbms_object postgresql_object custom_checkbox query_info' for='check_autocommit_" + v_tab.id + "'>Autocommit</label></div>" +
@@ -113,6 +113,9 @@ var v_createConsoleTabFunction = function() {
 
   var v_div = document.getElementById('div_' + v_tab.id);
   v_tab.elementDiv.innerHTML = v_html;
+
+  let indent_btn = document.getElementById(`bt_indent_${v_tab.id}`)
+  indent_btn.onclick = function() { indentSQL() }
 
   var langTools = ace.require("ace/ext/language_tools");
   var v_editor1 = ace.edit('txt_input_' + v_tab.id);

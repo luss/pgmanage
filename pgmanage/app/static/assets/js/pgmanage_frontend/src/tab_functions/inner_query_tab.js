@@ -25,7 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { adjustQueryTabObjects, renameTab, removeTab,  showMenuNewTab, toggleExpandToPanelView } from '../workspace'
+import { adjustQueryTabObjects, renameTab, removeTab,  showMenuNewTab, toggleExpandToPanelView, indentSQL } from '../workspace'
 import { beforeCloseTab } from '../create_tab_functions'
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
@@ -109,7 +109,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
   '<div class="row mb-1">' +
     '<div class="tab_actions omnidb__tab-actions col-12">' +
       '<button id="bt_start_' + v_tab.id + '" class="btn btn-sm btn-primary omnidb__tab-actions__btn" title="Run" onclick="v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.queryRunHandler();"><i class="fas fa-play fa-light"></i></button>' +
-      '<button id="bt_indent_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Indent SQL" onclick="indentSQL();"><i class="fas fa-indent fa-light"></i></button>' +
+      '<button id="bt_indent_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent fa-light"></i></button>' +
       '<button id="bt_history_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Command History" onclick="showCommandList();"><i class="fas fa-clock-rotate-left fa-light"></i></button>' +
       '<div class="btn-group ml-2 mr-2">' +
       '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" onclick="getExplain(0)" title="Explain" style="display: none;" disabled="true"><i class="fas fa-chart-simple fa-light"></i></button>' +
@@ -138,6 +138,9 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
 
   let fullscreen_btn = document.getElementById(`bt_fullscreen_${v_tab.id}`)
   fullscreen_btn.onclick = function() { toggleExpandToPanelView(`query_result_tabs_container${v_tab.id}`)}
+
+  let indent_btn = document.getElementById(`bt_indent_${v_tab.id}`)
+  indent_btn.onclick = function() { indentSQL() }
   // Creating tab list at the bottom of the query tab.
   var v_curr_tabs = createTabControl({ p_div: 'query_result_tabs_' + v_tab.id });
 
