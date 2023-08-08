@@ -8,7 +8,7 @@
 
       <div v-if="showSchema" class="form-group col-3">
         <label class="font-weight-bold mb-2" for="selectSchema">Schema</label>
-        <select class="form-control text-truncate pr-4" id="selectSchema" v-model="initialTable.schema">
+        <select class="form-control text-truncate pr-4" id="selectSchema" v-model="localTable.schema">
           <option v-for="(schema, index) in schemas" :value="schema" :key="index">
             {{ schema }}
           </option>
@@ -48,7 +48,11 @@
 </template>
 
 <script>
-import dialects from "./dialect-data.mjs";
+import Knex from 'knex'
+import { useVuelidate } from '@vuelidate/core'
+import ColumnList from "./SchemaEditorColumnList.vue"
+import dialects from "./dialect-data"
+
 export default {
   name: "SchemaEditor",
   props: {
@@ -63,12 +67,12 @@ export default {
     tree_node: Object
   },
   components: {
-    'ColumnList': Vue.defineAsyncComponent(() => loadModule('/static/assets/js/vuejs/components/SchemaEditorColumnList.vue', options)),
+    ColumnList
   },
   setup(props) {
-    // FIXME: do we really need validations here?
+    // FIXME: add column nam not-null validations
     return {
-      v$: Vuelidate.useVuelidate()
+      v$: useVuelidate()
     }
   },
   data() {
@@ -101,13 +105,14 @@ export default {
     // the "client" parameter is a bit misleading here,
     // we do not connect to any db from Knex, just setting
     // the correct SQL dialect with this option
-    this.knex = window.require('knex')({ client: this.dialect })
+    this.knex = Knex({ client: this.dialect })
     this.loadDialectData(this.dialect)
     this.setupEditor()
     if(this.$props.mode==='alter') {
       this.loadTableDefinition()
       // localTable for ALTER case is being set via watcher
     } else {
+      this.initialTable.schema = this.$props.schema
       this.localTable = {...this.initialTable}
     }
   },
@@ -121,19 +126,19 @@ export default {
           tab_id: this.tab_id
         })
         .then((response) => {
-          this.schemas = response.data.data.map((schema) => {return schema.name})
+          this.schemas = response.data.map((schema) => {return schema.name})
         })
         .catch((error) => {
           console.log(error)
         })
 
         axios.post('/get_types_postgresql/', {
-          p_database_index: this.database_index, //ARRGH!!! change to normal param name
-          p_tab_id: this.tab_id,
-          p_schema: this.schema
+          database_index: this.database_index,
+          tab_id: this.tab_id,
+          schema: this.schema
         })
         .then((response) => {
-          this.customTypes = response.data.v_data.map((type) => {return type.v_type_name})
+          this.customTypes = response.data.map((type) => {return type.type_name})
         })
         .catch((error) => {
           console.log(error)
@@ -179,6 +184,7 @@ export default {
     generateSQL() {
       //add knex error handing with notification to the user
       let tabledef = this.localTable
+      // FIXME: table name is quoted when using withSchema
       let k = this.knex.schema.withSchema(tabledef.schema)
       this.hasChanges = false
       if(this.mode === 'alter') {
@@ -213,7 +219,7 @@ export default {
               table.specificType(coldef.name, coldef.dataType)
 
             coldef.nullable ? col.nullable() : col.notNullable()
-
+            //FIXME:this defaultValue check is incorrect if coldef defaultval is zero
             if(coldef.defaultValue) col.defaultTo(coldef.defaultValue)
             if(coldef.comment) col.comment(coldef.comment)
           })
@@ -303,11 +309,14 @@ export default {
         this.$toast.error(this.createNotifyMessage('Failed', response.v_data.message), {
         })
       } else {
+        // TODO: clear local tabledefs to prevent multiple sql submissions
         let msg = response.v_data.v_status === "CREATE TABLE" ? `Table "${this.localTable.tableName}" created` : `Table "${this.localTable.tableName}" updated`
         this.$toast.success(this.createNotifyMessage('Done', msg), {
           duration:3000
         })
-        refreshTreePostgresql(this.tree_node)
+        // FIXME: this does not work, call refreshTree instead
+        // determine the proper node to be refreshed
+        // refreshTreePostgresql(this.tree_node)
       }
       this.queryIsRunning = false
     },

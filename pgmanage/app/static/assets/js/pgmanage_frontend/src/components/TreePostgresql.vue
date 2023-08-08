@@ -33,6 +33,7 @@ import {
   TemplateInsertPostgresql,
 } from "../tree_context_functions/tree_postgresql";
 import { createConfTab } from "../tab_functions/conf_tab";
+import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
@@ -239,15 +240,9 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Table",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
-              tabSQLTemplate(
-                "Create Table",
-                this.templates.create_table.replace(
-                  "#schema_name#",
-                  this.selectedNode.data.schema
-                )
-              );
+              createSchemaEditorTab(this.selectedNode, 'create', 'postgres')
             },
           },
           {
@@ -393,13 +388,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  tabSQLTemplate(
-                    "Alter Table",
-                    this.templates.alter_table.replace(
-                      "#table_name#",
-                      `${this.selectedNode.data.schema}.${this.selectedNode.title}`
-                    )
-                  );
+                  createSchemaEditorTab(this.selectedNode, 'alter', 'postgres')
                 },
               },
               {

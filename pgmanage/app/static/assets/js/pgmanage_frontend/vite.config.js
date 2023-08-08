@@ -30,5 +30,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       'vue': 'vue/dist/vue.esm-bundler.js',
     },
+  },
+  // this makes Knex.js happy
+  define: {
+    'process.env': {}
   }
 })

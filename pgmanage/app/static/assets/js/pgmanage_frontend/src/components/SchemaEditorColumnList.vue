@@ -24,8 +24,8 @@
       </div>
     </div>
     <div v-for="(column, index) in columns" :key="column.index"
-        :class="['schema-editor__column d-flex form-row flex-nowrap form-group no-gutters', 
-          { 'schema-editor__column-deleted': column.deleted }, 
+        :class="['schema-editor__column d-flex form-row flex-nowrap form-group no-gutters',
+          { 'schema-editor__column-deleted': column.deleted },
           { 'schema-editor__column-new': column.new }]">
           <div :class="commentable ? 'col-2' : 'col-3'">
               <input type="text" v-model="column.name" class="form-control mb-0" placeholder="column name..." />
@@ -54,23 +54,23 @@
           </div>
 
           <div v-if="commentable" class="col-3">
-            <input v-model="column.comment" class="form-control mb-0" 
-            type="text" 
+            <input v-model="column.comment" class="form-control mb-0"
+            type="text"
             placeholder="column comment.." />
           </div>
 
           <div :class="['col d-flex mr-2', this.movable(column) ? 'justify-content-between': 'justify-content-end']">
-            <button v-if="column.deleted && !column.new" @click='column.deleted = false' type="button" 
+            <button v-if="column.deleted && !column.new" @click='column.deleted = false' type="button"
               class="btn btn-icon btn-icon-success" title="Revert">
               <i class="fas fa-rotate-left"></i>
             </button>
 
-            <button v-if="this.movable(column)" @click='moveColumnUp(index)' 
+            <button v-if="this.movable(column)" @click='moveColumnUp(index)'
               class="btn btn-icon btn-icon-secondary" title="Move column up" type="button">
               <i class="fas fa-circle-up"></i>
             </button>
 
-            <button v-if="this.movable(column)" @click='moveColumnDown(index)' 
+            <button v-if="this.movable(column)" @click='moveColumnDown(index)'
               class="btn btn-icon btn-icon-secondary" title="Move column down" type="button">
               <i class="fas fa-circle-down"></i>
             </button>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+  import SearchableDropdown from "./SearchableDropdown.vue";
   export default {
     name: 'SchemaEditorColumnList',
     data() {
@@ -100,7 +101,7 @@
       }
     },
     components: {
-      'SearchableDropdown': Vue.defineAsyncComponent(() => loadModule('/static/assets/js/vuejs/components/SearchableDropdown.vue', options)),
+      SearchableDropdown
     },
     props: {
       initialColumns: Array,

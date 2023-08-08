@@ -1,5 +1,10 @@
-let createSchemaEditorTab = function (node, mode, dialect) {
+import { beforeCloseTab } from "../create_tab_functions";
+import { removeTab, showMenuNewTab } from "../workspace";
+import ToastPlugin from 'vue-toast-notification';
+import SchemaEditorTab from "../components/SchemaEditorTab.vue";
+import { createApp } from "vue";
 
+let createSchemaEditorTab = function (node, mode, dialect) {
     // Removing last tab of the inner tab list
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
@@ -30,11 +35,10 @@ let createSchemaEditorTab = function (node, mode, dialect) {
   }
   tab.tag = tag
   tab.tag.tempData = [];
-  const {createApp} = Vue;
 
   let app = createApp({
     components: {
-        'schema-editor-tab': Vue.defineAsyncComponent(() => loadModule('../static/assets/js/vuejs/components/SchemaEditorTab.vue', options)),
+        'schema-editor-tab': SchemaEditorTab,
     },
 
   },{ dialect: dialect || 'postgres',
@@ -42,12 +46,12 @@ let createSchemaEditorTab = function (node, mode, dialect) {
       database_name:v_connTabControl.selectedTab.tag.selectedDatabase,
       tab_id: v_connTabControl.selectedTab.id,
       mode: mode,
-      schema: mode === 'alter' ? node.tag.schema : 'public',
-      table: mode === 'alter' ? node.text : null,
+      schema: node.data.schema,
+      table: mode === 'alter' ? node.title : null,
       tree_node: node,
     })
 
-  app.use(VueToast.ToastPlugin, {
+  app.use(ToastPlugin, {
     duration: 0,
   });
   // save app referece in the tab, it will be later used to restroy app instance on tab close
@@ -70,3 +74,5 @@ let createSchemaEditorTab = function (node, mode, dialect) {
   }
 
 }
+
+export { createSchemaEditorTab }
