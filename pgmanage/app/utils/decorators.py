@@ -93,7 +93,7 @@ def database_required_new(check_timeout=True, open_connection=True):
                         attempt_to_open_connection=open_connection,
                     )
                 except Exception as exc:
-                    data = {"password_timeout": True, "data": str(exc)}
+                    data = {"password_timeout": False, "data": str(exc)}
                     return JsonResponse(data=data, status=400)
             else:
                 database = None
