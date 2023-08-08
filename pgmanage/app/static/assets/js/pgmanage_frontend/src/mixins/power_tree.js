@@ -1,5 +1,6 @@
 import { useToast } from 'vue-toast-notification';
 import { emitter } from '../emitter'
+import ContextMenu from '@imengyu/vue3-context-menu'
 export default {
   data() {
     return {
@@ -87,7 +88,7 @@ export default {
     onContextMenu(node, e) {
       this.$refs.tree.select(node.path);
       e.preventDefault();
-      window["vue3-context-menu"].default.showContextMenu({
+      ContextMenu.showContextMenu({
         theme: "pgmanage",
         x: e.x,
         y: e.y,

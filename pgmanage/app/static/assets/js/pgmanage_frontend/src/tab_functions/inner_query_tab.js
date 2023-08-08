@@ -37,6 +37,7 @@ import {
 import { beforeCloseTab } from "../create_tab_functions";
 import { getExplain, getExplainReturn } from "../tree_context_functions/tree_postgresql";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
+import ContextMenu from "@imengyu/vue3-context-menu";
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
@@ -307,7 +308,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
           children: buildSnippetContextMenuObjects('load', v_connTabControl.tag.globalSnippets, v_editor)
         }
       )
-      window["vue3-context-menu"].default.showContextMenu({
+      ContextMenu.showContextMenu({
         theme: "pgmanage",
         x: event.x,
         y: event.y,

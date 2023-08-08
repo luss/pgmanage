@@ -36,6 +36,7 @@ import { beforeCloseTab } from "../create_tab_functions";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import ContextMenu from '@imengyu/vue3-context-menu'
 
 var v_createConsoleTabFunction = function() {
 
@@ -197,7 +198,7 @@ var v_createConsoleTabFunction = function() {
           children: buildSnippetContextMenuObjects('load', v_connTabControl.tag.globalSnippets, v_editor1)
         }
       )
-      window["vue3-context-menu"].default.showContextMenu({
+     ContextMenu.showContextMenu({
         theme: "pgmanage",
         x: event.x,
         y: event.y,

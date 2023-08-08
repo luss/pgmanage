@@ -28,6 +28,7 @@ SOFTWARE.
 
 import { createApp } from 'vue'
 import TreeSnippets from '../components/TreeSnippets.vue'
+import ContextMenu from '@imengyu/vue3-context-menu';
 
 function getAllSnippets() {
   axios.get("/get_all_snippets/").then((resp) => {
@@ -79,7 +80,7 @@ function saveSnippetText(event) {
       callback
     );
   } else {
-    window["vue3-context-menu"].default.showContextMenu({
+    ContextMenu.showContextMenu({
       theme: 'pgmanage',
       x: event.x,
       y: event.y,

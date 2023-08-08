@@ -38,6 +38,8 @@ import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
+import ContextMenu from '@imengyu/vue3-context-menu'
+
 let v_start_height;
 /// <summary>
 /// Startup function.
@@ -1154,7 +1156,7 @@ function showMenuNewTabOuter(e) {
         },
       });
 
-      window["vue3-context-menu"].default.showContextMenu({
+      ContextMenu.showContextMenu({
         theme: "pgmanage",
         x: e.x,
         y: e.y,
