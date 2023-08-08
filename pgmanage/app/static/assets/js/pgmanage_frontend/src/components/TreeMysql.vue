@@ -27,7 +27,7 @@ import {
   TemplateInsertMysql,
   TemplateUpdateMysql,
 } from "../tree_context_functions/tree_mysql";
-import { renameTabConfirm } from "../workspace";
+import { drawGraph, renameTabConfirm } from "../workspace";
 export default {
   name: "TreeMySQL",
   components: {

@@ -33,9 +33,9 @@ import { v_createSnippetPanelFunction } from './panel_functions/outer_snippet_pa
 import { createEditDataTabFunction } from './tab_functions/inner_edit_data_tab'
 import { v_createMonitoringTabFunction } from './tab_functions/inner_monitoring_tab'
 import { v_createMonitorDashboardTabFunction, v_createNewMonitorUnitTabFunction } from './tab_functions/inner_monitoring_dashboard_tab'
-// import { v_createNewMonitorUnitTabFunction }
 import { createOuterTerminalTabFunction } from './tab_functions/outer_terminal_tab'
 import { createWelcomeTabFunction } from './tab_functions/outer_welcome_tab'
+import { v_createGraphTabFunction } from './tab_functions/inner_graph_tab'
 function initCreateTabFunctions() {
 
 
@@ -417,11 +417,12 @@ function initCreateTabFunctions() {
   // Functions to create tabs inside a connection tab
 	v_connTabControl.tag.createQueryTab = v_createQueryTabFunction;
   v_connTabControl.tag.createConsoleTab = v_createConsoleTabFunction;
-  v_connTabControl.tag.createWebsiteTab = v_createWebsiteTabFunction;
-  v_connTabControl.tag.createWebsiteOuterTab = v_createWebsiteOuterTabFunction;
+//   v_connTabControl.tag.createWebsiteTab = v_createWebsiteTabFunction;
   v_connTabControl.tag.createNewMonitorUnitTab = v_createNewMonitorUnitTabFunction;
   v_connTabControl.tag.createMonitorDashboardTab = v_createMonitorDashboardTabFunction;
-  v_connTabControl.tag.openWebSite = openWebSiteTabFunction;
+  v_connTabControl.tag.openWebSite  = function (_, p_site) {
+	window.open(p_site, '_blank');
+  };
 	v_connTabControl.tag.createEditDataTab = createEditDataTabFunction;
   v_connTabControl.tag.createGraphTab = v_createGraphTabFunction;
   v_connTabControl.tag.createMonitoringTab = v_createMonitoringTabFunction;

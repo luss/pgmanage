@@ -37,7 +37,7 @@ import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { settingsModalInit } from './settings_modal.js'
-
+import { format } from 'sql-formatter'
 let v_start_height;
 /// <summary>
 /// Startup function.
@@ -255,8 +255,8 @@ function drawGraph(p_all, p_schema) {
 										"p_complete": p_all,
 										"p_schema": p_schema}),
 		function(p_return) {
-      v_nodes = [];
-      v_edges = [];
+      let v_nodes = [];
+      let v_edges = [];
 
       for (var i=0; i<p_return.v_data.v_nodes.length; i++)
       {
@@ -962,8 +962,6 @@ function indentSQL(mode = false) {
   var tab_tag = null;
 	let editor = null;
 
-  let format = window.sqlFormatter.format
-
   let dialect = v_connTabControl.selectedTab.tag.selectedDBMS
   let format_options = {
     tabWidth: 2,
@@ -1405,6 +1403,7 @@ function toggleConnectionAutocomplete(p_toggler_id) {
 export {
   refreshHeights,
   changeDatabase,
+  drawGraph,
   adjustQueryTabObjects,
   renameTab,
   refreshTreeHeight,

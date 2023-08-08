@@ -21,7 +21,7 @@
 <script>
 import TreeMixin from "../mixins/power_tree.js";
 import { PowerTree } from "@onekiloparsec/vue-power-tree";
-import { renameTabConfirm } from "../workspace";
+import { drawGraph, renameTabConfirm } from "../workspace";
 import {
   TemplateUpdateOracle,
   TemplateInsertOracle,
