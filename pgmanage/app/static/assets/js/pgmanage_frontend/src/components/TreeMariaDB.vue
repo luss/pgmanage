@@ -28,7 +28,8 @@ import {
 } from "../tree_context_functions/tree_mariadb";
 
 import { drawGraph, renameTabConfirm } from "../workspace";
-
+import { querySQL } from "../query";
+import { v_startEditData } from "../tree_context_functions/edit_data";
 export default {
   name: "TreeMariaDB",
   components: {

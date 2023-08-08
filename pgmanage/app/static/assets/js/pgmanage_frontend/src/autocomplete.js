@@ -25,6 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { consoleSQL } from "./console";
 
 var v_autocomplete_object;
 var Range = ace.require('ace/range').Range;
@@ -1350,3 +1351,9 @@ function get_editor_last_word(p_editor) {
     'character_position': v_character_position
   }
 }
+
+export {
+  autocomplete_keydown,
+  autocomplete_update_editor_cursor,
+  autocomplete_start,
+};

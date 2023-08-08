@@ -27,6 +27,8 @@ SOFTWARE.
 */
 import { beforeCloseTab } from "../create_tab_functions";
 import { renameTab, removeTab, resizeVertical} from "../workspace";
+import { cancelEditData, queryEditData, checkEditDataStatus, saveEditData } from "../tree_context_functions/edit_data";
+import { showMenuNewTab } from "../workspace";
 
 let createEditDataTabFunction = function(p_table) {
 
@@ -102,11 +104,11 @@ let createEditDataTabFunction = function(p_table) {
   "<div id='" + v_tab.id + "_resize_horizontal' class='omnidb__resize-line__container--horizontal' ><div class='resize_line_horizontal'></div><div style='height:5px;'></div></div>" +
   "<div class='row mb-1'>" +
     "<div class='tab_actions omnidb__tab-actions col-12'>" +
-      "<button id='bt_start_" + v_tab.id + "' class='btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run' onclick='queryEditData();'><i class='fas fa-play'></i></button>" +
-      "<select id='sel_filtered_data_" + v_tab.id + "' class='sel_export_file_type form-control w-auto mr-2' onchange='queryEditData()'><option selected='selected' value='10' >Query 10 rows</option><option value='100'>Query 100 rows</option><option value='1000'>Query 1000 rows</option></select>" +
-      "<button id='bt_cancel_" + v_tab.id + "' class='btn btn-sm btn-danger omnidb__tab-actions__btn' title='Cancel' style='display: none;' onclick='cancelEditData();'>Cancel</button>" +
+      "<button id='bt_start_" + v_tab.id + "' class='btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run'><i class='fas fa-play'></i></button>" +
+      "<select id='sel_filtered_data_" + v_tab.id + "' class='sel_export_file_type form-control w-auto mr-2'><option selected='selected' value='10' >Query 10 rows</option><option value='100'>Query 100 rows</option><option value='1000'>Query 1000 rows</option></select>" +
+      "<button id='bt_cancel_" + v_tab.id + "' class='btn btn-sm btn-danger omnidb__tab-actions__btn' title='Cancel' style='display: none;'>Cancel</button>" +
       "<div id='div_edit_data_query_info_" + v_tab.id + "' class='query_info' style='display: inline-block; margin-left: 5px; vertical-align: middle;'></div>" +
-      "<button id='bt_saveEditData_" + v_tab.id + "' onclick='saveEditData()' class='btn btn-sm btn-success omnidb__tab-actions__btn' style='visibility: hidden;'>Save Changes</button>" +
+      "<button id='bt_saveEditData_" + v_tab.id + "' class='btn btn-sm btn-success omnidb__tab-actions__btn' style='visibility: hidden;'>Save Changes</button>" +
     "</div>" +
   "</div>" +
   "<div class='p-2 omnidb__theme-border--primary'>" +
@@ -118,7 +120,17 @@ let createEditDataTabFunction = function(p_table) {
   let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
   horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
 
+  let btn_start = document.getElementById(`bt_start_${v_tab.id}`)
+  btn_start.onclick = function() { queryEditData() }
 
+  let sel_filtered_data = document.getElementById(`sel_filtered_data_${v_tab.id}`)
+  sel_filtered_data.onchange = function() { queryEditData() }
+
+  let btn_cancel = document.getElementById(`bt_cancel_${v_tab.id}`)
+  btn_cancel.onclick = function() { cancelEditData() }
+
+  let btn_save = document.getElementById(`bt_saveEditData_${v_tab.id}`)
+  btn_save.onclick = function() { saveEditData() }
   var v_height  = window.innerHeight - $('#div_edit_data_data_' + v_tab.id).offset().top - 20;
 
   document.getElementById('div_edit_data_data_' + v_tab.id).style.height = v_height + "px"

@@ -28,6 +28,7 @@ SOFTWARE.
 import { refreshHeights } from "../workspace";
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { startTerminal, terminalKey, terminalContextMenu } from "../terminal";
 
 let createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Terminal', p_details = false) {
 

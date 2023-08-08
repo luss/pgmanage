@@ -25,11 +25,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { createApp } from 'vue'
-import TreeMariaDB from '../components/TreeMariaDB.vue'
-import { renameTabConfirm,  toggleConnectionAutocomplete } from '../workspace'
-import { tabSQLTemplate } from './tree_postgresql'
-import { createMessageModal } from '../notification_control'
+import { createApp } from "vue";
+import TreeMariaDB from "../components/TreeMariaDB.vue";
+import { renameTabConfirm, toggleConnectionAutocomplete } from "../workspace";
+import { tabSQLTemplate } from "./tree_postgresql";
+import { createMessageModal } from "../notification_control";
+import { querySQL } from "../query";
+import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
+
 /// <summary>
 /// Retrieving tree.
 /// </summary>
@@ -969,4 +972,9 @@ function mariadbTerminateBackend(p_row) {
   );
 }
 
-export { getTreeMariadb, TemplateSelectMariadb, TemplateInsertMariadb,  TemplateUpdateMariadb}
+export {
+  getTreeMariadb,
+  TemplateSelectMariadb,
+  TemplateInsertMariadb,
+  TemplateUpdateMariadb,
+};

@@ -39,6 +39,11 @@ import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } fro
 import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
+import { createRequest } from './long_polling'
+import { v_queryRequestCodes, checkQueryStatus } from './query'
+import { checkDebugStatus } from './debug'
+import { checkConsoleStatus } from './console'
+import { checkEditDataStatus } from './tree_context_functions/edit_data'
 
 let v_start_height;
 /// <summary>
@@ -1424,5 +1429,6 @@ export {
   resizeTreeVertical,
   resizeVertical,
   resizeSnippetHorizontal,
-  toggleConnectionAutocomplete
+  toggleConnectionAutocomplete,
+  toggleTreeContainer
 };

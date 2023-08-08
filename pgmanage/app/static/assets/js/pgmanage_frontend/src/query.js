@@ -25,6 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { SetAcked, removeContext, createRequest } from "./long_polling"
 
 /// <summary>
 /// Query state
@@ -139,7 +140,6 @@ function querySQL(p_mode,
 									p_cmd_type = null,
 									p_clear_data = false,
 									p_tab_title = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.tab_title_span.innerHTML) {
-
 	var v_state = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.state;
 
 	if (v_state!=v_queryState.Idle) {
@@ -512,7 +512,7 @@ function querySQLReturnRender(p_message,p_context) {
 				}
 				//Adding fetched data
 				else if (p_context.mode==1 || p_context.mode==2) {
-					v_new_data = p_context.tab_tag.ht.getSourceData();
+					let v_new_data = p_context.tab_tag.ht.getSourceData();
 					v_query_info.innerHTML =
 					"<span class='omnidb__query-info__value' style='font-weight: 900;'>" + (v_new_data.length+v_data.v_data.length) +  "</span><span> rows</span><span> in </span><span class='omnidb__query-info__value' style='font-weight: 600;'>" + p_message.v_data.v_duration + "</span>" +
 					"<br/><span>Start time</span>: <span class='omnidb__query-info__value' style='font-weight: 600;'>" + p_context.start_datetime + "</span>";
@@ -577,3 +577,16 @@ function refreshTreeNode(node, type_name) {
 		getInnerNode(node.children[i], type_name);
 	}
 }
+
+export {
+  querySQLReturn,
+  cancelSQLTab,
+  querySQL,
+  v_queryRequestCodes,
+  v_queryResponseCodes,
+  setTabStatus,
+  getQueryEditorValue,
+  checkQueryStatus,
+  refreshTreeNode,
+  cancelSQL,
+};

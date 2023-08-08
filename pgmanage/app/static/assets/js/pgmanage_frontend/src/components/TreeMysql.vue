@@ -28,6 +28,8 @@ import {
   TemplateUpdateMysql,
 } from "../tree_context_functions/tree_mysql";
 import { drawGraph, renameTabConfirm } from "../workspace";
+import { querySQL } from "../query";
+import { v_startEditData } from "../tree_context_functions/edit_data";
 export default {
   name: "TreeMySQL",
   components: {

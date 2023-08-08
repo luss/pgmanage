@@ -31,6 +31,8 @@ import TreeOracle from '../components/TreeOracle.vue'
 import { tabSQLTemplate } from './tree_postgresql'
 import { renameTabConfirm, toggleConnectionAutocomplete } from '../workspace'
 import { createMessageModal } from '../notification_control'
+import { querySQL } from "../query";
+import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 
 /// <summary>
 /// Retrieving tree.
@@ -1385,4 +1387,9 @@ function oracleTerminateBackend(row) {
 
 }
 
-export { getTreeOracle, TemplateUpdateOracle, TemplateInsertOracle, TemplateSelectOracle}
+export {
+  getTreeOracle,
+  TemplateUpdateOracle,
+  TemplateInsertOracle,
+  TemplateSelectOracle,
+};

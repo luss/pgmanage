@@ -26,13 +26,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { createApp } from 'vue';
-import TreePostgresql from '../components/TreePostgresql.vue'
-import { createMessageModal } from '../notification_control'
-import { toggleConnectionAutocomplete, refreshHeights, removeTab } from '../workspace'
-import { Plan } from "pev2"
-import "pev2/dist/style.css"
-import ContextMenu from '@imengyu/vue3-context-menu';
+import { createApp } from "vue";
+import TreePostgresql from "../components/TreePostgresql.vue";
+import { createMessageModal } from "../notification_control";
+import {
+  toggleConnectionAutocomplete,
+  refreshHeights,
+  removeTab,
+} from "../workspace";
+import { Plan } from "pev2";
+import "pev2/dist/style.css";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import { querySQL, getQueryEditorValue } from "../query";
+import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
@@ -1417,4 +1423,5 @@ export {
   TemplateInsertPostgresql,
   getExplain,
   getExplainReturn,
+  getDebugFunctionDefinitionPostgresql
 };
