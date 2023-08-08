@@ -29,9 +29,10 @@ SOFTWARE.
 import { createApp } from 'vue';
 import TreePostgresql from '../components/TreePostgresql.vue'
 import { createMessageModal } from '../notification_control'
-import { toggleConnectionAutocomplete, refreshHeights } from '../workspace'
+import { toggleConnectionAutocomplete, refreshHeights, removeTab } from '../workspace'
 import { Plan } from "pev2"
 import "pev2/dist/style.css"
+import ContextMenu from '@imengyu/vue3-context-menu';
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
@@ -94,21 +95,23 @@ function tabAdvancedObjectSearch(node) {
 
     v_tab_close_span.onclick = function(e) {
         var v_current_tab = v_tab;
-        customMenu({
-                x: e.clientX + 5,
-                y: e.clientY + 5
-            }, [{
-                text: 'Confirm',
+        ContextMenu.showContextMenu({
+            theme: "pgmanage",
+            x: e.x,
+            y: e.y,
+            zIndex: 1000,
+            minWidth: 230,
+            items: [{
+                label: 'Confirm',
                 icon: 'fas cm-all fa-check',
-                action: function() {
-                    removeTab(v_current_tab);
+                onClick: () => {
+                    removeTab(v_current_tab)
                 }
-            }, {
-                text: 'Cancel',
+            },{
+                label: 'Cancel',
                 icon: 'fas cm-all fa-times',
-                action: function() {}
             }],
-            null);
+          })
     };
 
     var v_tab_check_span = document.getElementById('tab_check');

@@ -37,6 +37,8 @@ import {
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
 import { connectionsStore } from "../stores/connections.js";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import { h } from "vue";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
@@ -145,22 +147,26 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
       p_rightClickFunction: function(e) {
         var v_option_list = [
           {
-            text: '<p class=\"mb-0 text-danger\">Close Connection Tab</p>',
+            label: h('p', {
+              class: 'mb-0 text-danger',
+              innerHTML: 'Close Connection Tab'
+            }),
             // icon: 'fas cm-all fa-terminal text-danger',
-            action: function() {
+            onClick: function() {
               if (v_tab.closeFunction!=null) {
                 v_tab.closeFunction(e,v_tab);
               }
             }
           }
         ];
-        customMenu(
-          {
-            x:e.clientX+5,
-            y:e.clientY+5
-          },
-          v_option_list,
-          null);
+        ContextMenu.showContextMenu({
+          theme: "pgmanage",
+          x: e.x,
+          y: e.y,
+          zIndex: 1000,
+          minWidth: 230,
+          items: v_option_list,
+        });
       },
       p_tooltip: p_tooltip_name
     });

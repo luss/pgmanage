@@ -1176,16 +1176,16 @@ function showMenuNewTabOuter(e) {
 function showMenuNewTab(e) {
 	var v_option_list = [
 		{
-			text: 'Query Tab',
+			label: 'Query Tab',
 			icon: 'fas cm-all fa-search',
-			action: function() {
+			onClick: function() {
 				v_connTabControl.tag.createQueryTab();
 			}
 		},
 		{
-			text: 'Console Tab',
+			label: 'Console Tab',
 			icon: 'fas cm-all fa-terminal',
-			action: function() {
+			onClick: function() {
 				v_connTabControl.tag.createConsoleTab();
 			}
 		}
@@ -1196,9 +1196,9 @@ function showMenuNewTab(e) {
 			v_connTabControl.selectedTab.tag.selectedDBMS=='mariadb') {
 		v_option_list.push(
 			{
-				text: 'Monitoring Dashboard',
+				label: 'Monitoring Dashboard',
 				icon: 'fas cm-all fa-chart-line',
-				action: function() {
+				onClick: function() {
 					v_connTabControl.tag.createMonitorDashboardTab();
 					startMonitorDashboard();
 				}
@@ -1209,9 +1209,9 @@ function showMenuNewTab(e) {
   if (v_connTabControl.selectedTab.tag.selectedDBMS=='postgresql') {
 		v_option_list.push(
 			{
-				text: 'Backends',
+				label: 'Backends',
 				icon: 'fas cm-all fa-tasks',
-				action: function() {
+				onClick: function() {
 					v_connTabControl.tag.createMonitoringTab(
 							'Backends',
 							'select * from pg_stat_activity', [{
@@ -1248,13 +1248,14 @@ function showMenuNewTab(e) {
     }
 	}
 
-	customMenu(
-		{
-			x:e.clientX+5,
-			y:e.clientY+5
-		},
-		v_option_list,
-		null);
+  ContextMenu.showContextMenu({
+    theme: "pgmanage",
+    x: e.x,
+    y: e.y,
+    zIndex: 1000,
+    minWidth: 230,
+    items: v_option_list,
+  });
 
 }
 
