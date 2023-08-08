@@ -856,7 +856,7 @@ function refreshHeights(p_all) {
     }
     else if (v_connTabControl.selectedTab.tag.mode=='outer_terminal') {
       v_connTabControl.selectedTab.tag.div_console.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.div_console).offset().top - (1.25)*v_font_size + 'px';
-      v_connTabControl.selectedTab.tag.editor_console.fit();
+      v_connTabControl.selectedTab.tag.fitAddon.fit();
     }
 
     //If inner tab exists

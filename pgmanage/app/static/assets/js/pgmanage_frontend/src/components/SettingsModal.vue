@@ -496,7 +496,7 @@ export default {
               let inner_tab_tag = outer_tab_tag_inner_tab_list[j].tag;
               if (inner_tab_tag) {
                 if (inner_tab_tag.editor_console) {
-                  inner_tab_tag.editor_console.setOption('fontSize', Number(this.selectedFontSize));
+                  inner_tab_tag.editor_console.options.fontSize = Number(this.selectedFontSize);
                 }
               }
             }

@@ -34,6 +34,9 @@ import {
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
+
 var v_createConsoleTabFunction = function() {
 
   // Removing last tab of the inner tab list
@@ -244,9 +247,10 @@ var v_createConsoleTabFunction = function() {
   v_editor2.write(v_connTabControl.selectedTab.tag.consoleHelp);
   // v_editor2_fit_addon.fit();
   //Loading Xterm Fit Addon
-	Terminal.applyAddon(fit);
-  v_editor2.fit();
-/*
+  const fitAddon = new FitAddon();
+  v_editor2.loadAddon(fitAddon);
+  fitAddon.fit();
+  /*
   v_editor1.commands.bindKey("Enter",
   function() {
     v_editor1.session.insert(v_editor1.getCursorPosition(),'\n');
@@ -257,9 +261,8 @@ var v_createConsoleTabFunction = function() {
     var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
     if (v_tab_tag.div_console) {
       v_tab_tag.div_console.style.height = window.innerHeight - $(v_tab_tag.div_console).offset().top - parseInt(v_tab_tag.div_result.style.height,10) - (1.25)*v_font_size - 38 + 'px';
-      v_tab_tag.editor_console.resize();
+      v_tab_tag.fitAddon.fit();
       v_tab_tag.editor_input.resize();
-      v_tab_tag.editor_console.fit();
     }
   }
 
@@ -268,6 +271,7 @@ var v_createConsoleTabFunction = function() {
     mode: 'console',
     editor_input: v_editor1,
     editor_console: v_editor2,
+    fitAddon: fitAddon,
     editorDivId: 'txt_console_' + v_tab.id,
     div_console: document.getElementById('txt_console_' + v_tab.id),
     div_result: document.getElementById('txt_input_' + v_tab.id),

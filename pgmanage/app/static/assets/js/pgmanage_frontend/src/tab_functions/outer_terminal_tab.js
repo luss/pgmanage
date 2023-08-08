@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { refreshHeights } from "../workspace";
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
+
 let createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Terminal', p_details = false) {
 
   // v_connTabControl.removeLastTab();
@@ -89,16 +92,17 @@ let createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Termina
   });
   term.open(term_div);
 
-  term.on('data', (key, ev) => {
-          terminalKey(key);
+  term.onData((data) => {
+          terminalKey(data);
   });
-
-  Terminal.applyAddon(fit);
+  const fitAddon = new FitAddon();
+  term.loadAddon(fitAddon);
 
   var v_tag = {
     tab_id: v_tab.id,
     mode: 'outer_terminal',
     editor_console: term,
+    fitAddon: fitAddon,
     editorDivId: 'txt_console_' + v_tab.id,
     div_console: document.getElementById('txt_console_' + v_tab.id),
     context: null,

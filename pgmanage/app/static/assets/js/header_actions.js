@@ -172,7 +172,7 @@ function changeTheme(p_option) {
 								v_inner_tab_tag.editor.setTheme("ace/theme/" + v_editor_theme);
 							}
 							else if (v_inner_tab_tag.editor_console) {
-								v_inner_tab_tag.editor_console.setOption('theme', v_current_terminal_theme);
+								v_inner_tab_tag.editor_console.options.theme = v_current_terminal_theme
 							}
 						}
 					}
@@ -200,7 +200,7 @@ function changeTheme(p_option) {
 		var v_tab = v_connTabControl.tabList[i];
 		if (v_tab.tag!=null) {
 			if (v_tab.tag.mode=='outer_terminal') {
-				v_tab.tag.editor_console.setOption('theme',v_current_terminal_theme);
+				v_tab.tag.editor_console.options.theme = v_current_terminal_theme
 			}
 		}
 	}
@@ -241,7 +241,7 @@ function changeFontSize(p_option) {
 		var v_tab = v_connTabControl.tabList[i];
 		if (v_tab.tag!=null) {
 			if (v_tab.tag.mode=='outer_terminal') {
-				v_tab.tag.editor_console.setOption('fontSize',p_option);
+				v_tab.tag.editor_console.options.fontSize = p_option;
 				v_tab.tag.editor_console.fit();
 			}
 		}
