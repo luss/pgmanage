@@ -36,6 +36,9 @@ import { v_createMonitorDashboardTabFunction, v_createNewMonitorUnitTabFunction 
 import { createOuterTerminalTabFunction } from './tab_functions/outer_terminal_tab'
 import { createWelcomeTabFunction } from './tab_functions/outer_welcome_tab'
 import { v_createGraphTabFunction } from './tab_functions/inner_graph_tab'
+import ContextMenu from '@imengyu/vue3-context-menu'
+import { createDebuggerTabFunction } from './tab_functions/inner_debugger_tab'
+
 function initCreateTabFunctions() {
 
 
@@ -426,7 +429,7 @@ function initCreateTabFunctions() {
 	v_connTabControl.tag.createEditDataTab = createEditDataTabFunction;
   v_connTabControl.tag.createGraphTab = v_createGraphTabFunction;
   v_connTabControl.tag.createMonitoringTab = v_createMonitoringTabFunction;
-  v_connTabControl.tag.createDebuggerTab = v_createDebuggerTabFunction;
+  v_connTabControl.tag.createDebuggerTab = createDebuggerTabFunction;
   v_connTabControl.tag.createOuterTerminalTab = createOuterTerminalTabFunction;
 
   // Functions to create tabs inside monitor tab
@@ -442,28 +445,26 @@ function beforeCloseTab(e,p_confirm_function) {
 			}
 		);
 		else {
-			customMenu(
-				{
-					x:e.clientX+5,
-					y:e.clientY+5
-				},
-				[
+			ContextMenu.showContextMenu( {
+        theme: "pgmanage",
+        x: e.x,
+        y: e.y,
+        zIndex: 1000,
+        minWidth: 230,
+        items: [
 					{
-						text: 'Confirm',
+						label: 'Confirm',
 						icon: 'fas cm-all fa-check',
-						action: function() {
+						onClick: function() {
 							p_confirm_function();
 						}
 					},
 					{
-						text: 'Cancel',
+						label: 'Cancel',
 						icon: 'fas cm-all fa-times',
-						action: function() {
-						}
 					}
 				],
-				null
-			);
+      })
 		}
 	}
 	else {

@@ -249,4 +249,4 @@ function refreshMonitoring(p_tab_tag) {
 
 }
 
-export { v_createMonitoringTabFunction }
+export { v_createMonitoringTabFunction, refreshMonitoring }

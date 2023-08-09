@@ -26,10 +26,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { createApp } from 'vue'
-import TreeSqlite from '../components/TreeSqlite.vue'
-import { tabSQLTemplate } from './tree_postgresql'
-import { toggleConnectionAutocomplete } from '../workspace';
+import { createApp } from "vue";
+import TreeSqlite from "../components/TreeSqlite.vue";
+import { tabSQLTemplate } from "./tree_postgresql";
+import { toggleConnectionAutocomplete } from "../workspace";
+import { querySQL } from "../query";
 
 /// <summary>
 /// Retrieving tree.
@@ -202,4 +203,9 @@ function truncateText(text, maxLength) {
     }
   }
 
-export { getTreeSqlite, TemplateSelectSqlite, TemplateInsertSqlite, TemplateUpdateSqlite }
+export {
+  getTreeSqlite,
+  TemplateSelectSqlite,
+  TemplateInsertSqlite,
+  TemplateUpdateSqlite,
+};

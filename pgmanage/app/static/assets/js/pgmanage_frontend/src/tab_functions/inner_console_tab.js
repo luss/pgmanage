@@ -34,10 +34,23 @@ import {
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import ContextMenu from '@imengyu/vue3-context-menu'
-
+import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import { querySQL } from "../query";
+import {
+  showConsoleHistory,
+  closeConsoleHistory,
+  clearConsole,
+  consoleSQL,
+  cancelConsole,
+  checkConsoleStatus,
+} from "../console";
+import {
+  autocomplete_keydown,
+  autocomplete_update_editor_cursor,
+  autocomplete_start,
+} from "../autocomplete";
 var v_createConsoleTabFunction = function() {
 
   // Removing last tab of the inner tab list
@@ -82,7 +95,7 @@ var v_createConsoleTabFunction = function() {
           "<h2 class='modal-title font-weight-bold'>" +
             "Console commands history" +
           "</h2>" +
-          "<button type='button' class='close' data-dismiss='modal' aria-label='Close' onclick='closeConsoleHistory()'>" +
+          "<button id='console_history_close_" + v_tab.id + "' type='button' class='close' data-dismiss='modal' aria-label='Close'" +
             "<span aria-hidden='true'>" +
               "<i class='fa-solid fa-xmark'></i>" +
             "</span>" +
@@ -104,18 +117,18 @@ var v_createConsoleTabFunction = function() {
   console_history_modal +
   "<div class='row mb-1'>" +
     "<div class='tab_actions omnidb__tab-actions col-12'>" +
-      "<button id='bt_start_" + v_tab.id + "' class='btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run' onclick='consoleSQL(false);'><i class='fas fa-play fa-light'></i></button>" +
+      "<button id='bt_start_" + v_tab.id + "' class='btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run'><i class='fas fa-play fa-light'></i></button>" +
       "<button id='bt_indent_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Indent SQL'><i class='fas fa-indent fa-light'></i></button>" +
-      "<button id='bt_clear_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Clear Console' onclick='clearConsole();'><i class='fas fa-broom fa-light'></i></button>" +
-      "<button id='bt_history_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Command History' onclick='showConsoleHistory();'><i class='fas fa-clock-rotate-left fa-light'></i></button>" +
+      "<button id='bt_clear_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Clear Console'><i class='fas fa-broom fa-light'></i></button>" +
+      "<button id='bt_history_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Command History'><i class='fas fa-clock-rotate-left fa-light'></i></button>" +
       "<div class='dbms_object postgresql_object omnidb__form-check form-check form-check-inline'><input id='check_autocommit_" + v_tab.id + "' class='form-check-input' type='checkbox' checked='checked'><label class='form-check-label dbms_object postgresql_object custom_checkbox query_info' for='check_autocommit_" + v_tab.id + "'>Autocommit</label></div>" +
       "<div class='dbms_object postgresql_object omnidb__tab-status'><i id='query_tab_status_" + v_tab.id + "' title='Not connected' class='fas fa-dot-circle tab-status tab-status-closed dbms_object postgresql_object omnidb__tab-status__icon'></i><span id='query_tab_status_text_" + v_tab.id + "' title='Not connected' class='tab-status-text query_info dbms_object postgresql_object ml-1'>Not connected</span></div>" +
-      "<button id='bt_fetch_more_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Fetch More' style='display: none; ' onclick='consoleSQL(false,1);'>Fetch more</button>" +
-      "<button id='bt_fetch_all_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Fetch All' style='margin-left: 5px; display: none; ' onclick='consoleSQL(false,2);'>Fetch all</button>" +
-      "<button id='bt_skip_fetch_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Skip Fetch' style='margin-left: 5px; display: none; ' onclick='consoleSQL(false,3);'>Skip Fetch</button>" +
-      "<button id='bt_commit_" + v_tab.id + "' class='dbms_object dbms_object_hidden postgresql_object btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run' style='margin-left: 5px; display: none; ' onclick='querySQL(3);'>Commit</button>" +
-      "<button id='bt_rollback_" + v_tab.id + "' class='dbms_object dbms_object_hidden postgresql_object btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Run' style='margin-left: 5px; display: none; ' onclick='querySQL(4);'>Rollback</button>" +
-      "<button id='bt_cancel_" + v_tab.id + "' class='btn btn-sm btn-danger omnidb__tab-actions__btn' title='Cancel' style=' display: none;' onclick='cancelConsole();'>Cancel</button>" +
+      "<button id='bt_fetch_more_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Fetch More' style='display: none; '>Fetch more</button>" +
+      "<button id='bt_fetch_all_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Fetch All' style='margin-left: 5px; display: none; '>Fetch all</button>" +
+      "<button id='bt_skip_fetch_" + v_tab.id + "' class='btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Skip Fetch' style='margin-left: 5px; display: none; '>Skip Fetch</button>" +
+      "<button id='bt_commit_" + v_tab.id + "' class='dbms_object dbms_object_hidden postgresql_object btn btn-sm btn-primary omnidb__tab-actions__btn' title='Run' style='margin-left: 5px; display: none; '>Commit</button>" +
+      "<button id='bt_rollback_" + v_tab.id + "' class='dbms_object dbms_object_hidden postgresql_object btn btn-sm btn-secondary omnidb__tab-actions__btn' title='Run' style='margin-left: 5px; display: none; '>Rollback</button>" +
+      "<button id='bt_cancel_" + v_tab.id + "' class='btn btn-sm btn-danger omnidb__tab-actions__btn' title='Cancel' style=' display: none;'>Cancel</button>" +
       "<div id='div_query_info_" + v_tab.id + "' class='omnidb__query-info'></div>" +
     "</div>" +
   "</div>" +
@@ -129,6 +142,36 @@ var v_createConsoleTabFunction = function() {
 
   let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
   horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
+
+  let history_btn = document.getElementById(`bt_history_${v_tab.id}`)
+  history_btn.onclick = function() { showConsoleHistory() }
+
+  let btn_start = document.getElementById(`bt_start_${v_tab.id}`)
+  btn_start.onclick = function() { consoleSQL(false) }
+
+  let btn_clear = document.getElementById(`bt_clear_${v_tab.id}`)
+  btn_clear.onclick = function() { clearConsole() }
+
+  let btn_fetch_more = document.getElementById(`bt_fetch_more_${v_tab.id}`)
+  btn_fetch_more.onclick = function() { consoleSQL(false, 1)}
+
+  let btn_fetch_all = document.getElementById(`bt_fetch_all_${v_tab.id}`)
+  btn_fetch_all.onclick = function() { consoleSQL(false, 2)}
+
+  let btn_skip_fetch = document.getElementById(`bt_skip_fetch_${v_tab.id}`)
+  btn_skip_fetch.onclick = function() { consoleSQL(false, 3)}
+
+  let btn_commit = document.getElementById(`bt_commit_${v_tab.id}`)
+  btn_commit.onclick = function() { querySQL(3)}
+
+  let bt_rollback = document.getElementById(`bt_rollback_${v_tab.id}`)
+  bt_rollback.onclick = function() { querySQL(4) }
+
+  let bt_cancel = document.getElementById(`bt_cancel_${v_tab.id}`)
+  bt_cancel.onclick = function() { cancelConsole() }
+
+  let console_history_close_btn = document.getElementById(`console_history_close_${v_tab.id}`)
+  console_history_close_btn.onclick = function() { closeConsoleHistory() }
 
   var langTools = ace.require("ace/ext/language_tools");
   var v_editor1 = ace.edit('txt_input_' + v_tab.id);

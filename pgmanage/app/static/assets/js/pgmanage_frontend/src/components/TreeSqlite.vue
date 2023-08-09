@@ -28,6 +28,7 @@ import {
 } from "../tree_context_functions/tree_sqlite";
 
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
+import { v_startEditData } from "../tree_context_functions/edit_data";
 
 export default {
   name: "TreeSqlite",

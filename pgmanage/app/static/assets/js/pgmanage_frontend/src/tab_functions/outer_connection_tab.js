@@ -34,9 +34,14 @@ import {
   refreshHeights,
   resizeConnectionHorizontal,
   resizeTreeVertical,
+  toggleTreeContainer
 } from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
 import { connectionsStore } from "../stores/connections.js";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import { h } from "vue";
+import { createRequest } from "../long_polling";
+import { v_queryRequestCodes } from "../query";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
@@ -145,22 +150,26 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
       p_rightClickFunction: function(e) {
         var v_option_list = [
           {
-            text: '<p class=\"mb-0 text-danger\">Close Connection Tab</p>',
+            label: h('p', {
+              class: 'mb-0 text-danger',
+              innerHTML: 'Close Connection Tab'
+            }),
             // icon: 'fas cm-all fa-terminal text-danger',
-            action: function() {
+            onClick: function() {
               if (v_tab.closeFunction!=null) {
                 v_tab.closeFunction(e,v_tab);
               }
             }
           }
         ];
-        customMenu(
-          {
-            x:e.clientX+5,
-            y:e.clientY+5
-          },
-          v_option_list,
-          null);
+        ContextMenu.showContextMenu({
+          theme: "pgmanage",
+          x: e.x,
+          y: e.y,
+          zIndex: 1000,
+          minWidth: 230,
+          items: v_option_list,
+        });
       },
       p_tooltip: p_tooltip_name
     });
@@ -201,7 +210,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
         '</div>' +//.div_left
         '<div id="' + v_tab.id + '_div_right" class="omnidb__workspace__div-right col" style="position: relative;">' +
           // "<div class='row'>" +
-            '<button type="button" class="py-4 px-0 btn btn-secondary omnidb__tree__toggler" onclick="toggleTreeContainer()"><i class="fas fa-arrows-alt-h"></i></button>' +
+            '<button id="' + v_tab.id + '_tree_toggler" type="button" class="py-4 px-0 btn btn-secondary omnidb__tree__toggler"><i class="fas fa-arrows-alt-h"></i></button>' +
             '<div id="' + v_tab.id + '_tabs" class="w-100"></div>' +
           // "</div>" +
         '</div>' +//.div_right
@@ -227,6 +236,9 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     let resize_horizontal = document.getElementById(`${v_tab.id}_left_resize_line_horizontal`)
     resize_horizontal.onmousedown = (event) => { resizeTreeVertical(event) }
 
+    let tree_toggler = document.getElementById(`${v_tab.id}_tree_toggler`)
+    tree_toggler.onclick = function() { toggleTreeContainer() }
+    
     // Tab control under the tree
     var v_treeTabs = createTabControl({ p_div: 'tree_tabs_' + v_tab.id });
 

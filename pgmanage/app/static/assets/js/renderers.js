@@ -255,15 +255,6 @@ function columnsActionRenderer(instance, td, row, col, prop, value, cellProperti
 	td.className ='cellReadOnly';
 }
 
-function editDataActionRenderer(instance, td, row, col, prop, value, cellProperties) {
-
-	arguments[5] = "<div class='text-center'><i title='Remove' class='fas fa-times action-grid action-close text-danger' onclick='deleteRowEditData()'></i></div>";
-
-	Handsontable.renderers.HtmlRenderer.apply(this, arguments);
-
-	td.className ='cellReadOnly';
-
-}
 
 function showPluginDataActionRenderer(instance, td, row, col, prop, value, cellProperties) {
 	if (arguments[5].includes('fa-check-circle')) {

@@ -25,7 +25,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+import ContextMenu from "@imengyu/vue3-context-menu";
+import { h } from "vue";
+import { createContext, createRequest } from "./long_polling";
+import { v_queryRequestCodes } from "./query";
 /// <summary>
 /// Terminal state
 /// </summary>
@@ -65,9 +68,9 @@ function terminalContextMenu(e,p_tab) {
 
 	v_option_list.push(
 	{
-		text: 'Adjust Terminal Dimensions',
+		label: 'Adjust Terminal Dimensions',
 		icon: 'fas cm-all fa-window-maximize',
-		action: function() {
+		onClick: function() {
 			terminalRun(false,'stty rows ' + v_tag.editor_console.rows + ' cols ' + v_tag.editor_console.cols + '\n');
 			setTimeout(function() {
 				v_tag.editor_console.focus();
@@ -77,19 +80,24 @@ function terminalContextMenu(e,p_tab) {
 
 	v_option_list.push(
 		{
-			text: '<p class=\"mb-0 text-danger\">Close Terminal</p>',
+			label: h('p', {
+				class: "mb-0 text-danger",
+				innerHTML: 'Close Terminal'
+			}),
 			// icon: 'fas cm-all fa-terminal text-danger',
-			action: function() {
-				customMenu(
-		      {
-		        x:e.clientX+5,
-		        y:e.clientY+5
-		      },
-		      [
+			onClick: () =>{
+				ContextMenu.closeContextMenu()
+				ContextMenu.showContextMenu({
+					theme: "pgmanage",
+					x: e.x,
+					y: e.y,
+					zIndex: 1000,
+					minWidth: 230,
+					items: [
 		        {
-		          text: 'Confirm',
+		          label: 'Confirm',
 		          icon: 'fas cm-all fa-check',
-		          action: function() {
+		          onClick: function() {
 								createRequest(v_queryRequestCodes.CloseTab, [{ conn_tab_id: v_tag.tab_id, tab_db_id: null }]);
 								if (v_tab.closeFunction!=null) {
 									v_tab.closeFunction(e,v_tab);
@@ -97,26 +105,22 @@ function terminalContextMenu(e,p_tab) {
 		          }
 		        },
 		        {
-		          text: 'Cancel',
+		          label: 'Cancel',
 		          icon: 'fas cm-all fa-times',
-		          action: function() {
-		          }
 		        }
 		      ],
-		      null);
+				});
 			}
 		});
 
-
-
-
-	customMenu(
-		{
-			x:e.clientX+5,
-			y:e.clientY+5
-		},
-		v_option_list,
-		null);
+	ContextMenu.showContextMenu({
+		theme: "pgmanage",
+		x: e.x,
+		y: e.y,
+		zIndex: 1000,
+		minWidth: 230,
+		items: v_option_list,
+	});
 
 
 }
@@ -169,3 +173,5 @@ function terminalReturnRender(p_message,p_context) {
 
   //v_tag.query_info.innerHTML = "<b>Start time</b>: " + p_context.start_datetime + " <b>Duration</b>: " + p_message.v_data.v_duration;
 }
+
+export { startTerminal, terminalKey, terminalContextMenu, terminalRun, terminalReturn }

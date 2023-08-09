@@ -25,6 +25,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { SetAcked, removeContext, createRequest } from "./long_polling";
+import { v_queryRequestCodes, setTabStatus, refreshTreeNode } from "./query";
 
 /// <summary>
 /// Console state
@@ -83,14 +85,32 @@ function showConsoleHistory() {
 	"</div>" +
 	"<div id='console_history_daterangepicker_container_" + v_tab_tag.id  + "' style='position:relative;'></div>" +
 	"<div class='mb-2 d-flex justify-content-center align-items-center'>" +
-		"<button id='bt_first_" + v_tab_tag.tab_id + "' onclick='consoleHistoryFirstPage()' class='bt_execute btn btn-sm btn-secondary mx-1' title='First'>First</button>" +
-		"<button id='bt_previous_" + v_tab_tag.tab_id + "' onclick='consoleHistoryPreviousPage()' class='bt_execute btn btn-sm btn-secondary mx-1' title='Previous'>Previous</button>" +
+		"<button id='bt_first_" + v_tab_tag.tab_id + "' class='bt_execute btn btn-sm btn-secondary mx-1' title='First'>First</button>" +
+		"<button id='bt_previous_" + v_tab_tag.tab_id + "' class='bt_execute btn btn-sm btn-secondary mx-1' title='Previous'>Previous</button>" +
 		"<span id='cl_curr_page_" + v_tab_tag.tab_id + "'></span> / <span id='cl_num_pages_" + v_tab_tag.tab_id + "'></span>" +
-		"<button id='bt_next_" + v_tab_tag.tab_id + "' onclick='consoleHistoryNextPage()' class='bt_execute btn btn-sm btn-secondary mx-1' title='Next'>Next</button>" +
-		"<button id='bt_last_" + v_tab_tag.tab_id + "' onclick='consoleHistoryLastPage()' class='bt_execute btn btn-sm btn-secondary mx-1' title='Last'>Last</button>" +
-		"<button id='bt_refresh_" + v_tab_tag.tab_id + "' onclick='refreshConsoleHistoryList()' class='bt_execute btn btn-sm btn-primary mx-1' title='Refresh'><i class='fas fa-sync-alt mr-1'></i>Refresh</button>" +
-		"<button id='bt_clear_" + v_tab_tag.tab_id + "' onclick='deleteConsoleHistoryList()' class='bt_execute btn btn-sm btn-danger mx-1' title='Clear List'><i class='fas fa-broom mr-1'></i>Clear List</button>" +
+		"<button id='bt_next_" + v_tab_tag.tab_id + "' class='bt_execute btn btn-sm btn-secondary mx-1' title='Next'>Next</button>" +
+		"<button id='bt_last_" + v_tab_tag.tab_id + "' class='bt_execute btn btn-sm btn-secondary mx-1' title='Last'>Last</button>" +
+		"<button id='bt_refresh_" + v_tab_tag.tab_id + "' class='bt_execute btn btn-sm btn-primary mx-1' title='Refresh'><i class='fas fa-sync-alt mr-1'></i>Refresh</button>" +
+		"<button id='bt_clear_" + v_tab_tag.tab_id + "' class='bt_execute btn btn-sm btn-danger mx-1' title='Clear List'><i class='fas fa-broom mr-1'></i>Clear List</button>" +
 	"</div>";
+
+	let btn_first = document.getElementById(`bt_first_${v_tab_tag.tab_id}`)
+	btn_first.onclick = function() { consoleHistoryFirstPage() }
+
+	let btn_previous = document.getElementById(`bt_previous_${v_tab_tag.tab_id}`)
+	btn_previous.onclick = function() { consoleHistoryPreviousPage() }
+
+	let btn_next = document.getElementById(`bt_next_${v_tab_tag.tab_id}`)
+	btn_next.onclick = function() { consoleHistoryNextPage() }
+
+	let btn_last = document.getElementById(`bt_last_${v_tab_tag.tab_id}`)
+	btn_last.onclick = function() { consoleHistoryLastPage() }
+
+	let btn_refresh = document.getElementById(`bt_refresh_${v_tab_tag.tab_id}`)
+	btn_refresh.onclick = function() { refreshConsoleHistoryList() }
+
+	let btn_clear = document.getElementById(`bt_clear_${v_tab_tag.tab_id}`)
+	btn_clear.onclick = function() { deleteConsoleHistoryList() }
 
   var v_grid_div = v_tab_tag.consoleHistory.gridDiv;
   v_grid_div.innerHTML = '';
@@ -545,3 +565,5 @@ function consoleReturnRender(p_message,p_context) {
 		}
 	}
 }
+
+export { consoleReturn, cancelConsoleTab, consoleSQL, showConsoleHistory, closeConsoleHistory, clearConsole, cancelConsole, checkConsoleStatus }

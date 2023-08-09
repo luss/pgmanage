@@ -37,6 +37,7 @@ import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
+import { v_startEditData } from "../tree_context_functions/edit_data";
 export default {
   name: "TreePostgresql",
   components: {

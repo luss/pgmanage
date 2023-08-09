@@ -25,8 +25,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { createRequest } from "../long_polling";
+import { v_queryRequestCodes } from "../query";
+import { checkDebugStatus } from "../debug";
 
-var v_createDebuggerTabFunction = function(p_function) {
+let createDebuggerTabFunction = function(p_function) {
   // Removing last tab of the inner tab list.
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
@@ -423,3 +426,5 @@ var v_createDebuggerTabFunction = function(p_function) {
 
   v_editor.focus();
 }
+
+export { createDebuggerTabFunction }

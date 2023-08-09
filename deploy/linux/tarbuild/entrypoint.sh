@@ -8,6 +8,11 @@ echo "VERSION=$VERSION"
 # Cloning repo
 git clone $REPO --depth 1 -b $BRANCH pgmanage
 
+echo "Installing Node.js..."
+curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
+bash /tmp/nodesource_setup.sh
+apt install nodejs
+
 # Installing dependencies
 cd pgmanage/
 pip3 install -r requirements.txt
@@ -42,6 +47,12 @@ echo "Done."
 sed -i "s/Dev/PgManage $VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$VERSION/" pgmanage/custom_settings.py
 
+# building vite bundle
+cd app/static/assets/js/pgmanage_frontend/
+npm install
+npm run build
+cd $HOME/pgmanage/pgmanage/
+
 rm -f pgmanage.db pgmanage.log
 touch pgmanage.db
 pyinstaller process_executor-lin.spec
@@ -59,12 +70,12 @@ staticx -l /lib/x86_64-linux-gnu/libcrypt.so.1  ./pgmanage-server ./pgmanage-ser
 # mv pgmanage-server_$VERSION-linux-x64.tar.gz /tmp/
 
 # Building app
-cd /tmp
+cd /deploy
 curl -C - -LO https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz
 # get appimagetool v13
-curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage && chmod +x /tmp/appimagetool-x86_64.AppImage
+curl -C - -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage && chmod +x /deploy/appimagetool-x86_64.AppImage
 cd -
-tar -xzvf /tmp/nwjs-v0.69.1-linux-x64.tar.gz
+tar -xzvf /deploy/nwjs-v0.69.1-linux-x64.tar.gz
 mv nwjs-v0.69.1-linux-x64 pgmanage-app_$VERSION
 cd pgmanage-app_$VERSION
 mkdir pgmanage-server
@@ -78,7 +89,7 @@ sed -i "s/X-AppImage-Version=dev/X-AppImage-Version=$VERSION/" pgmanage.desktop
 # rename nwjs runtime as pgmanage-app
 mv nw pgmanage-app && ln -s ./pgmanage-app AppRun
 cd $HOME
-/tmp/appimagetool-x86_64.AppImage --appimage-extract-and-run pgmanage-app_$VERSION/ pgmanage-app_$VERSION.AppImage
+/deploy/appimagetool-x86_64.AppImage --appimage-extract-and-run pgmanage-app_$VERSION/ pgmanage-app_$VERSION.AppImage
 # tar -czvf pgmanage-app_$VERSION-linux-x64.tar.gz pgmanage-app_$VERSION/
 # mv pgmanage-app_$VERSION-linux-x64.tar.gz /tmp/
-mv pgmanage-app_$VERSION.AppImage /tmp
+mv pgmanage-app_$VERSION.AppImage /deploy

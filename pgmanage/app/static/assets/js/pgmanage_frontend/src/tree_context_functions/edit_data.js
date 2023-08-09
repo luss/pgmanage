@@ -25,7 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+import { SetAcked, removeContext, createRequest } from "../long_polling";
+import { v_queryRequestCodes } from "../query";
+import { editDataActionRenderer } from '../renderers'
 /// <summary>
 /// Query state
 /// </summary>
@@ -104,7 +106,6 @@ function v_startEditData(p_table,p_schema) {
 /// Triggered when X is pressed in specific record at the edit table data window.
 /// </summary>
 function deleteRowEditData() {
-
 	var v_currTabTag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 	var v_data = v_currTabTag.editDataObject.ht.getData();
 	var v_row = v_currTabTag.editDataObject.ht.getSelected()[0][0];
@@ -684,3 +685,15 @@ v_currTabTag.bt_cancel.style.display = '';
 	p_context.tab_tag.bt_cancel.style.display = 'none';
 
 }
+
+export {
+  queryEditDataReturn,
+  saveEditDataReturn,
+  cancelEditDataTab,
+  v_startEditData,
+  cancelEditData,
+  queryEditData,
+  checkEditDataStatus,
+  saveEditData,
+  deleteRowEditData,
+};

@@ -25,6 +25,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { terminalReturn } from "./terminal";
+import { querySQLReturn, cancelSQLTab, querySQL, v_queryResponseCodes } from "./query";
+import { consoleReturn, cancelConsoleTab, consoleSQL } from "./console";
+import { queryEditDataReturn, saveEditDataReturn, cancelEditDataTab } from "./tree_context_functions/edit_data";
+import { debugResponse } from "./debug";
 
 var v_client_id;
 var v_polling_ajax = null;
@@ -291,7 +296,7 @@ function QueryPasswordRequired(p_context, p_message) {
 
 function createContext(p_context) {
 	v_context_object.contextCode += 1;
-	v_context_code = v_context_object.contextCode;
+	let v_context_code = v_context_object.contextCode;
 	p_context.v_context_code = v_context_code;
 	var v_context = {
 		code: v_context_code,
@@ -360,3 +365,5 @@ function SetAcked(p_context) {
 	if (p_context)
 		p_context.acked = true;
 }
+
+export { createContext, createRequest, SetAcked, removeContext }

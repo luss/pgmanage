@@ -28,6 +28,8 @@ import {
   TemplateSelectOracle,
 } from "../tree_context_functions/tree_oracle";
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
+import { querySQL } from "../query";
+import { v_startEditData } from "../tree_context_functions/edit_data";
 export default {
   name: "TreeOracle",
   components: {

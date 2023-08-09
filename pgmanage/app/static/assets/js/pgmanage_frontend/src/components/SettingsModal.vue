@@ -173,7 +173,10 @@
 <script>
 import { refreshHeights } from '../workspace'
 import { getExplain } from '../tree_context_functions/tree_postgresql'
-
+import { terminalRun } from '../terminal'
+import { consoleSQL } from '../console'
+import { autocomplete_start } from '../autocomplete'
+import { queryEditData } from '../tree_context_functions/edit_data'
 export default {
   name: 'SettingsModal',
   data() {

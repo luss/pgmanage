@@ -25,20 +25,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { createApp } from 'vue'
-import TreeMysql from '../components/TreeMysql.vue'
-import { renameTabConfirm,  toggleConnectionAutocomplete} from '../workspace';
-import { tabSQLTemplate } from './tree_postgresql';
-import { createMessageModal } from '../notification_control'
+import { createApp } from "vue";
+import TreeMysql from "../components/TreeMysql.vue";
+import { renameTabConfirm, toggleConnectionAutocomplete } from "../workspace";
+import { tabSQLTemplate } from "./tree_postgresql";
+import { createMessageModal } from "../notification_control";
+import { querySQL } from "../query";
+import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 
 /// <summary>
 /// Retrieving tree.
 /// </summary>
 function getTreeMysql(div) {
-
-    var context_menu = {
-        'cm_databases': {
-            elements: [/*, {
+  var context_menu = {
+    cm_databases: {
+      elements: [
+        /*, {
                 text: 'Doc: Databases',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -48,11 +50,12 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/managing-databases.html');
                 }
-            }*/]
-        },
-        'cm_roles': {
-            elements: [
-            /*, {
+            }*/
+      ],
+    },
+    cm_roles: {
+      elements: [
+        /*, {
                 text: 'Doc: Roles',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -62,10 +65,12 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/user-manag.html');
                 }
-            }*/]
-        },
-        'cm_tables': {
-            elements: [/*, {
+            }*/
+      ],
+    },
+    cm_tables: {
+      elements: [
+        /*, {
                 text: 'Doc: Basics',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -95,10 +100,12 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/ddl-alter.html');
                 }
-            }*/]
-        },
-        'cm_indexes': {
-            elements: [/*, {
+            }*/
+      ],
+    },
+    cm_indexes: {
+      elements: [
+        /*, {
                 text: 'Doc: Indexes',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -108,10 +115,12 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/indexes.html');
                 }
-            }*/]
-        },
-        'cm_views': {
-            elements: [/*, {
+            }*/
+      ],
+    },
+    cm_views: {
+      elements: [
+        /*, {
                 text: 'Doc: Views',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -121,9 +130,10 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/sql-createview.html');
                 }
-            }*/]
-        },
-        /*'cm_triggers': {
+            }*/
+      ],
+    },
+    /*'cm_triggers': {
             elements: [{
                 text: 'Refresh',
                 icon: 'fas cm-all fa-sync-alt',
@@ -286,8 +296,9 @@ function getTreeMysql(div) {
                 }
             }]
         },*/
-        'cm_functions': {
-            elements: [/*, {
+    cm_functions: {
+      elements: [
+        /*, {
                 text: 'Doc: Functions',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -297,10 +308,12 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/sql-createfunction.html');
                 }
-            }*/]
-        },
-        'cm_procedures': {
-            elements: [/*, {
+            }*/
+      ],
+    },
+    cm_procedures: {
+      elements: [
+        /*, {
                 text: 'Doc: Procedures',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -310,37 +323,38 @@ function getTreeMysql(div) {
                         getMajorVersionMysql(node.tree.tag.version) +
                         '/static/sql-createfunction.html');
                 }
-            }*/]
-        },
-    };
+            }*/
+      ],
+    },
+  };
 
-    const div_tree = document.getElementById(div);
-    div_tree.innerHTML =
-      '<tree-mysql :database-index="databaseIndex" :tab-id="tabId"></tree-mysql>';
-    const app = createApp({
-      components: {
-        "tree-mysql": TreeMysql
-      },
-      data() {
-        return {
-          databaseIndex:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tabId: window.v_connTabControl.selectedTab.id,
-        };
-      },
-    });
-    app.mount(`#${div}`);
+  const div_tree = document.getElementById(div);
+  div_tree.innerHTML =
+    '<tree-mysql :database-index="databaseIndex" :tab-id="tabId"></tree-mysql>';
+  const app = createApp({
+    components: {
+      "tree-mysql": TreeMysql,
+    },
+    data() {
+      return {
+        databaseIndex:
+          window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tabId: window.v_connTabControl.selectedTab.id,
+      };
+    },
+  });
+  app.mount(`#${div}`);
 
-    // save tree referece in the tab, it will be later used to destroy tree instance on tab close
-    v_connTabControl.selectedTab.tree = app
+  // save tree referece in the tab, it will be later used to destroy tree instance on tab close
+  v_connTabControl.selectedTab.tree = app;
 
-    let autocomplete_switch_status =
-      v_connTabControl.selectedTab.tag.enable_autocomplete !== false
-        ? " checked "
-        : "";
-    let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
+  let autocomplete_switch_status =
+    v_connTabControl.selectedTab.tag.enable_autocomplete !== false
+      ? " checked "
+      : "";
+  let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`;
 
-    v_connTabControl.selectedTab.tag.divDetails.innerHTML = `<i class="fas fa-server mr-1"></i>selected DB:
+  v_connTabControl.selectedTab.tag.divDetails.innerHTML = `<i class="fas fa-server mr-1"></i>selected DB:
         <b>${v_connTabControl.selectedTab.tag.selectedDatabase}</b>
         <div class="omnidb__switch omnidb__switch--sm float-right" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>">
     	    <input type="checkbox" ${autocomplete_switch_status} id="${autocomplete_btn_id}" class="omnidb__switch--input" onchange="toggleConnectionAutocomplete(\'autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}\')">
@@ -351,29 +365,35 @@ function getTreeMysql(div) {
             </label>
 		</div>`;
 
-    let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
-    autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
+  let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`);
+  autocomplete_btn.onchange = function () {
+    toggleConnectionAutocomplete(autocomplete_btn_id);
+  };
 
-    // tree.beforeContextMenuEvent = function(node, callback) {
+  // tree.beforeContextMenuEvent = function(node, callback) {
 
-    //     var v_elements = [];
-    //     //Hooks
-    //     if (v_connTabControl.tag.hooks.mysqlTreeContextMenu.length>0) {
-    //       for (var i=0; i<v_connTabControl.tag.hooks.mysqlTreeContextMenu.length; i++)
-    //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.mysqlTreeContextMenu[i](node));
-    //     }
+  //     var v_elements = [];
+  //     //Hooks
+  //     if (v_connTabControl.tag.hooks.mysqlTreeContextMenu.length>0) {
+  //       for (var i=0; i<v_connTabControl.tag.hooks.mysqlTreeContextMenu.length; i++)
+  //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.mysqlTreeContextMenu[i](node));
+  //     }
 
-    //     var v_customCallback = function() {
-    //       callback(v_elements);
-    //     }
-    //     v_customCallback();
-    // }
+  //     var v_customCallback = function() {
+  //       callback(v_elements);
+  //     }
+  //     v_customCallback();
+  // }
 }
 
 function afterNodeOpenedCallbackMysql(node) {
   //Hooks
-  if (v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length>0) {
-    for (var i=0; i<v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length; i++)
+  if (v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length > 0) {
+    for (
+      var i = 0;
+      i < v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length;
+      i++
+    )
       v_connTabControl.tag.hooks.mysqlTreeNodeOpen[i](node);
   }
 }
@@ -383,33 +403,30 @@ function afterNodeOpenedCallbackMysql(node) {
 /// </summary>
 /// <param name="node">Node object.</param>
 function getTreeDetailsMysql(node) {
+  node.removeChildNodes();
+  node.createChildNode("", false, "node-spin", null, null);
 
-    node.removeChildNodes();
-    node.createChildNode('', false, 'node-spin', null,
-        null);
+  execAjax(
+    "/get_tree_info_mysql/",
+    JSON.stringify({
+      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      p_tab_id: v_connTabControl.selectedTab.id,
+    }),
+    function (p_return) {
+      node.tree.contextMenu.cm_server.elements = [];
+      node.tree.contextMenu.cm_server.elements.push({
+        text: "Refresh",
+        icon: "fas cm-all fa-sync-alt",
+        action: function (node) {
+          if (node.childNodes == 0) refreshTreeMysql(node);
+          else {
+            node.collapseNode();
+            node.expandNode();
+          }
+        },
+      });
 
-    execAjax('/get_tree_info_mysql/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
-        }),
-        function(p_return) {
-
-            node.tree.contextMenu.cm_server.elements = []
-            node.tree.contextMenu.cm_server.elements.push({
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeMysql(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            });
-
-            /*node.tree.contextMenu.cm_server.elements.push({
+      /*node.tree.contextMenu.cm_server.elements.push({
                 text: 'Doc: PostgreSQL',
                 icon: 'fas cm-all fa-globe-americas',
                 action: function(node) {
@@ -443,119 +460,131 @@ function getTreeDetailsMysql(node) {
                 }
             });*/
 
-            if (node.childNodes.length > 0)
-                node.removeChildNodes();
+      if (node.childNodes.length > 0) node.removeChildNodes();
 
-            node.tree.tag = {
-                v_database: p_return.v_data.v_database_return.v_database,
-                version: p_return.v_data.v_database_return.version,
-                v_username: p_return.v_data.v_database_return.v_username,
-                superuser: p_return.v_data.v_database_return.superuser,
-                create_role: p_return.v_data.v_database_return.create_role,
-                alter_role: p_return.v_data.v_database_return.alter_role,
-                drop_role: p_return.v_data.v_database_return.drop_role,
-                create_database: p_return.v_data.v_database_return.create_database,
-                alter_database: p_return.v_data.v_database_return.alter_database,
-                drop_database: p_return.v_data.v_database_return.drop_database,
-                create_function: p_return.v_data.v_database_return.create_function,
-                drop_function: p_return.v_data.v_database_return.drop_function,
-                create_procedure: p_return.v_data.v_database_return.create_procedure,
-                drop_procedure: p_return.v_data.v_database_return.drop_procedure,
-                //create_triggerfunction: p_return.v_data.v_database_return
-                //    .create_triggerfunction,
-                //drop_triggerfunction: p_return.v_data.v_database_return
-                //    .drop_triggerfunction,
-                create_view: p_return.v_data.v_database_return.create_view,
-                drop_view: p_return.v_data.v_database_return.drop_view,
-                create_table: p_return.v_data.v_database_return.create_table,
-                alter_table: p_return.v_data.v_database_return.alter_table,
-                drop_table: p_return.v_data.v_database_return.drop_table,
-                create_column: p_return.v_data.v_database_return.create_column,
-                alter_column: p_return.v_data.v_database_return.alter_column,
-                drop_column: p_return.v_data.v_database_return.drop_column,
-                create_primarykey: p_return.v_data.v_database_return.create_primarykey,
-                drop_primarykey: p_return.v_data.v_database_return.drop_primarykey,
-                create_unique: p_return.v_data.v_database_return.create_unique,
-                drop_unique: p_return.v_data.v_database_return.drop_unique,
-                create_foreignkey: p_return.v_data.v_database_return.create_foreignkey,
-                drop_foreignkey: p_return.v_data.v_database_return.drop_foreignkey,
-                create_index: p_return.v_data.v_database_return.create_index,
-                drop_index: p_return.v_data.v_database_return.drop_index,
-                //create_trigger: p_return.v_data.v_database_return.create_trigger,
-                //create_view_trigger: p_return.v_data.v_database_return.create_view_trigger,
-                //alter_trigger: p_return.v_data.v_database_return.alter_trigger,
-                //enable_trigger: p_return.v_data.v_database_return.enable_trigger,
-                //disable_trigger: p_return.v_data.v_database_return.disable_trigger,
-                //drop_trigger: p_return.v_data.v_database_return.drop_trigger,
-                //create_partition: p_return.v_data.v_database_return.create_partition,
-                //noinherit_partition: p_return.v_data.v_database_return.noinherit_partition,
-                //drop_partition: p_return.v_data.v_database_return.drop_partition
-                delete: p_return.v_data.v_database_return.delete
-            }
+      node.tree.tag = {
+        v_database: p_return.v_data.v_database_return.v_database,
+        version: p_return.v_data.v_database_return.version,
+        v_username: p_return.v_data.v_database_return.v_username,
+        superuser: p_return.v_data.v_database_return.superuser,
+        create_role: p_return.v_data.v_database_return.create_role,
+        alter_role: p_return.v_data.v_database_return.alter_role,
+        drop_role: p_return.v_data.v_database_return.drop_role,
+        create_database: p_return.v_data.v_database_return.create_database,
+        alter_database: p_return.v_data.v_database_return.alter_database,
+        drop_database: p_return.v_data.v_database_return.drop_database,
+        create_function: p_return.v_data.v_database_return.create_function,
+        drop_function: p_return.v_data.v_database_return.drop_function,
+        create_procedure: p_return.v_data.v_database_return.create_procedure,
+        drop_procedure: p_return.v_data.v_database_return.drop_procedure,
+        //create_triggerfunction: p_return.v_data.v_database_return
+        //    .create_triggerfunction,
+        //drop_triggerfunction: p_return.v_data.v_database_return
+        //    .drop_triggerfunction,
+        create_view: p_return.v_data.v_database_return.create_view,
+        drop_view: p_return.v_data.v_database_return.drop_view,
+        create_table: p_return.v_data.v_database_return.create_table,
+        alter_table: p_return.v_data.v_database_return.alter_table,
+        drop_table: p_return.v_data.v_database_return.drop_table,
+        create_column: p_return.v_data.v_database_return.create_column,
+        alter_column: p_return.v_data.v_database_return.alter_column,
+        drop_column: p_return.v_data.v_database_return.drop_column,
+        create_primarykey: p_return.v_data.v_database_return.create_primarykey,
+        drop_primarykey: p_return.v_data.v_database_return.drop_primarykey,
+        create_unique: p_return.v_data.v_database_return.create_unique,
+        drop_unique: p_return.v_data.v_database_return.drop_unique,
+        create_foreignkey: p_return.v_data.v_database_return.create_foreignkey,
+        drop_foreignkey: p_return.v_data.v_database_return.drop_foreignkey,
+        create_index: p_return.v_data.v_database_return.create_index,
+        drop_index: p_return.v_data.v_database_return.drop_index,
+        //create_trigger: p_return.v_data.v_database_return.create_trigger,
+        //create_view_trigger: p_return.v_data.v_database_return.create_view_trigger,
+        //alter_trigger: p_return.v_data.v_database_return.alter_trigger,
+        //enable_trigger: p_return.v_data.v_database_return.enable_trigger,
+        //disable_trigger: p_return.v_data.v_database_return.disable_trigger,
+        //drop_trigger: p_return.v_data.v_database_return.drop_trigger,
+        //create_partition: p_return.v_data.v_database_return.create_partition,
+        //noinherit_partition: p_return.v_data.v_database_return.noinherit_partition,
+        //drop_partition: p_return.v_data.v_database_return.drop_partition
+        delete: p_return.v_data.v_database_return.delete,
+      };
 
-            node.tree.contextMenu.cm_server.elements.push({
-                text: 'Monitoring',
-                icon: 'fas cm-all fa-chart-line',
-                action: function(node) {},
-                submenu: {
-                    elements: [/*{
+      node.tree.contextMenu.cm_server.elements.push({
+        text: "Monitoring",
+        icon: "fas cm-all fa-chart-line",
+        action: function (node) {},
+        submenu: {
+          elements: [
+            /*{
                         text: 'Dashboard',
                         icon: 'fas cm-all fa-chart-line',
                         action: function(node) {
                             v_connTabControl.tag.createMonitorDashboardTab();
                             startMonitorDashboard();
                         }
-                    }, */{
-                        text: 'Process List',
-                        icon: 'fas cm-all fa-chart-line',
-                        action: function(node) {
-                            v_connTabControl.tag.createMonitoringTab(
-                                'Process List',
-                                'select * from information_schema.processlist', [{
-                                    icon: 'fas cm-all fa-times',
-                                    title: 'Terminate',
-                                    action: 'mysqlTerminateBackend'
-                                }]);
-                        }
-                    }]
-                }
-            });
-
-            node.setText(p_return.v_data.v_database_return.version);
-
-            var node_databases = node.createChildNode('Databases', false,
-                'fas node-all fa-database node-database-list', {
-                type: 'database_list',
-                num_databases: 0
-            }, 'cm_databases');
-            node_databases.createChildNode('', true,
-                'node-spin', null, null);
-
-            if (node.tree.tag.superuser) {
-                var node_roles = node.createChildNode('Roles', false,
-                    'fas node-all fa-users node-user-list', {
-                        type: 'role_list',
-                        num_roles: 0
-                }, 'cm_roles');
-                node_roles.createChildNode('', true,
-                    'node-spin', null, null);
-            }
-
-            if (v_connTabControl.selectedTab.tag.firstTimeOpen) {
-              v_connTabControl.selectedTab.tag.firstTimeOpen = false;
-              //v_connTabControl.tag.createMonitorDashboardTab();
-              //startMonitorDashboard();
-            }
-
-            afterNodeOpenedCallbackMysql(node);
-
+                    }, */ {
+              text: "Process List",
+              icon: "fas cm-all fa-chart-line",
+              action: function (node) {
+                v_connTabControl.tag.createMonitoringTab(
+                  "Process List",
+                  "select * from information_schema.processlist",
+                  [
+                    {
+                      icon: "fas cm-all fa-times",
+                      title: "Terminate",
+                      action: "mysqlTerminateBackend",
+                    },
+                  ]
+                );
+              },
+            },
+          ],
         },
-        function(p_return) {
-            nodeOpenErrorMysql(p_return, node);
-        },
-        'box',
-        false);
+      });
 
+      node.setText(p_return.v_data.v_database_return.version);
+
+      var node_databases = node.createChildNode(
+        "Databases",
+        false,
+        "fas node-all fa-database node-database-list",
+        {
+          type: "database_list",
+          num_databases: 0,
+        },
+        "cm_databases"
+      );
+      node_databases.createChildNode("", true, "node-spin", null, null);
+
+      if (node.tree.tag.superuser) {
+        var node_roles = node.createChildNode(
+          "Roles",
+          false,
+          "fas node-all fa-users node-user-list",
+          {
+            type: "role_list",
+            num_roles: 0,
+          },
+          "cm_roles"
+        );
+        node_roles.createChildNode("", true, "node-spin", null, null);
+      }
+
+      if (v_connTabControl.selectedTab.tag.firstTimeOpen) {
+        v_connTabControl.selectedTab.tag.firstTimeOpen = false;
+        //v_connTabControl.tag.createMonitorDashboardTab();
+        //startMonitorDashboard();
+      }
+
+      afterNodeOpenedCallbackMysql(node);
+    },
+    function (p_return) {
+      nodeOpenErrorMysql(p_return, node);
+    },
+    "box",
+    false
+  );
 }
 
 /*
@@ -826,90 +855,91 @@ function getTriggerFunctionDefinitionMysql(node) {
 /// Retrieving SELECT SQL template.
 /// </summary>
 function TemplateSelectMysql(p_schema, p_table) {
+  execAjax(
+    "/template_select_mysql/",
+    JSON.stringify({
+      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      p_tab_id: v_connTabControl.selectedTab.id,
+      p_table: p_table,
+      p_schema: p_schema,
+    }),
+    function (p_return) {
+      v_connTabControl.tag.createQueryTab(p_schema + "." + p_table);
 
-    execAjax('/template_select_mysql/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
-            "p_table": p_table,
-            "p_schema": p_schema
-        }),
-        function(p_return) {
-            v_connTabControl.tag.createQueryTab(
-                p_schema + '.' + p_table);
+      v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
+        p_return.v_data.v_template
+      );
+      v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
+      renameTabConfirm(
+        v_connTabControl.selectedTab.tag.tabControl.selectedTab,
+        p_schema + "." + p_table
+      );
 
+      //minimizeEditor();
 
-            v_connTabControl.selectedTab
-                .tag.tabControl.selectedTab
-                .tag.editor.setValue(p_return.v_data.v_template);
-            v_connTabControl.selectedTab
-                .tag.tabControl.selectedTab
-                .tag.editor.clearSelection();
-            renameTabConfirm(
-                v_connTabControl.selectedTab
-                .tag.tabControl.selectedTab,
-                p_schema + '.' + p_table);
-
-            //minimizeEditor();
-
-            querySQL(0);
-        },
-        function(p_return) {
-            showError(p_return.v_data);
-            return '';
-        },
-        'box',
-        true);
+      querySQL(0);
+    },
+    function (p_return) {
+      showError(p_return.v_data);
+      return "";
+    },
+    "box",
+    true
+  );
 }
 
 /// <summary>
 /// Retrieving INSERT SQL template.
 /// </summary>
 function TemplateInsertMysql(p_schema, p_table) {
-
-    execAjax('/template_insert_mysql/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
-            "p_table": p_table,
-            "p_schema": p_schema
-        }),
-        function(p_return) {
-          tabSQLTemplate(
-              'Insert ' + p_schema + '.' + p_table,
-              p_return.v_data.v_template);
-        },
-        function(p_return) {
-            showError(p_return.v_data);
-            return '';
-        },
-        'box',
-        true);
+  execAjax(
+    "/template_insert_mysql/",
+    JSON.stringify({
+      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      p_tab_id: v_connTabControl.selectedTab.id,
+      p_table: p_table,
+      p_schema: p_schema,
+    }),
+    function (p_return) {
+      tabSQLTemplate(
+        "Insert " + p_schema + "." + p_table,
+        p_return.v_data.v_template
+      );
+    },
+    function (p_return) {
+      showError(p_return.v_data);
+      return "";
+    },
+    "box",
+    true
+  );
 }
 
 /// <summary>
 /// Retrieving UPDATE SQL template.
 /// </summary>
 function TemplateUpdateMysql(p_schema, p_table) {
-
-    execAjax('/template_update_mysql/',
-        JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
-            "p_table": p_table,
-            "p_schema": p_schema
-        }),
-        function(p_return) {
-          tabSQLTemplate(
-              'Update ' + p_schema + '.' + p_table,
-              p_return.v_data.v_template);
-        },
-        function(p_return) {
-            showError(p_return.v_data);
-            return '';
-        },
-        'box',
-        true);
+  execAjax(
+    "/template_update_mysql/",
+    JSON.stringify({
+      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      p_tab_id: v_connTabControl.selectedTab.id,
+      p_table: p_table,
+      p_schema: p_schema,
+    }),
+    function (p_return) {
+      tabSQLTemplate(
+        "Update " + p_schema + "." + p_table,
+        p_return.v_data.v_template
+      );
+    },
+    function (p_return) {
+      showError(p_return.v_data);
+      return "";
+    },
+    "box",
+    true
+  );
 }
 
 /*function getMajorVersionMysql(p_version) {
@@ -935,7 +965,7 @@ function mysqlTerminateBackendConfirm(pid) {
         showPasswordPrompt(
           v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
           function () {
-            mariadbTerminateBackend(pid);
+            mysqlTerminateBackendConfirm(pid);
           },
           null,
           error.response.data.data
@@ -955,5 +985,10 @@ function mysqlTerminateBackend(row) {
   );
 }
 
-
-export { getTreeMysql, mysqlTerminateBackend, TemplateSelectMysql, TemplateInsertMysql, TemplateUpdateMysql }
+export {
+  getTreeMysql,
+  mysqlTerminateBackend,
+  TemplateSelectMysql,
+  TemplateInsertMysql,
+  TemplateUpdateMysql,
+};
