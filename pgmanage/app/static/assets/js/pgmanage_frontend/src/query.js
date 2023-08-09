@@ -560,10 +560,10 @@ function refreshTreeNode(node, type_name) {
 	// get inner nodes
 	function getInnerNode(node, type_name) {
 		if (!!node.children.length) {
+			if (node.data.type === `${type_name.toLowerCase()}_list`) {
+				v_connTabControl.selectedTab.tag.tree.refreshTree(node)
+			}
 			for (let i = 0; i < node.children.length; i++) {
-				if (node.data.type === `${type_name.toLowerCase()}_list`) {
-					v_connTabControl.selectedTab.tag.tree.refreshTree(node)
-				}
 				let childNode = node.children[i];
 
 				if (childNode.data?.database === selected_database) {
