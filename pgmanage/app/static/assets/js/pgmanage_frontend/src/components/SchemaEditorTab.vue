@@ -52,8 +52,10 @@ import Knex from 'knex'
 import { format } from 'sql-formatter'
 import { emitter } from '../emitter'
 import { useVuelidate } from '@vuelidate/core'
-import ColumnList from "./SchemaEditorColumnList.vue"
-import dialects from "./dialect-data"
+import ColumnList from './SchemaEditorColumnList.vue'
+import dialects from './dialect-data'
+import { createRequest } from '../long_polling'
+import { v_queryRequestCodes } from '../query'
 
 export default {
   name: "SchemaEditor",
