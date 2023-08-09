@@ -97,7 +97,6 @@
       return {
         columns: [],
         value:'',
-        options: ['Select option', 'options', 'selected', 'multiple', 'label', 'searchable', 'clearOnSelect', 'hideSelected', 'maxHeight', 'allowEmpty', 'showLabels', 'onChange', 'touched']
       }
     },
     components: {
@@ -151,9 +150,6 @@
         let col = this.columns.splice(index, 1)[0]
         this.columns.splice(index+1, 0, col)
       },
-      // setDataType(selected) {
-      //   this.
-      // }
     },
     watch: {
       initialColumns: {

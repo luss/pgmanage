@@ -49,6 +49,8 @@
 
 <script>
 import Knex from 'knex'
+import { format } from 'sql-formatter'
+import { emitter } from '../emitter'
 import { useVuelidate } from '@vuelidate/core'
 import ColumnList from "./SchemaEditorColumnList.vue"
 import dialects from "./dialect-data"
@@ -158,7 +160,7 @@ export default {
             return {
               dataType: col.data_type,
               name: col.name,
-              defaultValue: 0,
+              defaultValue: col.default_value,
               nullable: col.nullable,
               isPK: col.is_primary,
               comment: null, //TBD
@@ -184,7 +186,6 @@ export default {
     generateSQL() {
       //add knex error handing with notification to the user
       let tabledef = this.localTable
-      // FIXME: table name is quoted when using withSchema
       let k = this.knex.schema.withSchema(tabledef.schema)
       this.hasChanges = false
       if(this.mode === 'alter') {
@@ -193,7 +194,7 @@ export default {
           'drops': [],
           'typeChanges': [],
           'nullableChanges': [],
-          'dropNulls': [],
+          // 'dropNulls': [],
           'defaults': [],
           'renames': [],
         }
@@ -219,12 +220,13 @@ export default {
               table.specificType(coldef.name, coldef.dataType)
 
             coldef.nullable ? col.nullable() : col.notNullable()
-            //FIXME:this defaultValue check is incorrect if coldef defaultval is zero
-            if(coldef.defaultValue) col.defaultTo(coldef.defaultValue)
+
+            if(coldef.defaultValue !== '') col.defaultTo(coldef.defaultValue)
             if(coldef.comment) col.comment(coldef.comment)
           })
 
           if(changes.drops.length) table.dropColumns(changes.drops)
+
           changes.typeChanges.forEach((coldef) => {
             if(coldef.dataType === 'autoincrement') {
               table.increments(coldef.name).alter()
@@ -232,9 +234,21 @@ export default {
               table.specificType(coldef.name, coldef.dataType).defaultTo(coldef.defaultValue).alter({alterNullable : false})
             }
           })
-          changes.dropNulls.forEach((coldef) => {
-            coldef.nullable ? col.setNullable() : col.dropNullable()
+
+          changes.defaults.forEach(function(coldef) {
+            if (coldef.defaultValue !== '') {
+              table.specificType(coldef.name, coldef.dataType).alter().defaultTo(table.client.raw(coldef.defaultValue)).alter({alterNullable : false, alterType: false})
+            }
+            // FIXME: this does not work, figure out how to do drop default via Knex.
+            //  else {
+            //   table.specificType(coldef.name, coldef.dataType).defaultTo().alter({alterNullable : false, alterType: false})
+            // }
           })
+
+          changes.nullableChanges.forEach((coldef) => {
+            coldef.nullable ? table.setNullable(coldef.name) : table.dropNullable(coldef.name)
+          })
+
           changes.renames.forEach((rename) => {
             table.renameColumn(rename.oldName, rename.newName)
           })
@@ -294,7 +308,7 @@ export default {
 				cmd_type: null,
 				database_index: this.database_index,
 				mode: 0,
-				callback: this.handleResponse,
+				callback: this.handleResponse.bind(this),
 				acked: false,
 				query: this.generatedSQL,
 				log_query: false,
@@ -314,9 +328,9 @@ export default {
         this.$toast.success(this.createNotifyMessage('Done', msg), {
           duration:3000
         })
-        // FIXME: this does not work, call refreshTree instead
-        // determine the proper node to be refreshed
-        // refreshTreePostgresql(this.tree_node)
+        // FIXME: this does not work, we need to refresh one of
+        // ancestor nodes of this.tree_node
+        emitter.emit('refreshNode', {"node": this.tree_node})
       }
       this.queryIsRunning = false
     },
@@ -347,7 +361,6 @@ export default {
   },
   watch: {
     generatedSQL() {
-      let format = window.sqlFormatter.format;
       this.editor.setValue(
         format(
           this.generatedSQL,
