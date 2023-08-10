@@ -37,6 +37,12 @@ echo "setting app version in sources to $APP_VERSION"
 sed -i "s/Dev/PgManage $APP_VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$APP_VERSION/" pgmanage/custom_settings.py
 
+# building vite bundle
+cd app/static/assets/js/pgmanage_frontend/
+npm install
+npm run build
+cd ../../../../../
+
 echo "running pyinstaller"
 pyinstaller ./pgmanage-win.spec
 pyinstaller ./process_executor-win.spec
