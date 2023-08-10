@@ -8,11 +8,6 @@ echo "VERSION=$VERSION"
 # Cloning repo
 git clone $REPO --depth 1 -b $BRANCH pgmanage
 
-echo "Installing Node.js..."
-curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
-bash /tmp/nodesource_setup.sh
-apt install nodejs
-
 # Installing dependencies
 cd pgmanage/
 pip3 install -r requirements.txt
