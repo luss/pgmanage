@@ -566,4 +566,14 @@ function consoleReturnRender(p_message,p_context) {
 	}
 }
 
-export { consoleReturn, cancelConsoleTab, consoleSQL, showConsoleHistory, closeConsoleHistory, clearConsole, cancelConsole, checkConsoleStatus }
+export {
+  consoleReturn,
+  cancelConsoleTab,
+  consoleSQL,
+  showConsoleHistory,
+  closeConsoleHistory,
+  clearConsole,
+  cancelConsole,
+  checkConsoleStatus,
+  v_consoleState,
+};

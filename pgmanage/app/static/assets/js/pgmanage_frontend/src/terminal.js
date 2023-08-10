@@ -29,6 +29,8 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { h } from "vue";
 import { createContext, createRequest } from "./long_polling";
 import { v_queryRequestCodes } from "./query";
+import { v_consoleState } from "./console";
+
 /// <summary>
 /// Terminal state
 /// </summary>
