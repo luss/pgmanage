@@ -42,6 +42,7 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { h } from "vue";
 import { createRequest } from "../long_polling";
 import { v_queryRequestCodes } from "../query";
+import { cancelMonitorUnits } from "../monitoring";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.

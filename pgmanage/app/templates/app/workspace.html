@@ -243,7 +243,7 @@
             <div id="monitoring_units_grid" style="width: 100%; height: 300px; overflow: hidden;"></div>
           </div>
           <div class="modal-footer">
-            <button class='btn btn-primary btn-sm mr-3' onclick='editMonitorUnit()'>New Unit</button>
+            <button id="modal_monitoring_units_new_unit_btn" class='btn btn-primary btn-sm mr-3'>New Unit</button>
           </div>
         </div>
       </div>
@@ -546,7 +546,6 @@
     <script src="{{url_folder}}/static/assets/js/header_actions.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/notification_control.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tabs.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/monitoring.js?v{{pgmanage_short_version}}"></script>
     {% vite_asset 'src/main.js' %}
     <script defer src="{{url_folder}}/static/assets/js/plugin_hook.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/users.js?v{{pgmanage_short_version}}"></script>
