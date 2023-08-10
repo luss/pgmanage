@@ -45,6 +45,7 @@ import { checkDebugStatus } from './debug'
 import { checkConsoleStatus } from './console'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
+import { createTabControl } from './tabs'
 
 let v_start_height;
 /// <summary>

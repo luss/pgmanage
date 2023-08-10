@@ -563,3 +563,5 @@ function createImgElement(p_id,p_class,p_src) {
 		element.src = p_src;
 	return element;
 }
+
+export { createTabControl }

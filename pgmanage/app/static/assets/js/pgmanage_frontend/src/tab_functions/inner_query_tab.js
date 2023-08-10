@@ -53,6 +53,7 @@ import {
   autocomplete_start,
 } from "../autocomplete";
 import { showCommandList } from "../command_history";
+import { createTabControl } from "../tabs";
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
