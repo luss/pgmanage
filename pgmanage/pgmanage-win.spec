@@ -1,5 +1,15 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+
+# since pyinstaller does not have option to specify folders to exclude
+# we use basic filtering
+# https://github.com/orgs/pyinstaller/discussions/6126
+
+exclude_patterns = [
+  os.path.join('js', 'pgmanage_frontend'),
+]
+
 block_cipher = None
 
 data_files_server = [
@@ -24,6 +34,9 @@ a = Analysis(['pgmanage-server.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
+             
+a.datas = [entry for entry in a.datas if not any(pattern in entry[0] for pattern in exclude_patterns)]
+
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
