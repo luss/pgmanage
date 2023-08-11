@@ -27,7 +27,7 @@ SOFTWARE.
 */
 import { SetAcked, removeContext, createRequest } from "./long_polling";
 import { v_queryRequestCodes, setTabStatus, refreshTreeNode } from "./query";
-
+import { cellDataModal } from "./header_actions";
 /// <summary>
 /// Console state
 /// </summary>
@@ -81,7 +81,7 @@ function showConsoleHistory() {
 			"</button>" +
 		"</div>" +
 		"<label class='mr-1'>Command contains:</label>" +
-		"<input type='text' id='cl_input_contains_" + v_tab_tag.tab_id + "' class='mr-2 form-control' onchange='refreshConsoleHistoryList();' />" +
+		"<input type='text' id='cl_input_contains_" + v_tab_tag.tab_id + "' class='mr-2 form-control' />" +
 	"</div>" +
 	"<div id='console_history_daterangepicker_container_" + v_tab_tag.id  + "' style='position:relative;'></div>" +
 	"<div class='mb-2 d-flex justify-content-center align-items-center'>" +
@@ -111,6 +111,9 @@ function showConsoleHistory() {
 
 	let btn_clear = document.getElementById(`bt_clear_${v_tab_tag.tab_id}`)
 	btn_clear.onclick = function() { deleteConsoleHistoryList() }
+
+	let cl_input = document.getElementById(`cl_input_contains_${v_tab_tag.tab_id}`)
+	cl_input.onchange = function() { refreshConsoleHistoryList() }
 
   var v_grid_div = v_tab_tag.consoleHistory.gridDiv;
   v_grid_div.innerHTML = '';
@@ -566,4 +569,14 @@ function consoleReturnRender(p_message,p_context) {
 	}
 }
 
-export { consoleReturn, cancelConsoleTab, consoleSQL, showConsoleHistory, closeConsoleHistory, clearConsole, cancelConsole, checkConsoleStatus }
+export {
+  consoleReturn,
+  cancelConsoleTab,
+  consoleSQL,
+  showConsoleHistory,
+  closeConsoleHistory,
+  clearConsole,
+  cancelConsole,
+  checkConsoleStatus,
+  v_consoleState,
+};

@@ -51,6 +51,8 @@ import {
   autocomplete_update_editor_cursor,
   autocomplete_start,
 } from "../autocomplete";
+import { v_current_terminal_theme } from "../header_actions";
+
 var v_createConsoleTabFunction = function() {
 
   // Removing last tab of the inner tab list

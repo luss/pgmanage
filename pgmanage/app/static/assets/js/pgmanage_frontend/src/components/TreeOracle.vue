@@ -30,6 +30,7 @@ import {
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 import { querySQL } from "../query";
 import { v_startEditData } from "../tree_context_functions/edit_data";
+import { getProperties, clearProperties } from "../properties";
 export default {
   name: "TreeOracle",
   components: {

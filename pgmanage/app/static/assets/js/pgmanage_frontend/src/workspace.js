@@ -44,6 +44,8 @@ import { v_queryRequestCodes, checkQueryStatus } from './query'
 import { checkDebugStatus } from './debug'
 import { checkConsoleStatus } from './console'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
+import { startMonitorDashboard } from './monitoring'
+import { createTabControl } from './tabs'
 
 let v_start_height;
 /// <summary>
@@ -1231,9 +1233,9 @@ function showMenuNewTab(e) {
 	else if (v_connTabControl.selectedTab.tag.selectedDBMS=='mysql' || v_connTabControl.selectedTab.tag.selectedDBMS=='mariadb') {
 		v_option_list.push(
 			{
-				text: 'Process List',
+				label: 'Process List',
 				icon: 'fas cm-all fa-tasks',
-				action: function() {
+				onClick: function() {
 					v_connTabControl.tag.createMonitoringTab(
 							'Process List',
 							'select * from information_schema.processlist', [{

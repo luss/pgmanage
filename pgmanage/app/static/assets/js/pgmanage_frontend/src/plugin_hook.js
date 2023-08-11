@@ -169,6 +169,8 @@ with 2 parameters:
     - p_data: optional paramater to send data from the javascript side.
 
 */
+import { tabSQLTemplate } from './tree_context_functions/tree_postgresql'
+
 var v_plugins = {}
 
 $(function () {

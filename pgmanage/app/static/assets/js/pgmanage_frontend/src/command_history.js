@@ -76,21 +76,42 @@ function showCommandList() {
 			"<div class='form-group col-7 d-flex justify-content-end align-items-end'>"+
 				"<div>"+
 					"<label class='font-weight-bold mb-2'>Command contains:</label>" +
-					"<input type='text' id='cl_input_contains_" + v_tabTag.tab_id + "' class='form-control' onchange='refreshCommandList();' />" +
+					"<input type='text' id='cl_input_contains_" + v_tabTag.tab_id + "' class='form-control' />" +
 				"</div>"+
-				"<button id='bt_refresh_" + v_tabTag.tab_id + "' onclick='refreshCommandList()' class='bt_execute btn btn-primary ml-1' title='Refresh'><i class='fas fa-sync-alt mr-1'></i>Refresh</button>" +
-				"<button id='bt_clear_" + v_tabTag.tab_id + "' onclick='deleteCommandList()' class='bt_execute btn btn-danger ml-1' title='Clear List'><i class='fas fa-broom mr-1'></i>Clear List</button>" +
+				"<button id='bt_refresh_" + v_tabTag.tab_id + "' class='bt_execute btn btn-primary ml-1' title='Refresh'><i class='fas fa-sync-alt mr-1'></i>Refresh</button>" +
+				"<button id='bt_clear_" + v_tabTag.tab_id + "' class='bt_execute btn btn-danger ml-1' title='Clear List'><i class='fas fa-broom mr-1'></i>Clear List</button>" +
 			"</div>" +
 		"</div>" +
 	"</div>" +
 	"<div id='command_history_daterangepicker_container_" + v_tabTag.tab_id  + "' style='position:relative;'></div>"+
 	"<div class='pagination d-flex align-items-center mb-3'>" +
-		"<button id='bt_first_" + v_tabTag.tab_id + "' onclick='commandHistoryFirstPage()' class='pagination__btn mr-2'>First</button>" +
-		"<button id='bt_previous_" + v_tabTag.tab_id + "' onclick='commandHistoryPreviousPage()' class='pagination__btn mx-2'><i class='fa-solid fa-arrow-left'></i> Previous</button>" +
+		"<button id='bt_first_" + v_tabTag.tab_id + "' class='pagination__btn mr-2'>First</button>" +
+		"<button id='bt_previous_" + v_tabTag.tab_id + "' class='pagination__btn mx-2'><i class='fa-solid fa-arrow-left'></i> Previous</button>" +
 		"<div class='pagination__pages mx-3'><span id='cl_curr_page_" + v_tabTag.tab_id + "'></span> / <span id='cl_num_pages_" + v_tabTag.tab_id + "'></span></div>" +
-		"<button id='bt_next_" + v_tabTag.tab_id + "' onclick='commandHistoryNextPage()' class='pagination__btn mx-2'>Next <i class='fa-solid fa-arrow-right'></i></button>" +
-		"<button id='bt_last_" + v_tabTag.tab_id + "' onclick='commandHistoryLastPage()' class='pagination__btn ml-2'>Last</button>" +
+		"<button id='bt_next_" + v_tabTag.tab_id + "' class='pagination__btn mx-2'>Next <i class='fa-solid fa-arrow-right'></i></button>" +
+		"<button id='bt_last_" + v_tabTag.tab_id + "' class='pagination__btn ml-2'>Last</button>" +
 	"</div>";
+
+	let btn_first = document.getElementById(`bt_first_${v_tabTag.tab_id}`)
+	btn_first.onclick = function() { commandHistoryFirstPage() }
+
+	let btn_previous = document.getElementById(`bt_previous_${v_tabTag.tab_id}`)
+	btn_previous.onclick = function() { commandHistoryPreviousPage() }
+
+	let btn_next = document.getElementById(`bt_next_${v_tabTag.tab_id}`)
+	btn_next.onclick = function() { commandHistoryNextPage() }
+
+	let btn_last = document.getElementById(`bt_last_${v_tabTag.tab_id}`)
+	btn_last.onclick = function() { commandHistoryLastPage() }
+
+	let btn_refresh = document.getElementById(`bt_refresh_${v_tabTag.tab_id}`)
+	btn_refresh.onclick = function() { refreshCommandList() }
+
+	let btn_clear = document.getElementById(`bt_clear_${v_tabTag.tab_id}`)
+	btn_clear.onclick = function() { deleteCommandList() }
+
+	let cl_input = document.getElementById(`cl_input_contains_${v_tabTag.tab_id}`)
+	cl_input.onchange = function() { refreshCommandList() }
 
 	var v_gridDiv = v_tabTag.commandHistory.gridDiv;
 	v_gridDiv.innerHTML = '';
@@ -351,3 +372,5 @@ function closeCommandHistory() {
 	v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.inputCommandContains = null;
 	$(v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.modal).modal('hide');
 }
+
+export { showCommandList }

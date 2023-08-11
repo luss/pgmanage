@@ -66,6 +66,22 @@ var v_current_terminal_theme;
 /// </summary>
 $(function() {
 
+	let link_about = document.getElementById('omnidb__utilities-menu__link-about')
+	link_about.onclick = function() { showAbout() }
+
+	let link_user = document.getElementById('omnidb__utilities-menu__link-user')
+	link_user.onclick = function() { listUsers() }
+
+	let link_config = document.getElementById('omnidb__utilities-menu__link-config')
+	link_config.onclick = function() { showConfigUser() }
+
+	let link_signout = document.getElementById('omnidb__utilities-menu__link-signout')
+	link_signout.onclick = function() { confirmSignout() }
+
+	let link_toggle = document.getElementById('omnidb__utilities-menu__link-toggle')
+	link_toggle.onclick = function() { toggleUtilitiesMenu() }
+
+
 	// var v_fileref = document.getElementById("ss_theme");
   // v_fileref.setAttribute("href", v_url_folder + '/static/OmniDB_app/new/css/themes/' + v_theme + '.css');
 
@@ -312,13 +328,13 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 	}
 
 	v_canEditContent = p_can_alter;
-	v_save_btn = '<button type="button" class="btn btn-primary" onclick="saveEditContent()">Save</button>';
+	let v_save_btn = '<button id="modal_message_save_btn" type="button" class="btn btn-primary">Save</button>';
 	v_edit_modal.innerHTML =
 	`<div id="modal_message_dialog" class="modal-dialog" role="document" style="width: 1200px;max-width: 90vw;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="mb-0">${v_canEditContent ? 'Edit Data' : 'Show Data'}</h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="cancelEditContent()">
+				<button id="modal_message_close_icon" type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -328,13 +344,22 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 			</div>
 			<div class="modal-footer">
 				${v_canEditContent ? v_save_btn : ""}
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cancelEditContent()">
+				<button id="modal_message_close_btn" type="button" class="btn btn-secondary" data-dismiss="modal">
 				${v_canEditContent ? "Cancel" : "Close"}
 				</button>
 			</div>
 		</div>
 	</div>`;
 
+	let close_icon = document.getElementById('modal_message_close_icon')
+	close_icon.onclick = function() { cancelEditContent() }
+
+	let close_btn = document.getElementById('modal_message_close_btn')
+	close_btn.onclick = function() { cancelEditContent() }
+	if (v_canEditContent) {
+		let save_btn = document.getElementById('modal_message_save_btn')
+		save_btn.onclick = function() { saveEditContent() }
+	}
 	if (v_editContentObject!=null)
 		if (v_editContentObject.editor!=null) {
 			 v_editContentObject.editor.destroy();
@@ -420,7 +445,7 @@ function hideEditContent() {
 }
 
 function toggleUtilitiesMenu() {
-	target_element = $('div.omnidb__utilities-menu.omnidb__theme-bg--menu-utilities.omnidb__rounded--lg')
+	let target_element = $('div.omnidb__utilities-menu.omnidb__theme-bg--menu-utilities.omnidb__rounded--lg')
 	target_element.toggleClass('omnidb__utilities-menu--show')
 	$(document).mouseup(function (e) {
 		let toggle_button = $('#omnidb__utilities-menu__link-toggle')
@@ -431,3 +456,11 @@ function toggleUtilitiesMenu() {
 		}
 	});
 }
+
+export {
+  adjustChartTheme,
+  adjustGraphTheme,
+  changeTheme,
+  cellDataModal,
+  v_current_terminal_theme,
+};

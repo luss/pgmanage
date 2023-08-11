@@ -21,6 +21,8 @@
     "@vuelidate/validators": "^2.0.3",
     "events": "^3.3.0",
     "knex": "^2.4.2",
+    "chart.js": "^2.7.2",
+    "chartjs-plugin-annotation": "^0.5.7",
     "mitt": "^3.0.1",
     "pev2": "^1.8.0",
     "pinia": "^2.1.6",

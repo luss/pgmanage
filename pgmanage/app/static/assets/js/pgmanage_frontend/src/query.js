@@ -26,6 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { SetAcked, removeContext, createRequest } from "./long_polling"
+import { cellDataModal } from "./header_actions"
 
 /// <summary>
 /// Query state

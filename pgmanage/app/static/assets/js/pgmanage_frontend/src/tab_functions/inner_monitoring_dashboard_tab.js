@@ -1,5 +1,14 @@
 import { renameTab, removeTab, showMenuNewTab } from '../workspace'
 import { beforeCloseTab } from "../create_tab_functions"
+import {
+  refreshMonitorUnitsObjects,
+  showMonitorUnitList,
+  refreshMonitorDashboard,
+  closeMonitorDashboardTab,
+  saveMonitorScript,
+  testMonitorScript,
+  selectUnitTemplate
+} from "../monitoring";
 
 var v_createMonitorDashboardTabFunction = function() {
 
@@ -53,16 +62,23 @@ var v_createMonitorDashboardTabFunction = function() {
   v_tab_check_span.id = 'tab_check_' + v_tab.id;
 
   var v_html =
-  "<div class='omnidb__monitoring-result-tabs'>" +
-    "<div class='container-fluid'>" +
-      "<button class='btn btn-primary btn-sm my-2 mr-1' onclick='refreshMonitorDashboard(true)'><i class='fas fa-sync-alt mr-2'></i>Refresh All</button>" +
-      "<button class='btn btn-primary btn-sm my-2' onclick='showMonitorUnitList()'>Manage Units</button>" +
-      "<div id='dashboard_" + v_tab.id + "' class='dashboard_all row'></div>" +
-    "</div>" +
-  "</div>";
+    `<div class='omnidb__monitoring-result-tabs'>
+      <div class='container-fluid'>
+        <button id='${v_tab.id}_refresh_dashboard' class='btn btn-primary btn-sm my-2 mr-1'>
+        <i class='fas fa-sync-alt mr-2'></i>Refresh All</button>
+        <button id='${v_tab.id}_manage_units' class='btn btn-primary btn-sm my-2'>Manage Units</button>
+        <div id='dashboard_${v_tab.id}' class='dashboard_all row'></div>
+      </div>
+    </div>`;
 
   // Updating the html.
   v_tab.elementDiv.innerHTML = v_html;
+
+  let refresh_btn = document.getElementById(`${v_tab.id}_refresh_dashboard`)
+  refresh_btn.onclick = function() { refreshMonitorDashboard(true) }
+
+  let manage_units_btn = document.getElementById(`${v_tab.id}_manage_units`)
+  manage_units_btn.onclick = function() { showMonitorUnitList() }
 
   var v_resizeFunction = function () {
     var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
@@ -155,11 +171,19 @@ var v_createNewMonitorUnitTabFunction = function() {
     p_dblClickFunction: renameTab
   });
 
+  // Adding unique names to spans.
+  var v_tab_title_span = document.getElementById('tab_title');
+  v_tab_title_span.id = 'tab_title_' + v_tab.id;
+  var v_tab_loading_span = document.getElementById('tab_loading');
+  v_tab_loading_span.id = 'tab_loading_' + v_tab.id;
+  var v_tab_check_span = document.getElementById('tab_check');
+  v_tab_check_span.id = 'tab_check_' + v_tab.id;
+
   v_connTabControl.selectedTab.tag.tabControl.selectTab(v_tab);
 
   var v_html =
-  '<button class="btn btn-secondary btn-sm my-1 mr-1" onclick="testMonitorScript()">Test</button>' +
-  '<button class="btn btn-secondary btn-sm my-1" onclick="saveMonitorScript()">Save</button>' +
+  '<button id="test_monitor_script_' + v_tab.id + '" class="btn btn-secondary btn-sm my-1 mr-1">Test</button>' +
+  '<button id="save_monitor_script_' + v_tab.id + '" class="btn btn-secondary btn-sm my-1">Save</button>' +
   '<div class="form-row">' +
   '  <div class="col-md-3 mb-3">' +
   '    <label for="conn_form_title">Name</label>' +
@@ -180,7 +204,7 @@ var v_createNewMonitorUnitTabFunction = function() {
   '  </div>' +
   '  <div class="col-md-3 mb-3">' +
   '    <label for="conn_form_type">Template</label>' +
-  '    <select id="select_template_' + v_tab.id + '" onchange="selectUnitTemplate(this.value)" class="form-control">' +
+  '    <select id="select_template_' + v_tab.id + '" class="form-control">' +
   '      <option value=-1>Select Template</option>' +
   '    </select>' +
   '  </div>' +
@@ -196,6 +220,15 @@ var v_createNewMonitorUnitTabFunction = function() {
 
   var v_div = document.getElementById('div_' + v_tab.id);
   v_div.innerHTML = v_html;
+
+  let save_monitor_script = document.getElementById(`save_monitor_script_${v_tab.id}`)
+  save_monitor_script.onclick = function() { saveMonitorScript() }
+
+  let test_monitor_script = document.getElementById(`test_monitor_script_${v_tab.id}`)
+  test_monitor_script.onclick = function() { testMonitorScript() }
+
+  let select_template = document.getElementById(`select_template_${v_tab.id}`)
+  select_template.onchange = (event) => { selectUnitTemplate(event.target.value)}
 
   var langTools = ace.require("ace/ext/language_tools");
 
@@ -252,6 +285,9 @@ var v_createNewMonitorUnitTabFunction = function() {
     editorDiv: v_txt_script,
     editorDataDiv: v_txt_data,
     editorDivId: 'txt_script_' + v_tab.id,
+    tab_title_span : v_tab_title_span,
+    tab_loading_span : v_tab_loading_span,
+    tab_check_span : v_tab_check_span,
     select_type: document.getElementById('select_type_' + v_tab.id),
     select_template: document.getElementById('select_template_' + v_tab.id),
     input_unit_name: document.getElementById('txt_unit_name_' + v_tab.id),

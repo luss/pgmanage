@@ -258,3 +258,5 @@ let default_shortcuts = {
     }
   }
 }
+
+export { default_shortcuts }

@@ -28,6 +28,8 @@ SOFTWARE.
 import { SetAcked, removeContext, createRequest } from "../long_polling";
 import { v_queryRequestCodes } from "../query";
 import { editDataActionRenderer } from '../renderers'
+import { cellDataModal } from "../header_actions";
+
 /// <summary>
 /// Query state
 /// </summary>

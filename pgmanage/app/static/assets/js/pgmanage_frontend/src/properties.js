@@ -75,3 +75,5 @@ function clearProperties() {
     tab_tag.ddlEditor.gotoLine(0, 0, true);
   }
 }
+
+export { getProperties, clearProperties}

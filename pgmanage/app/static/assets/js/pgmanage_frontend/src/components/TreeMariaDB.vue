@@ -30,6 +30,7 @@ import {
 import { drawGraph, renameTabConfirm } from "../workspace";
 import { querySQL } from "../query";
 import { v_startEditData } from "../tree_context_functions/edit_data";
+import { getProperties, clearProperties } from "../properties";
 export default {
   name: "TreeMariaDB",
   components: {

@@ -27,6 +27,7 @@ SOFTWARE.
 */
 import { getTreeSnippets } from '../tree_context_functions/tree_snippets'
 import { resizeSnippetPanel, resizeSnippetHorizontal } from '../workspace'
+import { createTabControl } from '../tabs';
 
 var toggleSnippetPanel = function(p_set_state = false) {
   let v_element = $('#' + v_connTabControl.snippet_tag.divPanel.getAttribute('id'));

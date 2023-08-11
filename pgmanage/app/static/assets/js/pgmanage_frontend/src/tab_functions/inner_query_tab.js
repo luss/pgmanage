@@ -52,6 +52,9 @@ import {
   autocomplete_update_editor_cursor,
   autocomplete_start,
 } from "../autocomplete";
+import { showCommandList } from "../command_history";
+import { createTabControl } from "../tabs";
+
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
@@ -134,7 +137,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
     '<div class="tab_actions omnidb__tab-actions col-12">' +
       '<button id="bt_start_' + v_tab.id + '" class="btn btn-sm btn-primary omnidb__tab-actions__btn" title="Run" onclick="v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.queryRunHandler();"><i class="fas fa-play fa-light"></i></button>' +
       '<button id="bt_indent_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent fa-light"></i></button>' +
-      '<button id="bt_history_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Command History" onclick="showCommandList();"><i class="fas fa-clock-rotate-left fa-light"></i></button>' +
+      '<button id="bt_history_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Command History"><i class="fas fa-clock-rotate-left fa-light"></i></button>' +
       '<div class="btn-group ml-2 mr-2">' +
       '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" title="Explain" style="display: none;" disabled="true"><i class="fas fa-chart-simple fa-light"></i></button>' +
       '<button id="bt_analyze_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" title="Explain Analyze" style="display: none;" disabled="true"><i class="fas fa-magnifying-glass-chart fa-light"></i></button>' +
@@ -189,6 +192,9 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
 
   let btn_cancel = document.getElementById(`bt_cancel_${v_tab.id}`)
   btn_cancel.onclick = function() { cancelSQL() } 
+
+  let btn_history = document.getElementById(`bt_history_${v_tab.id}`)
+  btn_history.onclick = function() { showCommandList() }
 
   // Creating tab list at the bottom of the query tab.
   var v_curr_tabs = createTabControl({ p_div: 'query_result_tabs_' + v_tab.id });
