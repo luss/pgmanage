@@ -19,6 +19,9 @@ export default {
       return this.getSelectedNode()
     }
   },
+  beforeCreate() {
+    this.id = Math.random().toString(16).slice(2)
+  },
   mounted() {
     this.api = axios.create({
       transformRequest: [
@@ -44,12 +47,11 @@ export default {
     });
 
     this.$toast = useToast();
-
-    emitter.on('refreshNode', (e) => {
+    emitter.on(`refreshNode_${this.id}`, (e) => {
       this.refreshTree(e.node);
     })
 
-    emitter.on('removeNode', (e) => {
+    emitter.on(`removeNode_${this.id}`, (e) => {
       this.removeNode(e.node)
     })
 
@@ -59,6 +61,10 @@ export default {
     } else {
       v_connTabControl.selectedTab.tag.tree = this
     }
+  },
+  unmounted() {
+    emitter.all.delete(`refreshNode_${this.id}`)
+    emitter.all.delete(`removeNode_${this.id}`)
   },
   methods: {
     onClickHandler(node, e) {

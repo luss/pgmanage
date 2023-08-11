@@ -90,6 +90,7 @@ export default {
       editor: '',
       tabId: window.v_connTabControl.selectedTab.id,
       databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+      tree: window.v_connTabControl.selectedTab.tag.tree
     }
   },
   computed: {
@@ -190,7 +191,7 @@ export default {
         query: this.generatedSQL
       })
         .then((resp) => {
-          emitter.emit('refreshNode', {"node": this.treeNode})
+          emitter.emit(`refreshNode_${this.tree.id}`, {"node": this.treeNode})
           $('#postgresqlExtensionModal').modal('hide')
         })
         .catch((error) => {
@@ -234,7 +235,7 @@ export default {
         query: query
       })
         .then((resp) => {
-          emitter.emit('removeNode', {"node": this.treeNode})
+          emitter.emit(`removeNode_${this.tree.id}`, {"node": this.treeNode})
         })
         .catch((error) => {
           showError(error.response.data.data);

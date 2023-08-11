@@ -157,6 +157,7 @@ export default {
   },
   data() {
     return {
+      tree: window.v_connTabControl.selectedTab.tag.tree,
       tabId: window.v_connTabControl.selectedTab.id,
       databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
       error: '',
@@ -370,7 +371,7 @@ export default {
             inDatabase: this.inDatabase
           })
             .then((resp) => {
-              emitter.emit('refreshNode', {"node": this.treeNode})
+              emitter.emit(`refreshNode_${this.tree.id}`, {"node": this.treeNode})
               $('#pgCronModal').modal('hide')
             })
             .catch((error) => {
@@ -401,7 +402,7 @@ export default {
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
-          emitter.emit('removeNode', {"node": this.treeNode})
+          emitter.emit(`removeNode_${this.tree.id}`, {"node": this.treeNode})
           $('#pgCronModal').modal('hide')
         })
         .catch((error) => {
