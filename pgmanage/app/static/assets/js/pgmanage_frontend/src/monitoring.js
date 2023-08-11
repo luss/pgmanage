@@ -28,6 +28,8 @@ SOFTWARE.
 
 import { adjustChartTheme, adjustGraphTheme } from "./header_actions";
 import { cellDataModal } from "./header_actions";
+import { Chart } from 'chart.js';
+import 'chartjs-plugin-annotation';
 
 var v_unit_list_grid = null;
 
@@ -827,6 +829,8 @@ function refreshMonitorDashboard(p_loading,p_tab_tag,p_div) {
                       }
                       return text.join("");
                     }
+                    //TODO: upgrade chart.js from 2.7.2 to latest
+                    //TODO: upgrade chartjs-plugin-annotation from 0.5.7 to latest
                     var v_chart = new Chart(ctx, v_return_unit.v_object);
                     adjustChartTheme(v_chart);
                     if (v_show_legend) {

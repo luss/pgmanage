@@ -356,9 +356,10 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 
 	let close_btn = document.getElementById('modal_message_close_btn')
 	close_btn.onclick = function() { cancelEditContent() }
-
-	let save_btn = document.getElementById('modal_message_save_btn')
-	save_btn.onclick = function() { saveEditContent() }
+	if (v_canEditContent) {
+		let save_btn = document.getElementById('modal_message_save_btn')
+		save_btn.onclick = function() { saveEditContent() }
+	}
 	if (v_editContentObject!=null)
 		if (v_editContentObject.editor!=null) {
 			 v_editContentObject.editor.destroy();
