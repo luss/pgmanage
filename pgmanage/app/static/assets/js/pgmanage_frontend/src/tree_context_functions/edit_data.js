@@ -38,6 +38,8 @@ import {
 	grayEmptyRenderer,
 	newRowRenderer
 } from "../renderers";
+import { showPasswordPrompt } from "../passwords";
+
 /// <summary>
 /// Query state
 /// </summary>

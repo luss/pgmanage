@@ -72,13 +72,17 @@ $(function() {
 	link_about.onclick = function() { showAbout() }
 
 	let link_user = document.getElementById('omnidb__utilities-menu__link-user')
-	link_user.onclick = function() { listUsers() }
+	if (link_user) {
+		link_user.onclick = function() { listUsers() }
+	}
 
 	let link_config = document.getElementById('omnidb__utilities-menu__link-config')
 	link_config.onclick = function() { showConfigUser() }
 
 	let link_signout = document.getElementById('omnidb__utilities-menu__link-signout')
-	link_signout.onclick = function() { confirmSignout() }
+	if (link_signout) {
+		link_signout.onclick = function() { confirmSignout() }
+	}
 
 	let link_toggle = document.getElementById('omnidb__utilities-menu__link-toggle')
 	link_toggle.onclick = function() { toggleUtilitiesMenu() }

@@ -40,6 +40,7 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { querySQL, getQueryEditorValue } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { createTabControl } from "../tabs";
+import { showPasswordPrompt } from "../passwords";
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);

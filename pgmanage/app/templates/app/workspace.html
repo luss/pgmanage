@@ -368,11 +368,11 @@
 
             <div class="form-row">
               <div class="form-group col-6">
-                <input id="master_password" type="password" class="form-control" placeholder="New Password" oninput="checkMasterPassword()" minlength="8" required>
+                <input id="master_password" type="password" class="form-control" placeholder="New Password" minlength="8" required>
               </div>
 
               <div class="form-group col-6">
-                <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" oninput="checkMasterPassword()" minlength="8" required>
+                <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" minlength="8" required>
                 <div class="invalid-tooltip">
                   Password must be matching.
                 </div>
@@ -380,7 +380,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button id="password_set" type="button" class="btn btn-success" data-dismiss="modal" onclick="saveMasterPass()" disabled>Set Master password</button>
+            <button id="password_set" type="button" class="btn btn-success" data-dismiss="modal" disabled>Set Master password</button>
           </div>
         </div>
       </div>

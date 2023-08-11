@@ -27,6 +27,7 @@ SOFTWARE.
 */
 import { consoleSQL } from "./console";
 import { whiteHtmlRenderer, whiteRightHtmlRenderer } from "./renderers";
+import { showPasswordPrompt } from "./passwords";
 
 var v_autocomplete_object;
 var Range = ace.require('ace/range').Range;

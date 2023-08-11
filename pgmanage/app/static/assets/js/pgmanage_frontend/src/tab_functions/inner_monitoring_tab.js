@@ -2,6 +2,7 @@ import { monitoringAction, renameTab, removeTab, showMenuNewTab } from '../works
 import { beforeCloseTab } from "../create_tab_functions"
 import { cellDataModal } from '../header_actions';
 import { blueHtmlRenderer, whiteHtmlRenderer } from '../renderers';
+import { showPasswordPrompt } from '../passwords';
 
 var v_createMonitoringTabFunction = function(p_name, p_query, p_actions) {
 

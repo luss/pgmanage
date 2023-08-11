@@ -30,6 +30,7 @@ import { adjustChartTheme, adjustGraphTheme } from "./header_actions";
 import { cellDataModal } from "./header_actions";
 import { Chart } from 'chart.js';
 import 'chartjs-plugin-annotation';
+import { showPasswordPrompt } from "./passwords";
 
 var v_unit_list_grid = null;
 

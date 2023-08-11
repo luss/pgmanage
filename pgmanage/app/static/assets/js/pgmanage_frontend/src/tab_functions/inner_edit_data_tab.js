@@ -29,6 +29,7 @@ import { beforeCloseTab } from "../create_tab_functions";
 import { renameTab, removeTab, resizeVertical} from "../workspace";
 import { cancelEditData, queryEditData, checkEditDataStatus, saveEditData } from "../tree_context_functions/edit_data";
 import { showMenuNewTab } from "../workspace";
+import { showPasswordPrompt } from "../passwords";
 
 let createEditDataTabFunction = function(p_table) {
 

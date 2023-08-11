@@ -30,6 +30,7 @@ import { querySQLReturn, cancelSQLTab, querySQL, v_queryResponseCodes } from "./
 import { consoleReturn, cancelConsoleTab, consoleSQL } from "./console";
 import { queryEditDataReturn, saveEditDataReturn, cancelEditDataTab } from "./tree_context_functions/edit_data";
 import { debugResponse } from "./debug";
+import { showPasswordPrompt } from "./passwords";
 
 var v_client_id;
 var v_polling_ajax = null;
