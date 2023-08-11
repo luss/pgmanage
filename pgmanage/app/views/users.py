@@ -32,10 +32,7 @@ def get_users(request):
 
     try:
         for user in User.objects.all():
-            v_user_data_list = [user.username, '', 1 if user.is_superuser else 0,
-                                '''<i title="Remove User" class='fas fa-times action-grid action-close' 
-                                onclick='removeUser("{0}")'></i>'''.format(
-                                    user.id)]
+            v_user_data_list = [user.username, '', 1 if user.is_superuser else 0]
 
             v_user_list.append(v_user_data_list)
             v_user_id_list.append(user.id)
