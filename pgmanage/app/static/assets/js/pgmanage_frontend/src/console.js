@@ -28,6 +28,8 @@ SOFTWARE.
 import { SetAcked, removeContext, createRequest } from "./long_polling";
 import { v_queryRequestCodes, setTabStatus, refreshTreeNode } from "./query";
 import { cellDataModal } from "./header_actions";
+import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
+
 /// <summary>
 /// Console state
 /// </summary>
