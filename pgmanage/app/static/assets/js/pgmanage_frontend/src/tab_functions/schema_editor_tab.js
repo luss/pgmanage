@@ -49,6 +49,7 @@ let createSchemaEditorTab = function (node, mode, dialect) {
       schema: node.data.schema,
       table: mode === 'alter' ? node.title : null,
       tree_node: node,
+      tree: window.v_connTabControl.selectedTab.tag.tree
     })
 
   app.use(ToastPlugin, {

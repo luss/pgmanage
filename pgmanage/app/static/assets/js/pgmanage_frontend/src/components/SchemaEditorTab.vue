@@ -68,7 +68,8 @@ export default {
     tab_id: String,
     database_index: String, //really?
     database_name: String,
-    tree_node: Object
+    tree_node: Object,
+    tree: Object
   },
   components: {
     ColumnList
@@ -330,9 +331,8 @@ export default {
         this.$toast.success(this.createNotifyMessage('Done', msg), {
           duration:3000
         })
-        // FIXME: this does not work, we need to refresh one of
-        // ancestor nodes of this.tree_node
-        emitter.emit('refreshNode', {"node": this.tree_node})
+
+        emitter.emit(`schemaChanged_${this.tree.id}`, { database_name: this.database_name, schema_name: this.localTable.schema })
       }
       this.queryIsRunning = false
     },
