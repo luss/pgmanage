@@ -178,6 +178,8 @@ import { consoleSQL } from '../console'
 import { autocomplete_start } from '../autocomplete'
 import { queryEditData } from '../tree_context_functions/edit_data'
 import { default_shortcuts } from '../shortcuts'
+import { changeTheme } from '../header_actions'
+
 export default {
   name: 'SettingsModal',
   data() {

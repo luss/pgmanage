@@ -94,16 +94,16 @@
               {% endif %}
               {% if not desktop_mode %}
               {% if super_user %}
-              <a id="omnidb__utilities-menu__link-user" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="listUsers();"><i class="fas fa-user" title="Users"></i></a>
+              <a id="omnidb__utilities-menu__link-user" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#"><i class="fas fa-user" title="Users"></i></a>
               {% endif %}
               {% endif %}
-              <a id="omnidb__utilities-menu__link-config" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="showConfigUser();"><i class="fas fa-cog" title="Settings"></i></a>
+              <a id="omnidb__utilities-menu__link-config" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#"><i class="fas fa-cog" title="Settings"></i></a>
               <!-- <a id="omnidb__utilities-menu__link-plugins" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="showPlugins();"><i class="fas fa-cube" title="Plugins"></i></a> -->
-              <a id="omnidb__utilities-menu__link-about" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="showAbout();"><i class="fas fa-info-circle" title="About"></i></a>
+              <a id="omnidb__utilities-menu__link-about" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#"><i class="fas fa-info-circle" title="About"></i></a>
               {% if not desktop_mode %}
-              <a id="omnidb__utilities-menu__link-signout" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="confirmSignout()"><i class="fas fa-sign-out-alt" title="Sign out"></i></a>
+              <a id="omnidb__utilities-menu__link-signout" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#"><i class="fas fa-sign-out-alt" title="Sign out"></i></a>
               {% endif %}
-              <a id="omnidb__utilities-menu__link-toggle" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#" onclick="toggleUtilitiesMenu()"><i class="fas fa-tools" title="Utilities Menu"></i></a>
+              <a id="omnidb__utilities-menu__link-toggle" class="omnidb__menu__btn nav-item nav-link d-flex align-items-center justify-content-center" href="#"><i class="fas fa-tools" title="Utilities Menu"></i></a>
             </div>
           </div>
       </form>
@@ -543,7 +543,6 @@
     <script type="text/javascript" src="{{url_folder}}/static/assets/js/renderers.js?v{{pgmanage_short_version}}"></script>
 
     <script src="{{url_folder}}/static/assets/lib/axios@1.2.1/axios.min.js"></script>
-    <script src="{{url_folder}}/static/assets/js/header_actions.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/notification_control.js?v{{pgmanage_short_version}}"></script>
     {% vite_asset 'src/main.js' %}
     <script src="{{url_folder}}/static/assets/js/users.js?v{{pgmanage_short_version}}"></script>

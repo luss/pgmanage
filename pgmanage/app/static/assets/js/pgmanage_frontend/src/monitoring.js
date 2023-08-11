@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { adjustChartTheme, adjustGraphTheme } from "./header_actions";
+import { cellDataModal } from "./header_actions";
+
 var v_unit_list_grid = null;
 
 function closeMonitorUnit(p_div) {
