@@ -61,42 +61,39 @@ SOFTWARE.
   }
 }
 
+.node {
+  background-color: #206BC4;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
 
-.node-postgresql {
-  background-image: url( "../images/postgresql_medium.png")
-}
+  &-postgresql {
+    mask-image: url( "../images/postgresql.svg");
+    -webkit-mask-image: url( "../images/postgresql.svg");
+  }
 
-.node-postgresql::after{
-  content: "\200B";
-}
+  &-oracle {
+    mask-image: url("../images/oracle.svg");
+    -webkit-mask-image: url("../images/oracle.svg");
+  }
 
-.node-oracle {
-  background-image: url("../images/oracle_medium.png")
-}
+  &-mysql {
+    mask-image: url("../images/mysql.svg");
+    -webkit-mask-image: url("../images/mysql.svg");
+  }
 
-.node-oracle::after{
-  content: "\200B";
-}
+  &-mariadb {
+    mask-image: url("../images/mariadb.svg");
+    -webkit-mask-image: url("../images/mariadb.svg");
+  }
 
-.node-mysql {
-  background-image: url("../images/mysql_medium.png")
-}
-.node-mysql::after {
-  content: "\200B";
-}
-.node-mariadb {
-  background-image: url("../images/mariadb_medium.png")
-}
-.node-mariadb::after{
-  content: "\200B";
-}
-
-.node-sqlite {
-  background-image: url("../images/sqlite_medium.png")
-}
-
-.node-sqlite::after{
-  content: "\200B";
+  &-sqlite {
+    mask-image: url("../images/sqlite.svg");
+    -webkit-mask-image: url("../images/sqlite.svg");
+  }
 }
 
 .mx-context-menu i{

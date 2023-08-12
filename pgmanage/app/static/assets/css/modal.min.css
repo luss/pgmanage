@@ -2105,6 +2105,98 @@ a[href="https://github.com/dalibo/pev2"]:hover:before {
   font-weight: 600;
 }
 
+.vue-power-tree {
+  position: relative;
+  cursor: default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  min-width: fit-content;
+}
+
+.vue-power-tree-root > .vue-power-tree-nodes-list {
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.vue-power-tree-toggle {
+  width: 15px;
+}
+
+.vue-power-tree-selected > .vue-power-tree-node-item {
+  background-color: rgba(32, 107, 196, 0.2);
+}
+
+.vue-power-tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.vue-power-tree-node-list, .vue-power-tree-node-item {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.vue-power-tree-node-item {
+  padding: 0 10px;
+}
+
+.vue-power-tree-node-item.vue-power-tree-cursor-inside {
+  outline: 1px solid rgba(0, 101, 255, 0.5);
+}
+
+.vue-power-tree-gap {
+  width: 20px;
+  min-height: 1px;
+  flex-shrink: 0;
+}
+
+.vue-power-tree-row {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-right: auto;
+  min-height: 25px;
+}
+
+.vue-power-tree-title {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  white-space: nowrap;
+}
+
+.vue-power-tree-cursor {
+  position: absolute;
+  border: 1px solid rgba(0, 101, 255, 0.5);
+  height: 1px;
+  width: 100%;
+}
+
+.vue-power-tree-drag-info {
+  position: absolute;
+  background-color: #00000080;
+  opacity: .5;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+}
+
+.vue-power-tree .icon_tree {
+  display: inline-block;
+  width: 30px;
+  height: 16px;
+  font-size: 15px;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  text-align: center;
+}
+
 .modal {
   font-family: "Poppins", sans-serif;
   font-size: 0.875rem;
@@ -2346,33 +2438,33 @@ a[href="https://github.com/dalibo/pev2"]:hover:before {
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item_logo > .icon-mariadb {
-  mask-image: url("../images/db_icons/mariadb.svg");
-  -webkit-mask-image: url("../images/db_icons/mariadb.svg");
+  mask-image: url("/static/assets/images/db_icons/mariadb.svg");
+  -webkit-mask-image: url("/static/assets/images/db_icons/mariadb.svg");
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item_logo > .icon-mysql {
-  mask-image: url("../images/db_icons/mysql.svg");
-  -webkit-mask-image: url("../images/db_icons/mysql.svg");
+  mask-image: url("/static/assets/images/db_icons/mysql.svg");
+  -webkit-mask-image: url("/static/assets/images/db_icons/mysql.svg");
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item_logo > .icon-oracle {
-  mask-image: url("../images/db_icons/oracle.svg");
-  -webkit-mask-image: url("../images/db_icons/oracle.svg");
+  mask-image: url("/static/assets/images/db_icons/oracle.svg");
+  -webkit-mask-image: url("/static/assets/images/db_icons/oracle.svg");
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item_logo > .icon-postgresql {
-  mask-image: url("../images/db_icons/postgresql.svg");
-  -webkit-mask-image: url("../images/db_icons/postgresql.svg");
+  mask-image: url("/static/assets/images/db_icons/postgresql.svg");
+  -webkit-mask-image: url("/static/assets/images/db_icons/postgresql.svg");
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item_logo > .icon-sqlite {
-  mask-image: url("../images/db_icons/sqlite.svg");
-  -webkit-mask-image: url("../images/db_icons/sqlite.svg");
+  mask-image: url("/static/assets/images/db_icons/sqlite.svg");
+  -webkit-mask-image: url("/static/assets/images/db_icons/sqlite.svg");
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item_logo > .icon-terminal {
-  mask-image: url("../images/db_icons/terminal.svg");
-  -webkit-mask-image: url("../images/db_icons/terminal.svg");
+  mask-image: url("static/assets/images/db_icons/terminal.svg");
+  -webkit-mask-image: url("/static/assets/images/db_icons/terminal.svg");
 }
 
 .modal-connections__forms .group-edit-form__list .group-list__item input[type='checkbox'] {

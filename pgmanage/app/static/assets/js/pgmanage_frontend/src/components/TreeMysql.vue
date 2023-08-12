@@ -55,7 +55,7 @@ export default {
           isExpanded: false,
           isDraggable: false,
           data: {
-            icon: "node-mysql",
+            icon: "node node-mysql",
             type: "server",
             contextMenu: "cm_server",
           },
