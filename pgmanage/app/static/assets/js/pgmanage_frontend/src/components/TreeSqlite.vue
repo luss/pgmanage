@@ -55,7 +55,7 @@ export default {
           isExpanded: false,
           isDraggable: false,
           data: {
-            icon: "node-sqlite",
+            icon: "node node-sqlite",
             type: "server",
             contextMenu: "cm_server",
           },

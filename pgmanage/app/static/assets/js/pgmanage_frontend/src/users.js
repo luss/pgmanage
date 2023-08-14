@@ -25,19 +25,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
+let v_usersObject;
+let newUsersObject;
 /// <summary>
 /// Creates new users.
 /// </summary>
 function newUserConfirm() {
 
 	execAjax('/new_user/',
-			JSON.stringify({'p_data':window.newUsersObject.newUsers}),
+			JSON.stringify({'p_data':newUsersObject.newUsers}),
 			function(p_return) {
 
 				v_usersObject.v_cellChanges = [];
-				window.newUsersObject.newUsers = [];
-				if (v_usersObject.v_cellChanges.length === 0 && window.newUsersObject.newUsers.length === 0)
+				newUsersObject.newUsers = [];
+				if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0)
 					document.getElementById('div_save_users').disabled = true;
 				listUsers(true);
 			},
@@ -53,9 +54,9 @@ function newUser() {
 	document.getElementById('div_save_users').disabled = true;
 	document.getElementById('div_save_users').classList.remove('d-none');
 
-	if (window.newUsersObject.newUsers.length === 0){
+	if (newUsersObject.newUsers.length === 0){
 
-		window.newUsersObject.newUsers.push(["", "", 0])
+		newUsersObject.newUsers.push(["", "", 0])
 		listUsers(true,{adding_user:true});
 
 	} else {
@@ -74,7 +75,7 @@ function removeUserConfirm(p_id) {
 	execAjax('/remove_user/',
 			input,
 			function(p_return) {
-				if (v_usersObject.v_cellChanges.length === 0 && window.newUsersObject.newUsers.length === 0)
+				if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0)
 					document.getElementById('div_save_users').disabled = true;
 				listUsers(true);
 			},
@@ -102,14 +103,14 @@ function removeUser(p_id) {
 /// <param name="p_index">Connection index in the connection list.</param>
 function removeNewUserConfirm(p_index) {
 
-	if (window.newUsersObject.newUsers.length == 1)
-		window.newUsersObject.newUsers = [];
+	if (newUsersObject.newUsers.length == 1)
+		newUsersObject.newUsers = [];
 	else if (p_index == 0)
-		window.newUsersObject.newUsers.shift();
-	else if (p_index + 1 == window.newUsersObject.newUsers.length)
-		window.newUsersObject.newUsers.pop();
+		newUsersObject.newUsers.shift();
+	else if (p_index + 1 == newUsersObject.newUsers.length)
+		newUsersObject.newUsers.pop();
 	else
-		window.newUsersObject.newUsers.splice(p_index,1);
+		newUsersObject.newUsers.splice(p_index,1);
 	listUsers(true);
 
 }
@@ -132,7 +133,7 @@ function removeNewUser(p_index) {
 /// </summary>
 function saveUsers() {
 
-	if (v_usersObject.v_cellChanges.length==0 && window.newUsersObject.newUsers.length==0)
+	if (v_usersObject.v_cellChanges.length==0 && newUsersObject.newUsers.length==0)
 			return;
 
 	var v_unique_rows_changed = [];
@@ -150,7 +151,7 @@ function saveUsers() {
 
 	var v_data = {
 		edited: v_data_changed,
-		new: window.newUsersObject.newUsers
+		new: newUsersObject.newUsers
 	}
 	var input = JSON.stringify({"p_data": v_data, "p_user_id_list": v_user_id_list});
 
@@ -160,8 +161,8 @@ function saveUsers() {
 
 				// newUserConfirm();
 				v_usersObject.v_cellChanges = [];
-				window.newUsersObject.newUsers = [];
-				if (v_usersObject.v_cellChanges.length === 0 && window.newUsersObject.newUsers.length === 0) {
+				newUsersObject.newUsers = [];
+				if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0) {
 					document.getElementById('div_save_users').disabled = true;
 				}
 				listUsers(true, {users_update: v_data});
@@ -192,23 +193,21 @@ $('#modal_users').on('shown.bs.modal', function (e) {
 });
 
 $('#modal_users').on('hidden.bs.modal', function (e) {
-		window.newUsersObject.newUsers = [];
+		newUsersObject.newUsers = [];
 });
 
 
 function changeUser(event, p_row_index, p_col_index) {
 	let username = document.getElementById(`user_item_username_${p_row_index}`);
 	let password = document.getElementById(`user_item_password_${p_row_index}`);
-	var v_user_id = v_usersObject.v_user_ids[p_row_index];
-	var v_user_is_superuser = (document.getElementById("user_item_superuser_" + p_row_index).checked) ? 1 : 0;
-	var p_data_template = [
+	let v_user_is_superuser = (document.getElementById("user_item_superuser_" + p_row_index).checked) ? 1 : 0;
+	let p_data_template = [
 		username.value,
 		password.value,
 		v_user_is_superuser,
-		"<i title=\"Remove User\" class='fas fa-times action-grid action-close text-danger' onclick='removeUser(\"" + v_user_id + "\")'></i>"
 	];
 
-	var cellChange = {
+	let cellChange = {
 			'rowIndex': p_row_index,
 			'columnIndex': p_col_index,
 			'p_data': p_data_template
@@ -231,18 +230,15 @@ function changeUser(event, p_row_index, p_col_index) {
 function changeNewUser(event, p_row_index, p_col_index) {
 	let username = document.getElementById(`new_user_item_username_${p_row_index}`);
 	let password = document.getElementById(`new_user_item_password_${p_row_index}`);
-	var v_user_is_superuser = (document.getElementById(`new_user_item_superuser_${p_row_index}`).checked) ? 1 : 0;
-	var p_data_template = [
+	let v_user_is_superuser = (document.getElementById(`new_user_item_superuser_${p_row_index}`).checked) ? 1 : 0;
+	let p_data_template = [
 		username.value,
 		password.value,
 		v_user_is_superuser,
-		"<i title=\"Remove User\" class='fas fa-times action-grid action-close text-danger' onclick='removeNewUser(\"" + p_row_index + "\")'></i>"
 	];
 
-	window.newUsersObject.newUsers[p_row_index] = p_data_template;
+	newUsersObject.newUsers[p_row_index] = p_data_template;
 
-	var v_render_index = parseInt(v_usersObject.list.length) + parseInt(p_row_index);
-	var v_event = {target:{value:v_render_index}};
 
 	if (username.validity.valid && password.validity.valid){
 		document.getElementById('div_save_users').disabled = false;
@@ -256,7 +252,7 @@ function changeNewUser(event, p_row_index, p_col_index) {
 function getUsers(p_options = false) {
 
 	if (p_options.adding_user) {
-		var v_new_value = v_usersObject.list.length + window.newUsersObject.newUsers.length - 1;
+		var v_new_value = v_usersObject.list.length + newUsersObject.newUsers.length - 1;
 		if ($('#omnidb_user_select option:last-child').text() !== '(pending info)') {
 			$('#omnidb_user_select').append(new Option('(pending info)', v_new_value));
 			$('#omnidb_user_select option:last-child').addClass('bg-success');
@@ -272,11 +268,11 @@ function getUsers(p_options = false) {
 	}
 	else {
 
-		if (!window.newUsersObject) {
-			window.newUsersObject = new Object();
+		if (!newUsersObject) {
+			newUsersObject = new Object();
 		}
-		if (window.newUsersObject.newUsers == undefined) {
-			window.newUsersObject.newUsers = [];
+		if (newUsersObject.newUsers == undefined) {
+			newUsersObject.newUsers = [];
 		}
 
 		execAjax('/get_users/',
@@ -336,7 +332,7 @@ function getUsers(p_options = false) {
 						"<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-password' type='password' class='m-0 p-0' placeholder='Password' value=''>" +
 						"<div class='form-inline mb-4'>" +
 							"<h5 class='mr-2'>Select an user</h5>" +
-							"<select id='omnidb_user_select' onchange='renderSelectedUser(event)' class='form-control'>";
+							"<select id='omnidb_user_select' class='form-control'>";
 							if (p_options.focus_last)
 								v_user_list_html += "<option value=''> </option>";
 							else
@@ -348,37 +344,45 @@ function getUsers(p_options = false) {
 								"<option value='" + i + "'>" + v_user_item[0] + v_user_is_superuser + "</option>";
 								v_user_count++;
 							}
-							for (var i = 0; i < window.newUsersObject.newUsers.length; i++) {
-								var v_user_item = window.newUsersObject.newUsers[i];
+							for (var i = 0; i < newUsersObject.newUsers.length; i++) {
+								var v_user_item = newUsersObject.newUsers[i];
 								var v_user_is_superuser = (v_user_item[2] === 1) ? ' (superuser)' : '';
 								var v_user_item_index = parseInt(v_user_count) + parseInt(i);
 								var v_user_item_name = (v_user_item[0] === "") ? '(pending info)' : v_user_item[0] + v_user_is_superuser + ' (pending save)';
-								var v_user_is_selected = (p_options.focus_last && i + 1 == window.newUsersObject.newUsers.length) ? ' selected ' : '';
+								var v_user_is_selected = (p_options.focus_last && i + 1 == newUsersObject.newUsers.length) ? ' selected ' : '';
 								v_user_list_html +=
 								"<option class='bg-warning' value='" + v_user_item_index + "' " + v_user_is_selected + ">" + v_user_item_name + "</option>";
 							}
 							v_user_list_html +=
 							"</select>" +
-							"<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ml-2' onclick='newUser()'><i class='fas fa-user-plus'></i><span class='ml-2'>Add new user</span></button>" +
+							"<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ml-2'><i class='fas fa-user-plus'></i><span class='ml-2'>Add new user</span></button>" +
 						"</div>" +
 						"<div id='omnidb_user_content' class='row'>" +
 							v_users_update_html +
 						"</div>" +
 						"<div class='text-center'>" +
-							"<button type='button' id='div_save_users' class='btn btn-success ml-1 d-none' onclick='saveUsers()' disabled>Save</button>" +
+							"<button type='button' id='div_save_users' class='btn btn-success ml-1 d-none' disabled>Save</button>" +
 						"</div>" +
 						"<button type='submit' disabled style='display: none' aria-hidden='true'></button>" +
 					"</div>";
 					v_user_list_element.innerHTML = v_user_list_html;
-
+					
 					$('#div_users').addClass('isActive');
-
+					
 					window.scrollTo(0,0);
-
+					
 					var v_div_result = document.getElementById('div_user_list');
 					var container = v_div_result;
 					container.appendChild(v_user_list_element);
+					
+					let save_users = document.getElementById('div_save_users')
+					save_users.onclick = function() { saveUsers() }
 
+					let user_select = document.getElementById('omnidb_user_select')
+					user_select.onchange = (event) => { renderSelectedUser(event) }
+
+					let new_user_btn = document.getElementById('omnidb_utilities_menu_btn_new_user')
+					new_user_btn.onclick = function() { newUser() }
 					if (p_options) {
 						if (p_options.focus_last) {
 							setTimeout(function(){
@@ -386,7 +390,7 @@ function getUsers(p_options = false) {
 							},300);
 						}
 					}
-					if (v_usersObject.v_cellChanges.length > 0 || window.newUsersObject.newUsers.length > 0)
+					if (v_usersObject.v_cellChanges.length > 0 || newUsersObject.newUsers.length > 0)
 						document.getElementById('div_save_users').disabled = false;
 					$('[data-toggle="tooltip"]').tooltip({animation:true});// Loads or Updates all tooltips
 	        endLoading();
@@ -407,7 +411,7 @@ function listUsers(p_refresh,p_options = false) {
 
   var v_save_button = document.getElementById('div_save_users');
 	if (v_save_button !== null) {
-		if (v_usersObject.v_cellChanges.length === 0 && window.newUsersObject.newUsers.length === 0) {
+		if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0) {
 			v_save_button.disabled = true;
 		}
 	}
@@ -435,8 +439,8 @@ function renderSelectedUser(event) {
 		document.getElementById('div_save_users').classList.remove('d-none');
 	}
 	var v_index = event.target.value;
-	if (+v_index === (event.target.length - 2) && window.newUsersObject.newUsers.length !== 0){
-		if (window.newUsersObject.newUsers[0][0].length > 1 && window.newUsersObject.newUsers[0][1].length >= 8)
+	if (+v_index === (event.target.length - 2) && newUsersObject.newUsers.length !== 0){
+		if (newUsersObject.newUsers[0][0].length > 1 && newUsersObject.newUsers[0][1].length >= 8)
 			document.getElementById('div_save_users').disabled = false;
 	}
 	if (v_usersObject.v_cellChanges[v_index] !== undefined)
@@ -448,7 +452,7 @@ function renderSelectedUser(event) {
 	}
 	else {
 		var v_user_count = 0;
-		for (var i = 0; i < v_usersObject.list.length; i++) {
+		for (let i = 0; i < v_usersObject.list.length; i++) {
 			if (v_usersObject.v_cellChanges[i] !== undefined) {
 				var v_user_item = v_usersObject.v_cellChanges[i].p_data;
 			} else {
@@ -456,6 +460,7 @@ function renderSelectedUser(event) {
 			}
 			var v_superuser_checked = (v_user_item[2] === 1) ? 'checked' : '';
 			if (i == v_index) {
+				let user_id = v_usersObject.v_user_ids[v_index]
 				v_user_div_content.innerHTML =
 				"<div class='col-12 mb-4'>" +
 				"<div id='omnidb_user_item_" + i + "' class='omnidb__user-list__item card'>" +
@@ -466,12 +471,12 @@ function renderSelectedUser(event) {
 								"<i class='fas fa-user'></i>" +
 							"</label>" +
 						"</div>" +
-						"<input autofill='false' autocomplete='disabled' name='notChromeUsername' id='user_item_username_" + i  + "' type='text' class='form-control my-0' placeholder='User name' value='" + v_user_item[0] + "' oninput='changeUser(event," + i + ",0)' minlength='1'>" +
+						"<input autofill='false' autocomplete='disabled' name='notChromeUsername' id='user_item_username_" + i  + "' type='text' class='form-control my-0' placeholder='User name' value='" + v_user_item[0] + "' minlength='1'>" +
 					"</div>" +
 					"<span class='ml-2'>Superuser?</span>" +
 					"<div class='ml-2 mb-2'>" +
 						"<div class='omnidb__switch mr-2' data-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
-							"<input type='checkbox' id='user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + " onchange='changeUser(event," + i + ",2)'>" +
+							"<input type='checkbox' id='user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + ">" +
 							"<label for='user_item_superuser_" + i  + "' class='omnidb__switch--label'><span><i class='fas fa-star'></i></span></label>" +
 						"</div>" +
 					"</div>" +
@@ -482,24 +487,36 @@ function renderSelectedUser(event) {
 				"<i class='fas fa-key'></i>" +
 				"</label>" +
 				"</div>" +
-				"<input autofill='false' autocomplete='disabled' name='new-password' id='user_item_password_" + i  + "' type='password' class='form-control my-0' placeholder='New password' value='" + v_user_item[1] + "' oninput='changeUser(event," + i + ",1)' minlength='8'>" +
+				"<input autofill='false' autocomplete='disabled' name='new-password' id='user_item_password_" + i  + "' type='password' class='form-control my-0' placeholder='New password' value='" + v_user_item[1] + "' minlength='8'>" +
 				"</div>" +
 				"<span class='mr-2 text-danger omnidb__user-list__close'>" +
-				v_user_item[3] +
+				"<i id='user_remove_" + i  + "' title='Remove User' class='fas fa-times action-grid action-close'></i>"
 				"</span>" +
 				"</div>" +
 				"</div>";
+				let user_item_username = document.getElementById(`user_item_username_${i}`)
+				user_item_username.oninput = (event) => { changeUser(event.target.value, i, 0)}
+
+				let user_item_superuser = document.getElementById(`user_item_superuser_${i}`)
+				user_item_superuser.onchange = (event) => { changeUser(event.target.value, i, 2)}
+
+				let user_item_password = document.getElementById(`user_item_password_${i}`)
+				user_item_password.oninput = (event) => { changeUser(event.target.value, i, 1)}
+				
+				let user_remove = document.getElementById(`user_remove_${i}`)
+				user_remove.onclick = function() { removeUser(user_id)}
+
 				$(`#user_item_password_${i}`).passtrength({
 					passwordToggle: false
 				});
 			}
 			v_user_count++;
 		}
-		for (var i = 0; i < window.newUsersObject.newUsers.length; i++) {
-			var v_user_item = window.newUsersObject.newUsers[i];
-			var v_superuser_checked = (v_user_item[2] === 1) ? 'checked' : '';
-			var v_user_item_index = parseInt(v_user_count) + parseInt(i);
-			var v_user_div_content = document.getElementById('omnidb_user_content');
+		for (let i = 0; i < newUsersObject.newUsers.length; i++) {
+			let v_user_item = newUsersObject.newUsers[i];
+			let v_superuser_checked = (v_user_item[2] === 1) ? 'checked' : '';
+			let v_user_item_index = parseInt(v_user_count) + parseInt(i);
+			let v_user_div_content = document.getElementById('omnidb_user_content');
 			if (v_user_item_index == v_index) {
 				v_user_div_content.innerHTML =
 				"<div class='col-12 mb-4'>" +
@@ -511,12 +528,12 @@ function renderSelectedUser(event) {
 								"<i class='fas fa-user'></i>" +
 							"</label>" +
 						"</div>" +
-						"<input autofill='false' autocomplete='off' name='off' id='new_user_item_username_" + i  + "' type='text' class='form-control my-0' placeholder='User name' value='" + v_user_item[0] + "' oninput='changeNewUser(event," + i + ",0)' required minlength='1'>" +
+						"<input autofill='false' autocomplete='off' name='off' id='new_user_item_username_" + i  + "' type='text' class='form-control my-0' placeholder='User name' value='" + v_user_item[0] + "' required minlength='1'>" +
 					"</div>" +
 					"<span class='ml-2'>Superuser?</span>" +
 					"<div class='ml-2 mb-2'>" +
 						"<div class='omnidb__switch mr-2' data-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
-							"<input type='checkbox' id='new_user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + " onchange='changeNewUser(event," + i + ",2)'>" +
+							"<input type='checkbox' id='new_user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + ">" +
 							"<label for='new_user_item_superuser_" + i  + "' class='omnidb__switch--label'><span><i class='fas fa-star'></i></span></label>" +
 						"</div>" +
 					"</div>" +
@@ -527,18 +544,32 @@ function renderSelectedUser(event) {
 				"<i class='fas fa-key'></i>" +
 				"</label>" +
 				"</div>" +
-				"<input autofill='false' autocomplete='off' name='off' id='new_user_item_password_" + i  + "' type='password' class='form-control my-0' placeholder='New password' value='" + v_user_item[1] + "' oninput='changeNewUser(event," + i + ",1)' required minlength='8'>" +
+				"<input autofill='false' autocomplete='off' name='off' id='new_user_item_password_" + i  + "' type='password' class='form-control my-0' placeholder='New password' value='" + v_user_item[1] + "' required minlength='8'>" +
 				"</div>" +
 				"<span class='mr-2 text-danger omnidb__user-list__close'>" +
-					"<i title=\"Remove User\" class='fas fa-times action-grid action-close text-danger' onclick='removeNewUser(\"" + i + "\")'></i>" +
+					"<i id='new_user_remove_" + i  + "'  title='Remove User' class='fas fa-times action-grid action-close text-danger'></i>" +
 				"</span>" +
 				"</div>" +
 				"</div>";
-				$(`#new_user_item_password_${i}`).passtrength({
+						let new_user_username = document.getElementById(`new_user_item_username_${i}`)
+						new_user_username.oninput = (event) => { changeNewUser(event.target.value, i, 0)}
+
+						let new_user_item_superuser = document.getElementById(`new_user_item_superuser_${i}`)
+						new_user_item_superuser.onchange = (event) => { changeNewUser(event.target.value, i, 2)}
+
+						let new_user_item_password = document.getElementById(`new_user_item_password_${i}`)
+						new_user_item_password.oninput = (event) => { changeNewUser(event.target.value, i, 1)}
+
+						let new_user_remove = document.getElementById(`new_user_remove_${i}`)
+						new_user_remove.onclick = function() { removeNewUser(i)}
+
+						$(`#new_user_item_password_${i}`).passtrength({
 					passwordToggle: false
 				});
 			}
 		}
 	}
-
+	
 }
+
+export { listUsers }

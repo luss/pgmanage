@@ -55,7 +55,7 @@ export default {
           isExpanded: false,
           isDraggable: false,
           data: {
-            icon: "node-mariadb",
+            icon: "node node-mariadb",
             type: "server",
             contextMenu: "cm_server",
           },

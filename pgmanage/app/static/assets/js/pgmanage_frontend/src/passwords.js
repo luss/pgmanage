@@ -5,7 +5,7 @@ var v_modal_password_ok_after_hide_function = null;
 var v_modal_password_cancel_callback = null;
 var v_modal_password_input = null;
 
-import { conn_app} from './connections_modal.js'
+import { conn_app } from './connections_modal.js'
 
 function passwordModalsInit() {
 
@@ -35,6 +35,15 @@ function passwordModalsInit() {
   v_modal_password_ok_after_hide_function = null;
   v_modal_password_cancel_callback = null;
   v_modal_password_input = null;
+
+  let master_pass_input = document.getElementById('master_password')
+  master_pass_input.oninput = function() { checkMasterPassword }
+
+  let master_pass_input_confirm = document.getElementById('master_password_confirm')
+  master_pass_input_confirm.oninput = function() { checkMasterPassword()}
+
+  let password_set = document.getElementById('password_set')
+  password_set.onclick = function() { saveMasterPass() }
 }
 
 function showPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_message, p_send_tab_id = true) {
@@ -221,4 +230,4 @@ function showMasterPassPrompt(p_message) {
   v_button_reset.onclick = v_modal_password_reset_function;
 }
 
-export { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt }
+export { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt, showPasswordPrompt }

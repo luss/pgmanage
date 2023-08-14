@@ -65,7 +65,7 @@ export default {
           isExpanded: false,
           isDraggable: false,
           data: {
-            icon: "node-postgresql",
+            icon: "node node-postgresql",
             type: "server",
             contextMenu: "cm_server",
           },

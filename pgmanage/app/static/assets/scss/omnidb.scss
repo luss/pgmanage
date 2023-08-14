@@ -644,8 +644,12 @@ button.close {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 7px 15px 0px 7px;
+  padding: 7px 15px 0 0;
   width: 100%;
+}
+
+.omnidb__workspace__connection-details {
+  padding-left: 10px;
 }
 
 /* Workspace Connection Info */
@@ -927,7 +931,7 @@ button.close {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 7px 15px 0px 7px;
+  padding: 7px 10px 0 0;
   width: 100%;
 }
 .omnidb__snippets__div-right {
@@ -1775,6 +1779,6 @@ body {
 @import 'node-icon';
 @import 'themes/dark';
 @import 'themes/light';
-@import './../lib/aimaraJS/scss/Aimara';
+// @import './../lib/aimaraJS/scss/Aimara';
 @import './../lib/daterangepicker/scss/daterangepicker';
 @import './pgmanage';

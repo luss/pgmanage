@@ -33,6 +33,7 @@ import { renameTabConfirm, toggleConnectionAutocomplete } from '../workspace'
 import { createMessageModal } from '../notification_control'
 import { querySQL } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
+import { showPasswordPrompt } from "../passwords";
 
 /// <summary>
 /// Retrieving tree.

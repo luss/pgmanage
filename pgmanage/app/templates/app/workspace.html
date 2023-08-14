@@ -18,7 +18,6 @@
 
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/omnidb.min.css?{{pgmanage_short_version}}">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/modal.min.css?{{pgmanage_short_version}}">
     <title>PgManage</title>
   </head>
   <body>
@@ -368,11 +367,11 @@
 
             <div class="form-row">
               <div class="form-group col-6">
-                <input id="master_password" type="password" class="form-control" placeholder="New Password" oninput="checkMasterPassword()" minlength="8" required>
+                <input id="master_password" type="password" class="form-control" placeholder="New Password" minlength="8" required>
               </div>
 
               <div class="form-group col-6">
-                <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" oninput="checkMasterPassword()" minlength="8" required>
+                <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" minlength="8" required>
                 <div class="invalid-tooltip">
                   Password must be matching.
                 </div>
@@ -380,7 +379,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button id="password_set" type="button" class="btn btn-success" data-dismiss="modal" onclick="saveMasterPass()" disabled>Set Master password</button>
+            <button id="password_set" type="button" class="btn btn-success" data-dismiss="modal" disabled>Set Master password</button>
           </div>
         </div>
       </div>
@@ -535,12 +534,10 @@
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/cytoscape/cytoscape-klay.js"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/moment/moment.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/daterangepicker/daterangepicker.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/js/renderers.js?v{{pgmanage_short_version}}"></script>
 
     <script src="{{url_folder}}/static/assets/lib/axios@1.2.1/axios.min.js"></script>
     <script src="{{url_folder}}/static/assets/js/notification_control.js?v{{pgmanage_short_version}}"></script>
     {% vite_asset 'src/main.js' %}
-    <script src="{{url_folder}}/static/assets/js/users.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/tutorial_functions/tutorial.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
 
@@ -572,7 +569,6 @@
     var ht;
     var network;
     var v_connTabControl;
-    var v_usersObject;
     var v_editDataObject;
     var v_canEditContent;
     var v_editContentObject;

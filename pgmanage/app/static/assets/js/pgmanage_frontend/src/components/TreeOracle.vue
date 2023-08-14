@@ -55,7 +55,7 @@ export default {
           isExpanded: false,
           isDraggable: false,
           data: {
-            icon: "node-oracle",
+            icon: "node node-oracle",
             type: "server",
             contextMenu: "cm_server",
           },

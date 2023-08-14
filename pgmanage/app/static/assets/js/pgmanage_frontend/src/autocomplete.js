@@ -26,6 +26,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { consoleSQL } from "./console";
+import { whiteHtmlRenderer, whiteRightHtmlRenderer } from "./renderers";
+import { showPasswordPrompt } from "./passwords";
 
 var v_autocomplete_object;
 var Range = ace.require('ace/range').Range;
