@@ -52,6 +52,7 @@ import {
   autocomplete_start,
 } from "../autocomplete";
 import { v_current_terminal_theme } from "../header_actions";
+import ace from 'ace-builds'
 
 var v_createConsoleTabFunction = function() {
 

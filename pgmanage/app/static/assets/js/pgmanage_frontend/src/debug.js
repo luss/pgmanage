@@ -30,6 +30,7 @@ import { v_queryRequestCodes } from "./query";
 import { getDebugFunctionDefinitionPostgresql } from "./tree_context_functions/tree_postgresql";
 import { adjustChartTheme } from "./header_actions";
 import { blueRenderer, whiteRenderer } from "./renderers";
+import { Range } from "ace-builds";
 
 /// <summary>
 /// Debug state
@@ -438,7 +439,6 @@ function debugResponseRender(p_message, p_context) {
 		if (p_context.tab_tag.state==v_debugState.Ready)
 			p_context.tab_tag.debug_info.innerHTML = '<b>Ready</b>';
 
-	  var Range = ace.require('ace/range').Range;
 		
 	  if (p_message.v_data.v_lineno) {
 			p_context.tab_tag.editor.scrollToLine(p_message.v_data.v_lineno, true, true, function () {});
