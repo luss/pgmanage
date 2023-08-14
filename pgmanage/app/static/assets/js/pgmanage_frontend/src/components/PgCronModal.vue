@@ -145,6 +145,7 @@ import ConfirmableButton from './ConfirmableButton.vue'
 import { required, maxLength } from '@vuelidate/validators'
 import { useVuelidate } from '@vuelidate/core'
 import { emitter } from '../emitter'
+import ace from 'ace-builds'
 
 export default {
   name: 'PgCronModal',
