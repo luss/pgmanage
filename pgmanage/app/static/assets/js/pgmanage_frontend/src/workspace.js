@@ -1048,7 +1048,7 @@ function showMenuNewTabOuter(e) {
         let icon =
           conn.technology == "terminal"
             ? "fa-terminal"
-            : `node-${conn.technology}`;
+            : `node node-${conn.technology}`;
         let onClick;
         if (conn.technology == "terminal") {
           onClick = () => {
