@@ -3675,8 +3675,7 @@ export default {
           });
 
           resp.data.reduceRight((_, el) => {
-            // camelCase tables returned in double qotes from the backend, remove quotes
-            this.insertNode(node, el.name.replace(/^"(.*)"$/, '$1'), {
+            this.insertNode(node, el.name, {
               icon: "fas node-all fa-table node-table",
               type: "table",
               contextMenu: "cm_table",

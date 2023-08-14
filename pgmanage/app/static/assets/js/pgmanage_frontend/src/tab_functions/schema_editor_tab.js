@@ -47,7 +47,7 @@ let createSchemaEditorTab = function (node, mode, dialect) {
       tab_id: v_connTabControl.selectedTab.id,
       mode: mode,
       schema: node.data.schema,
-      table: mode === 'alter' ? node.title : null,
+      table: mode === 'alter' ? node.title.replace(/^"(.*)"$/, '$1') : null,
       tree_node: node,
       tree: window.v_connTabControl.selectedTab.tag.tree
     })

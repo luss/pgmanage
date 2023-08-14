@@ -66,7 +66,7 @@ export default {
     schema: String,
     table: String,
     tab_id: String,
-    database_index: String, //really?
+    database_index: Number,
     database_name: String,
     tree_node: Object,
     tree: Object
@@ -155,7 +155,7 @@ export default {
         axios.post('/get_table_definition_postgresql/', {
           database_index: this.database_index,
           tab_id: this.tab_id,
-          table: this.table,
+          table: this.localTable.tableName || this.table,
           schema: this.schema
         })
         .then((response) => {
@@ -170,7 +170,7 @@ export default {
             }
           })
           this.initialTable.columns = coldefs
-          this.initialTable.tableName = this.$props.table
+          this.initialTable.tableName = this.localTable.tableName || this.$props.table
           this.initialTable.schema = this.$props.schema
         })
         .catch((error) => {
@@ -197,7 +197,6 @@ export default {
           'drops': [],
           'typeChanges': [],
           'nullableChanges': [],
-          // 'dropNulls': [],
           'defaults': [],
           'renames': [],
         }
@@ -333,6 +332,9 @@ export default {
         })
 
         emitter.emit(`schemaChanged_${this.tree.id}`, { database_name: this.database_name, schema_name: this.localTable.schema })
+        // load table changes into UI
+        if(this.mode === 'alter')
+          this.loadTableDefinition()
       }
       this.queryIsRunning = false
     },
