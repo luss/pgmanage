@@ -28,6 +28,7 @@ SOFTWARE.
 import { refreshHeights , indentSQL, removeTab} from '../workspace'
 import { saveSnippetText } from '../tree_context_functions/tree_snippets'
 import { beforeCloseTab } from '../create_tab_functions'
+import ace from 'ace-builds'
 
 var v_createSnippetTextTabFunction = function(p_snippet = null) {
 

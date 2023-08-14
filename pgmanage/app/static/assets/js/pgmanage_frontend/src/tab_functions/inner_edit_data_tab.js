@@ -30,6 +30,7 @@ import { renameTab, removeTab, resizeVertical} from "../workspace";
 import { cancelEditData, queryEditData, checkEditDataStatus, saveEditData } from "../tree_context_functions/edit_data";
 import { showMenuNewTab } from "../workspace";
 import { showPasswordPrompt } from "../passwords";
+import ace from 'ace-builds'
 
 let createEditDataTabFunction = function(p_table) {
 

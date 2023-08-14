@@ -9,6 +9,7 @@ import {
   testMonitorScript,
   selectUnitTemplate
 } from "../monitoring";
+import ace from 'ace-builds'
 
 var v_createMonitorDashboardTabFunction = function() {
 

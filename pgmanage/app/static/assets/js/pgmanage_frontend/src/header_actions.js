@@ -27,6 +27,7 @@ SOFTWARE.
 */
 
 import { listUsers } from './users'
+import ace from 'ace-builds'
 
 /// <summary>
 /// Opens OmniDB about window.
