@@ -35,7 +35,7 @@ import {
   removeTab,
 } from "../workspace";
 import { Plan } from "pev2";
-import "pev2/dist/style.css";
+// import "pev2/dist/style.css";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { querySQL, getQueryEditorValue } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
