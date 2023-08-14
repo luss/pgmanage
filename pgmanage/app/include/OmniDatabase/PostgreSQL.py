@@ -1124,7 +1124,7 @@ class PostgreSQL:
                 ELSE udt_name
             END as data_type
             FROM information_schema.columns
-            WHERE table_schema = '{0}' AND table_name = '{1}'
+            WHERE table_schema = quote_ident('{0}') AND table_name = quote_ident('{1}')
             ORDER BY ordinal_position
         '''.format(in_schema, table), True)
 
@@ -1137,7 +1137,10 @@ class PostgreSQL:
             FROM   pg_index i
             JOIN   pg_attribute a ON a.attrelid = i.indrelid
                                 AND a.attnum = ANY(i.indkey)
-            WHERE  i.indrelid = '{0}.{1}'::regclass
+            INNER JOIN pg_class ci ON ci.oid = i.indexrelid
+            INNER JOIN pg_namespace ni ON ni.oid = ci.relnamespace
+            WHERE  i.indrelid = quote_ident('{1}')::regclass
+            AND nspname = quote_ident('{0}')
             AND    i.indisprimary;
         '''.format(in_schema, table), True)
 
