@@ -2078,7 +2078,8 @@ SOFTWARE.
 }
 
 .mx-context-menu i {
-  width: 16px;
+  width: 20px;
+  height: 16px;
 }
 
 .node-error {
