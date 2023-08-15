@@ -154,6 +154,7 @@ import ConfigTabGroup from "./ConfigTabGroup.vue";
 import { useVuelidate } from '@vuelidate/core'
 import axios from 'axios'
 import { showError } from "../notification_control";
+import distance from 'jaro-winkler'
 
 export default {
   name: "Config",
