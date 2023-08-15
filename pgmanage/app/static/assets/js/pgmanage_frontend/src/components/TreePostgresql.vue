@@ -41,6 +41,8 @@ import { createMessageModal } from "../notification_control";
 import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
 import { startMonitorDashboard } from "../monitoring";
+import { showConfirm } from '../notification_control';
+
 export default {
   name: "TreePostgresql",
   components: {

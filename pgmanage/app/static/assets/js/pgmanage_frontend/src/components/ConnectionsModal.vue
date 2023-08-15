@@ -96,6 +96,7 @@ import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
+import { showError, showAlert } from '../notification_control'
 
 export default {
   name: 'ConnectionsModal',

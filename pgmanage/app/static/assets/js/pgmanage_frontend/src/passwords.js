@@ -7,6 +7,7 @@ var v_modal_password_input = null;
 
 import { conn_app } from './connections_modal.js'
 import { execAjax } from './ajax_control.js';
+import { showAlert } from './notification_control.js';
 
 function passwordModalsInit() {
 

@@ -3,6 +3,7 @@ import { emitter } from '../emitter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { showPasswordPrompt } from '../passwords';
 import axios from 'axios';
+import { showError, showAlert } from '../notification_control';
 
 export default {
   data() {

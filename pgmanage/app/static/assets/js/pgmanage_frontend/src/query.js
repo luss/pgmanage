@@ -28,6 +28,7 @@ SOFTWARE.
 import { SetAcked, removeContext, createRequest } from "./long_polling"
 import { cellDataModal } from "./header_actions"
 import { whiteRenderer } from "./renderers"
+import { showAlert } from "./notification_control"
 
 /// <summary>
 /// Query state

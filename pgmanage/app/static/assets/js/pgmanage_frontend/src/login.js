@@ -1,4 +1,5 @@
 import { execAjax } from './ajax_control'
+import { showAlert, checkSessionMessage } from './notification_control';
 
 $(document).ready(function () {
 
@@ -16,8 +17,7 @@ $(document).ready(function () {
 
   txt_pwd.onchange = (event) => { validateField(event.target)}
 
-  //FIXME: remove comment when notification_control.js will be moved to Vite bundle
-  // checkSessionMessage();
+  checkSessionMessage();
 
   var v_user_name = document.getElementById('txt_user');
   var v_pwd = document.getElementById('txt_pwd');

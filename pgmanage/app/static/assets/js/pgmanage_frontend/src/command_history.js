@@ -27,6 +27,7 @@ SOFTWARE.
 */
 import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
 import { execAjax } from "./ajax_control";
+import { showConfirm } from "./notification_control";
 
 /// <summary>
 /// Wipes command history.

@@ -44,6 +44,7 @@
 
 <script>
 import axios from 'axios'
+import { showError } from '../notification_control'
 
 export default {
   name: 'ActionsModal',

@@ -15,6 +15,7 @@ import '../../../scss/components/modal.scss'
 import ace from 'ace-builds'
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
+import { showAlert } from './notification_control.js';
 
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)

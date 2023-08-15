@@ -30,6 +30,7 @@ import { v_queryRequestCodes, setTabStatus, refreshTreeNode } from "./query";
 import { cellDataModal } from "./header_actions";
 import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
 import { execAjax } from "./ajax_control";
+import { showAlert, showConfirm } from "./notification_control";
 
 /// <summary>
 /// Console state

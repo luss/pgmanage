@@ -315,6 +315,7 @@
 import UtilityJobs from "./UtilityJobs.vue";
 import FileManager from "./FileManager.vue";
 import axios from 'axios'
+import { showError, showAlert } from "../notification_control";
 
 export default {
   name: "BackupTab",

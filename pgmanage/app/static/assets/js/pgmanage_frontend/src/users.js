@@ -26,6 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { startLoading, endLoading, execAjax } from "./ajax_control";
+import { showConfirm } from "./notification_control";
 
 let v_usersObject;
 let newUsersObject;

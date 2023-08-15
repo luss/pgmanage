@@ -48,6 +48,7 @@ import { startMonitorDashboard } from './monitoring'
 import { createTabControl } from './tabs'
 import { startLoading, execAjax } from './ajax_control'
 import axios from 'axios'
+import { showAlert, showConfirm } from './notification_control'
 
 let v_start_height;
 /// <summary>

@@ -32,6 +32,7 @@ import { tabSQLTemplate } from "./tree_postgresql";
 import { toggleConnectionAutocomplete } from "../workspace";
 import { querySQL } from "../query";
 import { execAjax } from "../ajax_control";
+import { showError } from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.

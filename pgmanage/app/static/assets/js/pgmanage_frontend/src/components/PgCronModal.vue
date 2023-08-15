@@ -147,6 +147,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { emitter } from '../emitter'
 import ace from 'ace-builds'
 import axios from 'axios'
+import { showError } from '../notification_control'
 
 export default {
   name: 'PgCronModal',

@@ -179,6 +179,7 @@ import {
   csrfSafeMethod,
   execAjax,
 } from "./ajax_control";
+import { showError, showAlert, showConfirm } from './notification_control';
 
 var v_plugins = {}
 

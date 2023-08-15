@@ -181,6 +181,7 @@ import { default_shortcuts } from '../shortcuts'
 import { changeTheme } from '../header_actions'
 import ace from 'ace-builds'
 import axios from 'axios'
+import { showAlert } from '../notification_control'
 
 export default {
   name: 'SettingsModal',

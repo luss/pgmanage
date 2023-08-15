@@ -43,6 +43,7 @@ import { createTabControl } from "../tabs";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
+import { showError, showAlert, showConfirm } from "../notification_control";
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);

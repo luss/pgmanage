@@ -40,6 +40,7 @@ import {
 } from "../renderers";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
+import { showError, showAlert } from "../notification_control";
 
 /// <summary>
 /// Query state

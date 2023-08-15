@@ -28,6 +28,7 @@ SOFTWARE.
 
 import { listUsers } from './users'
 import ace from 'ace-builds'
+import { showConfirm } from './notification_control';
 
 /// <summary>
 /// Opens OmniDB about window.
