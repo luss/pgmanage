@@ -50,6 +50,8 @@
 
 <script>
 import { jobDetailState } from '../job_detail_state'
+import axios from 'axios'
+
 const JobState = {
   PROCESS_NOT_STARTED: 0,
   PROCESS_STARTED: 1,

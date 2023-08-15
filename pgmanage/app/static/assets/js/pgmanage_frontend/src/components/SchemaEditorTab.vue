@@ -56,6 +56,7 @@ import ColumnList from './SchemaEditorColumnList.vue'
 import dialects from './dialect-data'
 import { createRequest } from '../long_polling'
 import { v_queryRequestCodes } from '../query'
+import axios from 'axios'
 
 export default {
   name: "SchemaEditor",

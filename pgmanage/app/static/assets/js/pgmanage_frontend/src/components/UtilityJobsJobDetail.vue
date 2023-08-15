@@ -40,6 +40,7 @@
 
 <script>
 import { jobDetailState } from '../job_detail_state'
+import axios from 'axios'
 
 export default {
   name: 'JobDetail',

@@ -152,6 +152,7 @@
 <script>
 import ConfigTabGroup from "./ConfigTabGroup.vue";
 import { useVuelidate } from '@vuelidate/core'
+import axios from 'axios'
 
 export default {
   name: "Config",

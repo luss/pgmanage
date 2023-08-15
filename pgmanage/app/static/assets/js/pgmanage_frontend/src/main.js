@@ -13,8 +13,20 @@ import 'xterm/css/xterm.css'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import '../../../scss/components/modal.scss'
 import ace from 'ace-builds'
+import axios from 'axios'
+import { getCookie } from './ajax_control.js';
 
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
+
+axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
+axios.interceptors.response.use(response => {
+  return response;
+}, error => {
+  if (error.response.status === 401) {
+    showAlert('User not authenticated, please reload the page.');
+  }
+  return Promise.reject(error);
+});
 
 console.log('Hello from Vite')

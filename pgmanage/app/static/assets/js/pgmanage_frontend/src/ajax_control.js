@@ -204,3 +204,5 @@ function reportOffline() {
 	showAlert('Webserver was shutdown, please restart it and reload the application.');
 	var v_status_img = document.getElementById("ajax_status");
 }
+
+export { startLoading, endLoading, getCookie, execAjax, csrfSafeMethod}

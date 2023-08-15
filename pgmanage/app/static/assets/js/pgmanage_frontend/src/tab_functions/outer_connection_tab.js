@@ -46,6 +46,7 @@ import { cancelMonitorUnits } from "../monitoring";
 import { createTabControl } from "../tabs";
 import { whiteHtmlRenderer } from "../renderers";
 import ace from 'ace-builds'
+import { endLoading } from "../ajax_control";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.

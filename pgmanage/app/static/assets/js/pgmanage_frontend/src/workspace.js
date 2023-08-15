@@ -46,6 +46,8 @@ import { checkConsoleStatus } from './console'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
 import { createTabControl } from './tabs'
+import { startLoading, execAjax } from './ajax_control'
+import axios from 'axios'
 
 let v_start_height;
 /// <summary>

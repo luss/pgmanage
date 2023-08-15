@@ -172,6 +172,13 @@ with 2 parameters:
 import { tabSQLTemplate } from './tree_context_functions/tree_postgresql'
 import { showPluginDataActionRenderer } from './renderers';
 import { showPasswordPrompt } from './passwords';
+import {
+  startLoading,
+  endLoading,
+  getCookie,
+  csrfSafeMethod,
+  execAjax,
+} from "./ajax_control";
 
 var v_plugins = {}
 

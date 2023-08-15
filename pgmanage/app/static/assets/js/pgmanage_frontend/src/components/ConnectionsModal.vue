@@ -94,6 +94,8 @@
 import {connectionsStore} from '../stores/connections.js'
 import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue'
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
+import { startLoading, endLoading } from '../ajax_control'
+import axios from 'axios'
 
 export default {
   name: 'ConnectionsModal',

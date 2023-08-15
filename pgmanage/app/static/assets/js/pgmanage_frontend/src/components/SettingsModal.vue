@@ -180,6 +180,7 @@ import { queryEditData } from '../tree_context_functions/edit_data'
 import { default_shortcuts } from '../shortcuts'
 import { changeTheme } from '../header_actions'
 import ace from 'ace-builds'
+import axios from 'axios'
 
 export default {
   name: 'SettingsModal',

@@ -95,6 +95,7 @@
 
 <script>
 import FileManagerActionsModal from './FileManagerActionsModal.vue'
+import axios from 'axios'
 
 export default {
   name: 'FileManager',

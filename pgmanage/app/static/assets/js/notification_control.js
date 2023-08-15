@@ -26,18 +26,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-function checkSessionMessage() {
+//FIXME: remove comment when notification_control.js will be moved to Vite bundle
+// function checkSessionMessage() {
 
-	execAjax('/check_session_message/',
-				JSON.stringify({}),
-        function(p_return) {
-          if (p_return.v_data!='')
-          	showAlert(p_return.v_data);
-        },
-        null,
-    'box');
+// 	execAjax('/check_session_message/',
+// 				JSON.stringify({}),
+//         function(p_return) {
+//           if (p_return.v_data!='')
+//           	showAlert(p_return.v_data);
+//         },
+//         null,
+//     'box');
 
-}
+// }
 
 /// <summary>
 /// Startup function.

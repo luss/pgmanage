@@ -39,6 +39,7 @@ import {
 	newRowRenderer
 } from "../renderers";
 import { showPasswordPrompt } from "../passwords";
+import { execAjax } from "../ajax_control";
 
 /// <summary>
 /// Query state

@@ -314,6 +314,7 @@
 <script>
 import UtilityJobs from "./UtilityJobs.vue";
 import FileManager from "./FileManager.vue";
+import axios from 'axios'
 
 export default {
   name: "BackupTab",

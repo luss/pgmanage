@@ -34,6 +34,8 @@ import { createMessageModal } from '../notification_control'
 import { querySQL } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
+import { execAjax } from "../ajax_control";
+import axios from "axios";
 
 /// <summary>
 /// Retrieving tree.

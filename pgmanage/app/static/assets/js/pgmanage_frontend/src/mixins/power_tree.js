@@ -2,6 +2,8 @@ import { useToast } from 'vue-toast-notification';
 import { emitter } from '../emitter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { showPasswordPrompt } from '../passwords';
+import axios from 'axios';
+
 export default {
   data() {
     return {

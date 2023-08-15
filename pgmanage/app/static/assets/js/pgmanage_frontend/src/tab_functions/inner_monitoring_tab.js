@@ -3,6 +3,7 @@ import { beforeCloseTab } from "../create_tab_functions"
 import { cellDataModal } from '../header_actions';
 import { blueHtmlRenderer, whiteHtmlRenderer } from '../renderers';
 import { showPasswordPrompt } from '../passwords';
+import { execAjax } from '../ajax_control';
 
 var v_createMonitoringTabFunction = function(p_name, p_query, p_actions) {
 

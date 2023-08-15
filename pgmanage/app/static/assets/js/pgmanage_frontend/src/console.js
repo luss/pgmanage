@@ -29,6 +29,7 @@ import { SetAcked, removeContext, createRequest } from "./long_polling";
 import { v_queryRequestCodes, setTabStatus, refreshTreeNode } from "./query";
 import { cellDataModal } from "./header_actions";
 import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
+import { execAjax } from "./ajax_control";
 
 /// <summary>
 /// Console state

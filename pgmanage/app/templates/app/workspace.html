@@ -518,11 +518,7 @@
 
     <script src="{{url_folder}}/static/assets/lib/jquery/jquery.min.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/js/jquery-ui.js"></script>
-    <script src="{{url_folder}}/static/assets/js/ajax_control.js?v{{pgmanage_short_version}}"></script>
 
-    <script type="text/javascript">
-      startLoading();
-    </script>
     <script src="{{url_folder}}/static/assets/lib/popper/popper.min.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/lib/bootstrap/bootstrap.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/handsontable/handsontable.full.js?v{{pgmanage_short_version}}"></script>
@@ -533,7 +529,6 @@
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/moment/moment.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/daterangepicker/daterangepicker.js?v{{pgmanage_short_version}}"></script>
 
-    <script src="{{url_folder}}/static/assets/lib/axios@1.2.1/axios.min.js"></script>
     <script src="{{url_folder}}/static/assets/js/notification_control.js?v{{pgmanage_short_version}}"></script>
     {% vite_asset 'src/main.js' %}
     <script src="{{url_folder}}/static/assets/js/tutorial_functions/tutorial.js?v{{pgmanage_short_version}}"></script>
@@ -582,16 +577,7 @@
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
     <script src="{{url_folder}}/static/assets/lib/jaro-winkler/jaro-winkler.js"></script>
     <script type="text/javascript">
-      axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
       moment.defaultFormat = date_format;
-      axios.interceptors.response.use(response => {
-        return response;
-      }, error => {
-        if (error.response.status === 401) {
-          showAlert('User not authenticated, please reload the page.');
-        }
-        return Promise.reject(error);
-      });
     </script>
   </body>
 </html>

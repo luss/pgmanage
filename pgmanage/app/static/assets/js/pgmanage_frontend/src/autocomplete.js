@@ -28,6 +28,7 @@ SOFTWARE.
 import { consoleSQL } from "./console";
 import { whiteHtmlRenderer, whiteRightHtmlRenderer } from "./renderers";
 import { Range } from "ace-builds";
+import { execAjax } from "./ajax_control";
 
 var v_autocomplete_object;
 
