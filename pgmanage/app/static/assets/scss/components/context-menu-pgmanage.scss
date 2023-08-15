@@ -24,5 +24,16 @@
                 fill: themed($color);
             }
         }
+
+        i {
+            width: 20px;
+            height: 16px;
+            
+            &.node {
+                @include themify() {
+                    background-color: themed($primaryBlueWhiteSwitching);
+                }
+            }
+        }    
     }
 }
