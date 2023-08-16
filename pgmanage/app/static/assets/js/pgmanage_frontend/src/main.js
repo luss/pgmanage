@@ -17,6 +17,7 @@ import 'ace-builds/esm-resolver'
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
 import { showAlert } from './notification_control.js';
+import moment from 'moment';
 
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
@@ -30,5 +31,7 @@ axios.interceptors.response.use(response => {
   }
   return Promise.reject(error);
 });
+
+moment.defaultFormat = date_format;
 
 console.log('Hello from Vite')

@@ -31,6 +31,7 @@ import { cellDataModal } from "./header_actions";
 import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
 import { execAjax } from "./ajax_control";
 import { showAlert, showConfirm } from "./notification_control";
+import moment from "moment";
 
 /// <summary>
 /// Console state

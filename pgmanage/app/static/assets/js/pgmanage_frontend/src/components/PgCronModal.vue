@@ -148,6 +148,7 @@ import { emitter } from '../emitter'
 import ace from 'ace-builds'
 import axios from 'axios'
 import { showError } from '../notification_control'
+import moment from 'moment'
 
 export default {
   name: 'PgCronModal',

@@ -522,7 +522,6 @@
     <script src="{{url_folder}}/static/assets/lib/popper/popper.min.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/lib/bootstrap/bootstrap.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/handsontable/handsontable.full.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/moment/moment.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/daterangepicker/daterangepicker.js?v{{pgmanage_short_version}}"></script>
 
     {% vite_asset 'src/main.js' %}
@@ -570,8 +569,8 @@
     var date_format = '{{ date_format }}' === 'None' ? 'YYYY-MM-DD, HH:mm:ss' : '{{ date_format }}'
     </script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
       moment.defaultFormat = date_format;
-    </script>
+    </script> -->
   </body>
 </html>

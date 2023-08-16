@@ -182,6 +182,7 @@ import { changeTheme } from '../header_actions'
 import ace from 'ace-builds'
 import axios from 'axios'
 import { showAlert } from '../notification_control'
+import moment from 'moment'
 
 export default {
   name: 'SettingsModal',

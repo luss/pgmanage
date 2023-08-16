@@ -155,6 +155,7 @@ import { useVuelidate } from '@vuelidate/core'
 import axios from 'axios'
 import { showError } from "../notification_control";
 import distance from 'jaro-winkler'
+import moment from 'moment'
 
 export default {
   name: "Config",
