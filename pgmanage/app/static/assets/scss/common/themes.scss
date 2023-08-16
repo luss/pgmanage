@@ -36,6 +36,7 @@ $pev2StatsTableTheadLight: 'pev2StatsTableTheadLight';
 $pev2StatsTableTheadDark: 'pev2StatsTableTheadDark';
 $pev2CodeBlockBg: 'pev2CodeBlockBg';
 $schemaEditorColumnBg: 'schemaEditorColumnBg';
+$primaryBlueWhiteSwitching: 'primaryBlueWhiteSwitching';
 
 $themes: (
     light: (
@@ -73,6 +74,7 @@ $themes: (
         pev2StatsTableTheadDark: rgba($primaryBlue, 0.45),
         pev2CodeBlockBg: #CCDFF6,
         schemaEditorColumnBg: rgba($primaryBlue, 0.15),
+        primaryBlueWhiteSwitching: $primaryBlue,
     ),
     dark: (
         borderColor: $borderColorDark,
@@ -109,6 +111,7 @@ $themes: (
         pev2StatsTableTheadDark: #203A59,
         pev2CodeBlockBg: lighten($primaryColor, 2.5%),
         schemaEditorColumnBg: rgba($primaryBlue, 0.15),
+        primaryBlueWhiteSwitching: $white,
     ),
 );
 

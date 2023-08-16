@@ -82,7 +82,7 @@ $compact-width: 50px;
           }
 
           &:hover:not(.active) {
-            color: $primaryBlue !important;
+            color: inherit;
           }
         }
       }
@@ -101,7 +101,6 @@ $compact-width: 50px;
   }
 
   header {
-    margin-bottom: $spaceBase;
     overflow: hidden;
 
     h4 {
@@ -109,9 +108,17 @@ $compact-width: 50px;
       font-weight: 600;
       margin: 0;
       line-height: inherit;
+      border: 0 !important;
 
       @include themify() {
         color: themed($color) !important;
+        background: transparent;
+      }
+
+      &:active, &:focus {
+        background-color: transparent !important;
+        color: inherit !important;
+        box-shadow: none !important;
       }
     }
 
