@@ -516,14 +516,7 @@
 
     </div>
 
-    <script src="{{url_folder}}/static/assets/lib/jquery/jquery.min.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/jquery-ui.js"></script>
-
-    <script src="{{url_folder}}/static/assets/lib/popper/popper.min.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/lib/bootstrap/bootstrap.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/handsontable/handsontable.full.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/daterangepicker/daterangepicker.js?v{{pgmanage_short_version}}"></script>
-
     {% vite_asset 'src/main.js' %}
     <script src="{{url_folder}}/static/assets/js/tutorial_functions/tutorial.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
@@ -551,7 +544,6 @@
     var v_explain_control = {context: 'default'};
 
     var v_menu_item = '{{ menu_item }}'
-    $('#menu_' + v_menu_item).addClass('header_a_selected');
 
     var ht;
     var network;
@@ -568,9 +560,6 @@
     var pigz_path = '{{ pigz_path|addslashes}}';
     var date_format = '{{ date_format }}' === 'None' ? 'YYYY-MM-DD, HH:mm:ss' : '{{ date_format }}'
     </script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
-    <!-- <script type="text/javascript">
-      moment.defaultFormat = date_format;
-    </script> -->
+    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js" defer></script>
   </body>
 </html>

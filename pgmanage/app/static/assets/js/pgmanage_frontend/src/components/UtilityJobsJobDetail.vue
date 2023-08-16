@@ -41,6 +41,7 @@
 <script>
 import { jobDetailState } from '../job_detail_state'
 import axios from 'axios'
+import $ from "jquery";
 
 export default {
   name: 'JobDetail',

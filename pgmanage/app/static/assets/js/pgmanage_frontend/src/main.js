@@ -5,6 +5,10 @@ import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import omniURL from './ace_themes/theme-omnidb.js?url'
 import omniDarkURL from './ace_themes/theme-omnidb_dark.js?url'
+import $ from 'jquery';
+window.jQuery = window.$ = $;
+import 'daterangepicker'
+import 'bootstrap';
 import './workspace'
 import './plugin_hook'
 import './components/postgresql_modals'
@@ -13,7 +17,7 @@ import 'xterm/css/xterm.css'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import '../../../scss/components/modal.scss'
 import ace from 'ace-builds'
-import 'ace-builds/esm-resolver'
+import 'ace-builds/src-noconflict/mode-python';
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
 import { showAlert } from './notification_control.js';

@@ -1,10 +1,12 @@
+import $ from 'jquery';
+import 'bootstrap';
 import { execAjax } from './ajax_control'
 import { showAlert, checkSessionMessage } from './notification_control';
 
-$(document).ready(function () {
-
+$(function () {
   let txt_user = document.getElementById('txt_user')
   let txt_pwd = document.getElementById('txt_pwd')
+  let btn_sign_in = document.getElementById('btn_sign_in')
 
   txt_user.onkeydown = function(event) {
     if (event.key === 'Enter') signIn();
@@ -16,6 +18,8 @@ $(document).ready(function () {
   txt_user.onchange = (event) => { validateField(event.target)}
 
   txt_pwd.onchange = (event) => { validateField(event.target)}
+
+  btn_sign_in.onclick = function() { signIn() }
 
   checkSessionMessage();
 
