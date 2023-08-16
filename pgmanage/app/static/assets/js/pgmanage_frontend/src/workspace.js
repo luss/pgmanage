@@ -49,6 +49,8 @@ import { createTabControl } from './tabs'
 import { startLoading, execAjax } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
+import cytoscape from 'cytoscape';
+import spread from 'cytoscape-spread'
 
 let v_start_height;
 /// <summary>
@@ -297,7 +299,7 @@ function drawGraph(p_all, p_schema) {
 				v_edges.push(v_edge_object);
 
       }
-
+      cytoscape.use(spread)
 			v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.network = window.cy = cytoscape({
 				container: v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.graph_div,
 				boxSelectionEnabled: false,

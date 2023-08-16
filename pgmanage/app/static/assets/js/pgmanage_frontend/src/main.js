@@ -13,6 +13,7 @@ import 'xterm/css/xterm.css'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import '../../../scss/components/modal.scss'
 import ace from 'ace-builds'
+import 'ace-builds/esm-resolver'
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
 import { showAlert } from './notification_control.js';

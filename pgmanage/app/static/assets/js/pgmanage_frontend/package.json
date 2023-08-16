@@ -24,6 +24,8 @@
     "axios": "^1.4.0",
     "chart.js": "^2.7.2",
     "chartjs-plugin-annotation": "^0.5.7",
+    "cytoscape": "^3.26.0",
+    "cytoscape-spread": "^3.0.0",
     "events": "^3.3.0",
     "jaro-winkler": "^0.2.8",
     "knex": "^2.4.2",
