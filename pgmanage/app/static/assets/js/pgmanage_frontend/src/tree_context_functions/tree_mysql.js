@@ -373,33 +373,6 @@ function getTreeMysql(div) {
   autocomplete_btn.onchange = function () {
     toggleConnectionAutocomplete(autocomplete_btn_id);
   };
-
-  // tree.beforeContextMenuEvent = function(node, callback) {
-
-  //     var v_elements = [];
-  //     //Hooks
-  //     if (v_connTabControl.tag.hooks.mysqlTreeContextMenu.length>0) {
-  //       for (var i=0; i<v_connTabControl.tag.hooks.mysqlTreeContextMenu.length; i++)
-  //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.mysqlTreeContextMenu[i](node));
-  //     }
-
-  //     var v_customCallback = function() {
-  //       callback(v_elements);
-  //     }
-  //     v_customCallback();
-  // }
-}
-
-function afterNodeOpenedCallbackMysql(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length > 0) {
-    for (
-      var i = 0;
-      i < v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length;
-      i++
-    )
-      v_connTabControl.tag.hooks.mysqlTreeNodeOpen[i](node);
-  }
 }
 
 /// <summary>
@@ -580,8 +553,6 @@ function getTreeDetailsMysql(node) {
         //v_connTabControl.tag.createMonitorDashboardTab();
         //startMonitorDashboard();
       }
-
-      afterNodeOpenedCallbackMysql(node);
     },
     function (p_return) {
       nodeOpenErrorMysql(p_return, node);

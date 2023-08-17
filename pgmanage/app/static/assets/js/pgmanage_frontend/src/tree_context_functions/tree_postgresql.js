@@ -1107,14 +1107,6 @@ function getTreePostgresql(div) {
     autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
 }
 
-function afterNodeOpenedCallbackPostgreSQL(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.postgresqlTreeNodeOpen.length>0) {
-    for (var i=0; i<v_connTabControl.tag.hooks.postgresqlTreeNodeOpen.length; i++)
-      v_connTabControl.tag.hooks.postgresqlTreeNodeOpen[i](node);
-  }
-}
-
 /// <summary>
 /// Retrieving function definition.
 /// </summary>

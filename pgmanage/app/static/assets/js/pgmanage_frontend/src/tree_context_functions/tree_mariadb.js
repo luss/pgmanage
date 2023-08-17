@@ -369,29 +369,6 @@ function getTreeMariadb(div) {
 		</div>`;
     let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
     autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
-    // tree.beforeContextMenuEvent = function(node, callback) {
-
-    //     var v_elements = [];
-    //     //Hooks
-    //     if (v_connTabControl.tag.hooks.mariadbTreeContextMenu.length>0) {
-    //       for (var i=0; i<v_connTabControl.tag.hooks.mariadbTreeContextMenu.length; i++)
-    //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.mariadbTreeContextMenu[i](node));
-    //     }
-
-    //     var v_customCallback = function() {
-    //       callback(v_elements);
-    //     }
-    //     v_customCallback();
-    // }
-}
-
-
-function afterNodeOpenedCallbackMariaDB(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.mariadbTreeNodeOpen.length>0) {
-    for (var i=0; i<v_connTabControl.tag.hooks.mariadbTreeNodeOpen.length; i++)
-      v_connTabControl.tag.hooks.mariadbTreeNodeOpen[i](node);
-  }
 }
 
 /// <summary>
@@ -566,7 +543,6 @@ function getTreeDetailsMariadb(node) {
               //startMonitorDashboard();
             }
 
-            afterNodeOpenedCallbackMariaDB(node);
 
         },
         function(p_return) {

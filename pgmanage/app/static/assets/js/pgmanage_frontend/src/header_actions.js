@@ -248,12 +248,6 @@ function changeTheme(p_option) {
 			}
 		}
 	}
-
-	//Hooks
-	if (v_connTabControl.tag.hooks.changeTheme.length>0) {
-		for (var i=0; i<v_connTabControl.tag.hooks.changeTheme.length; i++)
-			v_connTabControl.tag.hooks.changeTheme[i](null,v_theme);
-	}
 }
 
 function changeFontSize(p_option) {

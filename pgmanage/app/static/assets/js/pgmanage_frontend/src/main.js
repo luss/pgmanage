@@ -10,7 +10,6 @@ import $ from 'jquery';
 import 'daterangepicker'
 import 'bootstrap';
 import './workspace'
-import './plugin_hook'
 import './components/postgresql_modals'
 import 'vue-toast-notification/dist/theme-sugar.css';
 import 'xterm/css/xterm.css'

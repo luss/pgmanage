@@ -918,12 +918,6 @@ function refreshHeights(p_all) {
     // Updating tree sizes
     refreshTreeHeight();
 
-    // Hooks
-    if (v_connTabControl.tag.hooks.windowResize.length>0) {
-      for (var i=0; i<v_connTabControl.tag.hooks.windowResize.length; i++)
-      v_connTabControl.tag.hooks.windowResize[i]();
-    }
-
     // Snippet panel
     resizeSnippetPanel();
 
@@ -1096,12 +1090,6 @@ function showMenuNewTabOuter(e) {
     });
   } else {
     let items = [];
-    //Hooks
-    if (v_connTabControl.tag.hooks.outerTabMenu.length > 0) {
-      for (let i = 0; i < v_connTabControl.tag.hooks.outerTabMenu.length; i++) {
-        items = items.concat(v_connTabControl.tag.hooks.outerTabMenu[i]());
-      }
-    }
 
     // Building connection list
     if (connectionsStore.connections.length > 0) {
@@ -1251,13 +1239,6 @@ function showMenuNewTab(e) {
 				}
 			}
 		);
-	}
-
-	//Hooks
-	if (v_connTabControl.tag.hooks.innerTabMenu.length>0) {
-		for (var i=0; i<v_connTabControl.tag.hooks.innerTabMenu.length; i++) {
-      v_option_list = v_option_list.concat(v_connTabControl.tag.hooks.innerTabMenu[i]());
-    }
 	}
 
   ContextMenu.showContextMenu({
