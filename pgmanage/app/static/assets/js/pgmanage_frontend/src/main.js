@@ -1,4 +1,5 @@
 import 'vite/modulepreload-polyfill';
+import 'bootstrap/scss/bootstrap.scss'
 import './ace_themes/theme-omnidb.js';
 import './ace_themes/theme-omnidb_dark.js';
 import 'ace-builds/src-noconflict/mode-sql'
@@ -6,7 +7,6 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 import omniURL from './ace_themes/theme-omnidb.js?url'
 import omniDarkURL from './ace_themes/theme-omnidb_dark.js?url'
 import $ from 'jquery';
-window.jQuery = window.$ = $;
 import 'daterangepicker'
 import 'bootstrap';
 import './workspace'
@@ -23,6 +23,7 @@ import { getCookie } from './ajax_control.js';
 import { showAlert } from './notification_control.js';
 import moment from 'moment';
 
+window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
 
