@@ -96,7 +96,7 @@ import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
-import { showError, showAlert } from '../notification_control'
+import { showToast } from '../notification_control'
 
 export default {
   name: 'ConnectionsModal',
@@ -197,9 +197,9 @@ export default {
       axios.post('/test_connection/', connection)
       .then((response) => {
         if(response.data.status !== 'success') {
-            showError(response.data.data);
+            showToast("error", response.data.data)
         } else {
-            showAlert(response.data.data);
+            showToast("success", response.data.data)
         }
       })
       .catch((error) => {

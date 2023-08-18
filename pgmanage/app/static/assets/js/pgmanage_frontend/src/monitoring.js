@@ -32,7 +32,7 @@ import { Chart } from 'chart.js';
 import 'chartjs-plugin-annotation';
 import { showPasswordPrompt } from "./passwords";
 import { startLoading, endLoading, execAjax } from "./ajax_control";
-import { showError, showAlert, showConfirm } from "./notification_control";
+import { showConfirm, showToast } from "./notification_control";
 
 var v_unit_list_grid = null;
 
@@ -387,7 +387,7 @@ function saveMonitorScript() {
   var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 
   if (v_tab_tag.input_unit_name.value.trim()=='') {
-    showAlert('Please provide name for this monitor.');
+    showToast("info", "Please provide name for this monitor.")
   }
   else {
     var input = JSON.stringify({"p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
@@ -404,9 +404,7 @@ function saveMonitorScript() {
   				function(p_return) {
 
             v_tab_tag.unit_id = p_return.v_data;
-
-            showAlert('Monitor unit saved.')
-
+            showToast("success", "Monitor unit saved.")
           },
           function(p_return) {
   					if (p_return.v_data.password_timeout) {
@@ -420,7 +418,7 @@ function saveMonitorScript() {
   						);
   					}
             else {
-              showError(p_return.v_data)
+              showToast("error", p_return.v_data.message)
             }
   				},
           'box');
@@ -576,7 +574,7 @@ $('#modal_monitoring_unit_test').on('shown.bs.modal', function (e) {
 						);
 					}
           else {
-            showError(p_return.v_data)
+            showToast("error", p_return.v_data.message)
           }
 				},
 				'box');
@@ -1234,7 +1232,7 @@ function refreshMonitorDashboard(p_loading,p_tab_tag,p_div) {
   						);
   					}
             else {
-              showError(p_return.v_data)
+              showToast("error", p_return.v_data.message)
             }
   				},
           null,

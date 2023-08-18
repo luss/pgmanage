@@ -47,13 +47,13 @@ import { createTabControl } from "../tabs";
 import { whiteHtmlRenderer } from "../renderers";
 import ace from 'ace-builds'
 import { endLoading } from "../ajax_control";
-import { showAlert } from "../notification_control";
+import { showToast } from "../notification_control";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
   if (connectionsStore.connections.length==0) {
     v_connTabControl.selectTabIndex(v_connTabControl.tabList.length-2);
-    showAlert('Create connections first.');
+    showToast("error", "Create connections first.")
   }
   else {
     // v_connTabControl.removeLastTab();

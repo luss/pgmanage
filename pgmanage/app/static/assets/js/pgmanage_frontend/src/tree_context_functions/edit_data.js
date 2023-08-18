@@ -40,7 +40,7 @@ import {
 } from "../renderers";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
-import { showError, showAlert } from "../notification_control";
+import { showToast } from "../notification_control";
 
 /// <summary>
 /// Query state
@@ -108,7 +108,7 @@ function v_startEditData(p_table,p_schema) {
 					);
 				}
 				else {
-					showError(p_return.v_data)
+					showToast("error", p_return.v_data.message)
 				}
 			},
 			'box',
@@ -192,7 +192,7 @@ function queryEditData() {
 	var v_state = v_currTabTag.state;
 
 	if (v_state!=0) {
-		showAlert('Tab with activity in progress.');
+		showToast("info", "Tab with activity in progress.");
 	}
 	else {
 
@@ -235,7 +235,7 @@ function queryEditData() {
 		setTimeout(function() {
 			if (!v_context.acked) {
 				cancelEditDataTab(v_context.tab_tag);
-				showAlert('No response from query server.');
+				showToast("error", "No response from query server")
 			}
 		},10000);
 
@@ -307,7 +307,8 @@ function queryEditDataReturnRender(p_message,p_context) {
 
 		if (v_currTabTag.editDataObject.pk.length==0) {
 			if (v_currTabTag.editDataObject.firstRender)
-				showAlert('Table has no primary key, existing rows will be read only.');
+				showToast("info", "Table has no primary key, existing rows will be read only.")
+
 
 			v_currTabTag.editDataObject.firstRender = false;
 			v_currTabTag.editDataObject.hasPK = false;
@@ -511,7 +512,7 @@ function saveEditData() {
 	var state = currTabTag.state;
 
 	if (state != v_editDataState.Idle) {
-		showAlert('Tab with activity in progress.');
+		showToast("info", "Tab with activity in progress.");
 	}
 	else {
 
@@ -687,7 +688,7 @@ v_currTabTag.bt_cancel.style.display = '';
 	if (v_has_error) {
 		//v_div_commands_log.innerHTML = v_commands_log;
 		//$('#div_commands_log').addClass('isActive');
-		showAlert(v_commands_log)
+		showToast("error", v_commands_log)
 
 	}
 

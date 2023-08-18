@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import GenericMessageModal from "./components/GenericMessageModal.vue";
 import { execAjax } from "./ajax_control";
+import { useToast } from 'vue-toast-notification';
 
 let v_message_modal_animating = false;
 let v_message_modal_queued = false;
@@ -91,28 +92,6 @@ function showMessageModal(p_content_function, p_large) {
 
 }
 
-function showError(p_message) {
-  var v_content_div = document.getElementById('modal_message_content');
-  var v_button_yes = document.getElementById('modal_message_yes');
-  var v_button_ok = document.getElementById('modal_message_ok');
-  var v_button_no = document.getElementById('modal_message_no');
-  var v_button_cancel = document.getElementById('modal_message_cancel');
-
-  v_content_div.innerHTML = p_message;
-
-  v_button_yes.style.display = 'none';
-  v_button_ok.style.display = '';
-  v_button_no.style.display = 'none';
-  v_button_cancel.style.display = 'none';
-
-  showMessageModal();
-
-  setTimeout(function() {
-    v_button_yes.focus();
-  },500);
-
-}
-
 function showAlert(p_info, p_funcYes = null, p_large = null)
 {
 
@@ -189,4 +168,26 @@ function checkSessionMessage() {
 
 }
 
-export { createMessageModal, showError, showAlert, showConfirm, checkSessionMessage};
+/**
+ * Show a toast notification with a specified type and message.
+ * 
+ * @param {string} type - The type of the toast notification.
+ *                       Possible values: 'success', 'info', 'warning', 'error', 'default'
+ * @param {string} message - The message to display in the toast.
+ */
+function showToast(type, message) {
+  let title = type === 'error' ? 'Failed' : "Done"
+  let html_msg = `<div class="v-toast__body p-0">
+                    <h3 class="font-weight-bold">${title}</h3>
+                    <p>${message}</p>
+                  </div>`
+  const $toast = useToast()
+
+  $toast.open({
+    message: html_msg,
+    type: type,
+    duration: type === 'error' ? 0 : 3000
+  })
+}
+
+export { createMessageModal, showAlert, showConfirm, checkSessionMessage, showToast};

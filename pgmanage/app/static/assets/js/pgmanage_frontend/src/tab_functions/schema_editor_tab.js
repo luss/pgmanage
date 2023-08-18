@@ -1,6 +1,5 @@
 import { beforeCloseTab } from "../create_tab_functions";
 import { removeTab, showMenuNewTab } from "../workspace";
-import ToastPlugin from 'vue-toast-notification';
 import SchemaEditorTab from "../components/SchemaEditorTab.vue";
 import { createApp } from "vue";
 
@@ -52,9 +51,6 @@ let createSchemaEditorTab = function (node, mode, dialect) {
       tree: window.v_connTabControl.selectedTab.tag.tree
     })
 
-  app.use(ToastPlugin, {
-    duration: 0,
-  });
   // save app referece in the tab, it will be later used to restroy app instance on tab close
   tab.app = app;
   app.mount(`#schema_editor_tab_${tab.id}`);

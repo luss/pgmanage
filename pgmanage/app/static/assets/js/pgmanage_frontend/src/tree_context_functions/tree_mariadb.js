@@ -35,7 +35,7 @@ import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
-import { showError } from "../notification_control";
+import { showToast } from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -852,8 +852,8 @@ function TemplateSelectMariadb(p_schema, p_table) {
 
             querySQL(0);
         },
-        function(p_return) {
-            showError(p_return.v_data);
+        function(p_return) {t
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -878,7 +878,7 @@ function TemplateInsertMariadb(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -903,7 +903,7 @@ function TemplateUpdateMariadb(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -938,7 +938,7 @@ function mariadbTerminateBackendConfirm(pid) {
           error.response.data.data
         );
       } else {
-        showError(error.response.data.data);
+        showToast("error", error.response.data.data)
       }
     });
 }

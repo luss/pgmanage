@@ -315,7 +315,7 @@
 import UtilityJobs from "./UtilityJobs.vue";
 import FileManager from "./FileManager.vue";
 import axios from 'axios'
-import { showError, showAlert } from "../notification_control";
+import { showAlert, showToast } from "../notification_control";
 
 export default {
   name: "BackupTab",
@@ -453,7 +453,7 @@ export default {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     },
     saveBackup() {
@@ -467,8 +467,7 @@ export default {
           this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
         })
         .catch((error) => {
-          showError(error.response.data.data);
-
+          showToast("error", error.response.data.data)
         })
     },
     onFile(e) {
@@ -495,8 +494,7 @@ export default {
           showAlert(resp.data.command.cmd)
         })
         .catch((error) => {
-          showError(error.response.data.data);
-
+          showToast("error", error.response.data.data)
         })
     }
   }

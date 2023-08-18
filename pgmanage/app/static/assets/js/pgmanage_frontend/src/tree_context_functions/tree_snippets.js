@@ -30,7 +30,7 @@ import { createApp } from 'vue'
 import TreeSnippets from '../components/TreeSnippets.vue'
 import ContextMenu from '@imengyu/vue3-context-menu';
 import axios from 'axios';
-import { showAlert, showConfirm } from '../notification_control';
+import { showConfirm, showToast } from '../notification_control';
 
 function getAllSnippets() {
   axios.get("/get_all_snippets/").then((resp) => {
@@ -139,7 +139,7 @@ function saveSnippetTextConfirm(save_object, text, callback) {
         callback(resp.data);
       }
 
-      showAlert("Snippet saved.");
+      showToast("success", "Snippet saved.")
 
       getAllSnippets();
     });

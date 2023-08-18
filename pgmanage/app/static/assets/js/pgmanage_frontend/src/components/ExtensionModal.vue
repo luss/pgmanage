@@ -72,7 +72,7 @@ import GenericMessageModal from './GenericMessageModal.vue'
 import { emitter } from '../emitter'
 import ace from 'ace-builds'
 import axios from 'axios'
-import { showError } from '../notification_control'
+import { showToast } from '../notification_control'
 
 export default {
   name: 'ExtensionModal',
@@ -184,7 +184,7 @@ export default {
           this.schemaList = resp.data.data
         })
         .catch((error) => {
-          showError(error.response.data.data)
+          showToast("error", error.response.data.data)
         })
     },
     saveExtension() {
@@ -198,7 +198,7 @@ export default {
           $('#postgresqlExtensionModal').modal('hide')
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     },
     setupEditor() {
@@ -225,7 +225,7 @@ export default {
           this.selectedVersion = resp.data.version
         })
         .catch((error) => {
-          showError(error.response.data.data)
+          showToast("error", error.response.data.data)
         })
     },
     dropExtension() {
@@ -241,7 +241,7 @@ export default {
           emitter.emit(`removeNode_${this.tree.id}`, {"node": this.treeNode})
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     }
 

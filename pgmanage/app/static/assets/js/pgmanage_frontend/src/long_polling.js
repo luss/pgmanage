@@ -32,7 +32,7 @@ import { queryEditDataReturn, saveEditDataReturn, cancelEditDataTab } from "./tr
 import { debugResponse } from "./debug";
 import { showPasswordPrompt } from "./passwords";
 import { getCookie, csrfSafeMethod, execAjax } from './ajax_control'
-import { showError, showAlert } from "./notification_control";
+import { showAlert, showToast } from "./notification_control";
 
 var v_client_id;
 var v_polling_ajax = null;
@@ -142,7 +142,7 @@ function polling_response(p_message) {
       break;
     }
     case parseInt(v_queryResponseCodes.MessageException): {
-      showError(p_message.v_data);
+      showToast("error", p_message.v_data);
       break;
     }
     case parseInt(v_queryResponseCodes.PasswordRequired): {

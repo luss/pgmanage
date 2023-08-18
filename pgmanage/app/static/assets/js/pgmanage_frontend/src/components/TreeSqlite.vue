@@ -624,7 +624,7 @@ export default {
           });
         })
         .catch((error) => {
-          showEror(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getIndexesSqlite(node) {
@@ -647,7 +647,7 @@ export default {
           });
         })
         .catch((error) => {
-          showEror(error.response.data.data);
+          this.nodeOpenError(error, node);
         });
     },
     getIndexesColumnsSqlite(node) {

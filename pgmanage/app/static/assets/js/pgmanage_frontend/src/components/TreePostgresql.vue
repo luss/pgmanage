@@ -41,7 +41,7 @@ import { createMessageModal } from "../notification_control";
 import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
 import { startMonitorDashboard } from "../monitoring";
-import { showConfirm } from '../notification_control';
+import { showConfirm, showToast } from '../notification_control';
 
 export default {
   name: "TreePostgresql",
@@ -2823,13 +2823,13 @@ export default {
                 ).value;
 
                 if (password == "") {
-                  this.$toast.error("Password is empty.");
+                  showToast("error", "Password is empty.")
                   return;
                 } else if (password_confirm == "") {
-                  this.$toast.error("Password confirmation is empty.");
+                  showToast("error", "Password confirmation is empty")
                   return;
                 } else if (password != password_confirm) {
-                  this.$toast.error("Passwords do not match.");
+                  showToast("error", "Passwords do not match")
                   return;
                 }
 
@@ -2839,7 +2839,7 @@ export default {
                     password: password,
                   })
                   .then((resp) => {
-                    this.$toast.success("Password changed successfully.");
+                    showToast("success", "Password changed successfully.")
                   })
                   .catch((error) => {
                     this.nodeOpenError(error, this.selectedNode);

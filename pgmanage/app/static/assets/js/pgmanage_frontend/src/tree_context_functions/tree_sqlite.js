@@ -32,7 +32,7 @@ import { tabSQLTemplate } from "./tree_postgresql";
 import { toggleConnectionAutocomplete } from "../workspace";
 import { querySQL } from "../query";
 import { execAjax } from "../ajax_control";
-import { showError } from "../notification_control";
+import { showToast} from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -97,7 +97,7 @@ function TemplateSelectSqlite(p_table, p_kind) {
             querySQL(0);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -123,7 +123,7 @@ function TemplateInsertSqlite(p_table) {
           );
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -149,7 +149,7 @@ function TemplateUpdateSqlite(p_table) {
           );
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',

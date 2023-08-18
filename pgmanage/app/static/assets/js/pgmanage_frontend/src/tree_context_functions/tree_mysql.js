@@ -35,7 +35,7 @@ import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
-import { showError } from "../notification_control";
+import { showToast } from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -855,7 +855,7 @@ function TemplateSelectMysql(p_schema, p_table) {
       querySQL(0);
     },
     function (p_return) {
-      showError(p_return.v_data);
+      showToast("error", p_return.v_data)
       return "";
     },
     "box",
@@ -882,7 +882,7 @@ function TemplateInsertMysql(p_schema, p_table) {
       );
     },
     function (p_return) {
-      showError(p_return.v_data);
+      showToast("error", p_return.v_data)
       return "";
     },
     "box",
@@ -909,7 +909,7 @@ function TemplateUpdateMysql(p_schema, p_table) {
       );
     },
     function (p_return) {
-      showError(p_return.v_data);
+      showToast("error", p_return.v_data)
       return "";
     },
     "box",
@@ -946,7 +946,7 @@ function mysqlTerminateBackendConfirm(pid) {
           error.response.data.data
         );
       } else {
-        showError(error.response.data.data);
+        showToast("error", error.response.data.data)
       }
     });
 }

@@ -7,7 +7,7 @@ var v_modal_password_input = null;
 
 import { conn_app } from './connections_modal.js'
 import { execAjax } from './ajax_control.js';
-import { showAlert } from './notification_control.js';
+import { showToast } from './notification_control.js';
 
 function passwordModalsInit() {
 
@@ -126,15 +126,15 @@ function saveMasterPass() {
 	let v_pwd = document.getElementById('master_password');
 
 	if ((v_confirm_pwd.value!='' || v_pwd.value!='') && (v_pwd.value!=v_confirm_pwd.value))
-		showAlert('Password and Confirm Password fields do not match.');
+    showToast("error", "Password and Confirm Password fields do not match.")
 	else if ((v_pwd.value === v_confirm_pwd.value) && (v_pwd.value.length < 8 && v_pwd.value.length >= 1))
-		showAlert('Password and Confirm Password fields must be longer than 8.');
+    showToast("error", "Password and Confirm Password fields must be longer than 8.")
 	else {
 		execAjax('/master_password/',
         JSON.stringify({"master_password": v_pwd.value}),
 				function(p_return) {
           conn_app.mount("#connections-modal-wrap");
-					showAlert('Master password created.');
+          showToast("success", "Master password created.")
 				});
 	}
 }
