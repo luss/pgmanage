@@ -14,7 +14,8 @@ import './components/postgresql_modals'
 import 'vue-toast-notification/dist/theme-sugar.css';
 import 'xterm/css/xterm.css'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import '../../../scss/components/modal.scss'
+import './assets/scss/omnidb.scss'
+import './assets/scss/components/modal.scss'
 import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-python';
 import axios from 'axios'

@@ -1,8 +1,9 @@
+import 'vite/modulepreload-polyfill';
 import $ from 'jquery';
-import 'bootstrap';
 import 'bootstrap/scss/bootstrap.scss'
-import '../../../scss/omnidb.scss'
-import '../../../scss/login.scss'
+import 'bootstrap';
+import './assets/scss/omnidb.scss'
+import './assets/scss/login.scss'
 import { execAjax } from './ajax_control'
 import { showAlert, checkSessionMessage } from './notification_control';
 

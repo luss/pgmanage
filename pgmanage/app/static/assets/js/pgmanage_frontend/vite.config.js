@@ -40,6 +40,11 @@ export default defineConfig({
     manifest: true,
     rollupOptions: {
       input: ["./src/main.js", "./src/login.js"],
+      output: {
+        entryFileNames: `assets/[name].js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: `assets/[name].[ext]`
+      }
     },
     outDir: outDir,
   },

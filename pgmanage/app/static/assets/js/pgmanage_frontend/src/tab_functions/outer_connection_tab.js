@@ -92,13 +92,16 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
         }
       }
     }
-    let v_icon = '<img src="' + v_url_folder + '/static/assets/images/' + v_conn.technology;
-    if (v_conn.technology === 'postgresql' || v_conn.technology === 'oracle'|| v_conn.technology === 'mariadb' || v_conn.technology === 'mysql' || v_conn.technology === 'sqlite') {
-      v_icon += '.svg"/>';
+    const imgPath = import.meta.env.MODE === 'development' ? `${import.meta.env.BASE_URL}src/assets/images/` : `${import.meta.env.BASE_URL}assets/`
+    // vite generates two svg files for each technology icon, in current case we take second one
+    let imgName
+    if (import.meta.env.MODE === 'development' || v_conn.technology === 'sqlite') {
+      imgName = v_conn.technology;
+    } else {
+      imgName = `${v_conn.technology}2`;
     }
-    else {
-      v_icon += '_medium.png"/>';
-    }
+
+    let v_icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`
 
     var v_tab = v_connTabControl.createTab({
       p_icon: v_icon,
