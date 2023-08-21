@@ -2864,7 +2864,7 @@ export default {
             label: "Edit Comment",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              getObjectDescriptionPostgresql(this.selectedNode);
+              this.getObjectDescriptionPostgresql(this.selectedNode);
             },
           },
           {
