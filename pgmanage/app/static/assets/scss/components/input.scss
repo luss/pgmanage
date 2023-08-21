@@ -9,7 +9,6 @@ input {
             transition: background-color 5000s ease-in-out 0s;
     
             @include themify {
-                // -webkit-box-shadow: 0 0 0px 1000px themed($inputBg) inset;
                 border: themed($border);
                 -webkit-text-fill-color: themed($color);
             }
@@ -126,6 +125,7 @@ input[type='checkbox'].custom-checkbox {
     background-size: contain;
     border-radius: $borderRadius;
     box-shadow: $checkboxBoxShadow;
+    border: 1px solid $primaryBlue;
 
     @include themify {
         background-color: themed($inputBg) !important;

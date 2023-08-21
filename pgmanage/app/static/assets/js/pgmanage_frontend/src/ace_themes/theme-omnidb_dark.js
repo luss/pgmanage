@@ -5,15 +5,16 @@ ace.define("ace/theme/omnidb_dark",["require","exports","module","ace/lib/dom"],
 exports.isDark = true;
 exports.cssClass = "ace-omnidb_dark";
 exports.cssText = ".ace-omnidb_dark .ace_gutter {\
-background: #29364E;\
+background: #162d4e;\
 font-size: 1em;\
+color: #747D8D;\
 }\
 .ace-omnidb_dark .ace_print-margin {\
 width: 1px;\
 background: #25282c\
 }\
 .ace-omnidb_dark {\
-background-color: #1D273B;\
+background-color: #16243c;\
 color: #F8FAFC\
 }\
 .ace-omnidb_dark .ace_cursor {\
@@ -34,10 +35,10 @@ border: 1px solid rgb(245, 159, 0);\
 background-color: rgba(245, 159, 0, 0.5);\
 }\
 .ace-omnidb_dark .ace_marker-layer .ace_active-line {\
-background: #203a59\
+background: #162d4e\
 }\
 .ace-omnidb_dark .ace_gutter-active-line {\
-background-color: #1D273B\
+background-color: #162d4e\
 }\
 .ace-omnidb_dark .ace_marker-layer .ace_selected-word {\
 border: 1px solid #373B41\

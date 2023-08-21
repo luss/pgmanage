@@ -14,6 +14,7 @@
             v-bind:id="'connection-' + connection.id"
             v-model="this.groupLocal.conn_list"
             v-bind:value="connection.id"
+            class="custom-checkbox"
             type="checkbox">
           <label v-bind:for="'connection-' + connection.id" class="group-list__item_wrap d-flex align-items-center m-0">
             <div class="group-list__item_logo mx-3">

@@ -205,7 +205,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
                   '  </div>' +
                   '</div>' +
                 '</div>' +
-                '<button type="button"  class="btn btn-secondary omnidb__tree-tabs__toggler"><i class="fas fa-arrows-alt-v"></i></button>' +
+                '<button type="button" class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler mr-2"><i class="fas fa-arrows-alt-v"></i></button>' +
                 '<div id="tree_tabs_' + v_tab.id + '" class="omnidb__tree-tabs__container" style="position: relative;"></div>' +
               '</div>' +
             '</div>' +

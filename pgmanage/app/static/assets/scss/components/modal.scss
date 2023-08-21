@@ -40,7 +40,7 @@ $modalPadding: 24px;
         border-radius: $borderRadius;
 
         @include themify() {
-            background: themed($surfaceBg);
+            background: themed($surfaceBgSecondary);
         }
     }
 
@@ -85,7 +85,7 @@ $modalPadding: 24px;
         min-height: 3.5rem;
 
         @include themify() {
-            background-color: themed($surfaceBg);
+            background-color: themed($surfaceBgSecondary);
             border-top: themed($border);
         }
 
@@ -112,7 +112,7 @@ $modalPadding: 24px;
 
         .add-connection {
             border: 0;
-            padding: 16px 20px;
+            padding: 16px 16px 16px 20px;
         }
     }
 
@@ -134,22 +134,13 @@ $modalPadding: 24px;
             cursor: pointer;
 
             @include themify() {
-                background-color: themed($surfaceBg);
+                background-color: themed($surfaceBgSecondary);
             }
 
             &.active {
                 @include themify() {
                     color: themed($color);
                     background-color: themed($accordionItemActiveBg);
-                    border-bottom: 1px solid themed($accordionItemActiveBg);
-                }
-            }
-
-            &.active {
-                @include themify() {
-                    color: themed($color);
-                    background-color: themed($accordionItemActiveBg);
-                    border-bottom: 1px solid themed($accordionItemActiveBg);
                 }
             }
 
@@ -161,7 +152,7 @@ $modalPadding: 24px;
 
     &__forms  {
         height: calc(100% - 67px);
-        padding: 20px;
+        padding: 16px 20px;
 
         .group-edit-form,  .connection-form {
             width: calc(100% - 40px);
@@ -253,7 +244,7 @@ $modalPadding: 24px;
 
                         input[type='checkbox'] {
                             position: absolute;
-                            left: 16px;
+                            left: 12px;
                             top: 50%;
                             transform: translateY(-50%);
                         }

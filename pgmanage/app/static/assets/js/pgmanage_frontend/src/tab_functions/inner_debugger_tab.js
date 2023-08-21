@@ -103,7 +103,7 @@ let createDebuggerTabFunction = function(p_function) {
     "</div>" +
   "</div>" +
   "<div id='debug_result_tabs_container" + v_tab.id + "' class='omnidb__query-result-tabs'>" +
-    "<button style='position:absolute;top:0.25rem;right:0.25rem;' type='button' class='btn btn-sm btn-secondary' onclick=toggleExpandToPanelView('debug_result_tabs_container" + v_tab.id + "')><i class='fas fa-expand'></i></button>" +
+    "<button style='position:absolute;top:0.25rem;right:0.25rem;' type='button' class='btn btn-sm btn-icon' onclick=toggleExpandToPanelView('debug_result_tabs_container" + v_tab.id + "')><i class='fas fa-expand'></i></button>" +
     "<div id='debug_result_tabs_" + v_tab.id + "'>" +
     "</div>" +
   "</div>";

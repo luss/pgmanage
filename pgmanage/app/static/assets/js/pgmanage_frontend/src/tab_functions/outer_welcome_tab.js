@@ -114,7 +114,7 @@ let createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_nam
   // Title html string
   let v_html_title =
   '<h1 class="mb-4">' +
-  '<span class="omnidb__welcome__intro-text">Hi, welcome to <span style="color:#4a6cbb;">PgManage!</span></span>' +
+  '<span class="omnidb__welcome__intro-text">Hi, welcome to <span style="color:#1560AD;">PgManage!</span></span>' +
   '</h1>';
   // Intro html string
   let v_html_intro =

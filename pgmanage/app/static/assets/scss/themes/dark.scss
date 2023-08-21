@@ -27,10 +27,10 @@ SOFTWARE.
 */
 
 .omnidb--theme-dark {
-  color: #dcddde;
+  color: #F8FAFC;
 
   .omnidb__main {
-    background-color: #2F3136;
+    background-color: #101D2E;
   }
 
   iframe {
@@ -38,7 +38,7 @@ SOFTWARE.
   }
 
   .omnidb__theme-bg--menu-primary {
-    background-color: #373944;
+    background-color: #162d4e;
 
     &::-webkit-scrollbar-track {
       background: #373944;
@@ -48,30 +48,27 @@ SOFTWARE.
     }
   }
   .omnidb__theme-bg--menu-utilities {
-    background-color: #394e83;
+    background-color: #0054A6;
   }
   .omnidb__theme-border--primary {
-    border: 1px solid #383b42;
+    border: 1px solid #2C3B5A;
   }
   .omnidb__theme-border-top--primary {
-    border-top: 1px solid #383b42;
+    border-top: 1px solid #2C3B5A;
   }
   .omnidb__theme-icon--primary {
-    color: #4A81D4;
+    color: #0054A6;
   }
   .omnidb__workspace__div-left,
   .omnidb__snippets__div-left {
-    background-color: #282A2F;
+    background-color: #161D2D;
   }
   .omnidb__workspace__div-right,
   .omnidb__snippets__div-right {
-    background-color: #2F3136;
+    background-color: #161D2D;
   }
   .omnidb__theme-bg--light {
     background-color: #282A2F;
-  }
-  .omnidb__tab-actions.tab_actions {
-    /* background-color: #282A2F; */
   }
 
   /* OMNIS */
@@ -79,7 +76,7 @@ SOFTWARE.
     background-color: rgba(47,49,54,0.25);
     svg {
       .icon-body {
-        fill: #394E83;
+        fill: #0054A6;
       }
       .icon-bg {
         fill: white;
@@ -146,12 +143,8 @@ SOFTWARE.
   }
 
   /* CONSOLE */
-  .omnidb__console__text-input .ace_content {
-    background-color: #282A2F;
-    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
-  }
   .omnidb__txt-console {
-    border-color: #383b42;
+    border-color: #2C3B5A;
   }
 
   /* TABS */
@@ -162,9 +155,7 @@ SOFTWARE.
     color: #FFF;
   }
   .nav-tabs .nav-link.active {
-    background-color: #282A2F;
-    border-color: #282A2F;
-    color: #92c7ff;
+    background-color: inherit;
   }
   .nav-tabs .nav-link:focus,
   .nav-tabs .nav-link:hover {
@@ -172,16 +163,22 @@ SOFTWARE.
     color: #555;
   }
   .nav-tabs .nav-link.active {
-    border-top: 2px solid #394E83;
+    border-top: 2px solid #0054A6;
   }
-  .omnidb__tab-menu--primary .nav-tabs .nav-link.active {
-    border-top: none;
+  .omnidb__tab-menu--primary .nav-tabs .nav-link {
+    border-top: 0;
+    transition: all .3s ease-in-out;
+
+    &.active {
+      background-color: #164171;
+    }
   }
+
   /* TABS WITH CARD-HEADERS */
   .omnidb__tab-menu.card-header .nav-tabs .nav-link.active {
     border-color: #383b42;
     border-bottom-color: #27292E;
-    border-top: 2px solid #394E83;
+    border-top: 2px solid #0054A6;
   }
 
   /* TEXT */
@@ -197,23 +194,23 @@ SOFTWARE.
     background-color: #282A2F;
   }
   .omnidb__tab-menu--primary .omnidb__tab-menu__link.nav-link.active .omnidb__tab-menu__link-name {
-    color: #DCDDDE;
+    color: #F8FAFC;
   }
   .omnidb__tab-menu--primary .omnidb__tab-menu__link-name {
-  	color: #DCDDDE;
+  	color: #F8FAFC;
   }
   .omnidb__tab-menu--primary .omnidb__tab-menu__link-icon {
     background-color: unset;
-  	color: #DCDDDE;
+  	color: #F8FAFC;
   }
 
   /* UTILITIES MENU */
   .omnidb__utilities-menu .omnidb__menu__btn {
     background-color: unset;
-    color: #DCDDDE !important;
+    color: #F8FAFC !important;
   }
   .omnidb__utilities-menu .omnidb__menu__btn-text {
-    color: #DCDDDE !important;
+    color: #F8FAFC !important;
   }
   .omnidb__utilities-menu .fa-code-branch {
     color: #FFF;
@@ -232,28 +229,32 @@ SOFTWARE.
 
   /* SECONDARY TAB */
   .omnidb__tab-menu--secondary {
-    /* border-bottom-color: #94A5E3; */
+    .nav-tabs {
+      border-bottom-color: transparent !important;
+    }
+
+    .omnidb__tab-menu__link {
+      background-color: transparent;
+      border-color: #2C3B5A;
+      border-radius: 4px 4px 0 0;
+      border-bottom-width: 0;
+
+      &-name {
+        color: #DCDDDE !important;
+      }
+
+      &-icon {
+        background-color: unset;
+        &.active {
+          background-color: transparent;
+          border-color: #2C3B5A;
+          border-bottom-color: #101D2E;
+          border-top: 2px solid #0054A6;
+        }      
+      }
+    }
   }
-  .omnidb__tab-menu--secondary .nav-tabs {
-    border-bottom-color: transparent !important;
-  }
-  .omnidb__tab-menu--secondary .omnidb__tab-menu__link {
-    background-color: transparent;
-    border-color: #383b42;
-    border-bottom-color: #43464E;
-  }
-  .omnidb__tab-menu--secondary .omnidb__tab-menu__link-name {
-    color: #DCDDDE !important;
-  }
-  .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon {
-    background-color: unset;
-  }
-  .omnidb__tab-menu--secondary .omnidb__tab-menu__link.active {
-    background-color: transparent;
-    border-color: #383b42;
-    border-bottom-color: #2F3136;
-    border-top: 2px solid #394E83;
-  }
+
 
   /* TREE TAB */
   .omnidb__tree-tabs .omnidb__tab-menu .nav-tabs {
@@ -261,8 +262,7 @@ SOFTWARE.
   }
   .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
     background-color: transparent;
-    border-color: #44464c;
-    border-bottom-color: #43464E;
+    border-color: #2C3B5A;
   }
   .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
     color: #DCDDDE !important;
@@ -274,7 +274,7 @@ SOFTWARE.
     background-color: transparent;
     border-color: #383b42;
     border-bottom-color: #282A2F;
-    border-top: 2px solid #394E83;
+    border-top: 2px solid #0054A6;
   }
 
   /* QUERY RESULT TABS */
@@ -283,8 +283,7 @@ SOFTWARE.
   }
   .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
     background-color: transparent;
-    border-color: #44464c;
-    border-bottom-color: #43464E;
+    border-color: #2C3B5A;
   }
   .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
     color: #DCDDDE !important;
@@ -294,17 +293,14 @@ SOFTWARE.
   }
   .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
     background-color: transparent;
-    border-color: #383b42;
-    border-bottom-color: #2f3136;
-    border-top: 2px solid #394E83;
-  }
-  .omnidb__query-result-tabs .omnidb__tab-content {
-    /* border: 1px solid #43464E; */
+    border-color: #2C3B5A;
+    border-bottom-color: #161D2D;
+    border-top: 2px solid #0054A6;
   }
 
   /* PANEL FULL VIEW */
   .omnidb__panel-view--full {
-    background-color: #2F3136;
+    background-color: #16243C;
   }
 
   /* MODAL CONFIG */
@@ -313,19 +309,17 @@ SOFTWARE.
   }
   .omnidb__modal-config .nav-link {
     background-color: transparent;
-    border-color: #44464c;
-    border-bottom-color: #2F3136;
+    border-color: #2C3B5A;
     color: #DCDDDE !important;
   }
   .omnidb__modal-config .nav-link.active {
     background-color: transparent;
-    border-color: #383b42;
-    border-bottom-color: #2F3136;
-    border-top: 2px solid #394E83;
+    border-color: #2C3B5A;
+    border-top: 2px solid #0054A6;
   }
   .omnidb__modal-config .nav-tabs .nav-link:focus,
   .omnidb__modal-config .nav-tabs .nav-link:hover {
-    border-bottom-color: #2F3136;
+    border-bottom-color: #2C3B5A;
   }
 
   /* MONITORING */
@@ -410,11 +404,11 @@ SOFTWARE.
   }
 
   .omnidb__form-check input:checked~.form-check-label::after {
-    background-color: #67ff81;
+    background-color: #2FB344;
   }
 
   .required > label::after {
-    color: #EC2424;
+    color: #D72239;
   }
 
   .custom-file > input+label {
@@ -458,7 +452,7 @@ SOFTWARE.
     background-color: #2f3136;
   }
   .omnidb__switch--input:checked~.omnidb__switch--label {
-    background-color: #394e83;
+    background-color: #0054A6;
   }
   .secondq__omnidb--input:checked ~ .omnidb__switch--label {
     background-color: #809dde;
@@ -585,15 +579,20 @@ SOFTWARE.
 
   .resize_line_vertical,
   .resize_line_horizontal {
-    border: 1px solid #373944;
-    background-color: #2F3136;
+    border: 1px solid #162D4E;
+    background-color: #161D2D;
+    transition: all .3s ease-in-out;
+
+    &:hover {
+      background-color: #16243c;
+    }
 
     &:before, &:after {
-      background-color: #4C5365;
+      background-color: #164b84;
 
     }
     &:hover:before, &:hover:after {
-      background-color: #6F7995;
+      background-color: #165699;
     }
   }
 
@@ -603,7 +602,7 @@ SOFTWARE.
 
   /* Workspace Connection Info */
   .omnidb__workspace__connection-details b {
-    color: #56acff;
+    color: #206BC4;
   }
 
   /* HANDSONTABLE */
@@ -798,6 +797,7 @@ SOFTWARE.
     background-color: #1A2234 !important;
     border: 1px solid #243049 !important;
     color: #F8FAFC !important;
+    font-size: inherit;
   }
   .handsontable th {
     color: #2bb2d8 !important;
@@ -945,34 +945,12 @@ SOFTWARE.
   .htContextMenu .wtSpreader table.htCore td:hover {
     background-color: #1E90FF !important;
   }
-  /* ------------------------
-  				Ace Editor Menu
-  -------------------------*/
-  .ace_editor.ace_autocomplete {
-    background: #191919 !important;
-  }
-  .ace_autocomplete .ace_content .ace_line {
-    color: #d7d7d7 !important;
-  }
-  .ace_autocomplete .ace_content .ace_completion-highlight {
-    color: #d7d7d7 !important;
-  }
-  .ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
-    background-color: #1E90FF !important;
-  }
-  .ace_autocomplete .ace_content .ace_line:hover {
-    border-top: 1px solid #fff !important;
-    border-bottom: 1px solid #fff !important;
-  }
-  .ace_editor .ace_line-hover {
-    background-color: rgba(0, 0, 0, 0.0) !important;
-    border-color: #1480b1 !important;
-  }
+
   /* -------------------------
   				Modal
   --------------------------*/
-  .white_box, .config_box, .plugin_box, .users_box, .connection_list, .dashboard_unit_list, .dashboard_unit, .dashboard_unit_test, .console_command_history {
-    border: 1px solid #484a55 !important;
+  .white_box, .config_box, .plugin_box, .users_box, .connection_list, .dashboard_unit_list, .dashboard_unit, .dashboard_unit_test {
+    border: 1px solid #16375F !important;
     background-color: #25282c !important;
     box-shadow: none !important;
     color: #ffffff;
@@ -1175,10 +1153,6 @@ SOFTWARE.
 
   .icon-conn-string {
     color: #50a8ff !important;
-  }
-
-  .node-all {
-    /*color: #ececec !important;*/
   }
 
   .shortcut_block_title {

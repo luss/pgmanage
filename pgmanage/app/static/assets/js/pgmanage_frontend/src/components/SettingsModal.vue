@@ -90,8 +90,8 @@
                 </div>
 
                 <div class="form-group col-6">
-                  <label class="font-weight-bold mb3">Preview</label>
-                  <p class="font-weight-bold mt-3"> {{ formattedDatePreview }}</p>
+                  <label class="font-weight-bold mb-3">Preview</label>
+                  <p class="font-weight-bold"> {{ formattedDatePreview }}</p>
                 </div>
 
               </div>

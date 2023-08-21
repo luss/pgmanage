@@ -152,11 +152,11 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
       '<button id="bt_cancel_' + v_tab.id + '" class="btn btn-sm btn-danger omnidb__tab-actions__btn" title="Cancel" style="display: none;">Cancel</button>' +
       '<div id="div_query_info_' + v_tab.id + '" class="omnidb__query-info"></div>' +
       '<button class="btn btn-sm btn-primary omnidb__tab-actions__btn ml-auto" title="Export Data" onclick="v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.exportData();"><i class="fas fa-download fa-light"></i></button>' +
-      '<select id="sel_export_type_' + v_tab.id + '" class="form-control omnidb__tab-actions__select" style="width: 80px;"><option selected="selected" value="csv">CSV</option><option value="csv-no_headers">CSV(no headers)</option><option value="xlsx">XLSX</option><option value="xlsx-no_headers">XLSX(no headers)</option></select>' +
+      '<select id="sel_export_type_' + v_tab.id + '" class="form-control" style="width: 80px;"><option selected="selected" value="csv">CSV</option><option value="csv-no_headers">CSV(no headers)</option><option value="xlsx">XLSX</option><option value="xlsx-no_headers">XLSX(no headers)</option></select>' +
     '</div>' +
   '</div>' +
   '<div id="query_result_tabs_container' + v_tab.id + '" class="omnidb__query-result-tabs">' +
-    '<button id="bt_fullscreen_' + v_tab.id + '" style="position:absolute;top:0.25rem;right:0.25rem;" type="button" class="btn btn-sm btn-secondary" ><i class="fas fa-expand"></i></button>' +
+    '<button id="bt_fullscreen_' + v_tab.id + '" style="position:absolute;top:0.25rem;right:0.25rem;" type="button" class="btn btn-sm btn-icon btn-icon-secondary" ><i class="fas fa-expand"></i></button>' +
     '<div id="query_result_tabs_' + v_tab.id + '">' +
     '</div>' +
   '</div>';

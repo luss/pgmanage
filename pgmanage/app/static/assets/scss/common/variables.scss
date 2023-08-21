@@ -1,8 +1,8 @@
 //common
-$primaryBlue: #206BC4;
-$primaryLight: #F8FAFC;
-$primaryColor: #1D273B;
-$primaryMutedColor: #767F8F;
+$primaryBlue: #1560AD;
+$primaryLight: #F8FAFD;
+$primaryDark: #16171E;
+$primaryMutedColor: #90949A;
 $secondaryGrey: #747D8D;
 $white:#FFFFFF;
 $borderRadius: 6px;
@@ -20,34 +20,39 @@ $fontWeightBold: 700;
 $lineHeight: 1.4;
 
 //light mode
-$bgLight: #F1F5F9;
-$fontColorLight: $primaryColor;
+$bgLight: $primaryLight;
+$bgLightSecondary: #F8FAFD;
+$bgLightTertiary: #E8EFF8;
+$fontColorLight: $primaryDark;
 $bgSurfaceLight: $white;
-$bgSurfaceSecondaryLight: $primaryLight;
-$borderColorLight: #D1D4DB;
+$bgSurfaceSecondaryLight: $bgLightSecondary;
+$bgSurfaceTertiaryLight: $bgLightTertiary;
+$borderColorLight: #CAD0D8;
 $borderLight: 1px solid $borderColorLight;
 $disabledFontColorLight: #C8D3E1;
 $accordionHeadingBgLight: rgba($borderColorLight, .5);
 $accordionHeadingActiveBgLight: rgba($primaryBlue, .2);
-$accordionItemActiveBgLight: rgba($primaryBlue, .05);
-$bgSurfaceBlueLight: #E8F0F9;
+$bgSurfaceBlueLight: #E8EFF8;
 
 //dark mode
-$bgDark: #1A2234;
+$bgDark: #161D2D;
+$bgDarkSecondary: #16243C;
+$bgDarkTertiary: #162D4E;
 $fontColorDark: $primaryLight;
-$bgSurfaceDark: #1D273B;
-$bgSurfaceSecondaryDark: #29364E;
-$borderColorDark: #2C3B5A;
+$bgSurfaceDark: $bgDark;
+$bgSurfaceSecondaryDark: $bgDarkSecondary;
+$bgSurfaceTertiaryDark: $bgDarkTertiary;
+$borderColorDark: #162D4E;
 $borderDark: 1px solid $borderColorDark;
 $borderColorActiveDark: #314264;
 $disabledFontColorDark: #313C52;
 $accordionHeadingBgDark: rgba($primaryBlue, .15);
 $accordionHeadingActiveBgDark: rgba($primaryBlue, .2);
-$accordionItemActiveBgDark: rgba($primaryBlue, .05);
 $disabledInputBgDark: #404958;
 
 //accent colors
+$darkHighlighted: #164171;
 $dangerColor: #D72239;
 $successColor: #2FB344;
-$warningColor: #f76707;
+$warningColor: #F76707;
 $infoColor: $primaryBlue;

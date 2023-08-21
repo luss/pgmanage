@@ -49,7 +49,7 @@ var v_light_terminal_theme = {
 }
 */
 var v_light_terminal_theme = {
-	background: '#f4f4f4',
+	background: '#e8eff8',
 	brightBlue: '#006de2',
 	brightGreen: '#4b9800',
 	foreground: '#454545',
@@ -59,7 +59,9 @@ var v_light_terminal_theme = {
 }
 
 var v_dark_terminal_theme = {
-	background: '#1a1a1d'
+	background: '#1D273B',
+	selection: '#1560AD',
+	foreground: '#F8FAFD',
 }
 
 var v_current_terminal_theme;

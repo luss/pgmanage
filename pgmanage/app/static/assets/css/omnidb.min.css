@@ -88,7 +88,7 @@ a:not([href]):not([tabindex]) {
 
 .omnidb__tab-menu--container--primary.omnidb__tab-menu--container--menu-shown .omnidb__panel-view--full {
   left: 100px;
-  width: calc(100vw - 110px);
+  width: calc(100vw - 100px);
 }
 
 .omnidb__panel {
@@ -112,7 +112,7 @@ a:not([href]):not([tabindex]) {
   align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-flex-start;
+  justify-content: flex-start;
 }
 
 .omnidb__tab-menu--primary .nav-tabs .nav-item {
@@ -121,6 +121,7 @@ a:not([href]):not([tabindex]) {
   margin-bottom: 3px;
   margin-top: 3px;
   padding: 3px;
+  border-radius: 0;
 }
 
 .omnidb__tab-menu.omnidb__tab-menu--primary .omnidb__tab-menu__link:hover .omnidb__tab-menu__link-close {
@@ -193,10 +194,6 @@ a:not([href]):not([tabindex]) {
 .omnidb__tab-menu--secondary {
   padding-top: 3px;
   padding-right: 80px;
-}
-
-.omnidb__tab-menu--secondary .omnidb__tab-menu__link-name {
-  padding-right: 10px;
 }
 
 .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon {
@@ -412,7 +409,6 @@ button.close {
 .omnidb__tree-tabs .omnidb__tab-menu__link,
 .omnidb__query-result-tabs .omnidb__tab-menu__link,
 .omnidb__modal-config .nav-link {
-  font-size: 1.15rem;
   line-height: 1;
   margin-right: 5px;
 }
@@ -447,6 +443,7 @@ button.close {
 .omnidb__welcome__intro-card {
   animation: workspaceFadeIn 0.45s ease forwards 1.15s;
   opacity: 0;
+  background-color: inherit;
 }
 
 .omnidb__welcome__intro-card {
@@ -489,13 +486,6 @@ button.close {
 /* TAB MENU */
 .omnidb__tab-menu__link-name span {
   vertical-align: middle;
-}
-
-/* NAV */
-.omnidb__tab-menu .nav-tabs .nav-link,
-.nav-tabs .nav-link {
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
 }
 
 /* EXPLAIN COMPONENTS */
@@ -653,7 +643,7 @@ button.close {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 7px 15px 0 0;
+  padding: 7px 10px 0 0;
   width: 100%;
 }
 
@@ -1165,11 +1155,11 @@ button.close {
 }
 
 .omnis__circle-waves--idle span {
-  background-color: #7DFF81;
+  background-color: #2FB344;
 }
 
 .omnis__circle-waves--running span {
-  background-color: #6A96d8;
+  background-color: #0054A6;
 }
 
 .omnis__circle-waves span {
@@ -1284,7 +1274,7 @@ label.omnidb__switch--label span {
 }
 
 .omnidb__switch--input:checked ~ .omnidb__switch--label {
-  background-color: #4A81D4;
+  background-color: #1560AD;
 }
 
 .omnidb__switch--input:checked ~ .omnidb__switch--label span {
@@ -1684,7 +1674,7 @@ body {
 }
 
 .omnis svg .icon-body {
-  fill: #4A81D4;
+  fill: #1560AD;
 }
 
 .omnis svg .icon-bg {
@@ -1962,11 +1952,11 @@ i.tab-status {
 }
 
 i.tab-status-closed {
-  color: gray;
+  color: #747D8D;
 }
 
 i.tab-status-idle {
-  color: #2cb32c;
+  color: #2FB344;
 }
 
 i.tab-status-running {
@@ -1974,11 +1964,11 @@ i.tab-status-running {
 }
 
 i.tab-status-idle_in_transaction {
-  color: orange;
+  color: #F76707;
 }
 
 i.tab-status-idle_in_transaction_aborted {
-  color: red;
+  color: #D72239;
 }
 
 /*
@@ -2009,11 +1999,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 .node-all {
-  color: #22477d;
+  color: #1560AD;
 }
 
 .cm-all {
-  color: #4a81d4;
+  color: #1560AD;
   font-size: 16px;
 }
 
@@ -2043,7 +2033,7 @@ SOFTWARE.
 }
 
 .node {
-  background-color: #206BC4;
+  background-color: #1560AD;
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
@@ -2075,11 +2065,6 @@ SOFTWARE.
 .node-sqlite {
   mask-image: url("../images/sqlite.svg");
   -webkit-mask-image: url("../images/sqlite.svg");
-}
-
-.mx-context-menu i {
-  width: 20px;
-  height: 16px;
 }
 
 .node-error {
@@ -2378,7 +2363,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 .omnidb--theme-dark {
-  color: #dcddde;
+  color: #F8FAFC;
   /* OMNIS */
   /* ICONS */
   /* BRANDING ICON */
@@ -2455,9 +2440,6 @@ SOFTWARE.
   /* -----------------------
   				Handsontables Menu
   ------------------------*/
-  /* ------------------------
-  				Ace Editor Menu
-  -------------------------*/
   /* -------------------------
   				Modal
   --------------------------*/
@@ -2490,7 +2472,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnidb__main {
-  background-color: #2F3136;
+  background-color: #101D2E;
 }
 
 .omnidb--theme-dark iframe {
@@ -2498,7 +2480,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnidb__theme-bg--menu-primary {
-  background-color: #373944;
+  background-color: #162d4e;
 }
 
 .omnidb--theme-dark .omnidb__theme-bg--menu-primary::-webkit-scrollbar-track {
@@ -2510,37 +2492,33 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnidb__theme-bg--menu-utilities {
-  background-color: #394e83;
+  background-color: #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__theme-border--primary {
-  border: 1px solid #383b42;
+  border: 1px solid #2C3B5A;
 }
 
 .omnidb--theme-dark .omnidb__theme-border-top--primary {
-  border-top: 1px solid #383b42;
+  border-top: 1px solid #2C3B5A;
 }
 
 .omnidb--theme-dark .omnidb__theme-icon--primary {
-  color: #4A81D4;
+  color: #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__workspace__div-left,
 .omnidb--theme-dark .omnidb__snippets__div-left {
-  background-color: #282A2F;
+  background-color: #161D2D;
 }
 
 .omnidb--theme-dark .omnidb__workspace__div-right,
 .omnidb--theme-dark .omnidb__snippets__div-right {
-  background-color: #2F3136;
+  background-color: #161D2D;
 }
 
 .omnidb--theme-dark .omnidb__theme-bg--light {
   background-color: #282A2F;
-}
-
-.omnidb--theme-dark .omnidb__tab-actions.tab_actions {
-  /* background-color: #282A2F; */
 }
 
 .omnidb--theme-dark .omnis {
@@ -2548,7 +2526,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnis svg .icon-body {
-  fill: #394E83;
+  fill: #0054A6;
 }
 
 .omnidb--theme-dark .omnis svg .icon-bg {
@@ -2610,13 +2588,8 @@ SOFTWARE.
   border-color: #747986;
 }
 
-.omnidb--theme-dark .omnidb__console__text-input .ace_content {
-  background-color: #282A2F;
-  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
 .omnidb--theme-dark .omnidb__txt-console {
-  border-color: #383b42;
+  border-color: #2C3B5A;
 }
 
 .omnidb--theme-dark .nav-tabs {
@@ -2628,9 +2601,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .nav-tabs .nav-link.active {
-  background-color: #282A2F;
-  border-color: #282A2F;
-  color: #92c7ff;
+  background-color: inherit;
 }
 
 .omnidb--theme-dark .nav-tabs .nav-link:focus,
@@ -2640,17 +2611,22 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .nav-tabs .nav-link.active {
-  border-top: 2px solid #394E83;
+  border-top: 2px solid #0054A6;
+}
+
+.omnidb--theme-dark .omnidb__tab-menu--primary .nav-tabs .nav-link {
+  border-top: 0;
+  transition: all .3s ease-in-out;
 }
 
 .omnidb--theme-dark .omnidb__tab-menu--primary .nav-tabs .nav-link.active {
-  border-top: none;
+  background-color: #164171;
 }
 
 .omnidb--theme-dark .omnidb__tab-menu.card-header .nav-tabs .nav-link.active {
   border-color: #383b42;
   border-bottom-color: #27292E;
-  border-top: 2px solid #394E83;
+  border-top: 2px solid #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__theme__text--primary {
@@ -2666,25 +2642,25 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnidb__tab-menu--primary .omnidb__tab-menu__link.nav-link.active .omnidb__tab-menu__link-name {
-  color: #DCDDDE;
+  color: #F8FAFC;
 }
 
 .omnidb--theme-dark .omnidb__tab-menu--primary .omnidb__tab-menu__link-name {
-  color: #DCDDDE;
+  color: #F8FAFC;
 }
 
 .omnidb--theme-dark .omnidb__tab-menu--primary .omnidb__tab-menu__link-icon {
   background-color: unset;
-  color: #DCDDDE;
+  color: #F8FAFC;
 }
 
 .omnidb--theme-dark .omnidb__utilities-menu .omnidb__menu__btn {
   background-color: unset;
-  color: #DCDDDE !important;
+  color: #F8FAFC !important;
 }
 
 .omnidb--theme-dark .omnidb__utilities-menu .omnidb__menu__btn-text {
-  color: #DCDDDE !important;
+  color: #F8FAFC !important;
 }
 
 .omnidb--theme-dark .omnidb__utilities-menu .fa-code-branch {
@@ -2704,18 +2680,15 @@ SOFTWARE.
   color: #ffffff;
 }
 
-.omnidb--theme-dark .omnidb__tab-menu--secondary {
-  /* border-bottom-color: #94A5E3; */
-}
-
 .omnidb--theme-dark .omnidb__tab-menu--secondary .nav-tabs {
   border-bottom-color: transparent !important;
 }
 
 .omnidb--theme-dark .omnidb__tab-menu--secondary .omnidb__tab-menu__link {
   background-color: transparent;
-  border-color: #383b42;
-  border-bottom-color: #43464E;
+  border-color: #2C3B5A;
+  border-radius: 4px 4px 0 0;
+  border-bottom-width: 0;
 }
 
 .omnidb--theme-dark .omnidb__tab-menu--secondary .omnidb__tab-menu__link-name {
@@ -2726,11 +2699,11 @@ SOFTWARE.
   background-color: unset;
 }
 
-.omnidb--theme-dark .omnidb__tab-menu--secondary .omnidb__tab-menu__link.active {
+.omnidb--theme-dark .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon.active {
   background-color: transparent;
-  border-color: #383b42;
-  border-bottom-color: #2F3136;
-  border-top: 2px solid #394E83;
+  border-color: #2C3B5A;
+  border-bottom-color: #101D2E;
+  border-top: 2px solid #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__tree-tabs .omnidb__tab-menu .nav-tabs {
@@ -2739,8 +2712,7 @@ SOFTWARE.
 
 .omnidb--theme-dark .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
   background-color: transparent;
-  border-color: #44464c;
-  border-bottom-color: #43464E;
+  border-color: #2C3B5A;
 }
 
 .omnidb--theme-dark .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
@@ -2755,7 +2727,7 @@ SOFTWARE.
   background-color: transparent;
   border-color: #383b42;
   border-bottom-color: #282A2F;
-  border-top: 2px solid #394E83;
+  border-top: 2px solid #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__query-result-tabs .omnidb__tab-menu .nav-tabs {
@@ -2764,8 +2736,7 @@ SOFTWARE.
 
 .omnidb--theme-dark .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
   background-color: transparent;
-  border-color: #44464c;
-  border-bottom-color: #43464E;
+  border-color: #2C3B5A;
 }
 
 .omnidb--theme-dark .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
@@ -2778,17 +2749,13 @@ SOFTWARE.
 
 .omnidb--theme-dark .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
   background-color: transparent;
-  border-color: #383b42;
-  border-bottom-color: #2f3136;
-  border-top: 2px solid #394E83;
-}
-
-.omnidb--theme-dark .omnidb__query-result-tabs .omnidb__tab-content {
-  /* border: 1px solid #43464E; */
+  border-color: #2C3B5A;
+  border-bottom-color: #161D2D;
+  border-top: 2px solid #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__panel-view--full {
-  background-color: #2F3136;
+  background-color: #16243C;
 }
 
 .omnidb--theme-dark .omnidb__modal-config .nav-tabs {
@@ -2797,21 +2764,19 @@ SOFTWARE.
 
 .omnidb--theme-dark .omnidb__modal-config .nav-link {
   background-color: transparent;
-  border-color: #44464c;
-  border-bottom-color: #2F3136;
+  border-color: #2C3B5A;
   color: #DCDDDE !important;
 }
 
 .omnidb--theme-dark .omnidb__modal-config .nav-link.active {
   background-color: transparent;
-  border-color: #383b42;
-  border-bottom-color: #2F3136;
-  border-top: 2px solid #394E83;
+  border-color: #2C3B5A;
+  border-top: 2px solid #0054A6;
 }
 
 .omnidb--theme-dark .omnidb__modal-config .nav-tabs .nav-link:focus,
 .omnidb--theme-dark .omnidb__modal-config .nav-tabs .nav-link:hover {
-  border-bottom-color: #2F3136;
+  border-bottom-color: #2C3B5A;
 }
 
 .omnidb--theme-dark .omnidb__monitoring-result-tabs {
@@ -2828,11 +2793,11 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnidb__form-check input:checked ~ .form-check-label::after {
-  background-color: #67ff81;
+  background-color: #2FB344;
 }
 
 .omnidb--theme-dark .required > label::after {
-  color: #EC2424;
+  color: #D72239;
 }
 
 .omnidb--theme-dark .custom-file > input + label {
@@ -2878,7 +2843,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-dark .omnidb__switch--input:checked ~ .omnidb__switch--label {
-  background-color: #394e83;
+  background-color: #0054A6;
 }
 
 .omnidb--theme-dark .secondq__omnidb--input:checked ~ .omnidb__switch--label {
@@ -2989,24 +2954,30 @@ SOFTWARE.
 
 .omnidb--theme-dark .resize_line_vertical,
 .omnidb--theme-dark .resize_line_horizontal {
-  border: 1px solid #373944;
-  background-color: #2F3136;
+  border: 1px solid #162D4E;
+  background-color: #161D2D;
+  transition: all .3s ease-in-out;
+}
+
+.omnidb--theme-dark .resize_line_vertical:hover,
+.omnidb--theme-dark .resize_line_horizontal:hover {
+  background-color: #16243c;
 }
 
 .omnidb--theme-dark .resize_line_vertical:before, .omnidb--theme-dark .resize_line_vertical:after,
 .omnidb--theme-dark .resize_line_horizontal:before,
 .omnidb--theme-dark .resize_line_horizontal:after {
-  background-color: #4C5365;
+  background-color: #164b84;
 }
 
 .omnidb--theme-dark .resize_line_vertical:hover:before, .omnidb--theme-dark .resize_line_vertical:hover:after,
 .omnidb--theme-dark .resize_line_horizontal:hover:before,
 .omnidb--theme-dark .resize_line_horizontal:hover:after {
-  background-color: #6F7995;
+  background-color: #165699;
 }
 
 .omnidb--theme-dark .omnidb__workspace__connection-details b {
-  color: #56acff;
+  color: #206BC4;
 }
 
 .omnidb--theme-dark .omnidb__ht__first-col-actions td:first-child {
@@ -3190,6 +3161,7 @@ SOFTWARE.
   background-color: #1A2234 !important;
   border: 1px solid #243049 !important;
   color: #F8FAFC !important;
+  font-size: inherit;
 }
 
 .omnidb--theme-dark .handsontable th {
@@ -3347,34 +3319,8 @@ SOFTWARE.
   background-color: #1E90FF !important;
 }
 
-.omnidb--theme-dark .ace_editor.ace_autocomplete {
-  background: #191919 !important;
-}
-
-.omnidb--theme-dark .ace_autocomplete .ace_content .ace_line {
-  color: #d7d7d7 !important;
-}
-
-.omnidb--theme-dark .ace_autocomplete .ace_content .ace_completion-highlight {
-  color: #d7d7d7 !important;
-}
-
-.omnidb--theme-dark .ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
-  background-color: #1E90FF !important;
-}
-
-.omnidb--theme-dark .ace_autocomplete .ace_content .ace_line:hover {
-  border-top: 1px solid #fff !important;
-  border-bottom: 1px solid #fff !important;
-}
-
-.omnidb--theme-dark .ace_editor .ace_line-hover {
-  background-color: rgba(0, 0, 0, 0) !important;
-  border-color: #1480b1 !important;
-}
-
-.omnidb--theme-dark .white_box, .omnidb--theme-dark .config_box, .omnidb--theme-dark .plugin_box, .omnidb--theme-dark .users_box, .omnidb--theme-dark .connection_list, .omnidb--theme-dark .dashboard_unit_list, .omnidb--theme-dark .dashboard_unit, .omnidb--theme-dark .dashboard_unit_test, .omnidb--theme-dark .console_command_history {
-  border: 1px solid #484a55 !important;
+.omnidb--theme-dark .white_box, .omnidb--theme-dark .config_box, .omnidb--theme-dark .plugin_box, .omnidb--theme-dark .users_box, .omnidb--theme-dark .connection_list, .omnidb--theme-dark .dashboard_unit_list, .omnidb--theme-dark .dashboard_unit, .omnidb--theme-dark .dashboard_unit_test {
+  border: 1px solid #16375F !important;
   background-color: #25282c !important;
   box-shadow: none !important;
   color: #ffffff;
@@ -3564,10 +3510,6 @@ SOFTWARE.
   color: #50a8ff !important;
 }
 
-.omnidb--theme-dark .node-all {
-  /*color: #ececec !important;*/
-}
-
 .omnidb--theme-dark .shortcut_block_title {
   border-bottom: 1px dashed #484a55 !important;
 }
@@ -3673,14 +3615,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 .omnidb--theme-light {
-  color: #454545;
   /* TEXT */
   /* OMNIS */
   /* ICONS */
   /* BRANDING ICON */
   /* BUTTONS */
   /* CONSOLE */
-  /* TABS */
   /* PRIMARY TAB */
   /* UTILITIES MENU */
   /* SECONDARY TAB */
@@ -3714,7 +3654,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-light .omnidb__main {
-  background-color: #F4F4F4;
+  background-color: #F8FAFD;
 }
 
 .omnidb--theme-light iframe {
@@ -3722,7 +3662,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-light .omnidb__theme-bg--menu-primary {
-  background-color: #4A81D4;
+  background-color: #1560AD;
 }
 
 .omnidb--theme-light .omnidb__theme-bg--menu-primary::-webkit-scrollbar-track {
@@ -3734,7 +3674,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-light .omnidb__theme-bg--menu-utilities {
-  background-color: #4A81D4;
+  background-color: #1560AD;
 }
 
 .omnidb--theme-light .omnidb__theme-bg--light {
@@ -3793,7 +3733,7 @@ SOFTWARE.
 
 .omnidb--theme-light .close,
 .omnidb--theme-light i.icon-close {
-  color: #d85656;
+  color: #D72239;
 }
 
 .omnidb--theme-light .omnidb-icon__theme--branding {
@@ -3828,12 +3768,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-light .omnidb__txt-console {
-  border-color: #DEDEDE;
-}
-
-.omnidb--theme-light .nav-tabs .nav-link:focus, .omnidb--theme-light .nav-tabs .nav-link:hover {
-  border-color: #e9ecef #e9ecef #dee2e6;
-  color: #555;
+  border-color: #CAD0D8;
 }
 
 .omnidb--theme-light .omnidb__tab-menu--primary .nav-tabs .nav-link.active {
@@ -3884,19 +3819,20 @@ SOFTWARE.
 
 .omnidb--theme-light .omnidb__tab-menu--secondary .omnidb__tab-menu__link {
   background-color: transparent;
-  border-color: #e2e2e2;
-  border-bottom-color: #DEDEDE;
+  border-color: #CAD0D8;
+  border-bottom-color: #F8FAFC;
+  border-radius: 4px 4px 0 0;
 }
 
 .omnidb--theme-light .omnidb__tab-menu--secondary .omnidb__tab-menu__link.active {
   background-color: transparent;
-  border-color: #DEDEDE;
-  border-bottom-color: #F4F4F4;
-  border-top: 2px solid #68A4FF;
+  border-color: #CAD0D8;
+  border-bottom-color: #F8FAFC;
+  border-top: 2px solid #1560AD;
 }
 
 .omnidb--theme-light .omnidb__tab-menu--secondary .omnidb__tab-menu__link-name {
-  color: #585858 !important;
+  color: #16171E !important;
 }
 
 .omnidb--theme-light .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon {
@@ -3909,19 +3845,15 @@ SOFTWARE.
 
 .omnidb--theme-light .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
   background-color: transparent;
-  border-color: #DEDEDE;
-  border-bottom-color: #DEDEDE;
+  border-color: #CAD0D8;
+  border-bottom-color: #F8FAFC;
 }
 
 .omnidb--theme-light .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
   background-color: transparent;
-  border-color: #DEDEDE;
+  border-color: #CAD0D8;
   border-bottom-color: #FFFFFF;
-  border-top: 2px solid #68A4FF;
-}
-
-.omnidb--theme-light .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
-  color: #585858 !important;
+  border-top: 2px solid #1560AD;
 }
 
 .omnidb--theme-light .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-icon {
@@ -3934,15 +3866,15 @@ SOFTWARE.
 
 .omnidb--theme-light .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
   background-color: transparent;
-  border-color: #e2e2e2;
+  border-color: #CAD0D8;
   border-bottom-color: #DEDEDE;
 }
 
 .omnidb--theme-light .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
   background-color: transparent;
-  border-color: #DEDEDE;
-  border-bottom-color: #F4F4F4;
-  border-top: 2px solid #68A4FF;
+  border-color: #CAD0D8;
+  border-bottom-color: #F8FAFC;
+  border-top: 2px solid #1560AD;
 }
 
 .omnidb--theme-light .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
@@ -4001,7 +3933,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-light .omnidb__form-check input:checked ~ .form-check-label::after {
-  background-color: #43afd2;
+  background-color: #1560AD;
 }
 
 .omnidb--theme-light .required > label::after {
@@ -4117,7 +4049,7 @@ SOFTWARE.
 }
 
 .omnidb--theme-light .omnidb__workspace__connection-details b {
-  color: #284AC6;
+  color: #1560AD;
 }
 
 .omnidb--theme-light .handsontable {
@@ -4161,12 +4093,16 @@ SOFTWARE.
   color: #4A81D4;
 }
 
+.omnidb--theme-light select {
+  font-size: inherit;
+}
+
 .omnidb--theme-light .omnidb__query-info__value {
-  color: #4A81D4;
+  color: #1560AD;
 }
 
 .omnidb--theme-light .node-all {
-  color: #4A81D4;
+  color: #1560AD;
 }
 
 .omnidb--theme-light .omnidb__autocomplete {
@@ -4622,6 +4558,7 @@ SOFTWARE.
 body {
   font-family: 'Poppins';
   font-size: 0.875rem;
+  color: #16171E;
 }
 
 .backup-tab-scrollable {

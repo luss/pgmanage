@@ -14,7 +14,7 @@
           <div class="col-1">Actions</div>
         </li>
 
-        <li v-for="job in jobList" :key="job.id" class="list-group-item d-flex row no-gutters" role="button">
+        <li v-for="job in jobList" :key="job.id" class="list-group-item d-flex row no-gutters">
           <div class="col-1">{{ job.utility_pid }}</div>
           <div class="col-2">{{ job.details.type }}</div>
           <div class="col-2">{{ job.details.server }}</div>

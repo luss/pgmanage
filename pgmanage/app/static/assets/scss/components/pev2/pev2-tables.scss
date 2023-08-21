@@ -23,7 +23,7 @@
     .table {
       background-color: $primaryLight;
       font-weight: 500;
-      color: $primaryColor !important;
+      color: $primaryDark !important;
     
       .thead-dark th {
         background-color: $primaryBlue;
@@ -31,7 +31,7 @@
     
       .thead-light th {
         background-color: $bgLight;
-        color: $primaryColor;
+        color: $primaryDark;
       }
     
       a {

@@ -86,7 +86,7 @@ a:not([href]):not([tabindex]){
     }
     .omnidb__panel-view--full {
       left: 100px;
-      width: calc(100vw - 110px);
+      width: calc(100vw - 100px);
     }
   }
 }
@@ -110,14 +110,15 @@ a:not([href]):not([tabindex]){
   align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-flex-start;
+  justify-content: flex-start;
 }
 .omnidb__tab-menu--primary .nav-tabs .nav-item {
   width: 100%;
   border: none;
   margin-bottom: 3px;
   margin-top: 3px;
-  padding: 3px;
+  padding: 3px; 
+  border-radius: 0;
 }
 .omnidb__tab-menu.omnidb__tab-menu--primary .omnidb__tab-menu__link:hover .omnidb__tab-menu__link-close {
   opacity: 1;
@@ -187,9 +188,6 @@ a:not([href]):not([tabindex]){
 .omnidb__tab-menu--secondary {
   padding-top: 3px;
   padding-right: 80px;
-}
-.omnidb__tab-menu--secondary .omnidb__tab-menu__link-name {
-  padding-right: 10px;
 }
 
 .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon {
@@ -404,7 +402,6 @@ button.close {
 .omnidb__tree-tabs .omnidb__tab-menu__link,
 .omnidb__query-result-tabs .omnidb__tab-menu__link,
 .omnidb__modal-config .nav-link {
-  font-size: 1.15rem;
   line-height: 1;
   margin-right: 5px;
 }
@@ -435,6 +432,7 @@ button.close {
 .omnidb__welcome__intro-card {
   animation: workspaceFadeIn 0.45s ease forwards 1.15s;
   opacity: 0;
+  background-color: inherit;
 }
 .omnidb__welcome__intro-card {
   animation: workspaceFadeIn 0.45s ease forwards 1.55s;
@@ -476,37 +474,8 @@ button.close {
   vertical-align: middle;
 }
 
-
-/* NAV */
-.omnidb__tab-menu .nav-tabs .nav-link,
-.nav-tabs .nav-link {
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-}
-
 /* EXPLAIN COMPONENTS */
 .omnidb__main {
-
-  // &__explain--default {
-  //   .omnidb__query-result-tabs__content--explain-default {
-  //     display: block;
-  //   }
-  //
-  //   .omnidb__query-result-tabs__content--explain-legere {
-  //     display: none;
-  //   }
-  // }
-  //
-  // &:not(.omnidb__explain--default) {
-  //   .omnidb__query-result-tabs__content--explain-default {
-  //     display: none;
-  //   }
-  //
-  //   .omnidb__query-result-tabs__content--explain-legere {
-  //     display: block;
-  //   }
-  // }
-
   /* EXPLAIN SWITCH */
   /* SWITCH */
   .omnidb__switch--explain {
@@ -644,7 +613,7 @@ button.close {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 7px 15px 0 0;
+  padding: 7px 10px 0 0;
   width: 100%;
 }
 
@@ -1067,10 +1036,10 @@ button.close {
   z-index: 0;
 }
 .omnis__circle-waves--idle span {
-  background-color: #7DFF81;
+  background-color: #2FB344;
 }
 .omnis__circle-waves--running span {
-  background-color: #6A96d8;
+  background-color: #0054A6;
 }
 .omnis__circle-waves span {
   border-radius: 18px;
@@ -1174,7 +1143,7 @@ label.omnidb__switch--label span {
   transform: translate(10px,10px);
 }
 .omnidb__switch--input:checked ~ .omnidb__switch--label {
-  background-color: #4A81D4;
+  background-color: #1560AD;
 }
 .omnidb__switch--input:checked ~ .omnidb__switch--label span {
   margin-left: 15px;
@@ -1575,7 +1544,7 @@ body {
   opacity: 0.8;
   svg {
     .icon-body {
-      fill: #4A81D4;
+      fill: #1560AD;
     }
     .icon-bg {
       fill: white;

@@ -78,7 +78,7 @@ var v_createSnippetTextTabFunction = function(p_snippet = null) {
   v_tab_check_span.id = 'tab_check_' + v_tab.id;
 
   var v_html =
-  '<div id="txt_snippet_' + v_tab.id + '" style="width: 100%; height: 200px; border: 1px solid #c3c3c3;"></div>' +
+  '<div id="txt_snippet_' + v_tab.id + '" style="width: 100%; height: 200px;"></div>' +
   '<div class="row mt-2">' +
     '<div class="tab_actions omnidb__tab-actions col-12">' +
       '<button id="bt_indent_' + v_tab.id + '" class="btn btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent mr-2"></i>indent</button>' +

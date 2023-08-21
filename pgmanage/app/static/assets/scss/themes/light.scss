@@ -27,10 +27,8 @@ SOFTWARE.
 */
 
 .omnidb--theme-light {
-  color: #454545;
-
   .omnidb__main {
-    background-color: #F4F4F4;
+    background-color: #F8FAFD;
   }
 
   iframe {
@@ -38,7 +36,7 @@ SOFTWARE.
   }
 
   .omnidb__theme-bg--menu-primary {
-    background-color: #4A81D4;
+    background-color: #1560AD;
     &::-webkit-scrollbar-track {
       background: #4A81d4;
     }
@@ -48,7 +46,7 @@ SOFTWARE.
   }
 
   .omnidb__theme-bg--menu-utilities {
-    background-color: #4A81D4;
+    background-color: #1560AD;
   }
 
   .omnidb__theme-bg--light {
@@ -112,7 +110,7 @@ SOFTWARE.
   /* ICONS */
   .close,
   i.icon-close {
-    color: #d85656;
+    color: #D72239;
   }
 
   /* BRANDING ICON */
@@ -149,22 +147,7 @@ SOFTWARE.
 
   /* CONSOLE */
   .omnidb__txt-console {
-    border-color: #DEDEDE;
-  }
-
-  /* TABS */
-  .nav-tabs {
-    .nav-link {
-      &:focus,
-      &:hover {
-        border-color: #e9ecef #e9ecef #dee2e6;
-        color: #555;
-      }
-
-      &.active {
-        // border-top: 2px solid #68A4FF;
-      }
-    }
+    border-color: #CAD0D8;
   }
 
   /* PRIMARY TAB */
@@ -223,19 +206,20 @@ SOFTWARE.
 
     .omnidb__tab-menu__link {
       background-color: transparent;
-      border-color: #e2e2e2;
-      border-bottom-color: #DEDEDE;
+      border-color: #CAD0D8;
+      border-bottom-color: #F8FAFC;
+      border-radius: 4px 4px 0 0;
 
       &.active {
         background-color: transparent;
-        border-color: #DEDEDE;
-        border-bottom-color: #F4F4F4;
-        border-top: 2px solid #68A4FF;
+        border-color: #CAD0D8;
+        border-bottom-color: #F8FAFC;
+        border-top: 2px solid #1560AD;
       }
     }
 
     .omnidb__tab-menu__link-name {
-      color: #585858 !important;
+      color: #16171E !important;
     }
 
     .omnidb__tab-menu__link-icon {
@@ -252,19 +236,15 @@ SOFTWARE.
 
       .omnidb__tab-menu__link {
         background-color: transparent;
-        border-color: #DEDEDE;
-        border-bottom-color: #DEDEDE;
+        border-color: #CAD0D8;
+        border-bottom-color: #F8FAFC;
 
         &.active {
           background-color: transparent;
-          border-color: #DEDEDE;
+          border-color: #CAD0D8;
           border-bottom-color: #FFFFFF;
-          border-top: 2px solid #68A4FF;
+          border-top: 2px solid #1560AD;
         }
-      }
-
-      .omnidb__tab-menu__link-name {
-        color: #585858 !important;
       }
 
       .omnidb__tab-menu__link-icon {
@@ -281,14 +261,14 @@ SOFTWARE.
 
     .omnidb__tab-menu__link {
       background-color: transparent;
-      border-color: #e2e2e2;
+      border-color: #CAD0D8;
       border-bottom-color: #DEDEDE;
 
       &.active {
         background-color: transparent;
-        border-color: #DEDEDE;
-        border-bottom-color: #F4F4F4;
-        border-top: 2px solid #68A4FF;
+        border-color: #CAD0D8;
+        border-bottom-color: #F8FAFC;
+        border-top: 2px solid #1560AD;
       }
     }
 
@@ -431,7 +411,7 @@ SOFTWARE.
     }
 
     input:checked~.form-check-label::after {
-      background-color: #43afd2;
+      background-color: #1560AD;
     }
   }
 
@@ -568,7 +548,7 @@ SOFTWARE.
 
   /* Workspace Connection Info */
   .omnidb__workspace__connection-details b {
-    color: #284AC6;
+    color: #1560AD;
   }
 
   /* HANDSONTABLE */
@@ -616,14 +596,18 @@ SOFTWARE.
     color: #4A81D4;
   }
 
+  select {
+    font-size: inherit;
+  }
+
   /* Query Info */
   .omnidb__query-info__value {
-    color: #4A81D4;
+    color: #1560AD;
   }
 
   /* Aimara Tree */
   .node-all {
-    color: #4A81D4;
+    color: #1560AD;
   }
 
   /* Autocomplete */

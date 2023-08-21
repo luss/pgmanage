@@ -303,7 +303,7 @@ function setTabStatus(p_tab_tag, p_con_status) {
 		p_tab_tag.query_tab_status.className = 'fas fa-dot-circle tab-status tab-status-idle position-relative';
 		p_tab_tag.query_tab_status.title = 'Idle';
 		p_tab_tag.query_tab_status.innerHTML =
-		'<div style="position: absolute; width: 12px; height: 12px; overflow: visible; left: 0px; top: 0px; display: block;">' +
+		'<div style="position: absolute; width: 14px; height: 14px; overflow: visible; left: 0px; top: 0px; display: block;">' +
 			'<span class="omnis__circle-waves omnis__circle-waves--idle">' +
 				'<span></span>' +
 				'<span></span>' +
@@ -317,7 +317,7 @@ function setTabStatus(p_tab_tag, p_con_status) {
 		p_tab_tag.query_tab_status.className = 'fas fa-dot-circle tab-status tab-status-running position-relative';
 		p_tab_tag.query_tab_status.title = 'Running';
 		p_tab_tag.query_tab_status.innerHTML =
-		'<div style="position: absolute; width: 12px; height: 12px; overflow: visible; left: 0px; top: 0px; display: block;">' +
+		'<div style="position: absolute; width: 14px; height: 14px; overflow: visible; left: 0px; top: 0px; display: block;">' +
 			'<span class="omnis__circle-waves omnis__circle-waves--running">' +
 				'<span></span>' +
 				'<span></span>' +

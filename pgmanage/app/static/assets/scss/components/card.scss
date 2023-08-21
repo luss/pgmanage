@@ -1,15 +1,17 @@
 .card {
     border-radius: $borderRadius;
     overflow: hidden;
+    background-color: initial;
 
     @include themify() {
         border: themed($border);
+        background-color: themed($surfaceBgSecondary);
     }
 
     &-header {
+        background-color: rgba($primaryBlue, .2);
 
         @include themify() {
-            background-color: themed($tabsSurfaceBg);
             border-bottom: themed($border) !important;
         }
     }
@@ -18,7 +20,7 @@
         padding: 24px;
 
         @include themify() {
-            background-color: themed($surfaceBg);
+            background-color: themed($surfaceBgSecondary);
         }
     }
 }
