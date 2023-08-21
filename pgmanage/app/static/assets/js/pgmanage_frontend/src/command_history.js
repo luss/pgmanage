@@ -26,6 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
+import { execAjax } from "./ajax_control";
+import { showConfirm } from "./notification_control";
+import moment from "moment";
 
 /// <summary>
 /// Wipes command history.

@@ -31,6 +31,8 @@ import { getDebugFunctionDefinitionPostgresql } from "./tree_context_functions/t
 import { adjustChartTheme } from "./header_actions";
 import { blueRenderer, whiteRenderer } from "./renderers";
 import { Range } from "ace-builds";
+import { execAjax } from "./ajax_control";
+import { showAlert } from "./notification_control";
 
 /// <summary>
 /// Debug state

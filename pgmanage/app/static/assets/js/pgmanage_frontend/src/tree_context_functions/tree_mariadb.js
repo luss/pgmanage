@@ -33,6 +33,9 @@ import { createMessageModal } from "../notification_control";
 import { querySQL } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
+import { execAjax } from "../ajax_control";
+import axios from "axios";
+import { showToast } from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -366,29 +369,6 @@ function getTreeMariadb(div) {
 		</div>`;
     let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
     autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
-    // tree.beforeContextMenuEvent = function(node, callback) {
-
-    //     var v_elements = [];
-    //     //Hooks
-    //     if (v_connTabControl.tag.hooks.mariadbTreeContextMenu.length>0) {
-    //       for (var i=0; i<v_connTabControl.tag.hooks.mariadbTreeContextMenu.length; i++)
-    //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.mariadbTreeContextMenu[i](node));
-    //     }
-
-    //     var v_customCallback = function() {
-    //       callback(v_elements);
-    //     }
-    //     v_customCallback();
-    // }
-}
-
-
-function afterNodeOpenedCallbackMariaDB(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.mariadbTreeNodeOpen.length>0) {
-    for (var i=0; i<v_connTabControl.tag.hooks.mariadbTreeNodeOpen.length; i++)
-      v_connTabControl.tag.hooks.mariadbTreeNodeOpen[i](node);
-  }
 }
 
 /// <summary>
@@ -563,7 +543,6 @@ function getTreeDetailsMariadb(node) {
               //startMonitorDashboard();
             }
 
-            afterNodeOpenedCallbackMariaDB(node);
 
         },
         function(p_return) {
@@ -873,8 +852,8 @@ function TemplateSelectMariadb(p_schema, p_table) {
 
             querySQL(0);
         },
-        function(p_return) {
-            showError(p_return.v_data);
+        function(p_return) {t
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -899,7 +878,7 @@ function TemplateInsertMariadb(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -924,7 +903,7 @@ function TemplateUpdateMariadb(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -959,7 +938,7 @@ function mariadbTerminateBackendConfirm(pid) {
           error.response.data.data
         );
       } else {
-        showError(error.response.data.data);
+        showToast("error", error.response.data.data)
       }
     });
 }

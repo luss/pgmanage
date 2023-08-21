@@ -31,6 +31,7 @@ import { cancelEditData, queryEditData, checkEditDataStatus, saveEditData } from
 import { showMenuNewTab } from "../workspace";
 import { showPasswordPrompt } from "../passwords";
 import ace from 'ace-builds'
+import { execAjax } from "../ajax_control";
 
 let createEditDataTabFunction = function(p_table) {
 

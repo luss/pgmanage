@@ -26,6 +26,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { showPasswordPrompt } from "./passwords";
+import axios from "axios";
+import { showToast } from "./notification_control";
 
 /// <summary>
 /// Retrieving Properties.
@@ -58,7 +60,7 @@ function getProperties(view, data) {
           error.response.data.data
         );
       } else {
-        showError(error.response.data.data);
+        showToast("error", p_return.v_data.message)
       }
     });
 }

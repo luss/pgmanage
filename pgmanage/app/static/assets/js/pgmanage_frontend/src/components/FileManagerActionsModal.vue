@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { showToast } from '../notification_control'
+
 export default {
   name: 'ActionsModal',
   props: {
@@ -108,7 +111,7 @@ export default {
           this.$emit('actionDone', event, this.name)
         })
         .catch((error) => {
-          showError(error.response.data.data)
+          showToast("error", error.response.data.data)
         })
     },
     create(event, type) {
@@ -121,7 +124,7 @@ export default {
           this.$emit('actionDone', event, this.name)
         })
         .catch((error) => {
-          showError(error.response.data.data)
+          showToast("error", error.response.data.data)
         })
     },
     delete() {
@@ -132,7 +135,7 @@ export default {
           this.$emit('actionDone')
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     },
 

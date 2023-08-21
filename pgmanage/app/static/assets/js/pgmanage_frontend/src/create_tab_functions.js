@@ -38,6 +38,7 @@ import { createWelcomeTabFunction } from './tab_functions/outer_welcome_tab'
 import { v_createGraphTabFunction } from './tab_functions/inner_graph_tab'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createDebuggerTabFunction } from './tab_functions/inner_debugger_tab'
+import { showConfirm } from './notification_control'
 
 function initCreateTabFunctions() {
 

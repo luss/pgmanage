@@ -31,6 +31,8 @@ import TreeSqlite from "../components/TreeSqlite.vue";
 import { tabSQLTemplate } from "./tree_postgresql";
 import { toggleConnectionAutocomplete } from "../workspace";
 import { querySQL } from "../query";
+import { execAjax } from "../ajax_control";
+import { showToast} from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -70,28 +72,6 @@ function getTreeSqlite(div) {
 
     let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
     autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
-    
-    // tree.beforeContextMenuEvent = function(node, callback) {
-    //     var v_elements = [];
-
-    //     //Hooks
-    //     if (v_connTabControl.tag.hooks.sqliteTreeContextMenu.length > 0) {
-    //         for (var i = 0; i < v_connTabControl.tag.hooks.sqliteTreeContextMenu.length; i++) {
-    //             v_elements = v_elements.concat(v_connTabControl.tag.hooks.sqliteTreeContextMenu[i](node));
-    //         }
-    //     }
-
-    //     callback(v_elements);
-    // }
-}
-
-function afterNodeOpenedCallbackSqlite(node) {
-    //Hooks
-    if (v_connTabControl.tag.hooks.sqliteTreeNodeOpen.length > 0) {
-        for (var i = 0; i < v_connTabControl.tag.hooks.sqliteTreeNodeOpen.length; i++) {
-            v_connTabControl.tag.hooks.sqliteTreeNodeOpen[i](node);
-        }
-    }
 }
 
 /// <summary>
@@ -117,7 +97,7 @@ function TemplateSelectSqlite(p_table, p_kind) {
             querySQL(0);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -143,7 +123,7 @@ function TemplateInsertSqlite(p_table) {
           );
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -169,7 +149,7 @@ function TemplateUpdateSqlite(p_table) {
           );
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',

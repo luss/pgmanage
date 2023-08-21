@@ -28,7 +28,7 @@ SOFTWARE.
 
 import { createApp } from "vue";
 import TreePostgresql from "../components/TreePostgresql.vue";
-import { createMessageModal } from "../notification_control";
+import { createMessageModal, showAlert, showConfirm, showToast } from "../notification_control";
 import {
   toggleConnectionAutocomplete,
   refreshHeights,
@@ -41,6 +41,8 @@ import { querySQL, getQueryEditorValue } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { createTabControl } from "../tabs";
 import { showPasswordPrompt } from "../passwords";
+import { execAjax } from "../ajax_control";
+import axios from "axios";
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
@@ -1104,14 +1106,6 @@ function getTreePostgresql(div) {
     autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
 }
 
-function afterNodeOpenedCallbackPostgreSQL(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.postgresqlTreeNodeOpen.length>0) {
-    for (var i=0; i<v_connTabControl.tag.hooks.postgresqlTreeNodeOpen.length; i++)
-      v_connTabControl.tag.hooks.postgresqlTreeNodeOpen[i](node);
-  }
-}
-
 /// <summary>
 /// Retrieving function definition.
 /// </summary>
@@ -1196,7 +1190,7 @@ function TemplateSelectPostgresql(p_schema, p_table, p_kind) {
             querySQL(0);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1221,7 +1215,7 @@ function TemplateInsertPostgresql(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1246,7 +1240,7 @@ function TemplateUpdatePostgresql(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1272,7 +1266,7 @@ function TemplateSelectFunctionPostgresql(p_schema, p_function, p_functionid) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1298,7 +1292,7 @@ function TemplateCallProcedurePostgresql(p_schema, p_procedure, p_procedureid) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1334,7 +1328,7 @@ function postgresqlTerminateBackendConfirm(pid) {
           error.response.data.data
         );
       } else {
-        showError(error.response.data.data);
+        showToast("error", error.response.data.data)
       }
     });
 }
@@ -1363,7 +1357,7 @@ function getExplain(p_mode) {
         .getValue();
 
     if (v_query.trim() == '') {
-        showAlert('Please provide a string.');
+        showToast("info", "Please provide a string.")
     }
     else {
         let should_prepend = v_query.trim().split(' ')[0].toUpperCase() !== 'EXPLAIN'

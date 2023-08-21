@@ -29,6 +29,9 @@ import { SetAcked, removeContext, createRequest } from "./long_polling";
 import { v_queryRequestCodes, setTabStatus, refreshTreeNode } from "./query";
 import { cellDataModal } from "./header_actions";
 import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
+import { execAjax } from "./ajax_control";
+import { showConfirm, showToast } from "./notification_control";
+import moment from "moment";
 
 /// <summary>
 /// Console state
@@ -398,12 +401,12 @@ function consoleSQL(p_check_command = true, p_mode = 0) {
 
 
     if (v_tag.state!=v_consoleState.Idle) {
-  		showAlert('Tab with activity in progress.');
+			showToast("info", "Tab with activity in progres.")
   	}
   	else {
 
       if (v_content=='' && p_mode == 0) {
-  			showAlert('Please provide a string.');
+  			showToast("info", "Please provide a string.")
   		}
   		else {
 

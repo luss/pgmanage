@@ -46,6 +46,11 @@ import { checkConsoleStatus } from './console'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
 import { createTabControl } from './tabs'
+import { startLoading, execAjax } from './ajax_control'
+import axios from 'axios'
+import { showAlert, showConfirm } from './notification_control'
+import cytoscape from 'cytoscape';
+import spread from 'cytoscape-spread'
 
 let v_start_height;
 /// <summary>
@@ -294,7 +299,7 @@ function drawGraph(p_all, p_schema) {
 				v_edges.push(v_edge_object);
 
       }
-
+      cytoscape.use(spread)
 			v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.network = window.cy = cytoscape({
 				container: v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.graph_div,
 				boxSelectionEnabled: false,
@@ -913,12 +918,6 @@ function refreshHeights(p_all) {
     // Updating tree sizes
     refreshTreeHeight();
 
-    // Hooks
-    if (v_connTabControl.tag.hooks.windowResize.length>0) {
-      for (var i=0; i<v_connTabControl.tag.hooks.windowResize.length; i++)
-      v_connTabControl.tag.hooks.windowResize[i]();
-    }
-
     // Snippet panel
     resizeSnippetPanel();
 
@@ -1091,12 +1090,6 @@ function showMenuNewTabOuter(e) {
     });
   } else {
     let items = [];
-    //Hooks
-    if (v_connTabControl.tag.hooks.outerTabMenu.length > 0) {
-      for (let i = 0; i < v_connTabControl.tag.hooks.outerTabMenu.length; i++) {
-        items = items.concat(v_connTabControl.tag.hooks.outerTabMenu[i]());
-      }
-    }
 
     // Building connection list
     if (connectionsStore.connections.length > 0) {
@@ -1246,13 +1239,6 @@ function showMenuNewTab(e) {
 				}
 			}
 		);
-	}
-
-	//Hooks
-	if (v_connTabControl.tag.hooks.innerTabMenu.length>0) {
-		for (var i=0; i<v_connTabControl.tag.hooks.innerTabMenu.length; i++) {
-      v_option_list = v_option_list.concat(v_connTabControl.tag.hooks.innerTabMenu[i]());
-    }
 	}
 
   ContextMenu.showContextMenu({

@@ -28,6 +28,7 @@ SOFTWARE.
 
 import { listUsers } from './users'
 import ace from 'ace-builds'
+import { showConfirm } from './notification_control';
 
 /// <summary>
 /// Opens OmniDB about window.
@@ -248,12 +249,6 @@ function changeTheme(p_option) {
 				}
 			}
 		}
-	}
-
-	//Hooks
-	if (v_connTabControl.tag.hooks.changeTheme.length>0) {
-		for (var i=0; i<v_connTabControl.tag.hooks.changeTheme.length; i++)
-			v_connTabControl.tag.hooks.changeTheme[i](null,v_theme);
 	}
 }
 

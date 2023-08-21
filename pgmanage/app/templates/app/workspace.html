@@ -3,13 +3,13 @@
 <html lang="en">
   <head>
     {% vite_hmr_client %}
+    {% vite_asset 'src/main.js' %}
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" type="image/x-icon" href="{{url_folder}}/static/assets/images/favicon.ico"/>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/bootstrap/bootstrap.min.css?v{{pgmanage_short_version}}">
     <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/assets/lib/handsontable/handsontable.full.css?v{{pgmanage_short_version}}">
     <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/fa/css/all.css?v{{pgmanage_short_version}}">
 
@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/Passtrength/css/passtrength.css">
 
     <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/omnidb.min.css?{{pgmanage_short_version}}">
     <title>PgManage</title>
   </head>
   <body>
@@ -114,7 +113,7 @@
       </div>
     </div>
 
-    <div id="div_loading" class="div_loading" style='z-index: 100005;'>
+    <div id="div_loading" class="div_loading" style='z-index: 100005; display: block;'>
       <div class="div_loading_cover"></div>
       <div class="div_loading_content">
         <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
@@ -515,26 +514,7 @@
       <div id="div_autocomplete_searching">Searching...</div>
 
     </div>
-
-    <script src="{{url_folder}}/static/assets/lib/jquery/jquery.min.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/js/jquery-ui.js"></script>
-    <script src="{{url_folder}}/static/assets/js/ajax_control.js?v{{pgmanage_short_version}}"></script>
-
-    <script type="text/javascript">
-      startLoading();
-    </script>
-    <script src="{{url_folder}}/static/assets/lib/popper/popper.min.js?v{{pgmanage_short_version}}"></script>
-    <script src="{{url_folder}}/static/assets/lib/bootstrap/bootstrap.min.js?v{{pgmanage_short_version}}"></script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/handsontable/handsontable.full.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/cytoscape/cytoscape.min.js"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/cytoscape/cytoscape-spread.js"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/cytoscape/klay.js"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/cytoscape/cytoscape-klay.js"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/moment/moment.min.js?v{{pgmanage_short_version}}"></script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/daterangepicker/daterangepicker.js?v{{pgmanage_short_version}}"></script>
-
-    <script src="{{url_folder}}/static/assets/lib/axios@1.2.1/axios.min.js"></script>
-    <script src="{{url_folder}}/static/assets/js/notification_control.js?v{{pgmanage_short_version}}"></script>
     {% vite_asset 'src/main.js' %}
     <script src="{{url_folder}}/static/assets/js/tutorial_functions/tutorial.js?v{{pgmanage_short_version}}"></script>
     <script src="{{url_folder}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
@@ -562,7 +542,6 @@
     var v_explain_control = {context: 'default'};
 
     var v_menu_item = '{{ menu_item }}'
-    $('#menu_' + v_menu_item).addClass('header_a_selected');
 
     var ht;
     var network;
@@ -579,19 +558,6 @@
     var pigz_path = '{{ pigz_path|addslashes}}';
     var date_format = '{{ date_format }}' === 'None' ? 'YYYY-MM-DD, HH:mm:ss' : '{{ date_format }}'
     </script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js"></script>
-    <script src="{{url_folder}}/static/assets/lib/jaro-winkler/jaro-winkler.js"></script>
-    <script type="text/javascript">
-      axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
-      moment.defaultFormat = date_format;
-      axios.interceptors.response.use(response => {
-        return response;
-      }, error => {
-        if (error.response.status === 401) {
-          showAlert('User not authenticated, please reload the page.');
-        }
-        return Promise.reject(error);
-      });
-    </script>
+    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js" defer></script>
   </body>
 </html>

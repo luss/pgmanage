@@ -95,6 +95,8 @@
 
 <script>
 import FileManagerActionsModal from './FileManagerActionsModal.vue'
+import axios from 'axios'
+import { showToast } from '../notification_control'
 
 export default {
   name: 'FileManager',
@@ -164,7 +166,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error)
+          showToast("error", error.response.data.data)
         })
     },
     openActionsModal(action) {

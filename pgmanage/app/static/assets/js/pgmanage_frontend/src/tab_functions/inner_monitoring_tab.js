@@ -3,6 +3,8 @@ import { beforeCloseTab } from "../create_tab_functions"
 import { cellDataModal } from '../header_actions';
 import { blueHtmlRenderer, whiteHtmlRenderer } from '../renderers';
 import { showPasswordPrompt } from '../passwords';
+import { execAjax } from '../ajax_control';
+import { showToast } from '../notification_control';
 
 var v_createMonitoringTabFunction = function(p_name, p_query, p_actions) {
 
@@ -244,7 +246,7 @@ function refreshMonitoring(p_tab_tag) {
           );
         }
         else {
-          showError(p_return.v_data);
+          showToast("error", p_return.v_data.message)
         }
       },
       'box',

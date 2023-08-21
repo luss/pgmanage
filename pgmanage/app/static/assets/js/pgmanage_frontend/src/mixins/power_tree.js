@@ -1,7 +1,10 @@
-import { useToast } from 'vue-toast-notification';
 import { emitter } from '../emitter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { showPasswordPrompt } from '../passwords';
+import axios from 'axios';
+import { showAlert, showToast } from '../notification_control';
+
+
 export default {
   data() {
     return {
@@ -47,7 +50,6 @@ export default {
       return Promise.reject(error);
     });
 
-    this.$toast = useToast();
     emitter.on(`refreshNode_${this.id}`, (e) => {
       this.refreshTree(e.node);
     })
@@ -72,10 +74,6 @@ export default {
       // fix this not to use window
       if (window.v_connTabControl.selectedTab.tag.treeTabsVisible)
         this.getProperties(node);
-
-      if (node.data.type == "error") {
-        showError(node.data.message);
-      }
     },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);
@@ -186,11 +184,8 @@ export default {
           error_response.response.data.data
         );
       } else {
-        //FIXME: add proper ui styling and html
         this.removeChildNodes(node);
-        this.$toast.error(error_response.response.data.data, {
-          duration: 0
-        })
+        showToast("error", error_response.response.data.data)
       }
     },
     getRootNode() {

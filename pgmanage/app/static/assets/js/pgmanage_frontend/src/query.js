@@ -28,6 +28,7 @@ SOFTWARE.
 import { SetAcked, removeContext, createRequest } from "./long_polling"
 import { cellDataModal } from "./header_actions"
 import { whiteRenderer } from "./renderers"
+import { showToast } from "./notification_control"
 
 /// <summary>
 /// Query state
@@ -145,7 +146,7 @@ function querySQL(p_mode,
 	var v_state = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.state;
 
 	if (v_state!=v_queryState.Idle) {
-		showAlert('Tab with activity in progress.');
+		showToast("info", "Tab with activity in progress.")
 	}
 	else {
 
@@ -157,7 +158,7 @@ function querySQL(p_mode,
 		var v_tab_close_span = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.tab_close_span;
 
 		if (v_sql_value.trim()=='') {
-			showAlert('Please provide a string.');
+			showToast("info", "Please provide a string.")
 		}
 		else {
 

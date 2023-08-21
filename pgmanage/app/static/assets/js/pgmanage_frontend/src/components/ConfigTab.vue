@@ -152,6 +152,10 @@
 <script>
 import ConfigTabGroup from "./ConfigTabGroup.vue";
 import { useVuelidate } from '@vuelidate/core'
+import axios from 'axios'
+import { showToast } from "../notification_control";
+import distance from 'jaro-winkler'
+import moment from 'moment'
 
 export default {
   name: "Config",
@@ -244,7 +248,7 @@ export default {
         })
         .catch((error) => {
           this.data = "";
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     },
     getCategories() {
@@ -258,7 +262,7 @@ export default {
           this.selected = this.categories[0];
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     },
     changeData(e) {
@@ -288,7 +292,7 @@ export default {
           this.getConfigStatus();
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     },
     getConfigHistory() {
@@ -306,7 +310,7 @@ export default {
           });
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     },
     confirmConfig(event, revert = false) {
@@ -353,7 +357,7 @@ export default {
           if (error.response.data.data.includes("SSL connection has been closed unexpectedly"))
             this.getConfigStatus()
           else
-            showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     },
     deleteOldConfig(config_id) {
@@ -364,7 +368,7 @@ export default {
           this.getConfigHistory();
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     },
     getConfigurationDiffs() {
@@ -386,7 +390,7 @@ export default {
           this.configDiffData = diff
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         });
     }
   },

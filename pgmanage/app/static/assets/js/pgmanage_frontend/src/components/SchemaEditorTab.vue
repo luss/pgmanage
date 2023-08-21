@@ -56,6 +56,8 @@ import ColumnList from './SchemaEditorColumnList.vue'
 import dialects from './dialect-data'
 import { createRequest } from '../long_polling'
 import { v_queryRequestCodes } from '../query'
+import axios from 'axios'
+import { showToast } from '../notification_control'
 
 export default {
   name: "SchemaEditor",
@@ -322,14 +324,11 @@ export default {
     },
     handleResponse(response) {
       if(response.v_error == true) {
-        this.$toast.error(this.createNotifyMessage('Failed', response.v_data.message), {
-        })
+        showToast("error", response.v_data.message)
       } else {
         // TODO: clear local tabledefs to prevent multiple sql submissions
         let msg = response.v_data.v_status === "CREATE TABLE" ? `Table "${this.localTable.tableName}" created` : `Table "${this.localTable.tableName}" updated`
-        this.$toast.success(this.createNotifyMessage('Done', msg), {
-          duration:3000
-        })
+        showToast("success", msg)
 
         emitter.emit(`schemaChanged_${this.tree.id}`, { database_name: this.database_name, schema_name: this.localTable.schema })
         // load table changes into UI
@@ -337,12 +336,6 @@ export default {
           this.loadTableDefinition()
       }
       this.queryIsRunning = false
-    },
-    createNotifyMessage(title, desc) {
-      return `<div class="v-toast__body p-0">
-                  <h3 class="font-weight-bold">${title}</h3>
-                  <p>${desc}</p>
-              </div>`
     },
   },
   computed: {

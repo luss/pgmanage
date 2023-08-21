@@ -180,6 +180,9 @@ import { queryEditData } from '../tree_context_functions/edit_data'
 import { default_shortcuts } from '../shortcuts'
 import { changeTheme } from '../header_actions'
 import ace from 'ace-builds'
+import axios from 'axios'
+import { showAlert, showToast } from '../notification_control'
+import moment from 'moment'
 
 export default {
   name: 'SettingsModal',
@@ -426,7 +429,7 @@ export default {
         shortcuts: this.shortcutList
       })
         .then((resp) => {
-          showAlert('Shortcuts saved.');
+          showToast("success", "Shortcuts saved.");
         })
         .catch((error) => {
           console.log(error);
@@ -533,9 +536,9 @@ export default {
     },
     saveSettingsUser() {
       if ((this.passwordConfirm != '' || this.password != '') && (this.password != this.passwordConfirm))
-        showAlert('New Password and Confirm New Password fields do not match.');
+        showToast("error", "New Password and Confirm New Password fields do not match.")
       else if ((this.password === this.passwordConfirm) && (this.password.length < 8 && this.password.length >= 1))
-        showAlert('New Password and Confirm New Password fields must be longer than 8.');
+        showToast("error", "New Password and Confirm New Password fields must be longer than 8.")
       else {
         axios.post('/save_config_user/', {
           "font_size": this.selectedFontSize,
@@ -550,7 +553,7 @@ export default {
           .then((resp) => {
             $('#modal_settings').modal('hide');
             moment.defaultFormat = this.selectedDateFormat
-            showAlert('Configuration saved.');
+            showToast("success", "Configuration saved.");
           })
           .catch((error) => {
             console.log(error)
@@ -623,7 +626,7 @@ export default {
           showAlert(binary_paths)
         })
         .catch((error) => {
-          console.log(error)
+          showToast("error", error.response.data.data)
         })
     },
     onFile(e) {

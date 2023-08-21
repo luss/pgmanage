@@ -146,6 +146,9 @@ import { required, maxLength } from '@vuelidate/validators'
 import { useVuelidate } from '@vuelidate/core'
 import { emitter } from '../emitter'
 import ace from 'ace-builds'
+import axios from 'axios'
+import { showToast } from '../notification_control'
+import moment from 'moment'
 
 export default {
   name: 'PgCronModal',
@@ -339,8 +342,7 @@ export default {
           }
         })
         .catch((error) => {
-          // FIXME: send a proper error response so that this code works
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     },
 
@@ -354,8 +356,7 @@ export default {
           this.setupJobStatisticsTab()
         })
         .catch((error) => {
-          // FIXME: send a proper error response so that this code works
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     },
 
@@ -376,8 +377,7 @@ export default {
               $('#pgCronModal').modal('hide')
             })
             .catch((error) => {
-              // FIXME: send a proper error response so that this code works
-              showError(error.response.data.data);
+              showToast("error", error.response.data.data)
             })
         }
     },
@@ -407,7 +407,7 @@ export default {
           $('#pgCronModal').modal('hide')
         })
         .catch((error) => {
-          showError(error.response.data.data);
+          showToast("error", error.response.data.data)
         })
     }
   },

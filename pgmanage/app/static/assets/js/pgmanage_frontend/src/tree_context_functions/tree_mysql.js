@@ -33,6 +33,9 @@ import { createMessageModal } from "../notification_control";
 import { querySQL } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
+import { execAjax } from "../ajax_control";
+import axios from "axios";
+import { showToast } from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -370,33 +373,6 @@ function getTreeMysql(div) {
   autocomplete_btn.onchange = function () {
     toggleConnectionAutocomplete(autocomplete_btn_id);
   };
-
-  // tree.beforeContextMenuEvent = function(node, callback) {
-
-  //     var v_elements = [];
-  //     //Hooks
-  //     if (v_connTabControl.tag.hooks.mysqlTreeContextMenu.length>0) {
-  //       for (var i=0; i<v_connTabControl.tag.hooks.mysqlTreeContextMenu.length; i++)
-  //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.mysqlTreeContextMenu[i](node));
-  //     }
-
-  //     var v_customCallback = function() {
-  //       callback(v_elements);
-  //     }
-  //     v_customCallback();
-  // }
-}
-
-function afterNodeOpenedCallbackMysql(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length > 0) {
-    for (
-      var i = 0;
-      i < v_connTabControl.tag.hooks.mysqlTreeNodeOpen.length;
-      i++
-    )
-      v_connTabControl.tag.hooks.mysqlTreeNodeOpen[i](node);
-  }
 }
 
 /// <summary>
@@ -577,8 +553,6 @@ function getTreeDetailsMysql(node) {
         //v_connTabControl.tag.createMonitorDashboardTab();
         //startMonitorDashboard();
       }
-
-      afterNodeOpenedCallbackMysql(node);
     },
     function (p_return) {
       nodeOpenErrorMysql(p_return, node);
@@ -881,7 +855,7 @@ function TemplateSelectMysql(p_schema, p_table) {
       querySQL(0);
     },
     function (p_return) {
-      showError(p_return.v_data);
+      showToast("error", p_return.v_data)
       return "";
     },
     "box",
@@ -908,7 +882,7 @@ function TemplateInsertMysql(p_schema, p_table) {
       );
     },
     function (p_return) {
-      showError(p_return.v_data);
+      showToast("error", p_return.v_data)
       return "";
     },
     "box",
@@ -935,7 +909,7 @@ function TemplateUpdateMysql(p_schema, p_table) {
       );
     },
     function (p_return) {
-      showError(p_return.v_data);
+      showToast("error", p_return.v_data)
       return "";
     },
     "box",
@@ -972,7 +946,7 @@ function mysqlTerminateBackendConfirm(pid) {
           error.response.data.data
         );
       } else {
-        showError(error.response.data.data);
+        showToast("error", error.response.data.data)
       }
     });
 }

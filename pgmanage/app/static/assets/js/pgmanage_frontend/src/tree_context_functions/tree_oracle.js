@@ -34,6 +34,9 @@ import { createMessageModal } from '../notification_control'
 import { querySQL } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
+import { execAjax } from "../ajax_control";
+import axios from "axios";
+import { showToast } from "../notification_control";
 
 /// <summary>
 /// Retrieving tree.
@@ -536,22 +539,6 @@ function getTreeOracle(div) {
 
     let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
     autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
-
-    // tree.beforeContextMenuEvent = function(node, callback) {
-
-    //     var v_elements = [];
-    //     //Hooks
-    //     if (v_connTabControl.tag.hooks.oracleTreeContextMenu.length>0) {
-    //       for (var i=0; i<v_connTabControl.tag.hooks.oracleTreeContextMenu.length; i++)
-    //         v_elements = v_elements.concat(v_connTabControl.tag.hooks.oracleTreeContextMenu[i](node));
-    //     }
-
-    //     var v_customCallback = function() {
-    //       callback(v_elements);
-    //     }
-    //     v_customCallback();
-    // }
-
 }
 
 
@@ -574,17 +561,6 @@ function refreshTreeOracle(node) {
     } */ if (node.tag.type == 'server') {
         getTreeDetailsOracle(node);
     }
-    else {
-      afterNodeOpenedCallbackOracle(node);
-    }
-}
-
-function afterNodeOpenedCallbackOracle(node) {
-  //Hooks
-  if (v_connTabControl.tag.hooks.oracleTreeNodeOpen.length>0) {
-    for (var i=0; i<v_connTabControl.tag.hooks.oracleTreeNodeOpen.length; i++)
-      v_connTabControl.tag.hooks.oracleTreeNodeOpen[i](node);
-  }
 }
 
 /// <summary>
@@ -834,8 +810,6 @@ function getTreeDetailsOracle(node) {
               //v_connTabControl.tag.createMonitorDashboardTab();
               //startMonitorDashboard();
             }
-
-            afterNodeOpenedCallbackOracle(node);
 
         },
         function(p_return) {
@@ -1284,7 +1258,7 @@ function TemplateSelectOracle(p_schema, p_table) {
             querySQL(0);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1310,7 +1284,7 @@ function TemplateInsertOracle(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1336,7 +1310,7 @@ function TemplateUpdateOracle(p_schema, p_table) {
               p_return.v_data.v_template);
         },
         function(p_return) {
-            showError(p_return.v_data);
+            showToast("error", p_return.v_data)
             return '';
         },
         'box',
@@ -1374,7 +1348,7 @@ function oracleTerminateBackendConfirm(pid) {
               error.response.data.data
             );
           } else {
-            showError(error.response.data.data);
+            showToast("error", error.response.data.data)
           }
     })
 }

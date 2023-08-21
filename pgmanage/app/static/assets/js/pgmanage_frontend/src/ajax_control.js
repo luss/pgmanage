@@ -25,6 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { showAlert } from "./notification_control";
 
 //Number of active AJAX calls
 var v_calls_count = 0;
@@ -204,3 +205,5 @@ function reportOffline() {
 	showAlert('Webserver was shutdown, please restart it and reload the application.');
 	var v_status_img = document.getElementById("ajax_status");
 }
+
+export { startLoading, endLoading, getCookie, execAjax, csrfSafeMethod}
