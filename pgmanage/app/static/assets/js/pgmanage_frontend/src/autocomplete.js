@@ -1149,13 +1149,14 @@ function autocomplete_select_element(p_element) {
   //keyword element
   if (p_element.visible_index==null) {
     p_element.container.classList.add('omnidb__autocomplete__data-row--selected');
-
-    if (p_element.container.offsetTop<p_element.container.parentNode.scrollTop)
-      p_element.container.parentNode.scrollTop = p_element.container.offsetTop;
-    else {
-      var v_value = p_element.container.offsetTop + 22-80-2-p_element.container.parentNode.scrollTop;
-      if (v_value > 0) {
-        p_element.container.parentNode.scrollTop += v_value;
+    if(p_element.container.parentNode != null) {
+      if (p_element.container.offsetTop<p_element.container.parentNode.scrollTop)
+        p_element.container.parentNode.scrollTop = p_element.container.offsetTop;
+      else {
+        var v_value = p_element.container.offsetTop + 22-80-2-p_element.container.parentNode.scrollTop;
+        if (v_value > 0) {
+          p_element.container.parentNode.scrollTop += v_value;
+        }
       }
     }
   }
@@ -1210,7 +1211,7 @@ function close_autocomplete(p_additional_text) {
   }
   setTimeout(() => {
     v_autocomplete_object.div.style.display = 'none';
-  }, 1000)
+  }, 500)
 
   v_autocomplete_object.close_div.parentNode.removeChild(v_autocomplete_object.close_div);
 
