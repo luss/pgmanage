@@ -35,26 +35,9 @@ a:not([href]):not([tabindex]){
   background-color: #f8f9fa;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-/* Corner */
-::-webkit-scrollbar-corner {
-  background: none;
-}
-
 .omnidb__tab-menu--primary {
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-scrollbar-width: thin;
-  scrollbar-width: thin;
-  &::-webkit-scrollbar {
-    -webkit-scrollbar-width: thin;
-    scrollbar-width: thin;
-    width: 2px;
-  }
   width: 100px;
 }
 
@@ -1750,4 +1733,3 @@ body {
 @import 'themes/light';
 // @import './../lib/aimaraJS/scss/Aimara';
 @import '../daterangepicker/scss/daterangepicker';
-@import './pgmanage';

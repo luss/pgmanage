@@ -484,17 +484,6 @@ SOFTWARE.
     border-top-color: #484a55;
   }
 
-  /* SCROLL */
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: none;
-  }
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #47505D;
-    cursor: pointer;
-  }
-
   /* SCROLLBAR FIREFOX (new versions) */
   * {
     scrollbar-color: #47505D transparent;

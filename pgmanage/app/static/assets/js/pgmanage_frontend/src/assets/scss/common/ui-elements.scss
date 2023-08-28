@@ -7,3 +7,29 @@
 .border-radius {
     border-radius: $borderRadius;
 }
+
+::-webkit-scrollbar {
+    width: $scrollbarSize;
+    height: $scrollbarSize;
+
+    &-track {
+        background-color: transparent;
+    }
+
+    &-thumb {
+        background-color: rgba($secondaryGrey, 0.4);
+        border-radius: 2px;
+
+        &:hover {
+            background-color: rgba($secondaryGrey, 0.8);
+        }
+    }
+
+    &-button {
+        display: none;
+    }
+
+    &-corner {
+        background: transparent;
+    }
+}

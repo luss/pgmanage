@@ -1,7 +1,31 @@
+$theme-map: null; //important! do not delete this
+
+@import './common/themes.scss';
+@import './common/variables';
+@import './common/typography';
+@import './components/button';
+@import './components/dropdown';
+@import './components/accordion';
+@import './components/input';
+@import './components/modal';
+@import './components/tabs';
+@import './components/daterangepicker';
+@import './components/pagination';
+@import './components/card';
+@import './components/list-group';
+@import './components/alert';
+@import './common/ui-elements';
+@import './components/toasts';
+@import './components/context-menu-pgmanage';
+@import './components/cron-light';
+@import './components/pev2/pev2';
+@import './components/schema-editor';
+@import './components/vue-power-tree';
+
 body {
-    font-family: 'Poppins';
-    font-size: 0.875rem;
-    color: #16171E;
+    font-family: $fontFamily;
+    font-size: $fontSize;
+    color: $primaryDark;
 }
 
 .backup-tab-scrollable {
