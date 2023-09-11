@@ -9,7 +9,7 @@ import sqlparse
 from app.client_manager import client_manager
 from app.models.main import Connection, Shortcut, UserDetails
 from app.utils.crypto import make_hash
-from app.utils.decorators import database_required, user_authenticated
+from app.utils.decorators import database_required, database_required_new, user_authenticated
 from app.utils.key_manager import key_manager
 from app.utils.master_password import (
     reset_master_pass,
@@ -221,46 +221,39 @@ def renew_password(request, session):
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def draw_graph(request, v_database):
+@database_required_new(check_timeout=True, open_connection=True)
+def draw_graph(request, database):
     response_data = create_response_template()
-
-    data = request.data
-    complete = data["p_complete"]
-    schema = data["p_schema"]
+    schema = request.data["schema"]
 
     nodes = []
     edges = []
 
     try:
-        tables = v_database.QueryTables(False, schema)
+        tables = database.QueryTables(False, schema)
         for table in tables.Rows:
             node_data = {
                 "id": table["table_name"],
                 "label": table["table_name"],
                 "group": 1,
+                "columns": []
             }
 
-            if complete:
-                node_data["label"] += "\n"
-                columns = v_database.QueryTablesFields(
-                    table["table_name"], False, schema
-                )
-                for column in columns.Rows:
-                    node_data["label"] += (
-                        column["column_name"] + " : " + column["data_type"] + "\n"
-                    )
-
+            table_columns = database.QueryTablesFields(
+                table["table_name"], False, schema
+            ).Rows
+            node_data['columns'] =  list(({'name': c['column_name'], "type": c['data_type']} for c in table_columns))
             nodes.append(node_data)
 
-        data = v_database.QueryTablesForeignKeys(None, False, schema)
+        q_fks = database.QueryTablesForeignKeys(None, False, schema)
 
         curr_constraint = ""
         curr_from = ""
         curr_to = ""
         curr_to_schema = ""
 
-        for fk in data.Rows:
+        for fk in q_fks.Rows:
+            print(fk)
             if curr_constraint != "" and curr_constraint != fk["constraint_name"]:
                 edge = {
                     "from": curr_from,
@@ -269,8 +262,8 @@ def draw_graph(request, v_database):
                     "arrows": "to",
                 }
 
-                # FK referencing other schema, create a new node if it isn't in v_nodes list.
-                if v_database.v_schema != curr_to_schema:
+                # FK referencing other schema, create a new node if it isn't in the nodes list.
+                if database.v_schema != curr_to_schema:
                     found = False
                     for k in range(len(nodes) - 1, 0):
                         if nodes[k]["label"] == curr_to:
@@ -295,7 +288,7 @@ def draw_graph(request, v_database):
             edges.append(edge)
 
             # FK referencing other schema, create a new node if it isn't in v_nodes list.
-            if v_database.v_schema != curr_to_schema:
+            if database.v_schema != curr_to_schema:
                 found = False
 
                 for k in range(len(nodes) - 1, 0):
@@ -308,7 +301,7 @@ def draw_graph(request, v_database):
 
                     nodes.append(node)
 
-        response_data["v_data"] = {"v_nodes": nodes, "v_edges": edges}
+        response_data["v_data"] = {"nodes": nodes, "edges": edges}
 
     except Exception as exc:
         return error_response(message=str(exc), password_timeout=True)

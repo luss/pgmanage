@@ -264,41 +264,38 @@ function adjustQueryTabObjects(p_all_tabs) {
 function drawGraph(p_all, p_schema) {
 
 	execAjax('/draw_graph/',
-		JSON.stringify({"p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-										"p_tab_id": v_connTabControl.selectedTab.id,
-										"p_complete": p_all,
-										"p_schema": p_schema}),
-		function(p_return) {
-      let v_nodes = [];
-      let v_edges = [];
+		JSON.stringify({"database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+										"tab_id": v_connTabControl.selectedTab.id,
+										"complete": p_all,
+										"schema": p_schema}),
+		function(response) {
+      let nodes = [];
+      let edges = [];
 
-      for (var i=0; i<p_return.v_data.v_nodes.length; i++)
-      {
+      response.v_data.nodes.forEach((node) => {
+        nodes.push({
+          data: {
+            id: node.id,
+            label: node.label,
+            columns: node.columns,
+            type: 'table'
+          },
+          position: {},
+          classes: 'group' + node.group
+        })
+      })
 
-      	var v_node_object = new Object();
-				v_node_object.data = new Object();
-				v_node_object.position = new Object();
-				v_node_object.data.id = p_return.v_data.v_nodes[i].id;
-				v_node_object.data.label = p_return.v_data.v_nodes[i].label;
-				v_node_object.classes = 'group' + p_return.v_data.v_nodes[i].group;
-
-				v_nodes.push(v_node_object);
-
-      }
-
-      for (var i=0; i<p_return.v_data.v_edges.length; i++)
-      {
-
-      	var v_edge_object = new Object();
-				v_edge_object.data = new Object();
-				v_edge_object.data.source = p_return.v_data.v_edges[i].from;
-				v_edge_object.data.target = p_return.v_data.v_edges[i].to;
-				v_edge_object.data.label = p_return.v_data.v_edges[i].label;
-				v_edge_object.data.faveColor = '#9dbaea';
-				v_edge_object.data.arrowColor = '#9dbaea';
-				v_edges.push(v_edge_object);
-
-      }
+      response.v_data.edges.forEach((edge) => {
+        edges.push({
+          data: {
+            source: edge.from,
+            target: edge.to,
+            label: edge.label,
+            faveColor: '#9dbaea',
+            arrowColor: '#9dbaea'
+          }
+        })
+      })
       cytoscape.use(spread)
 			v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.network = window.cy = cytoscape({
 				container: v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.graph_div,
@@ -385,11 +382,11 @@ function drawGraph(p_all, p_schema) {
 					}
 				],
 
-				elements: {
-					nodes: v_nodes,
-					edges: v_edges
-				}
-			});
+        elements: {
+          nodes: nodes,
+          edges: edges
+        }
+      });
 		},
 		function(p_return) {
 			if (p_return.v_data.password_timeout) {

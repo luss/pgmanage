@@ -196,6 +196,13 @@ export default {
             ],
           },
           {
+            label: "ER Diagram",
+            icon: "fab cm-all fa-hubspot",
+            onClick: () => {
+              v_connTabControl.tag.createERDTab(this.selectedNode);
+            },
+          },
+          {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
