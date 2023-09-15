@@ -19,12 +19,15 @@ export default {
     database_name: String,
   },
   setup(props) {
+    if (typeof cytoscape("core", "nodeHtmlLabel") === "undefined")
+      nodeHtmlLabel(cytoscape);
   },
   data() {
     return {
-        nodes: [],
-        edges: [],
-        cy: {}
+      nodes: [],
+      edges: [],
+      cy: {},
+      layout: {}
     };
   },
   mounted() {
@@ -100,10 +103,6 @@ export default {
       return classes.join(' ')
     },
     initGraph() {
-      if (typeof cytoscape("core", "nodeHtmlLabel") === "undefined") {
-        nodeHtmlLabel(cytoscape);
-      }
-
       this.cy = cytoscape({
         container: this.$refs.cyContainer,
         boxSelectionEnabled: false,
@@ -158,12 +157,10 @@ export default {
         edge.target().data('columns', dstcols)
       })
 
-      let layout = this.cy.layout({
+      this.layout = this.cy.layout({
         name: 'grid',// circle:true, //or breadthfirst
-        nodeDimensionsIncludeLabels: true,
-        fit: true, // on every layout reposition of nodes, fit the viewport
-        padding: 1, // padding around the simulation\
-        spacingFactor: 0.8,
+        padding: 50, // padding around the simulation\
+        spacingFactor: 0.85,
       })
 
       this.cy.on('click', 'node', function (evt) {
@@ -184,12 +181,8 @@ export default {
             let coldivs = ''
             if (data.columns)
               coldivs = data.columns.map((c) => {
-                let dataAttr = ''
-                let colName = ''
-                if(c.cgid) {
-                  dataAttr = `data-cgid="${c.cgid}"`
-                  colName = c.is_fk ? `<a ${dataAttr} href="#" class="colname">${c.name}</a>` : `<span class="colname">${c.name}</span>`
-                }
+                let dataAttr = c.cgid ? `data-cgid="${c.cgid}"` : ''
+                let colName = c.is_fk ? `<a ${dataAttr} href="#" class="colname">${c.name}</a>` : `<span class="colname">${c.name}</span>`
                 return `<div ${dataAttr} class="nodeColumn ${this.columnClass(c)}">
                       ${colName}
                   <span class="coltype">${c.type}</span>
@@ -197,9 +190,7 @@ export default {
               }).join('')
 
             return `<div id="htmlLabel-${data.id}">
-                <div class="nodeTitle">
-                  ${data.label}
-                </div>
+                <div class="nodeTitle">${data.label}</div>
                 ${coldivs}
             </div>`;
           }).bind(this)
@@ -208,20 +199,26 @@ export default {
 
       function adjustSizes() {
         const padding = 2;
-        this[0].nodes().forEach((node) => {
-          let el = $(`#htmlLabel-${node.data().id}`)[0]
+        this.cy.nodes().forEach((node) => {
+          let el = document.querySelector(`#htmlLabel-${node.data().id}`)
           if (el) {
             node.style('width', el.parentElement.clientWidth + padding)
             node.style('height', el.parentElement.clientHeight + padding)
           }
         })
-        this[1].run()
-        this[2].style.visibility = 'visible'
+        this.layout.run()
+        this.cy.fit()
+        this.$refs.cyContainer.style.visibility = 'visible'
       }
 
-      // FIXME: do this on render complete instead of just pausing
-      setTimeout(adjustSizes.bind([this.cy, layout, this.$refs.cyContainer]), 100)
 
+      // FIXME: do this on render complete instead of just pausing
+      setTimeout(adjustSizes.bind(this), 100)
+      // not sure if we need it at all
+      // new ResizeObserver((function(){
+      //   this.cy.fit()
+      //   this.cy.center()
+      //   }).bind(this)).observe(this.$refs.cyContainer)
     },
   },
 };
