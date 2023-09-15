@@ -1267,11 +1267,16 @@ class PostgreSQL:
             else:
                 v_filter = "and quote_ident(rc.constraint_schema) not in ('information_schema','pg_catalog') "
 
-        if type(p_fkey) == list :
-            fkey_list = ', '.join(list(f'\'{str(e)}\'' for e in p_fkey))
-            v_filter = v_filter + "and quote_ident(kcu1.constraint_name) in ({0}) ".format(fkey_list)
+
+        if type(p_fkey) == list:
+            fkeys = p_fkey
         else:
-            v_filter = v_filter + "and quote_ident(kcu1.constraint_name) = '{0}' ".format(p_fkey)
+            fkeys = [p_fkey]
+
+        fkey_list = ', '.join(list(f'\'{str(e)}\'' for e in fkeys))
+
+        if fkey_list:
+            v_filter = v_filter + "and quote_ident(kcu1.constraint_name) in ({0}) ".format(fkey_list)
 
         return self.v_connection.Query('''
             select *
