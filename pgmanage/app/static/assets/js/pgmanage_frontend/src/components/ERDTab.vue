@@ -170,10 +170,8 @@ export default {
         if (evt.originalEvent) {
           const element = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
           if(element.dataset.cgid) {
-            let edge = this.cy().edges().filter(function( ele ){
-              return ele.data('cgid') === element.dataset.cgid;
-            })
-            setTimeout(function(){edge.select()}, 1)
+            let edge = this.cy().edges().filter(( ele ) => ele.data('cgid') === element.dataset.cgid)
+            setTimeout(() => {edge.select()}, 1)
           }
         }
       })
@@ -183,14 +181,15 @@ export default {
           query: 'node', // cytoscape query selector
           cssClass: 'erNode', // any classes will be as attribute of <div> container for every title
           tpl: (function(data) {
-            let coldivs = ""
+            let coldivs = ''
             if (data.columns)
               coldivs = data.columns.map((c) => {
                 let dataAttr = ''
-
-                if(c.cgid)
+                let colName = ''
+                if(c.cgid) {
                   dataAttr = `data-cgid="${c.cgid}"`
-                  let colName = c.is_fk ? `<a ${dataAttr} href="#" class="colname">${c.name}</a>` : `<span class="colname">${c.name}</span>`
+                  colName = c.is_fk ? `<a ${dataAttr} href="#" class="colname">${c.name}</a>` : `<span class="colname">${c.name}</span>`
+                }
                 return `<div ${dataAttr} class="nodeColumn ${this.columnClass(c)}">
                       ${colName}
                   <span class="coltype">${c.type}</span>
