@@ -1734,6 +1734,8 @@ body {
   min-width: 160px;
   min-height: 70px;
   padding: 8px;
+  padding-left: 20px;
+  padding-right: 20px;
 
   flex-direction: column;
   text-align: left;
@@ -1755,6 +1757,26 @@ body {
     color: $primaryDark;
     font-weight: $fontWeightBold;
   }
+
+  .nodeColumn.pkColumn:before {
+    font: var(--fa-font-solid);
+    font-size: 10px;
+    content: "\f084";
+    margin-left: -14px;
+    color: $primaryBlue;
+  }
+  .nodeColumn.fkColumn:before {
+    font: var(--fa-font-solid);
+    font-size: 10px;
+    content: "\f084";
+    margin-left: -14px;
+    color: $primaryMutedColor;
+  }
+
+  .nodeColumn.highlighted {
+    background: red;
+  }
+
   .nodeColumn {
     font-weight: $fontWeight;
     .colname {
@@ -1763,7 +1785,9 @@ body {
     .coltype {
       color: $primaryMutedColor;
     }
+    // margin-left: 15px;
   }
+
 }
 
 @import 'interface-icon';

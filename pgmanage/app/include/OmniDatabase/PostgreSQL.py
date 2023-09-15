@@ -968,7 +968,7 @@ class PostgreSQL:
     @lock_required
     def QueryCurrentSchema(self):
         return self.v_connection.Query('Select current_schema();', True)
-    
+
     @lock_required
     def QueryTables(self, p_all_schemas=False, p_schema=None):
         v_filter = ''
@@ -1266,7 +1266,13 @@ class PostgreSQL:
                 v_filter = "and quote_ident(rc.constraint_schema) not in ('information_schema','pg_catalog') and quote_ident(kcu1.table_name) = {0}".format(p_table)
             else:
                 v_filter = "and quote_ident(rc.constraint_schema) not in ('information_schema','pg_catalog') "
-        v_filter = v_filter + "and quote_ident(kcu1.constraint_name) = '{0}' ".format(p_fkey)
+
+        if type(p_fkey) == list :
+            fkey_list = ', '.join(list(f'\'{str(e)}\'' for e in p_fkey))
+            v_filter = v_filter + "and quote_ident(kcu1.constraint_name) in ({0}) ".format(fkey_list)
+        else:
+            v_filter = v_filter + "and quote_ident(kcu1.constraint_name) = '{0}' ".format(p_fkey)
+
         return self.v_connection.Query('''
             select *
             from (select distinct
