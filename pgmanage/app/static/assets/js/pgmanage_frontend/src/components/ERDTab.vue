@@ -95,9 +95,9 @@ export default {
     columnClass(column) {
       let classes = []
       if(column.is_pk)
-        classes.push('pkColumn')
+        classes.push('pk-column')
       if(column.is_fk)
-        classes.push('fkColumn')
+        classes.push('fk-column')
       if(column.is_highlighed)
         classes.push('highlighted')
       return classes.join(' ')
@@ -113,6 +113,7 @@ export default {
             style: {
               "shape": "round-rectangle",
               "background-color": "#F8FAFC",
+              "background-opacity": 0,
               "height": 40,
               "width": 140,
               shape: "round-rectangle",
@@ -131,9 +132,9 @@ export default {
             selector: 'edge:selected',
             style: {
               'width': 4,
-              'line-color': '#1560AD',
-              'target-arrow-color': '#1560AD',
-              'source-arrow-color': '#1560AD',
+              'line-color': '#F76707',
+              'target-arrow-color': '#F76707',
+              'source-arrow-color': '#F76707',
             }
           },
         ],
@@ -176,23 +177,25 @@ export default {
       this.cy.nodeHtmlLabel(
         [{
           query: 'node', // cytoscape query selector
-          cssClass: 'erNode', // any classes will be as attribute of <div> container for every title
+          cssClass: 'erd-card', // any classes will be as attribute of <div> container for every title
           tpl: (function(data) {
             let coldivs = ''
             if (data.columns)
               coldivs = data.columns.map((c) => {
                 let dataAttr = c.cgid ? `data-cgid="${c.cgid}"` : ''
-                let colName = c.is_fk ? `<a ${dataAttr} href="#" class="colname">${c.name}</a>` : `<span class="colname">${c.name}</span>`
-                return `<div ${dataAttr} class="nodeColumn ${this.columnClass(c)}">
+                let colName = c.is_fk ?
+                `<a ${dataAttr} href="#" class="erd-card__column_name">${c.name}</a>` :
+                `<span class="erd-card__column_name">${c.name}</span>`
+                return `<div ${dataAttr} class="erd-card__column ${this.columnClass(c)}">
                       ${colName}
-                  <span class="coltype">${c.type}</span>
+                  <span class="erd-card__column_type">${c.type}</span>
                 </div>`
               }).join('')
 
-            return `<div id="htmlLabel-${data.id}">
-                <div class="nodeTitle">${data.label}</div>
+            return `<div class="erd-card__wrap"><div id="htmlLabel-${data.id}">
+                <h3 class="erd-card__title clipped-text" title="${data.label}">${data.label}</h3>
                 ${coldivs}
-            </div>`;
+            </div></div>`;
           }).bind(this)
         }],
       )
