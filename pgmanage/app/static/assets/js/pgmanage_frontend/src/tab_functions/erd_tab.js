@@ -8,7 +8,7 @@ import ERDTab from "../components/ERDTab.vue";
 import { beforeCloseTab } from "../create_tab_functions";
 
 export let  createERDTabFunction = function(node) {
-    let tab_name = `ERD: ${node.data.schema}`
+    let tab_name = node.data.schema ? `ERD: ${node.data.schema}` : 'ERD'
     v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
     let tab = v_connTabControl.selectedTab.tag.tabControl.createTab({

@@ -224,9 +224,10 @@ def renew_password(request, session):
 @database_required_new(check_timeout=True, open_connection=True)
 def draw_graph(request, database):
     response_data = create_response_template()
-    schema = request.data["schema"]
+    schema = request.data.get("schema", '')
     edge_dict = {}
     node_dict = {}
+
     try:
         tables = database.QueryTables(False, schema)
 
@@ -267,7 +268,6 @@ def draw_graph(request, database):
                 }
 
         q_fkcols = database.QueryTablesForeignKeysColumns(list(edge_dict.keys()), None, False, schema)
-
         for fkcol in q_fkcols.Rows:
             cgid = fkcol['constraint_name']
             edge = edge_dict[fkcol['constraint_name']]
