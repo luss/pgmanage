@@ -8,7 +8,17 @@ import ERDTab from "../components/ERDTab.vue";
 import { beforeCloseTab } from "../create_tab_functions";
 
 export let  createERDTabFunction = function(node) {
-    let tab_name = node.data.schema ? `ERD: ${node.data.schema}` : 'ERD'
+    let schema = ''
+    switch(node.data.type){
+      case 'schema':
+        schema = node.data.schema
+        break
+      case 'database':
+        schema = node.data.database
+        break
+    }
+
+    let tab_name = schema ? `ERD: ${schema}` : 'ERD'
     v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
     let tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
@@ -51,7 +61,7 @@ export let  createERDTabFunction = function(node) {
         database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
         database_name: v_connTabControl.selectedTab.tag.selectedDatabase,
         tab_id: v_connTabControl.selectedTab.id,
-        schema: node.data.schema,
+        schema: schema,
     });
 
     tab.app = app;
