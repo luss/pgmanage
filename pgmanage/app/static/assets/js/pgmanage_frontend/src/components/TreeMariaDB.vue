@@ -104,6 +104,13 @@ export default {
             ],
           },
           {
+            label: "ER Diagram",
+            icon: "fab cm-all fa-hubspot",
+            onClick: () => {
+              v_connTabControl.tag.createERDTab(this.selectedNode);
+            },
+          },
+          {
             label: "Alter Database",
             icon: "fas cm-all fa-edit",
             onClick: () => {
