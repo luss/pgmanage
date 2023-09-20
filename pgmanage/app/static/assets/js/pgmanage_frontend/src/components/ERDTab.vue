@@ -4,8 +4,11 @@
 
 <script>
 import axios from 'axios'
+import ShortUniqueId from 'short-unique-id'
 import cytoscape from 'cytoscape';
 import nodeHtmlLabel from 'cytoscape-node-html-label'
+
+// const uid = new ShortUniqueId({dictionary: 'alpha_upper', length: 4})
 
 // TODO: add fit/pan/zoom buttons
 // TODO: handlecontainer resize
@@ -27,11 +30,13 @@ export default {
       nodes: [],
       edges: [],
       cy: {},
-      layout: {}
+      layout: {},
+      instance_uid: ''
     };
   },
   mounted() {
     this.loadSchemaGraph()
+    this.instance_uid = new ShortUniqueId({dictionary: 'alpha_upper', length: 4}).randomUUID()
   },
   methods: {
     loadSchemaGraph() {
@@ -193,7 +198,7 @@ export default {
                 </div>`
               }).join('')
 
-            return `<div class="erd-card__wrap"><div id="htmlLabel-${data.html_id}">
+            return `<div class="erd-card__wrap"><div id="${this.instance_uid}-${data.html_id}">
                 <h3 class="erd-card__title clipped-text" title="${data.label}">${data.label}</h3>
                 ${coldivs}
             </div></div>`;
@@ -204,7 +209,7 @@ export default {
       function adjustSizes() {
         const padding = 2;
         this.cy.nodes().forEach((node) => {
-          let el = document.querySelector(`#htmlLabel-${node.data().html_id}`)
+          let el = document.querySelector(`#${this.instance_uid}-${node.data().html_id}`)
           if (el) {
             node.style('width', el.parentElement.clientWidth + padding)
             node.style('height', el.parentElement.clientHeight + padding)
