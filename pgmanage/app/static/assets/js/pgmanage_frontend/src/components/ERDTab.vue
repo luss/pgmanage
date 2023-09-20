@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100vh; visibility: hidden" ref="cyContainer"></div>
+  <div style="width: 100%; height: calc(100vh - 70px); visibility: hidden" ref="cyContainer"></div>
 </template>
 
 <script>
