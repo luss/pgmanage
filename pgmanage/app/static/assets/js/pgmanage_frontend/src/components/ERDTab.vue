@@ -45,6 +45,7 @@ export default {
           {
             data: {
               id: node.id,
+              html_id: node.id.replace(/[^a-zA-Z_.-:]+/, '_'),
               label: node.label,
               columns: node.columns.map((column) => (
                 {
@@ -159,8 +160,8 @@ export default {
       })
 
       this.layout = this.cy.layout({
-        name: 'grid',// circle:true, //or breadthfirst
-        padding: 50, // padding around the simulation\
+        name: 'grid',
+        padding: 50,
         spacingFactor: 0.85,
       })
 
@@ -176,8 +177,8 @@ export default {
 
       this.cy.nodeHtmlLabel(
         [{
-          query: 'node', // cytoscape query selector
-          cssClass: 'erd-card', // any classes will be as attribute of <div> container for every title
+          query: 'node',
+          cssClass: 'erd-card',
           tpl: (function(data) {
             let coldivs = ''
             if (data.columns)
@@ -192,7 +193,7 @@ export default {
                 </div>`
               }).join('')
 
-            return `<div class="erd-card__wrap"><div id="htmlLabel-${data.id}">
+            return `<div class="erd-card__wrap"><div id="htmlLabel-${data.html_id}">
                 <h3 class="erd-card__title clipped-text" title="${data.label}">${data.label}</h3>
                 ${coldivs}
             </div></div>`;
@@ -203,7 +204,7 @@ export default {
       function adjustSizes() {
         const padding = 2;
         this.cy.nodes().forEach((node) => {
-          let el = document.querySelector(`#htmlLabel-${node.data().id}`)
+          let el = document.querySelector(`#htmlLabel-${node.data().html_id}`)
           if (el) {
             node.style('width', el.parentElement.clientWidth + padding)
             node.style('height', el.parentElement.clientHeight + padding)

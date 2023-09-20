@@ -72,7 +72,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab(this.selectedNode);
+              v_connTabControl.tag.createERDTab();
             },
           },
           this.cmRefreshObject,
