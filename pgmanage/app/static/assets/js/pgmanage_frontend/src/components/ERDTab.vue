@@ -92,6 +92,7 @@ export default {
         'character varying': 'varchar',
         'timestamp with time zone': 'timestamptz',
         'timestamp without time zone': 'timestamp',
+        'time without time zone': 'time',
         'time with time zone': 'timetz',
         'character': 'char',
         'boolean': 'bool'
