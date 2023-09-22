@@ -92,7 +92,7 @@ export default {
         customTypes: [],
         localTable: {},
         initialTable: {
-          tableName: 'newTable',
+          tableName: 'new_table',
           schema: '',
           columns: [{
             dataType: 'autoincrement',
