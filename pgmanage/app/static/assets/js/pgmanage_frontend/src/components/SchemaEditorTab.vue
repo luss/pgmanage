@@ -331,9 +331,14 @@ export default {
         showToast("success", msg)
 
         emitter.emit(`schemaChanged_${this.tree.id}`, { database_name: this.database_name, schema_name: this.localTable.schema })
-        // load table changes into UI
-        if(this.mode === 'alter')
+        // ALTER: load table changes into UI
+        if(this.mode === 'alter') {
           this.loadTableDefinition()
+        } else {
+          // CREATE:reset the editor
+          this.initialTable.schema = this.$props.schema
+          this.localTable = {...this.initialTable}
+        }
       }
       this.queryIsRunning = false
     },
