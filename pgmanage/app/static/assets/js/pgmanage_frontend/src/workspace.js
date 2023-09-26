@@ -35,28 +35,27 @@ import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
 import { getTreeOracle } from './tree_context_functions/tree_oracle'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
-import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt, showPasswordPrompt } from './passwords.js'
+import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createRequest } from './long_polling'
 import { v_queryRequestCodes, checkQueryStatus } from './query'
 import { checkDebugStatus } from './debug'
-import { checkConsoleStatus } from './console'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
 import { createTabControl } from './tabs'
-import { startLoading, execAjax } from './ajax_control'
+import { startLoading } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
-import cytoscape from 'cytoscape';
-import spread from 'cytoscape-spread'
+import { emitter } from './emitter'
 
 let v_start_height;
 /// <summary>
 /// Startup function.
 /// </summary>
 $(function () {
+  settingsModalInit()
 
   // Instantiating outer tab component.
   v_connTabControl = createTabControl({
@@ -139,7 +138,6 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip({animation:true});
 
   connectionsModalInit()
-  settingsModalInit()
 });
 
 function queueChangeActiveDatabaseThreadSafe(p_data) {
@@ -728,8 +726,11 @@ function refreshHeights(p_all) {
     if (v_connTabControl.selectedTab.tag.tabControl != null && v_connTabControl.selectedTab.tag.tabControl.selectedTab) {
       var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 
-      if (v_tab_tag.mode=='console' || v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_dashboard' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='query' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
-        v_tab_tag.resize();
+      if (v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_dashboard' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='query' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
+          v_tab_tag.resize();
+      }
+      else if (v_tab_tag.mode === 'console') {
+        emitter.emit(`${v_tab_tag.tab_id}_resize`)
       }
       // else if (v_tab_tag.mode=='query_history') {
       //   v_tab_tag.div_result.style.height = window.innerHeight - $(v_tab_tag.div_result).offset().top - (1.75)*v_font_size + 'px';
@@ -802,7 +803,6 @@ function refreshTreeHeight() {
 }
 
 function checkTabStatus(v_tab) {
-
 	if (v_tab.tag.tabControl.selectedTab.tag.mode=='query')
 		checkQueryStatus(v_tab.tag.tabControl.selectedTab);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='edit')
@@ -810,8 +810,7 @@ function checkTabStatus(v_tab) {
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='debug')
 		checkDebugStatus(v_tab.tag.tabControl.selectedTab);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='console')
-		checkConsoleStatus(v_tab.tag.tabControl.selectedTab);
-
+    emitter.emit(`${v_tab.tag.tabControl.selectedTab.id}_check_console_status`);
 }
 
 /// <summary>
@@ -1039,7 +1038,7 @@ function showMenuNewTab(e) {
 			onClick: function() {
 				v_connTabControl.tag.createConsoleTab();
 			}
-		}
+		},
 	];
 
 	if (v_connTabControl.selectedTab.tag.selectedDBMS=='postgresql' ||
@@ -1245,6 +1244,7 @@ function uiCopyTextToClipboard(p_value) {
 function toggleConnectionAutocomplete(p_toggler_id) {
   let checked = document.getElementById(p_toggler_id).checked;
   v_connTabControl.selectedTab.tag.enable_autocomplete = (checked);
+  emitter.emit(`${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_toggle_autocomplete`, checked)
 }
 
 export {
@@ -1268,5 +1268,6 @@ export {
   resizeVertical,
   resizeSnippetHorizontal,
   toggleConnectionAutocomplete,
-  toggleTreeContainer
+  toggleTreeContainer,
+  uiCopyTextToClipboard
 };

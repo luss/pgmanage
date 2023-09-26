@@ -3,7 +3,6 @@ import ShortUniqueId from 'short-unique-id';
 
 import { terminalReturn } from "./terminal";
 import { querySQLReturn, cancelSQLTab, querySQL, v_queryResponseCodes } from "./query";
-import { consoleReturn, cancelConsoleTab, consoleSQL } from "./console";
 import { queryEditDataReturn, saveEditDataReturn, cancelEditDataTab } from "./tree_context_functions/edit_data";
 import { debugResponse } from "./debug";
 import { showPasswordPrompt } from "./passwords";
@@ -109,10 +108,9 @@ function polling_response(message) {
     }
     case parseInt(v_queryResponseCodes.ConsoleResult): {
       if (context) {
-        context.tab_tag.tempData = context.tab_tag.tempData += message.v_data.v_data;
         if (message.v_data.v_last_block || message.v_error) {
-          message.v_data.v_data = [];
-          consoleReturn(message, context);
+          context.callback(message, context)
+          
           //Remove context
           removeContext(context_code);
         }
@@ -210,14 +208,10 @@ function QueryPasswordRequired(p_context, p_message) {
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {
-				cancelConsoleTab(p_context.tab_tag);
-				p_context.tab_tag.editor_input.setValue(p_context.tab_tag.last_command);
-        p_context.tab_tag.editor_input.clearSelection();
-				consoleSQL(p_context.check_command,
-									 p_context.mode);
+        p_context.passwordSuccessCallback(p_context)
 			},
 			function() {
-				cancelConsoleTab(p_context.tab_tag);
+        p_context.passwordFailCalback(p_context.tab_tag)
 			},
 			p_message
 		);
