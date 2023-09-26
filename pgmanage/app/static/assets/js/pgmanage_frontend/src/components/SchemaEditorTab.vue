@@ -362,7 +362,7 @@ export default {
       return this.mode !== 'alter' && this.dialectData.hasSchema
     },
     commentable() {
-      return this.mode !== 'alter' && this.dialectData.hasComments
+      return this.dialectData.hasComments
     },
     getMode() {
       return this.mode
