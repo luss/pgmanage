@@ -966,6 +966,10 @@ class PostgreSQL:
         ''', True)
 
     @lock_required
+    def QueryCurrentSchema(self):
+        return self.v_connection.Query('Select current_schema();', True)
+
+    @lock_required
     def QueryTables(self, p_all_schemas=False, p_schema=None):
         v_filter = ''
         if not p_all_schemas:
@@ -1103,6 +1107,42 @@ class PostgreSQL:
         '''.format(v_filter), True)
 
     @lock_required
+    def QueryTableDefinition(self, table=None, schema=None):
+        in_schema = schema if schema else self.v_schema
+
+        return self.v_connection.Query('''
+            SELECT
+            table_schema,
+            table_name,
+            column_name,
+            is_nullable,
+            ordinal_position,
+            column_default,
+            CASE
+                WHEN character_maximum_length is not null  and udt_name != 'text'
+                THEN CONCAT(udt_name, concat('(', concat(character_maximum_length::varchar(255), ')')))
+                ELSE udt_name
+            END as data_type,
+            pg_catalog.col_description(format('%s.%s',isc.table_schema,isc.table_name)::regclass::oid,isc.ordinal_position) as comment
+            FROM information_schema.columns isc
+            WHERE table_schema = '{0}' AND table_name = '{1}'
+            ORDER BY ordinal_position
+        '''.format(in_schema, table), True)
+
+    @lock_required
+    def QueryTablePKColumns(self, table=None, schema=None):
+        in_schema = schema if schema else self.v_schema
+
+        return self.v_connection.Query('''
+            SELECT a.attname as column_name
+            FROM   pg_index i
+            JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                                AND a.attnum = ANY(i.indkey)
+            WHERE  i.indrelid = ('{0}' || '.' || quote_ident('{1}'))::regclass
+            AND    i.indisprimary;
+        '''.format(in_schema, table), True)
+
+    @lock_required
     def QueryTablesForeignKeys(self, p_table=None, p_all_schemas=False, p_schema=None):
         v_filter = ''
         if not p_all_schemas:
@@ -1223,7 +1263,18 @@ class PostgreSQL:
                 v_filter = "and quote_ident(rc.constraint_schema) not in ('information_schema','pg_catalog') and quote_ident(kcu1.table_name) = {0}".format(p_table)
             else:
                 v_filter = "and quote_ident(rc.constraint_schema) not in ('information_schema','pg_catalog') "
-        v_filter = v_filter + "and quote_ident(kcu1.constraint_name) = '{0}' ".format(p_fkey)
+
+
+        if type(p_fkey) == list:
+            fkeys = p_fkey
+        else:
+            fkeys = [p_fkey]
+
+        fkey_list = ', '.join(list(f'\'{str(e)}\'' for e in fkeys))
+
+        if fkey_list:
+            v_filter = v_filter + "and quote_ident(kcu1.constraint_name) in ({0}) ".format(fkey_list)
+
         return self.v_connection.Query('''
             select *
             from (select distinct

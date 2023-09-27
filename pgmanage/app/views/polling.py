@@ -1158,7 +1158,7 @@ def thread_console(self,args):
 
                         v_database.v_connection.ClearNotices()
                         v_database.v_connection.v_start=True
-                        v_data1 = v_database.v_connection.Special(sql);
+                        v_data1 = v_database.v_connection.Special(sql)
 
                         v_notices = v_database.v_connection.GetNotices()
                         v_notices_text = ''
@@ -1196,7 +1196,8 @@ def thread_console(self,args):
             v_response['v_data'] = {
                 'v_data' : v_data_return,
                 'v_last_block': True,
-                'v_duration': v_duration
+                'v_duration': v_duration,
+                'v_con_status': v_database.v_connection.GetConStatus(),
             }
 
             #send data in chunks to avoid blocking the websocket server

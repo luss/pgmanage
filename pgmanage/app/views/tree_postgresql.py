@@ -155,9 +155,13 @@ def get_database_objects(request, database):
     )
 
     try:
+        current_schema = "public"
+        schema = database.QueryCurrentSchema().Rows
+        if schema:
+            [current_schema] = schema[0]
         extensions = database.QueryExtensions().Rows
         has_pg_cron = len(list(filter(version_filter, extensions))) > 0
-        data = {"has_pg_cron": has_pg_cron}
+        data = {"has_pg_cron": has_pg_cron, "current_schema": current_schema}
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=400)
 
@@ -232,6 +236,34 @@ def get_columns(request, database):
 
     return JsonResponse(data=list_columns, safe=False)
 
+
+
+@user_authenticated
+@database_required_new(check_timeout = True, open_connection = True)
+def get_table_definition(request, v_database):
+    data = request.data
+    table = data['table']
+    schema = data['schema']
+
+    columns = []
+    try:
+        q_primaries = v_database.QueryTablePKColumns(table, schema)
+        pk_column_names = [x[0] for x in q_primaries.Rows]
+        q_definition = v_database.QueryTableDefinition(table, schema)
+        for col in q_definition.Rows:
+            column_data = {
+                'name': col['column_name'],
+                'data_type': col['data_type'],
+                'default_value': col['column_default'],
+                'nullable': col['is_nullable'] != 'NO',
+                'is_primary': col['column_name'] in pk_column_names,
+                'comment': col['comment']
+            }
+            columns.append(column_data)
+    except Exception as exc:
+        return JsonResponse(data={'data': str(exc)}, status=400)
+
+    return JsonResponse(data={'data': columns})
 
 @user_authenticated
 @database_required_new(check_timeout=True, open_connection=True)

@@ -40,6 +40,12 @@ echo -n "Switching to Desktop Mode... "
 sed -i -e 's/DESKTOP_MODE = False/DESKTOP_MODE = True/g' pgmanage/custom_settings.py
 echo "Done."
 
+# building vite bundle
+cd app/static/assets/js/pgmanage_frontend/
+npm install
+npm run build
+cd ../../../../../
+
 rm -rf pgmanage.db pgmanage.log
 touch pgmanage.db
 
