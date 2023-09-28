@@ -1025,6 +1025,13 @@ function showMenuNewTabOuter(e) {
 
 function showMenuNewTab(e) {
 	var v_option_list = [
+    {
+			label: 'Query Tab New',
+			icon: 'fas cm-all fa-search',
+			onClick: function() {
+				v_connTabControl.tag.createQueryTabNew();
+			}
+		},
 		{
 			label: 'Query Tab',
 			icon: 'fas cm-all fa-search',

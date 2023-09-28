@@ -40,6 +40,7 @@ import ContextMenu from '@imengyu/vue3-context-menu'
 import { createDebuggerTabFunction } from './tab_functions/inner_debugger_tab'
 import { showConfirm } from './notification_control'
 import { createConsoleTabFunction } from './tab_functions/inner_console_tab'
+import { createQueryTabFunction } from './tab_functions/inner_query_tab_vue'
 
 function initCreateTabFunctions() {
 
@@ -421,6 +422,7 @@ function initCreateTabFunctions() {
 
   // Functions to create tabs inside a connection tab
 	v_connTabControl.tag.createQueryTab = v_createQueryTabFunction;
+	v_connTabControl.tag.createQueryTabNew = createQueryTabFunction;
   v_connTabControl.tag.createConsoleTab = createConsoleTabFunction;
 
 //   v_connTabControl.tag.createWebsiteTab = v_createWebsiteTabFunction;
