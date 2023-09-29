@@ -1051,7 +1051,7 @@ def thread_query(self,args):
                 }
                 v_response['v_data'] = {
                     'position': v_database.GetErrorPosition(str(exc)),
-                    'message' : str(exc).replace('\n','<br>'),
+                    'message' : str(exc),
                     'v_duration': v_duration,
                     'v_notices': v_notices_text,
                     'v_notices_length': len(v_notices),
