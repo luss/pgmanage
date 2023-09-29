@@ -55,6 +55,8 @@ export let createQueryTabFunction = function(name="Query", tab_db_id, tab_db_nam
                                   :tab-id="tabId" 
                                   :database-index="databaseIndex"
                                   :dialect="dialect"
+                                  :database-name="databaseName"
+                                  :init-tab-database-id="initTabDatabaseId"
                                   >
                                 </query-tab>`;
 
@@ -68,6 +70,8 @@ export let createQueryTabFunction = function(name="Query", tab_db_id, tab_db_nam
         tabId: tab.id,
         databaseIndex: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
         dialect: v_connTabControl.selectedTab.tag.selectedDBMS,
+        databaseName: !!tab_db_name ? tab_db_name : v_connTabControl.selectedTab.tag.selectedDatabase,
+        initTabDatabaseId: !!tab_db_id ? tab_db_id : null
       };
     },
   });
@@ -79,6 +83,11 @@ export let createQueryTabFunction = function(name="Query", tab_db_id, tab_db_nam
   let tag = {
     tab_id: tab.id,
     mode: 'query',
+    tab_loading_span: tab_loading_span,
+    tab_check_span: tab_check_span,
+    tab_title_span: tab_title_span,
+    tabControl: v_connTabControl.selectedTab.tag.tabControl,
+    connTab: v_connTabControl.selectedTab,
   }
 
   tab.tag = tag

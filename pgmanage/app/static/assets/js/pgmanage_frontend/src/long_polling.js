@@ -89,13 +89,19 @@ function polling_response(message) {
       if (context) {
         SetAcked(context);
         if (!message.v_error || message.v_data.v_chunks) {
-          if(context.tab_tag.tempData)
+          // temporary development workaround
+          if (!context.vue) {
             context.tab_tag.tempData = context.tab_tag.tempData.concat(message.v_data.v_data);
+          }
         }
         if (!message.v_data.v_chunks || message.v_data.v_last_block || message.v_error) {
-          message.v_data.v_data = [];
+          if (!context.vue) {
+            message.v_data.v_data = [];
+          }
           if(context.simple && context.callback!=null) { //used by schema editor only, dont run any legacy rendering for simple requests
             context.callback(message)
+          } else if (context.vue) {
+            context.callback(message, context)
           } else {
             querySQLReturn(message, context);
           }
