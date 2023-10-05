@@ -88,13 +88,16 @@ function polling_response(message) {
     case parseInt(v_queryResponseCodes.QueryResult): {
       if (context) {
         SetAcked(context);
-        if (!message.v_error || message.v_data.v_chunks) {
+        // temporary development workaround, 
+        if (!message.v_error || message.v_data.chunks || message.v_data.v_chunks) {
           // temporary development workaround
           if (!context.vue) {
             context.tab_tag.tempData = context.tab_tag.tempData.concat(message.v_data.v_data);
           }
         }
-        if (!message.v_data.v_chunks || message.v_data.v_last_block || message.v_error) {
+        // temporary development workaround, 
+        if (!message.v_data.chunks || message.v_data.last_block || message.v_error
+            || !message.v_data.v_chunks || message.v_data.v_last_block) {
           if (!context.vue) {
             message.v_data.v_data = [];
           }

@@ -59,28 +59,28 @@
 
           <!-- Query ACTIONS BUTTONS-->
           <button :id="`bt_fetch_more_${tabId}`" class="btn btn-sm btn-secondary" title="Run" v-if="showFetchButtons"
-            @click="querySQL(1)">
+            @click="querySQL(queryModes.FETCH_MORE)">
             Fetch More
           </button>
 
           <button :id="`bt_fetch_all_${tabId}`" class="btn btn-sm btn-secondary" title="Run" v-if="showFetchButtons"
-            @click="querySQL(2)">
+            @click="querySQL(queryModes.FETCH_ALL)">
             Fetch all
           </button>
 
           <template v-if="activeTransaction">
-            <button :id="`bt_commit_${tabId}`" class="btn btn-sm btn-primary" title="Run">
+            <button :id="`bt_commit_${tabId}`" class="btn btn-sm btn-primary" title="Run"
+              @click="querySQL(queryModes.COMMIT)">
               Commit
             </button>
 
-            <button :id="`bt_rollback_${tabId}`" class="btn btn-sm btn-secondary" title="Run">
+            <button :id="`bt_rollback_${tabId}`" class="btn btn-sm btn-secondary" title="Run"
+              @click="querySQL(queryModes.ROLLBACK)">
               Rollback
             </button>
           </template>
 
-          <button :id="`bt_cancel_${tabId}`" class="btn btn-sm btn-danger" title="Cancel" style="display: none">
-            Cancel
-          </button>
+          <CancelButton v-if="executingState" :tab-id="tabId" :conn-id="connId" @cancelled="cancelSQLTab()" />
 
           <!-- QUERY INFO DIV-->
           <div :id="`div_query_info_${tabId}`">
@@ -146,6 +146,11 @@
                   <template v-else-if="errorMessage" class="error_text" style="white-space: pre">
                     {{ errorMessage }}
                   </template>
+                  <template v-else-if="queryInfoText">
+                    <div class="query_info">
+                      {{ queryInfoText }}
+                    </div>
+                  </template>
                   <template v-else>
                     <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
                     <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
@@ -188,30 +193,15 @@ import { indentSQLMixin } from "../mixins/indent_sql";
 import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { v_queryRequestCodes } from "../query";
+import { v_queryRequestCodes, refreshTreeNode } from "../query";
 import { Plan } from "pev2";
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
+import { queryModes, queryState, tabStatusMap } from "../constants";
+import CancelButton from "./CancelSQLButton.vue";
 
 // register Handsontable's modules
 registerAllModules();
-
-/// <summary>
-/// Query state
-/// </summary>
-const queryState = {
-  Idle: 0,
-  Executing: 1,
-  Ready: 2,
-};
-
-const tabStatusMap = {
-  NOT_CONNECTED: 0,
-  IDLE: 1,
-  RUNNING: 2,
-  IDLE_IN_TRANSACTION: 3,
-  IDLE_IN_TRANSACTION_ABORTED: 4,
-};
 
 export default {
   name: "QueryTab",
@@ -221,6 +211,7 @@ export default {
     Pane,
     pev2: Plan,
     HotTable,
+    CancelButton,
   },
   props: {
     connId: String,
@@ -241,7 +232,6 @@ export default {
       context: "",
       tabDatabaseId: this.initTabDatabaseId,
       cancelled: false,
-      activeTransaction: false,
       enableExplainButtons: false,
       query: "",
       plan: "",
@@ -266,7 +256,26 @@ export default {
         fillHandle: false,
         manualColumnResize: true,
         licenseKey: "non-commercial-and-evaluation",
+        contextMenu: {
+          items: {
+            copy: {
+              name() {
+                return '<div class="position-absolute"><i class="fas fa-copy cm-all align-middle"></i></div><div class="pl-5">Copy</div>';
+              },
+            },
+            view_data: {
+              name() {
+                return '<div class="position-absolute"><i class="fas fa-edit cm-all align-middle"></i></div><div class="pl-5">View Content</div>';
+              },
+              callback(key, selection, clickEvent) {
+                //TODO need to change cellDataModal function
+                // cellDataModal(this,options[0].start.row,options[0].start.col,this.getDataAtCell(options[0].start.row,options[0].start.col),false);
+              },
+            },
+          },
+        },
       },
+      queryInfoText: "",
     };
   },
   computed: {
@@ -275,6 +284,9 @@ export default {
     },
     idleState() {
       return this.queryState === queryState.Idle;
+    },
+    executingState() {
+      return this.queryState === queryState.Executing;
     },
     statusText() {
       const statusMap = {
@@ -305,6 +317,15 @@ export default {
         "omnis__circle-waves--idle": this.tabStatus === tabStatusMap.IDLE,
         "omnis__circle-waves--running": this.tabStatus === tabStatusMap.RUNNING,
       };
+    },
+    activeTransaction() {
+      return [
+        tabStatusMap.IDLE_IN_TRANSACTION,
+        tabStatusMap.IDLE_IN_TRANSACTION_ABORTED,
+      ].includes(this.tabStatus);
+    },
+    queryModes() {
+      return queryModes;
     },
   },
   watch: {
@@ -369,6 +390,8 @@ export default {
       this.cancelled = false;
       this.exportFileName = "";
       this.exportDownloadName = "";
+      this.queryInfoText = "";
+      this.showFetchButtons = false;
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
@@ -377,20 +400,20 @@ export default {
           showToast("info", "Please provice a string.");
         } else {
           let message_data = {
-            v_sql_cmd: query,
-            v_mode: mode,
-            v_autocommit: this.autocommit,
+            sql_cmd: query,
+            mode: mode,
+            autocommit: this.autocommit,
             v_db_index: this.databaseIndex,
             v_conn_tab_id: this.connId,
             v_tab_id: this.tabId,
-            v_tab_db_id: this.tabDatabaseId,
-            v_sql_save: save_query,
+            tab_db_id: this.tabDatabaseId,
+            sql_save: save_query,
             database_name: this.databaseName,
-            v_cmd_type: cmd_type, // this is need for distinguish between export and normal query
-            v_all_data: all_data, // needed
-            v_log_query: log_query,
+            cmd_type: cmd_type,
+            all_data: all_data, // maybe not needed, it is used only by export command
+            log_query: log_query,
             // change the we are getting tab title
-            v_tab_title: tab_tag.tab_title_span.innerHTML,
+            tab_title: tab_tag.tab_title_span.innerHTML,
           };
 
           this.editor.setReadOnly(true);
@@ -425,8 +448,8 @@ export default {
     },
     querySQLReturn(data, context) {
       //Update tab_db_id if not null in response
-      if (data.v_data.v_inserted_id) {
-        this.tabDatabaseId = data.v_data.v_inserted_id;
+      if (data.v_data.inserted_id) {
+        this.tabDatabaseId = data.v_data.inserted_id;
       }
 
       //If query wasn't canceled already
@@ -457,19 +480,8 @@ export default {
 
       this.editor.setReadOnly(false);
 
-      //Show commit/rollback buttons if transaction is open
-      if (
-        [
-          tabStatusMap.IDLE_IN_TRANSACTION,
-          tabStatusMap.IDLE_IN_TRANSACTION_ABORTED,
-        ].includes(data.v_data.v_con_status)
-      ) {
-        this.activeTransaction = true;
-      } else {
-        this.activeTransaction = false;
-      }
-
-      this.tabStatus = data.v_data.v_con_status;
+      this.tabStatus = data.v_data.con_status;
+      this.queryDuration = data.v_data.duration;
 
       if (data.v_error) {
         this.errorMessage = data.v_data.message;
@@ -478,46 +490,83 @@ export default {
           $(`#${this.$refs.explainTab.id}`).tab("show");
 
           // Adjusting data.
-          let explain_text = data.v_data.v_data.join("\n");
+          let explain_text = data.v_data.data.join("\n");
 
           if (explain_text.length > 0) {
             this.query = this.getQueryEditorValue();
             this.plan = explain_text;
           }
         } else if (!!context.cmd_type && context.cmd_type.includes("export")) {
-          this.exportFileName = data.v_data.v_filename;
-          this.exportDownloadName = data.v_data.v_downloadname;
+          this.exportFileName = data.v_data.file_name;
+          this.exportDownloadName = data.v_data.download_name;
         } else {
           $(`#${this.$refs.dataTab.id}`).tab("show");
 
           //Show fetch buttons if data has 50 rows
-          if (data.v_data.v_data.length >= 50 && context.mode !== 2) {
+          if (
+            data.v_data.data.length >= 50 &&
+            context.mode !== this.queryModes.FETCH_ALL
+          ) {
             this.showFetchButtons = true;
           } else {
             this.showFetchButtons = false;
           }
+          if (context.mode === this.queryModes.DATA_OPERATION) {
+            // if no data that means that it is create, upsert, delete operation
+            if (
+              data.v_data.data.length === 0 &&
+              data.v_data.col_names.length === 0
+            ) {
+              this.queryInfoText = data.v_data.status
+                ? data.v_data.status
+                : "Done";
+            } else {
+              this.$refs.hotTableComponent.hotInstance.updateSettings({
+                colHeaders: data.v_data.col_names,
+                copyPaste: {
+                  pasteMode: "",
+                  uiContainer: this.$refs.hotTableInputHolder,
+                },
+              });
+              this.$refs.hotTableComponent.hotInstance.updateData(
+                data.v_data.data
+              );
+            }
+          } else if (
+            context.mode === this.queryModes.FETCH_MORE ||
+            context.mode === this.queryModes.FETCH_ALL
+          ) {
+            let initialData =
+              this.$refs.hotTableComponent.hotInstance.getSourceData();
 
-          if (context.mode == 0) {
-            this.$refs.hotTableComponent.hotInstance.updateSettings({
-              colHeaders: data.v_data.v_col_names,
-              copyPaste: {
-                pasteMode: "",
-                uiContainer: this.$refs.hotTableInputHolder,
-              },
+            data.v_data.data.forEach((row) => {
+              initialData.push(row);
             });
-            this.$refs.hotTableComponent.hotInstance.updateData(
-              data.v_data.v_data
-            );
+
+            this.$refs.hotTableComponent.hotInstance.updateData(initialData);
+          } else {
+            this.queryInfoText = data.v_data.status;
+          }
+
+          let mode = ["CREATE", "DROP", "ALTER"];
+          if (!!data.v_data.status && isNaN(data.v_data.status)) {
+            let status = data.v_data.status?.split(" ");
+            let status_name = status[1];
+            if (mode.includes(status[0])) {
+              //FIXME: replace this with event emitting on tree instance
+              let root_node =
+                v_connTabControl.selectedTab.tag.tree.getRootNode();
+              if (!!status_name) refreshTreeNode(root_node, status_name);
+            }
           }
         }
       }
 
-      this.queryDuration = data.v_data.v_duration;
       //FIXME: change into event emitting later
       context.tab_tag.tab_loading_span.style.visibility = "hidden";
-      context.tab_tag.tab_check_span.style.display = "";
+      context.tab_tag.tab_check_span.style.display = "none";
     },
-    getExplain(mode) {
+    getExplain(explainMode) {
       let command = this.getQueryEditorValue();
 
       if (command.trim() === "") {
@@ -526,14 +575,14 @@ export default {
         let should_prepend =
           command.trim().split(" ")[0].toUpperCase() !== "EXPLAIN";
         if (should_prepend) {
-          if (mode === 0) {
+          if (explainMode === 0) {
             command = "explain " + command;
-          } else if (mode === 1) {
+          } else if (explainMode === 1) {
             command = "explain (analyze, buffers) " + command;
           }
         }
 
-        this.querySQL(0, "explain", true, command);
+        this.querySQL(this.queryModes.DATA_OPERATION, "explain", true, command);
       }
     },
     queryRunOrExplain() {
@@ -542,17 +591,33 @@ export default {
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
         if (should_explain) {
-          return this.querySQL(0, "explain", true);
+          return this.querySQL(this.queryModes.DATA_OPERATION, "explain", true);
         }
       }
 
-      this.querySQL(0);
+      this.querySQL(this.queryModes.DATA_OPERATION);
     },
     exportData() {
       $(`#${this.$refs.dataTab.id}`).tab("show");
       let cmd_type = `export_${this.exportType}`;
       let query = this.getQueryEditorValue();
-      this.querySQL(0, cmd_type, true, query, true, query, true);
+      this.querySQL(
+        this.queryModes.DATA_OPERATION,
+        cmd_type,
+        true,
+        query,
+        true,
+        query,
+        true
+      );
+    },
+    cancelSQLTab() {
+      this.editor.setReadOnly(false);
+
+      this.queryState = queryState.Idle;
+      this.tabStatus = tabStatusMap.NOT_CONNECTED;
+
+      this.cancelled = true;
     },
   },
 };
