@@ -1,3 +1,4 @@
+from typing import Optional, Tuple
 import io
 from django.http import HttpResponse
 from django.template import loader
@@ -30,11 +31,21 @@ from app.models.main import *
 from app.client_manager import client_manager, Client
 from app.utils.decorators import session_required
 from app.utils.response_helpers import create_response_template
+from app.include.Session import Session
 
 import traceback
 
 import logging
 logger = logging.getLogger('app.QueryServer')
+
+
+class queryModes(IntEnum):
+    DATA_OPERATION = 0
+    FETCH_MORE = 1
+    FETCH_ALL = 2
+    COMMIT = 3
+    ROLLBACK = 4
+
 
 class requestType(IntEnum):
   Login          = 0
@@ -317,16 +328,31 @@ def create_request(request, session):
             v_data['session'] = session
             #Query request
             if v_code == requestType.Query:
-                tab_object['tab_db_id'] = v_data['v_tab_db_id']
-                v_data['v_tab_object'] = tab_object
-                t = StoppableThread(thread_query,v_data)
-                tab_object['thread'] = t
-                tab_object['type'] = 'query'
-                tab_object['sql_cmd'] = v_data['v_sql_cmd']
-                tab_object['sql_save'] = v_data['v_sql_save']
-                tab_object['tab_id'] = v_data['v_tab_id']
-                #t.setDaemon(True)
-                t.start()
+                # for development keeping old query functionality
+                # to be deleted when new query tab implemented
+                if v_data.get('v_sql_cmd'):
+                    # old functionality
+                    tab_object['tab_db_id'] = v_data['v_tab_db_id']
+                    v_data['v_tab_object'] = tab_object
+                    t = StoppableThread(thread_query_old,v_data)
+                    tab_object['thread'] = t
+                    tab_object['type'] = 'query'
+                    tab_object['sql_cmd'] = v_data['v_sql_cmd']
+                    tab_object['sql_save'] = v_data['v_sql_save']
+                    tab_object['tab_id'] = v_data['v_tab_id']
+                    #t.setDaemon(True)
+                    t.start()
+                else:
+                    tab_object['tab_db_id'] = v_data['tab_db_id']
+                    v_data['tab_object'] = tab_object
+                    t = StoppableThread(thread_query,v_data)
+                    tab_object['thread'] = t
+                    tab_object['type'] = 'query'
+                    tab_object['sql_cmd'] = v_data['sql_cmd']
+                    tab_object['sql_save'] = v_data['sql_save']
+                    tab_object['tab_id'] = v_data['v_tab_id']
+                    #t.setDaemon(True)
+                    t.start()
 
             #Console request
             elif v_code == requestType.Console:
@@ -779,7 +805,7 @@ def thread_terminal(self,args):
         if not self.cancel:
             queue_response(v_client_object,v_response)
 
-def thread_query(self,args):
+def thread_query_old(self,args):
     v_response = {
         'v_code': response.QueryResult,
         'v_context_code': args['v_context_code'],
@@ -1122,6 +1148,278 @@ def thread_query(self,args):
         v_response['v_data'] = traceback.format_exc().replace('\n','<br>')
         if not self.cancel:
             queue_response(v_client_object,v_response)
+
+
+def thread_query(self, args):
+    response_data = {
+        'v_code': response.QueryResult,
+        'v_context_code': args['v_context_code'],
+        'v_error': False,
+        'v_data': 1
+    }
+
+    try:
+        sql_cmd: str = args.get('sql_cmd')
+        cmd_type: Optional[str] = args.get('cmd_type')
+        tab_object: dict = args.get('tab_object')
+        mode: queryModes = args.get('mode')
+        all_data: bool = args.get('all_data')
+        log_query: bool = args.get('log_query')
+        tab_title: str = args.get('tab_title')
+        autocommit: bool = args.get('autocommit')
+        client_object: Client = args.get('client_object') or args.get('v_client_object')
+
+        session: Session = args.get('session')
+        database = args.get('database') or args.get('v_database')
+
+        log_start_time = datetime.now(timezone.utc)
+        log_status = 'success'
+
+        inserted_id = None
+        if not tab_object.get('tab_db_id') and not tab_object.get('inserted_tab') and log_query:
+            db_tab = Tab(
+                user=User.objects.get(id=session.v_user_id),
+                connection=Connection.objects.get(id=database.v_conn_id),
+                title=tab_title,
+                snippet = tab_object.get('sql_save'),
+                database=database.v_active_service
+            )
+            db_tab.save()
+            inserted_id = db_tab.id
+            tab_object['inserted_tab'] = True
+        
+        log_end_time = datetime.now(timezone.utc)
+        duration = GetDuration(log_start_time, log_end_time)
+
+        if cmd_type in ['export_csv','export_xlsx', 'export_csv-no_headers', 'export_xlsx-no_headers']:
+            file_name, extension = export_data(sql_cmd=sql_cmd, database=database, encoding=session.v_csv_encoding, delimiter=session.v_csv_delimiter, cmd_type=cmd_type)
+
+            log_end_time = datetime.now(timezone.utc)
+            duration = GetDuration(log_start_time, log_end_time)
+
+            response_data['v_data'] = {
+                'file_name': f"{settings.PATH}/static/temp/{file_name}",
+                'download_name': f"pgmanage_exported-{log_end_time}.{extension}",
+                'duration': duration,
+                'inserted_id': inserted_id,
+                'con_status': database.v_connection.GetConStatus(),
+                'chunks': False
+            }
+
+            if not self.cancel:
+                queue_response(client_object, response_data)
+        else:
+            if mode == queryModes.DATA_OPERATION:
+                database.v_connection.v_autocommit = autocommit
+                if not database.v_connection.v_con or database.v_connection.GetConStatus() == 0:
+                    database.v_connection.Open()
+                else:
+                    database.v_connection.v_start = True
+            
+            if mode in (queryModes.DATA_OPERATION, queryModes.FETCH_MORE) and not all_data:
+                data = database.v_connection.QueryBlock(sql_cmd, 50, True, True)
+
+                notices = database.v_connection.GetNotices()
+
+                database.v_connection.ClearNotices()
+
+                log_end_time = datetime.now(timezone.utc)
+                duration = GetDuration(log_start_time, log_end_time)
+                
+
+                response_data['v_data'] = {
+                    'col_names': data.Columns,
+                    'data': data.Rows,
+                    'last_block': True,
+                    'duration': duration,
+                    'notices': notices,
+                    'inserted_id': inserted_id,
+                    'status': database.v_connection.GetStatus(),
+                    'con_status': database.v_connection.GetConStatus(),
+                    'chunks': True
+                }
+
+                if not self.cancel:
+                    queue_response(client_object, response_data)
+            elif mode == queryModes.FETCH_ALL or all_data:
+                has_more_records = True
+                
+                while has_more_records:
+
+                    data = database.v_connection.QueryBlock(sql_cmd, 10000, True, True)
+
+                    notices = database.v_connection.GetNotices()
+
+                    database.v_connection.ClearNotices()
+
+                    log_end_time = datetime.now(timezone.utc)
+
+                    duration = GetDuration(log_start_time, log_end_time)
+
+                    response_data['v_data'] = {
+                        'col_names': data.Columns,
+                        'data': data.Rows,
+                        'last_block': False,
+                        'duration': duration,
+                        'notices': notices,
+                        'inserted_id': inserted_id,
+                        'status': '',
+                        'con_status': 0,
+                        'chunks': True
+                    }
+
+                    if database.v_connection.v_start:
+                        has_more_records = False
+                    elif len(data.Rows) > 0:
+                        has_more_records = True
+                    else:
+                        has_more_records = False
+
+                    
+                    if self.cancel:
+                            break
+                    if has_more_records:
+                        queue_response(client_object, response_data)
+                
+                if not self.cancel:
+
+                    notices = database.v_connection.GetNotices()
+
+                    log_end_time = datetime.now(timezone.utc)
+                    duration = GetDuration(log_start_time, log_end_time)
+
+                    response_data['v_data'] = {
+                        'col_names': data.Columns,
+                        'data': data.Rows,
+                        'last_block': True,
+                        'duration': duration,
+                        'notices': notices,
+                        'inserted_id': inserted_id,
+                        'status': database.v_connection.GetStatus(),
+                        'con_status': database.v_connection.GetConStatus(),
+                        'chunks': True
+                    }
+                    queue_response(client_object, response_data)
+            elif mode in (queryModes.COMMIT, queryModes.ROLLBACK):
+                duration = GetDuration(log_start_time, log_end_time)
+
+                if mode == queryModes.COMMIT:
+                    database.v_connection.Query('COMMIT;', True)
+                else:
+                    database.v_connection.Query('ROLLBACK;', True)
+
+                response_data['v_data'] = {
+                    'col_names': None,
+                    'data': [],
+                    'last_block': True,
+                    'duration': duration,
+                    'notices': [],
+                    'inserted_id': inserted_id,
+                    'status': database.v_connection.GetStatus(),
+                    'con_status': database.v_connection.GetConStatus(),
+                    'chunks': False
+                }
+                queue_response(client_object, response_data)
+    except Exception as exc:
+        if not self.cancel:
+            notices = database.v_connection.GetNotices()
+
+            log_end_time = datetime.now(timezone.utc)
+            duration = GetDuration(log_start_time, log_end_time)
+
+            log_status = "error" # ????
+
+            response_data['v_data'] = {
+                'position': database.GetErrorPosition(str(exc)),
+                'message': str(exc),
+                'duration': duration,
+                'notices': notices,
+                'inserted_id': inserted_id,
+                'status': 0,
+                'con_status': database.v_connection.GetConStatus(),
+                'chunks': False
+            }
+
+            response_data['v_error'] = True
+
+            queue_response(client_object, response_data)
+    
+    if mode == queryModes.DATA_OPERATION and log_query:
+        LogHistory(session.v_user_id,
+                   session.v_user_name,
+                   sql_cmd,
+                   log_start_time,
+                   log_end_time,
+                   duration,
+                   log_status,
+                   database.v_conn_id)
+        
+
+    if mode == queryModes.DATA_OPERATION and tab_object.get('tab_db_id') and log_query:
+        tab = Tab.objects.filter(id=tab_object.get('tab_db_id')).first()
+        if tab:
+            tab.snippet = tab_object.get('sql_save')
+            tab.title = tab_title
+            tab.save()
+        
+
+def export_data(sql_cmd: str, database, encoding: str, delimiter: str, cmd_type: str) -> Tuple[str, str]:
+    skip_headers = False
+    #cleaning temp folder
+    clean_temp_folder()
+
+    if len(cmd_type.split('-')) == 2:
+        cmd_type = cmd_type.split('-')[0]
+        skip_headers = True
+
+    if cmd_type=='export_csv':
+        extension = 'csv'
+    else:
+        extension = 'xlsx'
+
+    export_dir = settings.TEMP_DIR
+
+    if not os.path.exists(export_dir):
+        os.makedirs(export_dir)
+    
+    database.v_connection.Open()
+
+    file_name = f'${str(time.time()).replace(".", "_")}.{extension}'
+
+    data = database.v_connection.QueryBlock(sql_cmd, 1000, False, True)
+
+    file_path = os.path.join(export_dir, file_name)
+
+    file = Utils.DataFileWriter(file_path, data.Columns, encoding, delimiter, skip_headers=skip_headers)
+
+    file.Open()
+
+    if database.v_connection.v_start:
+        file.Write(data)
+        has_more_records = False
+    elif len(data.Rows) > 0:
+        file.Write(data)
+        has_more_records = True
+    else:
+        has_more_records = False
+    
+    while has_more_records:
+        data = database.v_connection.QueryBlock(sql_cmd, 1000, False, True)
+
+        if database.connection.v_start:
+            file.Write(data)
+            has_more_records = False
+        elif len(data.Rows) > 0:
+            file.Write(data)
+            has_more_records = True
+        else:
+            has_more_records = False
+    database.v_connection.Close()
+
+    file.Flush()
+
+    return file_name, extension
+
 
 def thread_console(self,args):
     v_response = {

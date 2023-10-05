@@ -13,7 +13,7 @@ export let createQueryTabFunction = function(name="Query", tab_db_id, tab_db_nam
     <span id="tab_loading" style="visibility:hidden;">
       <i class="tab-icon node-spin"></i>
     </span>
-    <i title="" id="tab_check" style="display: none; class="fas fa-check-circle tab-icon icon-check"></i>
+    <i title="" id="tab_check" style="display: none;" class="fas fa-check-circle tab-icon icon-check"></i>
     `
 
     // Creating query tab in the inner tab list
