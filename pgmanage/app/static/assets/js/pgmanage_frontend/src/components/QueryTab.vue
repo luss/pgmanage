@@ -1,7 +1,7 @@
 <template>
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
-      <div ref="editor" :id="`txt_query_${tabId}`" class="h-100"></div>
+      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"/>
     </pane>
 
     <pane size="70">
@@ -187,9 +187,6 @@
 
 <script>
 import { Splitpanes, Pane } from "splitpanes";
-import { settingsStore } from "../stores/settings";
-import ace from "ace-builds";
-import { indentSQLMixin } from "../mixins/indent_sql";
 import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
@@ -199,19 +196,21 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import { queryModes, queryState, tabStatusMap } from "../constants";
 import CancelButton from "./CancelSQLButton.vue";
+import QueryEditor from "./QueryEditor.vue";
+import { emitter } from "../emitter";
 
 // register Handsontable's modules
 registerAllModules();
 
 export default {
   name: "QueryTab",
-  mixins: [indentSQLMixin],
   components: {
     Splitpanes,
     Pane,
     pev2: Plan,
     HotTable,
     CancelButton,
+    QueryEditor,
   },
   props: {
     connId: String,
@@ -276,6 +275,7 @@ export default {
         },
       },
       queryInfoText: "",
+      readOnlyEditor: false,
     };
   },
   computed: {
@@ -334,11 +334,18 @@ export default {
     },
   },
   mounted() {
-    this.setupEditor();
+    emitter.on(`${this.tabId}_check_query_status`, () => {
+        this.$refs.editor.focus()
+        if (this.queryState === queryState.Ready) {
+          this.querySQLReturnRender(this.data, this.context);
+        }
+      });
 
+    
     if (this.dialect === "postgresql") {
       $(`#${this.$refs.explainTab.id}`).on("shown.bs.tab", () => {
         this.enableExplainButtons = true;
+        this.getExplain(0)
       });
 
       $(`#${this.$refs.explainTab.id}`).on("hidden.bs.tab", () => {
@@ -346,46 +353,23 @@ export default {
       });
     }
   },
+  unmounted() {
+    emitter.all.delete(`${this.tabId}_check_query_status`)
+  },
   methods: {
-    setupEditor() {
-      this.editor = ace.edit(this.$refs.editor);
-      this.editor.$blockScrolling = Infinity;
-      this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
-      this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(settingsStore.fontSize);
-
-      // Remove shortcuts from ace in order to avoid conflict with pgmanage shortcuts
-      this.editor.commands.bindKey("ctrl-space", null);
-      this.editor.commands.bindKey("alt-e", null);
-      this.editor.commands.bindKey("Cmd-,", null);
-      this.editor.commands.bindKey("Ctrl-,", null);
-      this.editor.commands.bindKey("Cmd-Delete", null);
-      this.editor.commands.bindKey("Ctrl-Delete", null);
-      this.editor.commands.bindKey("Ctrl-Up", null);
-      this.editor.commands.bindKey("Ctrl-Down", null);
-      this.editor.commands.bindKey("Up", null);
-      this.editor.commands.bindKey("Down", null);
-      this.editor.commands.bindKey("Tab", null);
-
-      this.editor.focus();
-      this.editor.resize();
-    },
-    // this is arguable, looks more like feature
-    getQueryEditorValue() {
-      let selectedText = this.editor.getSelectedText();
-      return !!selectedText ? selectedText : this.editor.getValue().trim();
+    getQueryEditorValue(raw_query) {
+      return this.$refs.editor.getQueryEditorValue(raw_query);
     },
     querySQL(
       mode,
       cmd_type = null,
       all_data = false,
-      query = this.getQueryEditorValue(),
+      query = this.getQueryEditorValue(false),
       log_query = true,
-      save_query = this.editor.getValue(),
+      save_query = this.getQueryEditorValue(true),
       clear_data = false
     ) {
       let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-      // const command = this.getQueryEditorValue();
       this.queryDuration = "";
       this.cancelled = false;
       this.exportFileName = "";
@@ -416,7 +400,7 @@ export default {
             tab_title: tab_tag.tab_title_span.innerHTML,
           };
 
-          this.editor.setReadOnly(true);
+          this.readOnlyEditor = true;
 
           this.queryStartTime = moment().format();
 
@@ -478,7 +462,7 @@ export default {
       this.context = "";
       this.data = "";
 
-      this.editor.setReadOnly(false);
+      this.readOnlyEditor = false;
 
       this.tabStatus = data.v_data.con_status;
       this.queryDuration = data.v_data.duration;
@@ -493,7 +477,7 @@ export default {
           let explain_text = data.v_data.data.join("\n");
 
           if (explain_text.length > 0) {
-            this.query = this.getQueryEditorValue();
+            this.query = this.getQueryEditorValue(false);
             this.plan = explain_text;
           }
         } else if (!!context.cmd_type && context.cmd_type.includes("export")) {
@@ -567,7 +551,7 @@ export default {
       context.tab_tag.tab_check_span.style.display = "none";
     },
     getExplain(explainMode) {
-      let command = this.getQueryEditorValue();
+      let command = this.getQueryEditorValue(false);
 
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");
@@ -587,7 +571,7 @@ export default {
     },
     queryRunOrExplain() {
       if (this.dialect === "postgresql") {
-        let query = this.getQueryEditorValue();
+        let query = this.getQueryEditorValue(false);
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
         if (should_explain) {
@@ -600,7 +584,7 @@ export default {
     exportData() {
       $(`#${this.$refs.dataTab.id}`).tab("show");
       let cmd_type = `export_${this.exportType}`;
-      let query = this.getQueryEditorValue();
+      let query = this.getQueryEditorValue(false);
       this.querySQL(
         this.queryModes.DATA_OPERATION,
         cmd_type,
@@ -612,13 +596,16 @@ export default {
       );
     },
     cancelSQLTab() {
-      this.editor.setReadOnly(false);
+      this.readOnlyEditor = false;
 
       this.queryState = queryState.Idle;
       this.tabStatus = tabStatusMap.NOT_CONNECTED;
 
       this.cancelled = true;
     },
+    indentSQL() {
+      this.$refs.editor.indentSQL()
+    }
   },
 };
 </script>

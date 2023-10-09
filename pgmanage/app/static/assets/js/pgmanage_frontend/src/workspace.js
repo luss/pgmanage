@@ -49,6 +49,7 @@ import { startLoading } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
+import { settingsStore } from './stores/settings'
 
 let v_start_height;
 /// <summary>
@@ -726,7 +727,7 @@ function refreshHeights(p_all) {
     if (v_connTabControl.selectedTab.tag.tabControl != null && v_connTabControl.selectedTab.tag.tabControl.selectedTab) {
       var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 
-      if (v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_dashboard' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='query' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
+      if (v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_dashboard' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
           v_tab_tag.resize();
       }
       else if (v_tab_tag.mode === 'console') {
@@ -1250,7 +1251,8 @@ function uiCopyTextToClipboard(p_value) {
 
 function toggleConnectionAutocomplete(p_toggler_id) {
   let checked = document.getElementById(p_toggler_id).checked;
-  v_connTabControl.selectedTab.tag.enable_autocomplete = (checked);
+  settingsStore.setAutocomplete(checked)
+  //TODO: remove after changing ConsoleTab editor implementation to component based
   emitter.emit(`${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_toggle_autocomplete`, checked)
 }
 

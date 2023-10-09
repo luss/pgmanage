@@ -36,6 +36,7 @@ import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
 import { showToast } from "../notification_control";
+import { settingsStore } from "../stores/settings";
 
 /// <summary>
 /// Retrieving tree.
@@ -353,7 +354,7 @@ function getTreeMariadb(div) {
     v_connTabControl.selectedTab.tree = app
 
     let autocomplete_switch_status =
-      v_connTabControl.selectedTab.tag.enable_autocomplete !== false
+      settingsStore.enableAutocomplete !== false
         ? " checked "
         : "";
     let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
