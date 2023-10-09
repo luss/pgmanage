@@ -56,6 +56,7 @@ import { showCommandList } from "../command_history";
 import { createTabControl } from "../tabs";
 import ace from 'ace-builds'
 import { snippetsStore } from "../stores/snippets";
+import { settingsStore } from "../stores/settings";
 
 var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
   // Removing last tab of the inner tab list.
@@ -295,7 +296,7 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
   var langTools = ace.require("ace/ext/language_tools");
   var v_editor = ace.edit('txt_query_' + v_tab.id);
   v_editor.$blockScrolling = Infinity;
-  v_editor.setTheme("ace/theme/" + v_editor_theme);
+  v_editor.setTheme("ace/theme/" + settingsStore.editorTheme);
   v_editor.session.setMode("ace/mode/sql");
   v_editor.setFontSize(Number(v_font_size));
 

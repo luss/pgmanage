@@ -73,6 +73,7 @@ import { emitter } from '../emitter'
 import ace from 'ace-builds'
 import axios from 'axios'
 import { showToast } from '../notification_control'
+import { settingsStore } from '../stores/settings'
 
 export default {
   name: 'ExtensionModal',
@@ -203,9 +204,9 @@ export default {
     },
     setupEditor() {
       this.editor = ace.edit('generated_sql_div');
-      this.editor.setTheme("ace/theme/" + window.v_editor_theme);
+      this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
       this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(Number(window.v_font_size));
+      this.editor.setFontSize(Number(settingsStore.fontSize));
       this.editor.setReadOnly(true);
       this.editor.$blockScrolling = Infinity;
 

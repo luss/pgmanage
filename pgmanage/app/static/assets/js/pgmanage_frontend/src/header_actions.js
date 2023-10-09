@@ -324,7 +324,7 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 
 	var langTools = ace.require("ace/ext/language_tools");
 	var v_editor = ace.edit('txt_edit_content');
-	v_editor.setTheme("ace/theme/" + v_editor_theme);
+	v_editor.setTheme("ace/theme/" + settingsStore.editorTheme);
 	v_editor.session.setMode("ace/mode/sql");
 	v_editor.$blockScrolling = Infinity;
 

@@ -29,6 +29,7 @@ import { refreshHeights , indentSQL, removeTab} from '../workspace'
 import { saveSnippetText } from '../tree_context_functions/tree_snippets'
 import { beforeCloseTab } from '../create_tab_functions'
 import ace from 'ace-builds'
+import { settingsStore } from '../stores/settings';
 
 var v_createSnippetTextTabFunction = function(p_snippet = null) {
 
@@ -107,10 +108,10 @@ var v_createSnippetTextTabFunction = function(p_snippet = null) {
   var langTools = ace.require("ace/ext/language_tools");
   var v_editor = ace.edit('txt_snippet_' + v_tab.id);
   v_editor.$blockScrolling = Infinity;
-  v_editor.setTheme("ace/theme/" + v_editor_theme);
+  v_editor.setTheme("ace/theme/" + settingsStore.editorTheme);
   v_editor.session.setMode("ace/mode/sql");
 
-  v_editor.setFontSize(Number(v_font_size));
+  v_editor.setFontSize(Number(settingsStore.fontSize));
 
   v_editor.commands.bindKey("ctrl-space", null);
 

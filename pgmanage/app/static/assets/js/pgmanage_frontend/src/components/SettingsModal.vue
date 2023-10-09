@@ -172,9 +172,7 @@
 
 <script>
 import { refreshHeights } from '../workspace'
-import { getExplain } from '../tree_context_functions/tree_postgresql'
 import { terminalRun } from '../terminal'
-import { autocomplete_start } from '../autocomplete'
 import { queryEditData } from '../tree_context_functions/edit_data'
 import { default_shortcuts } from '../shortcuts'
 import { changeTheme } from '../header_actions'
@@ -294,8 +292,9 @@ export default {
       shortcut_run_query: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query')
-            window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.bt_start.click();
+          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
+            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_query`)
+          }
           else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console')
             emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_console`, false)
           else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'edit')
@@ -307,24 +306,25 @@ export default {
       shortcut_explain: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query')
-            getExplain(0);
+          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
+            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_explain`)
+          }
         }
       },
       shortcut_explain_analyze: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query')
-            getExplain(1);
+          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
+            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_explain_analyze`)
+          }
         }
       },
       shortcut_cancel_query: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query')
-            if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.bt_cancel.style.display != 'none')
-              window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.bt_cancel.click();
-          else if(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
+          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
+            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_cancel_query`)
+          } else if(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
             emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_cancel_query`)
           }
         }
@@ -332,9 +332,9 @@ export default {
       shortcut_indent: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query')
-            window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.bt_indent.click();
-          else if ( window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
+          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
+            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_indent_sql`)
+          } else if ( window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
             emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_indent_sql`)
           }
         }
@@ -393,9 +393,7 @@ export default {
       shortcut_autocomplete: function (e) {
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
           if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-              let editor = null;
-              editor = window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor
-              autocomplete_start(editor, 0, e, true);
+              emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_show_autocomplete_results`, e)
             }
             else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
               emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_show_autocomplete_results`, e)

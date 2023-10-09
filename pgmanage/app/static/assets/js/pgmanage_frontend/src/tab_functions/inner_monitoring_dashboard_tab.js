@@ -10,6 +10,7 @@ import {
   selectUnitTemplate
 } from "../monitoring";
 import ace from 'ace-builds'
+import { settingsStore } from '../stores/settings';
 
 var v_createMonitorDashboardTabFunction = function() {
 
@@ -236,9 +237,9 @@ var v_createNewMonitorUnitTabFunction = function() {
   var v_txt_script = document.getElementById('txt_script_' + v_tab.id);
   var v_editor = ace.edit('txt_script_' + v_tab.id);
   v_editor.$blockScrolling = Infinity;
-  v_editor.setTheme("ace/theme/" + v_editor_theme);
+  v_editor.setTheme("ace/theme/" + settingsStore.editorTheme);
   v_editor.session.setMode("ace/mode/python");
-  v_editor.setFontSize(Number(v_font_size));
+  v_editor.setFontSize(Number(settingsStore.fontSize));
   v_editor.commands.bindKey("ctrl-space", null);
   v_editor.commands.bindKey("Cmd-,", null)
   v_editor.commands.bindKey("Ctrl-,", null)
@@ -250,9 +251,9 @@ var v_createNewMonitorUnitTabFunction = function() {
   var v_txt_data = document.getElementById('txt_data_' + v_tab.id);
   var v_editor_data = ace.edit('txt_data_' + v_tab.id);
   v_editor_data.$blockScrolling = Infinity;
-  v_editor_data.setTheme("ace/theme/" + v_editor_theme);
+  v_editor_data.setTheme("ace/theme/" + settingsStore.editorTheme);
   v_editor_data.session.setMode("ace/mode/python");
-  v_editor_data.setFontSize(Number(v_font_size));
+  v_editor_data.setFontSize(Number(settingsStore.fontSize));
   v_editor_data.commands.bindKey("ctrl-space", null);
   v_editor_data.commands.bindKey("Cmd-,", null)
   v_editor_data.commands.bindKey("Ctrl-,", null)

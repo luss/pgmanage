@@ -29,6 +29,7 @@ import { blueHtmlRenderer, whiteHtmlRenderer } from "./renderers";
 import { execAjax } from "./ajax_control";
 import { showConfirm } from "./notification_control";
 import moment from "moment";
+import { emitter } from "./emitter";
 
 /// <summary>
 /// Wipes command history.
@@ -313,10 +314,9 @@ function commandHistoryLastPage() {
 }
 
 function commandHistoryOpenCmd(p_index) {
-	var v_command = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.grid.getDataAtRow(p_index)[4];
-	v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(v_command);
-	v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-	v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(0, 0, true);
+	let command = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.grid.getDataAtRow(p_index)[4];
+	let selected_tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+	emitter.emit(`${selected_tab.id}_copy_to_editor`, command)
 	closeCommandHistory();
 }
 
