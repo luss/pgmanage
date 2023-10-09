@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { emitter } from "../emitter";
 import { createRequest, removeContext, SetAcked } from "../long_polling";
 import { v_queryRequestCodes } from "../query";
 export default {
@@ -29,6 +30,14 @@ export default {
 
       this.$emit("cancelled");
     },
+  },
+  mounted() {
+    emitter.on(`${this.tabId}_cancel_query`, () => {
+      this.cancelSQL();
+    });
+  },
+  unmounted() {
+    emitter.all.delete(`${this.tabId}_cancel_query`);
   },
 };
 </script>

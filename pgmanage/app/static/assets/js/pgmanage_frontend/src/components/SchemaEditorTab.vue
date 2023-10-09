@@ -58,6 +58,7 @@ import { createRequest } from '../long_polling'
 import { v_queryRequestCodes } from '../query'
 import axios from 'axios'
 import { showToast } from '../notification_control'
+import { settingsStore } from '../stores/settings'
 
 export default {
   name: "SchemaEditor",
@@ -181,9 +182,9 @@ export default {
     },
     setupEditor() {
       this.editor = ace.edit(this.$refs.editor);
-      this.editor.setTheme("ace/theme/" + window.v_editor_theme);
+      this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
       this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(Number(window.v_font_size));
+      this.editor.setFontSize(Number(settingsStore.fontSize));
       this.editor.$blockScrolling = Infinity;
       this.editor.clearSelection();
       this.editor.setReadOnly(true);

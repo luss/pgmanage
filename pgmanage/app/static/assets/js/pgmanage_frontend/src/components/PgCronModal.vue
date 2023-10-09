@@ -149,6 +149,7 @@ import ace from 'ace-builds'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import moment from 'moment'
+import { settingsStore } from '../stores/settings'
 
 export default {
   name: 'PgCronModal',
@@ -384,9 +385,9 @@ export default {
 
     setupEditor() {
       this.editor = ace.edit('job_command');
-      this.editor.setTheme("ace/theme/" + window.v_editor_theme);
+      this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
       this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(Number(window.v_font_size));
+      this.editor.setFontSize(Number(settingsStore.fontSize));
       this.editor.$blockScrolling = Infinity;
 
       this.editor.setValue(this.command)

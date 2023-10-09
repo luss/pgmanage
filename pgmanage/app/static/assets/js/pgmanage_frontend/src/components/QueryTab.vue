@@ -1,7 +1,7 @@
 <template>
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
-      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"/>
+      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query" />
     </pane>
 
     <pane size="70">
@@ -16,20 +16,21 @@
             <i class="fas fa-indent fa-light"></i>
           </button>
 
-          <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History">
+          <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History"
+            @click="showCommandList()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
 
           <template v-if="postgresqlDialect">
             <!-- EXPLAIN ANALYZE BUTTONS-->
             <div class="btn-group ml-2 mr-2">
-              <button :id="`bt_explain_${tabId}`" class="btn btn-sm btn-secondary" title="Explain" @click="getExplain(0)"
+              <button :id="`bt_explain_${tabId}`" class="btn btn-sm btn-secondary" title="Explain" @click="runExplain(0)"
                 :disabled="!enableExplainButtons">
                 <i class="fas fa-chart-simple fa-light"></i>
               </button>
 
               <button :id="`bt_analyze_${tabId}`" class="btn btn-sm btn-secondary" title="Explain Analyze"
-                @click="getExplain(1)" :disabled="!enableExplainButtons">
+                @click="runExplain(1)" :disabled="!enableExplainButtons">
                 <i class="fas fa-magnifying-glass-chart fa-light"></i>
               </button>
             </div>
@@ -125,6 +126,14 @@
                 <span class="omnidb__tab-menu__link-name"> Data </span>
               </a>
               <template v-if="postgresqlDialect">
+                <a ref="messagesTab" class="omnidb__tab-menu__link nav-item nav-link" :id="`nav_messages_tab_${tabId}`"
+                  data-toggle="tab" :data-target="`#nav_messages_${tabId}`" type="button" role="tab"
+                  :aria-controls="`nav_messages_${tabId}`" aria-selected="true">
+                  <span class="omnidb__tab-menu__link-name">
+                    Messages
+                    <a v-if="noticesCount">{{ noticesCount }}</a>
+                  </span>
+                </a>
                 <a ref="explainTab" class="nav-item nav-link omnidb__tab-menu__link" :id="`nav_explain_tab_${tabId}`"
                   data-toggle="tab" :data-target="`#nav_explain_${tabId}`" type="button" role="tab"
                   :aria-controls="`nav_explain_${tabId}`" aria-selected="false">
@@ -160,6 +169,14 @@
             </div>
 
             <template v-if="postgresqlDialect">
+              <div class="tab-pane" :id="`nav_messages_${tabId}`" role="tabpanel"
+                :aria-labelledby="`nav_messages_tab_${tabId}`">
+                <div class="omnidb__theme-border--primary p-2">
+                  <div class="result-div">
+                    <p v-for="notice in notices">{{ notice }}</p>
+                  </div>
+                </div>
+              </div>
               <div class="tab-pane" :id="`nav_explain_${tabId}`" role="tabpanel"
                 :aria-labelledby="`nav_explain_tab_${tabId}`">
                 <div class="omnidb__theme-border--primary pt-2">
@@ -183,6 +200,8 @@
       </div>
     </pane>
   </splitpanes>
+
+  <CommandsHistoryModal :tab-id="tabId" />
 </template>
 
 <script>
@@ -198,6 +217,8 @@ import { queryModes, queryState, tabStatusMap } from "../constants";
 import CancelButton from "./CancelSQLButton.vue";
 import QueryEditor from "./QueryEditor.vue";
 import { emitter } from "../emitter";
+import CommandsHistoryModal from "./CommandsHistoryModal.vue";
+import { showCommandList } from "../command_history";
 
 // register Handsontable's modules
 registerAllModules();
@@ -211,6 +232,7 @@ export default {
     HotTable,
     CancelButton,
     QueryEditor,
+    CommandsHistoryModal,
   },
   props: {
     connId: String,
@@ -276,6 +298,7 @@ export default {
       },
       queryInfoText: "",
       readOnlyEditor: false,
+      notices: [],
     };
   },
   computed: {
@@ -327,6 +350,9 @@ export default {
     queryModes() {
       return queryModes;
     },
+    noticesCount() {
+      return this.notices.length;
+    },
   },
   watch: {
     plan: function () {
@@ -335,17 +361,32 @@ export default {
   },
   mounted() {
     emitter.on(`${this.tabId}_check_query_status`, () => {
-        this.$refs.editor.focus()
-        if (this.queryState === queryState.Ready) {
-          this.querySQLReturnRender(this.data, this.context);
-        }
-      });
+      this.$refs.editor.focus();
+      if (this.queryState === queryState.Ready) {
+        this.querySQLReturnRender(this.data, this.context);
+      }
+    });
 
-    
+    emitter.on(`${this.tabId}_run_query`, () => {
+      this.queryRunOrExplain();
+    });
+
+    emitter.on(`${this.tabId}_run_explain`, () => {
+      this.runExplain(0);
+    });
+
+    emitter.on(`${this.tabId}_run_explain_analyze`, () => {
+      this.runExplain(1);
+    });
+
+    emitter.on(`${this.tabId}_indent_sql`, () => {
+      this.indentSQL();
+    });
+
     if (this.dialect === "postgresql") {
       $(`#${this.$refs.explainTab.id}`).on("shown.bs.tab", () => {
         this.enableExplainButtons = true;
-        this.getExplain(0)
+        if (!(this.tabStatus === tabStatusMap.RUNNING)) this.runExplain(0);
       });
 
       $(`#${this.$refs.explainTab.id}`).on("hidden.bs.tab", () => {
@@ -354,7 +395,10 @@ export default {
     }
   },
   unmounted() {
-    emitter.all.delete(`${this.tabId}_check_query_status`)
+    emitter.all.delete(`${this.tabId}_check_query_status`);
+    emitter.all.delete(`${this.tabId}_run_explain`);
+    emitter.all.delete(`${this.tabId}_run_explain_analyze`);
+    emitter.all.delete(`${this.tabId}_indent_sql`);
   },
   methods: {
     getQueryEditorValue(raw_query) {
@@ -376,6 +420,7 @@ export default {
       this.exportDownloadName = "";
       this.queryInfoText = "";
       this.showFetchButtons = false;
+      this.notices = [];
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
@@ -464,9 +509,6 @@ export default {
 
       this.readOnlyEditor = false;
 
-      this.tabStatus = data.v_data.con_status;
-      this.queryDuration = data.v_data.duration;
-
       if (data.v_error) {
         this.errorMessage = data.v_data.message;
       } else {
@@ -485,6 +527,10 @@ export default {
           this.exportDownloadName = data.v_data.download_name;
         } else {
           $(`#${this.$refs.dataTab.id}`).tab("show");
+
+          if (data.v_data.notices.length) {
+            this.notices = data.v_data.notices;
+          }
 
           //Show fetch buttons if data has 50 rows
           if (
@@ -545,12 +591,14 @@ export default {
           }
         }
       }
+      this.tabStatus = data.v_data.con_status;
+      this.queryDuration = data.v_data.duration;
 
       //FIXME: change into event emitting later
       context.tab_tag.tab_loading_span.style.visibility = "hidden";
       context.tab_tag.tab_check_span.style.display = "none";
     },
-    getExplain(explainMode) {
+    runExplain(explainMode) {
       let command = this.getQueryEditorValue(false);
 
       if (command.trim() === "") {
@@ -604,8 +652,9 @@ export default {
       this.cancelled = true;
     },
     indentSQL() {
-      this.$refs.editor.indentSQL()
-    }
+      this.$refs.editor.indentSQL();
+    },
+    showCommandList,
   },
 };
 </script>
