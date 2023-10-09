@@ -33,6 +33,7 @@ import { toggleConnectionAutocomplete } from "../workspace";
 import { querySQL } from "../query";
 import { execAjax } from "../ajax_control";
 import { showToast} from "../notification_control";
+import { settingsStore } from "../stores/settings";
 
 /// <summary>
 /// Retrieving tree.
@@ -56,7 +57,7 @@ function getTreeSqlite(div) {
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
 
-    let autocomplete_switch_status = (v_connTabControl.selectedTab.tag.enable_autocomplete !== false) ? ' checked ' : '';
+    let autocomplete_switch_status = (settingsStore.enableAutocomplete !== false) ? ' checked ' : '';
     let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
     v_connTabControl.selectedTab.tag.divDetails.innerHTML =
         `<i class="fas fa-server mr-1"></i>selected DB: 

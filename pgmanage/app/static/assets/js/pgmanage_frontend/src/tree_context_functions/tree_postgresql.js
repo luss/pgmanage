@@ -43,6 +43,7 @@ import { createTabControl } from "../tabs";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
+import { settingsStore } from "../stores/settings";
 
 function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
     v_connTabControl.tag.createQueryTab(p_tab_name);
@@ -1088,7 +1089,7 @@ function getTreePostgresql(div) {
     v_connTabControl.selectedTab.tree = app
     let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
     let autocomplete_switch_status =
-      v_connTabControl.selectedTab.tag.enable_autocomplete !== false
+      settingsStore.enableAutocomplete !== false
         ? " checked "
         : "";
     v_connTabControl.selectedTab.tag.divDetails.innerHTML = `<i class="fas fa-server mr-1"></i>selected DB:

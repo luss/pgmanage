@@ -2,6 +2,7 @@ import { beforeCloseTab } from "../create_tab_functions";
 import { removeTab, showMenuNewTab } from "../workspace";
 import QueryTab from "../components/QueryTab.vue"
 import { createApp } from "vue";
+import { emitter } from "../emitter";
 
 export let createQueryTabFunction = function(name="Query", tab_db_id, tab_db_name) {
     // Removing last tab of the inner tab list.
@@ -22,10 +23,7 @@ export let createQueryTabFunction = function(name="Query", tab_db_id, tab_db_nam
       p_name: name_html,
       p_selectFunction: function() {
         if (this.tag != null) {
-          // emitt events on resize and checkQueryStatus
-          // this.tag.editor.focus();
-          // checkQueryStatus(this);
-          // this.tag.resize();
+          emitter.emit(`${this.id}_check_query_status`);
         }
       },
       p_closeFunction: function(e, tab) {
