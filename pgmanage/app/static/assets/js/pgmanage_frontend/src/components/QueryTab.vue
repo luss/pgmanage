@@ -1,7 +1,8 @@
 <template>
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
-      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query" />
+      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
+        @editor-change="updateEditorContent" />
     </pane>
 
     <pane size="70">
@@ -42,20 +43,7 @@
                 :for="`check_autocommit_${tabId}`">Autocommit</label>
             </div>
 
-            <div class="omnidb__tab-status">
-              <i :id="`query_tab_status_${tabId}`" :title="statusText"
-                :class="['fas fa-dot-circle tab-status', statusClass]">
-                <div v-if="tabStatus === 1 || tabStatus === 2" class="tab-status-indicator">
-                  <span :class="circleWavesClass">
-                    <span v-for="n in 4" :key="n"></span>
-                  </span>
-                </div>
-              </i>
-
-              <span :id="`query_tab_status_text_${tabId}`" :title="statusText" class="ml-1">
-                {{ statusText }}
-              </span>
-            </div>
+            <TabStatusIndicator :tab-status="tabStatus" />
           </template>
 
           <!-- Query ACTIONS BUTTONS-->
@@ -109,95 +97,9 @@
           </select>
         </div>
       </div>
-
-      <div :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs tab-body">
-        <button :id="`bt_fullscreen_${tabId}`" style="position: absolute; top: 0.25rem; right: 0.25rem" type="button"
-          class="btn btn-sm btn-icon btn-icon-secondary">
-          <i class="fas fa-expand"></i>
-        </button>
-
-        <!-- DATA, MESSAGE, EXPLAIN tabs-->
-        <div :id="`query_result_tabs_${tabId}`" class="h-100">
-          <div class="omnidb__tab-menu">
-            <div class="nav nav-tabs" role="tablist">
-              <a ref="dataTab" class="omnidb__tab-menu__link nav-item nav-link active" :id="`nav_data_tab_${tabId}`"
-                data-toggle="tab" :data-target="`#nav_data_${tabId}`" type="button" role="tab"
-                :aria-controls="`nav_data_${tabId}`" aria-selected="true">
-                <span class="omnidb__tab-menu__link-name"> Data </span>
-              </a>
-              <template v-if="postgresqlDialect">
-                <a ref="messagesTab" class="omnidb__tab-menu__link nav-item nav-link" :id="`nav_messages_tab_${tabId}`"
-                  data-toggle="tab" :data-target="`#nav_messages_${tabId}`" type="button" role="tab"
-                  :aria-controls="`nav_messages_${tabId}`" aria-selected="true">
-                  <span class="omnidb__tab-menu__link-name">
-                    Messages
-                    <a v-if="noticesCount">{{ noticesCount }}</a>
-                  </span>
-                </a>
-                <a ref="explainTab" class="nav-item nav-link omnidb__tab-menu__link" :id="`nav_explain_tab_${tabId}`"
-                  data-toggle="tab" :data-target="`#nav_explain_${tabId}`" type="button" role="tab"
-                  :aria-controls="`nav_explain_${tabId}`" aria-selected="false">
-                  <span class="omnidb__tab-menu__link-name"> Explain </span>
-                </a>
-              </template>
-            </div>
-          </div>
-
-          <div class="tab-content">
-            <div class="tab-pane active" :id="`nav_data_${tabId}`" role="tabpanel"
-              :aria-labelledby="`nav_data_tab_${tabId}`">
-              <div class="omnidb__theme-border--primary p-2">
-                <div class="result-div">
-                  <template v-if="exportFileName && exportDownloadName">
-                    The file is ready.
-                    <a class="link_text" :href="exportFileName" :download="exportDownloadName">Save</a>
-                  </template>
-                  <template v-else-if="errorMessage" class="error_text" style="white-space: pre">
-                    {{ errorMessage }}
-                  </template>
-                  <template v-else-if="queryInfoText">
-                    <div class="query_info">
-                      {{ queryInfoText }}
-                    </div>
-                  </template>
-                  <template v-else>
-                    <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
-                    <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
-                  </template>
-                </div>
-              </div>
-            </div>
-
-            <template v-if="postgresqlDialect">
-              <div class="tab-pane" :id="`nav_messages_${tabId}`" role="tabpanel"
-                :aria-labelledby="`nav_messages_tab_${tabId}`">
-                <div class="omnidb__theme-border--primary p-2">
-                  <div class="result-div">
-                    <p v-for="notice in notices">{{ notice }}</p>
-                  </div>
-                </div>
-              </div>
-              <div class="tab-pane" :id="`nav_explain_${tabId}`" role="tabpanel"
-                :aria-labelledby="`nav_explain_tab_${tabId}`">
-                <div class="omnidb__theme-border--primary pt-2">
-                  <div class="result-div">
-                    <template v-if="!query && !plan">
-                      <p class="lead text-center text-muted mt-5">
-                        Nothing to visualize. Please click Explain or Analyze
-                        button on the toolbar above.
-                      </p>
-                    </template>
-
-                    <template v-else>
-                      <pev2 class="h-100" :plan-source="plan" :plan-query="query" :key="reRenderCounter" />
-                    </template>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
+      <QueryResultTabs ref="queryResults" :tab-id="tabId" :editor-content="editorContent" :dialect="dialect"
+        :tab-status="tabStatus" @enable-explain-buttons="toggleExplainButtons" @run-explain="runExplain(0)"
+        @show-fetch-buttons="toggleFetchButtons" />
     </pane>
   </splitpanes>
 
@@ -209,9 +111,7 @@ import { Splitpanes, Pane } from "splitpanes";
 import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { v_queryRequestCodes, refreshTreeNode } from "../query";
-import { Plan } from "pev2";
-import { HotTable } from "@handsontable/vue3";
+import { v_queryRequestCodes } from "../query";
 import { registerAllModules } from "handsontable/registry";
 import { queryModes, queryState, tabStatusMap } from "../constants";
 import CancelButton from "./CancelSQLButton.vue";
@@ -219,6 +119,8 @@ import QueryEditor from "./QueryEditor.vue";
 import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import { showCommandList } from "../command_history";
+import TabStatusIndicator from "./TabStatusIndicator.vue";
+import QueryResultTabs from "./QueryResultTabs.vue";
 
 // register Handsontable's modules
 registerAllModules();
@@ -228,11 +130,11 @@ export default {
   components: {
     Splitpanes,
     Pane,
-    pev2: Plan,
-    HotTable,
     CancelButton,
     QueryEditor,
     CommandsHistoryModal,
+    TabStatusIndicator,
+    QueryResultTabs,
   },
   props: {
     connId: String,
@@ -249,14 +151,11 @@ export default {
       autocommit: true,
       queryStartTime: "",
       queryDuration: "",
-      data: "",
-      context: "",
+      tempData: "",
+      tempContext: "",
       tabDatabaseId: this.initTabDatabaseId,
       cancelled: false,
       enableExplainButtons: false,
-      query: "",
-      plan: "",
-      reRenderCounter: 0,
       exportTypes: {
         csv: "CSV",
         "csv-no_headers": "CSV(no headers)",
@@ -264,41 +163,9 @@ export default {
         "xlsx-no_headers": "XLSX(no headers)",
       },
       exportType: "csv",
-      exportFileName: "",
-      exportDownloadName: "",
-      errorMessage: "",
       showFetchButtons: false,
-      hotSettings: {
-        data: [],
-        height: "auto",
-        width: "100%",
-        readOnly: true,
-        rowHeaders: true,
-        fillHandle: false,
-        manualColumnResize: true,
-        licenseKey: "non-commercial-and-evaluation",
-        contextMenu: {
-          items: {
-            copy: {
-              name() {
-                return '<div class="position-absolute"><i class="fas fa-copy cm-all align-middle"></i></div><div class="pl-5">Copy</div>';
-              },
-            },
-            view_data: {
-              name() {
-                return '<div class="position-absolute"><i class="fas fa-edit cm-all align-middle"></i></div><div class="pl-5">View Content</div>';
-              },
-              callback(key, selection, clickEvent) {
-                //TODO need to change cellDataModal function
-                // cellDataModal(this,options[0].start.row,options[0].start.col,this.getDataAtCell(options[0].start.row,options[0].start.col),false);
-              },
-            },
-          },
-        },
-      },
-      queryInfoText: "",
       readOnlyEditor: false,
-      notices: [],
+      editorContent: "",
     };
   },
   computed: {
@@ -311,36 +178,6 @@ export default {
     executingState() {
       return this.queryState === queryState.Executing;
     },
-    statusText() {
-      const statusMap = {
-        0: "Not Connected",
-        1: "Idle",
-        2: "Running",
-        3: "Idle in transaction",
-        4: "Idle in transaction (aborted)",
-      };
-      return statusMap[this.tabStatus] || "";
-    },
-    statusClass() {
-      const statusClassMap = {
-        0: "tab-status-closed",
-        1: "tab-status-idle position-relative",
-        2: "tab-status-running position-relative",
-        3: "tab-status-idle_in_transaction",
-        4: "tab-status-idle_in_transaction_aborted",
-      };
-
-      return `${statusClassMap[this.tabStatus] || ""}`;
-    },
-    circleWavesClass() {
-      return {
-        "omnis__circle-waves":
-          this.tabStatus === tabStatusMap.IDLE ||
-          this.tabStatus === tabStatusMap.RUNNING,
-        "omnis__circle-waves--idle": this.tabStatus === tabStatusMap.IDLE,
-        "omnis__circle-waves--running": this.tabStatus === tabStatusMap.RUNNING,
-      };
-    },
     activeTransaction() {
       return [
         tabStatusMap.IDLE_IN_TRANSACTION,
@@ -350,20 +187,12 @@ export default {
     queryModes() {
       return queryModes;
     },
-    noticesCount() {
-      return this.notices.length;
-    },
-  },
-  watch: {
-    plan: function () {
-      this.reRenderCounter++;
-    },
   },
   mounted() {
     emitter.on(`${this.tabId}_check_query_status`, () => {
       this.$refs.editor.focus();
       if (this.queryState === queryState.Ready) {
-        this.querySQLReturnRender(this.data, this.context);
+        this.$refs.queryResults.renderResult(this.tempData, this.tempContext);
       }
     });
 
@@ -382,17 +211,6 @@ export default {
     emitter.on(`${this.tabId}_indent_sql`, () => {
       this.indentSQL();
     });
-
-    if (this.dialect === "postgresql") {
-      $(`#${this.$refs.explainTab.id}`).on("shown.bs.tab", () => {
-        this.enableExplainButtons = true;
-        if (!(this.tabStatus === tabStatusMap.RUNNING)) this.runExplain(0);
-      });
-
-      $(`#${this.$refs.explainTab.id}`).on("hidden.bs.tab", () => {
-        this.enableExplainButtons = false;
-      });
-    }
   },
   unmounted() {
     emitter.all.delete(`${this.tabId}_check_query_status`);
@@ -410,17 +228,13 @@ export default {
       all_data = false,
       query = this.getQueryEditorValue(false),
       log_query = true,
-      save_query = this.getQueryEditorValue(true),
+      save_query = this.editorContent,
       clear_data = false
     ) {
       let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
       this.queryDuration = "";
       this.cancelled = false;
-      this.exportFileName = "";
-      this.exportDownloadName = "";
-      this.queryInfoText = "";
       this.showFetchButtons = false;
-      this.notices = [];
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
@@ -489,114 +303,29 @@ export default {
           this.connId ===
           context.tab_tag.connTab.tag.connTabControl.selectedTab.id
         ) {
-          this.querySQLReturnRender(data, context);
+          this.tempContext = "";
+          this.tempData = "";
+          this.readOnlyEditor = false;
+          this.queryState = queryState.Idle;
+
+          this.$refs.queryResults.renderResult(data, context);
+
+          this.tabStatus = data.v_data.con_status;
+          this.queryDuration = data.v_data.duration;
+
+          // FIXME: change into event emitting later
+          context.tab_tag.tab_loading_span.style.visibility = "hidden";
+          context.tab_tag.tab_check_span.style.display = "none";
         } else {
           this.queryState = queryState.Ready;
-          this.data = data;
-          this.context = context;
+          this.tempData = data;
+          this.tempContext = context;
 
           //FIXME: change into event emitting later
           context.tab_tag.tab_loading_span.style.visibility = "hidden";
           context.tab_tag.tab_check_span.style.display = "";
         }
       }
-    },
-    querySQLReturnRender(data, context) {
-      this.queryState = queryState.Idle;
-
-      this.context = "";
-      this.data = "";
-
-      this.readOnlyEditor = false;
-
-      if (data.v_error) {
-        this.errorMessage = data.v_data.message;
-      } else {
-        if (context.cmd_type === "explain") {
-          $(`#${this.$refs.explainTab.id}`).tab("show");
-
-          // Adjusting data.
-          let explain_text = data.v_data.data.join("\n");
-
-          if (explain_text.length > 0) {
-            this.query = this.getQueryEditorValue(false);
-            this.plan = explain_text;
-          }
-        } else if (!!context.cmd_type && context.cmd_type.includes("export")) {
-          this.exportFileName = data.v_data.file_name;
-          this.exportDownloadName = data.v_data.download_name;
-        } else {
-          $(`#${this.$refs.dataTab.id}`).tab("show");
-
-          if (data.v_data.notices.length) {
-            this.notices = data.v_data.notices;
-          }
-
-          //Show fetch buttons if data has 50 rows
-          if (
-            data.v_data.data.length >= 50 &&
-            context.mode !== this.queryModes.FETCH_ALL
-          ) {
-            this.showFetchButtons = true;
-          } else {
-            this.showFetchButtons = false;
-          }
-          if (context.mode === this.queryModes.DATA_OPERATION) {
-            // if no data that means that it is create, upsert, delete operation
-            if (
-              data.v_data.data.length === 0 &&
-              data.v_data.col_names.length === 0
-            ) {
-              this.queryInfoText = data.v_data.status
-                ? data.v_data.status
-                : "Done";
-            } else {
-              this.$refs.hotTableComponent.hotInstance.updateSettings({
-                colHeaders: data.v_data.col_names,
-                copyPaste: {
-                  pasteMode: "",
-                  uiContainer: this.$refs.hotTableInputHolder,
-                },
-              });
-              this.$refs.hotTableComponent.hotInstance.updateData(
-                data.v_data.data
-              );
-            }
-          } else if (
-            context.mode === this.queryModes.FETCH_MORE ||
-            context.mode === this.queryModes.FETCH_ALL
-          ) {
-            let initialData =
-              this.$refs.hotTableComponent.hotInstance.getSourceData();
-
-            data.v_data.data.forEach((row) => {
-              initialData.push(row);
-            });
-
-            this.$refs.hotTableComponent.hotInstance.updateData(initialData);
-          } else {
-            this.queryInfoText = data.v_data.status;
-          }
-
-          let mode = ["CREATE", "DROP", "ALTER"];
-          if (!!data.v_data.status && isNaN(data.v_data.status)) {
-            let status = data.v_data.status?.split(" ");
-            let status_name = status[1];
-            if (mode.includes(status[0])) {
-              //FIXME: replace this with event emitting on tree instance
-              let root_node =
-                v_connTabControl.selectedTab.tag.tree.getRootNode();
-              if (!!status_name) refreshTreeNode(root_node, status_name);
-            }
-          }
-        }
-      }
-      this.tabStatus = data.v_data.con_status;
-      this.queryDuration = data.v_data.duration;
-
-      //FIXME: change into event emitting later
-      context.tab_tag.tab_loading_span.style.visibility = "hidden";
-      context.tab_tag.tab_check_span.style.display = "none";
     },
     runExplain(explainMode) {
       let command = this.getQueryEditorValue(false);
@@ -630,7 +359,6 @@ export default {
       this.querySQL(this.queryModes.DATA_OPERATION);
     },
     exportData() {
-      $(`#${this.$refs.dataTab.id}`).tab("show");
       let cmd_type = `export_${this.exportType}`;
       let query = this.getQueryEditorValue(false);
       this.querySQL(
@@ -654,22 +382,21 @@ export default {
     indentSQL() {
       this.$refs.editor.indentSQL();
     },
+    updateEditorContent(newContent) {
+      this.editorContent = newContent;
+    },
+    toggleFetchButtons(newValue) {
+      this.showFetchButtons = newValue;
+    },
+    toggleExplainButtons() {
+      this.enableExplainButtons = !this.enableExplainButtons;
+    },
     showCommandList,
   },
 };
 </script>
 
 <style scoped>
-.tab-status-indicator {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  overflow: visible;
-  left: 0px;
-  top: 0px;
-  display: block;
-}
-
 .query-body {
   height: calc(100vh - 60px);
 }
@@ -687,23 +414,5 @@ export default {
 
 .splitpanes .splitpanes__pane {
   transition: none;
-}
-
-.tab-body {
-  height: calc(100% - 40px);
-}
-
-.tab-content,
-.omnidb__theme-border--primary {
-  height: calc(100% - 20px);
-}
-
-.tab-pane,
-.result-div {
-  height: 100%;
-}
-
-.result-div {
-  overflow: auto;
 }
 </style>

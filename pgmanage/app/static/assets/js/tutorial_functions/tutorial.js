@@ -483,8 +483,8 @@ function startTutorial(p_tutorial_name) {
         <p>For example, you can <span class="bg-info rounded px-1 text-white">run</span> a query, <span class="bg-info rounded px-1 text-white">cancel</span> an ongoing query, <span class="bg-info rounded px-1 text-white">fetch more</span>, <span class="bg-info rounded px-1 text-white">explain</span>, <span class="bg-info rounded px-1 text-white">explain analyze</span>.</p>
         <p>If you navigate the Tree on the left to find a table and use the action Query Table from it's context menu, the editor will autofill and the run query will be issued.</p>
         `,
-        p_position: function() {var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.omnidb__tab-actions')[0]; return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
-        p_target: function(){var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.omnidb__tab-actions')[0]; return v_target;},
+        p_position: function() {var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.tab-actions')[0]; return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
+        p_target: function(){var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.tab-actions')[0]; return v_target;},
         p_title: 'Actions Panel'
       },
       {
@@ -503,8 +503,13 @@ function startTutorial(p_tutorial_name) {
           </li>
         </ol>
         `,
-        p_position: function() {var v_target = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_result; return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y + 40}},
-        p_target: function(){var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.divResult).find('.omnidb__tab-actions')[0]; return v_target;},
+        p_position: function() {
+          let v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.result-div')[0]; 
+          if (!v_target) {
+            v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.ace_editor')[0]
+          }
+          return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y + 40}},
+        p_target: function(){var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.tab-actions')[0]; return v_target;},
         p_title: 'Query Result'
       }
     ]
