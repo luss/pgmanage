@@ -31,6 +31,7 @@ export default {
     tabMode: String,
     dialect: String,
   },
+  emits: ["editorChange"],
   data() {
     return {
       editor: "",
@@ -62,19 +63,23 @@ export default {
     });
 
     emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
-        this.editor.setValue(command);
-        this.editor.clearSelection();
-        this.editor.gotoLine(0, 0, true);
-      });
+      this.editor.setValue(command);
+      this.editor.clearSelection();
+      this.editor.gotoLine(0, 0, true);
+    });
+
+    this.editor.on("change", () => {
+      this.$emit("editorChange", this.editor.getValue().trim());
+    });
 
     settingsStore.$subscribe((mutation, state) => {
       this.editor.setTheme(`ace/theme/${state.editorTheme}`);
       this.editor.setFontSize(state.fontSize);
-    })
+    });
   },
   unmounted() {
     emitter.all.delete(`${this.tabId}_show_autocomplete_results`);
-    emitter.all.delete(`${this.tabId}_copy_to_editor`)
+    emitter.all.delete(`${this.tabId}_copy_to_editor`);
   },
   methods: {
     setupEditor() {
@@ -168,9 +173,9 @@ export default {
         this.editor.gotoLine(0, 0, true);
       }
     },
-    focus(){
-      this.editor.focus()
-    }
+    focus() {
+      this.editor.focus();
+    },
   },
 };
 </script>
