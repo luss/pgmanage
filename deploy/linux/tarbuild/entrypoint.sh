@@ -11,6 +11,7 @@ git clone $REPO --depth 1 -b $BRANCH pgmanage
 # Installing dependencies
 cd pgmanage/
 pip3 install -r requirements.txt
+pip3 install pyinstaller==5.13.0
 
 # if version is not provided, we use last tag from repository
 if [ -z "$VERSION" ]
