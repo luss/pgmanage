@@ -89,7 +89,8 @@ function polling_response(message) {
       if (context) {
         SetAcked(context);
         if (!message.v_error || message.v_data.v_chunks) {
-          context.tab_tag.tempData = context.tab_tag.tempData.concat(message.v_data.v_data);
+          if(context.tab_tag.tempData)
+            context.tab_tag.tempData = context.tab_tag.tempData.concat(message.v_data.v_data);
         }
         if (!message.v_data.v_chunks || message.v_data.v_last_block || message.v_error) {
           message.v_data.v_data = [];
@@ -110,7 +111,7 @@ function polling_response(message) {
       if (context) {
         if (message.v_data.v_last_block || message.v_error) {
           context.callback(message, context)
-          
+
           //Remove context
           removeContext(context_code);
         }
@@ -126,7 +127,10 @@ function polling_response(message) {
     case parseInt(v_queryResponseCodes.QueryEditDataResult): {
       if (context) {
         SetAcked(context);
-        queryEditDataReturn(message, context);
+        if(context.callback)
+          context.callback(message)
+        else
+          queryEditDataReturn(message, context);
         removeContext(context_code);
       }
       break;
@@ -134,6 +138,13 @@ function polling_response(message) {
     case parseInt(v_queryResponseCodes.SaveEditDataResult): {
       if (context) {
         saveEditDataReturn(message, context);
+        removeContext(context_code);
+      }
+      break;
+    }
+    case parseInt(v_queryResponseCodes.SaveEditDataResultNew): {
+      if (context) {
+        context.callback(message)
         removeContext(context_code);
       }
       break;

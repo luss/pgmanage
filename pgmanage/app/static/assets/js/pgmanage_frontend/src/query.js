@@ -49,6 +49,7 @@ var v_queryRequestCodes = {
 	Script: 3,
 	QueryEditData: 4,
 	SaveEditData: 5,
+	SaveEditDataNew: 55,
 	CancelThread: 6,
 	Debug: 7,
 	CloseTab: 8,
@@ -66,6 +67,7 @@ var v_queryResponseCodes = {
 	QueryResult: 1,
 	QueryEditDataResult: 2,
 	SaveEditDataResult: 3,
+	SaveEditDataResultNew: 33,
 	SessionMissing: 4,
 	PasswordRequired: 5,
 	QueryAck: 6,
@@ -560,7 +562,7 @@ function querySQLReturnRender(p_message,p_context) {
 
 
 // recursive function to find parent node list of queried type and refresh it
-function refreshTreeNode(node, type_name) {	
+function refreshTreeNode(node, type_name) {
 	let selected_database = v_connTabControl.selectedTab.tag.selectedDatabase;
 	// get inner nodes
 	function getInnerNode(node, type_name) {

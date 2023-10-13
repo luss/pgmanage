@@ -42,7 +42,9 @@ class requestType(IntEnum):
   Execute        = 2
   Script         = 3
   QueryEditData  = 4
+  QueryEditDataNew  = 40
   SaveEditData   = 5
+  SaveEditDataNew   = 55
   CancelThread   = 6
   Debug          = 7
   CloseTab       = 8
@@ -56,6 +58,7 @@ class response(IntEnum):
   QueryResult         = 1
   QueryEditDataResult = 2
   SaveEditDataResult  = 3
+  SaveEditDataResultNew  = 33
   SessionMissing      = 4
   PasswordRequired    = 5
   QueryAck            = 6
@@ -267,7 +270,16 @@ def create_request(request, session):
                 except OSError:
                     pass
 
-        elif v_code == requestType.Query or v_code == requestType.QueryEditData or v_code == requestType.SaveEditData or v_code == requestType.AdvancedObjectSearch or v_code == requestType.Console:
+        # elif v_code == requestType.Query or v_code == requestType.QueryEditData or v_code == requestType.SaveEditData or v_code == requestType.AdvancedObjectSearch or v_code == requestType.Console:
+        elif v_code in [
+            requestType.Query,
+            requestType.QueryEditData,
+            requestType.QueryEditDataNew,
+            requestType.SaveEditData,
+            requestType.SaveEditDataNew,
+            requestType.AdvancedObjectSearch,
+            requestType.Console
+            ]:
             #create tab object if it doesn't exist
             tab_object = client_object.get_tab(conn_tab_id=v_data['v_conn_tab_id'],
                                                 tab_id=v_data['v_tab_id'])
@@ -335,9 +347,25 @@ def create_request(request, session):
                 #t.setDaemon(True)
                 t.start()
 
+            #Query edit data
+            elif v_code == requestType.QueryEditDataNew:
+                t = StoppableThread(thread_query_edit_data_new,v_data)
+                tab_object['thread'] = t
+                tab_object['type'] = 'edit'
+                #t.setDaemon(True)
+                t.start()
+
             #Save edit data
             elif v_code == requestType.SaveEditData:
                 t = StoppableThread(thread_save_edit_data,v_data)
+                tab_object['thread'] = t
+                tab_object['type'] = 'edit'
+                #t.setDaemon(True)
+                t.start()
+
+            #Save edit data
+            elif v_code == requestType.SaveEditDataNew:
+                t = StoppableThread(thread_save_edit_data_new,v_data)
                 tab_object['thread'] = t
                 tab_object['type'] = 'edit'
                 #t.setDaemon(True)
@@ -349,7 +377,7 @@ def create_request(request, session):
             #create tab object if it doesn't exist
             tab_object = client_object.get_tab(conn_tab_id=v_data.get('v_conn_tab_id'),
                                                 tab_id=v_data.get('v_tab_id'))
-            
+
             if tab_object is None:
                 tab_object = client_object.create_tab(
                     conn_tab_id=v_data.get('v_conn_tab_id'),
@@ -1351,6 +1379,62 @@ def thread_query_edit_data(self,args):
         if not self.cancel:
             queue_response(v_client_object,v_response)
 
+def thread_query_edit_data_new(self,args):
+    res = {
+        'v_code': response.QueryEditDataResult,
+        'v_context_code': args['v_context_code'],
+        'v_error': False,
+        'v_data': {
+            'rows' : [],
+        }
+    }
+
+    try:
+        database = args['v_database']
+
+        table          = args['v_table']
+
+        if database.v_has_schema:
+            schema         = args['v_schema']
+
+        filter         = args['v_filter']
+        count          = str(args['v_count'])
+        client_object  = args['v_client_object']
+
+        try:
+            if database.v_has_schema:
+                table_name = schema + '.' + table
+            else:
+                table_name = table
+
+            print(count)
+            table_data = database.QueryTableRecords('*', table_name, filter, count)
+
+            table_rows = []
+            for row in table_data.Rows:
+                row_data = []
+
+                for col in table_data.Columns:
+                    if row[col] == None:
+                        row_data.append(None)
+                    else:
+                        row_data.append(str(row[col]))
+                table_rows.append(row_data)
+            res['v_data']['rows'] = table_rows
+
+        except Exception as exc:
+            res['v_data'] = str(exc)
+            res['v_error'] = True
+
+        if not self.cancel:
+            queue_response(client_object,res)
+    except Exception as exc:
+        logger.error('''*** Exception ***\n{0}'''.format(traceback.format_exc()))
+        res['v_error'] = True
+        res['v_data'] = traceback.format_exc().replace('\n','<br>')
+        if not self.cancel:
+            queue_response(client_object,res)
+
 def thread_save_edit_data(self,args):
     v_response = {
         'v_code': response.SaveEditDataResult,
@@ -1564,3 +1648,28 @@ def thread_save_edit_data(self,args):
         v_response['v_data'] = traceback.format_exc().replace('\n','<br>')
         if not self.cancel:
             queue_response(v_client_object,v_response)
+
+
+def thread_save_edit_data_new(self,args):
+    response = {
+        'v_code': response.SaveEditDataResult,
+        'v_context_code': args['v_context_code'],
+        'v_error': False,
+        'v_data': []
+    }
+
+    try:
+        database = args['v_database']
+        client_object  = args['v_client_object']
+        command = 'select 1=1'
+
+        database.v_connection.Execute(command)
+
+        if not self.cancel:
+            queue_response(client_object, response)
+    except Exception as exc:
+        logger.error('''*** Exception ***\n{0}'''.format(traceback.format_exc()))
+        response['v_error'] = True
+        response['v_data'] = traceback.format_exc().replace('\n','<br>')
+        if not self.cancel:
+            queue_response(client_object, response)

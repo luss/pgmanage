@@ -35,6 +35,7 @@ import {
 } from "../tree_context_functions/tree_postgresql";
 import { createConfTab } from "../tab_functions/conf_tab";
 import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
+import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
@@ -293,6 +294,16 @@ export default {
                 icon: "fas cm-all fa-table",
                 onClick: () => {
                   v_startEditData(
+                    this.selectedNode.title,
+                    this.selectedNode.data.schema
+                  );
+                },
+              },
+              {
+                label: "New Edit Data",
+                icon: "fas cm-all fa-table",
+                onClick: () => {
+                  createDataEditorTab(
                     this.selectedNode.title,
                     this.selectedNode.data.schema
                   );
