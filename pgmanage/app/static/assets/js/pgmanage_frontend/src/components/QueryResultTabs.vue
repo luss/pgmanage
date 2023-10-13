@@ -1,7 +1,7 @@
 <template>
-  <div :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs tab-body">
+  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs tab-body">
     <button :id="`bt_fullscreen_${tabId}`" style="position: absolute; top: 0.25rem; right: 0.25rem" type="button"
-      class="btn btn-sm btn-icon btn-icon-secondary">
+      class="btn btn-sm btn-icon btn-icon-secondary" @click="toggleFullScreen()">
       <i class="fas fa-expand"></i>
     </button>
 
@@ -76,7 +76,8 @@
 import ExplainTabContent from "./ExplainTabContent.vue";
 import { queryModes, tabStatusMap } from "../constants";
 import { HotTable } from "@handsontable/vue3";
-import { refreshTreeNode } from "../query";
+import { cellDataModal } from "../header_actions";
+import { emitter } from "../emitter";
 
 export default {
   components: {
@@ -85,6 +86,7 @@ export default {
   },
   props: {
     tabId: String,
+    connId: String,
     editorContent: String,
     dialect: String,
     tabStatus: Number,
@@ -118,8 +120,17 @@ export default {
                 return '<div class="position-absolute"><i class="fas fa-edit cm-all align-middle"></i></div><div class="pl-5">View Content</div>';
               },
               callback(key, selection, clickEvent) {
-                //TODO need to change cellDataModal function
-                // cellDataModal(this,options[0].start.row,options[0].start.col,this.getDataAtCell(options[0].start.row,options[0].start.col),false);
+                //TODO overwrite cellDataModal function
+                cellDataModal(
+                  this,
+                  selection[0].start.row,
+                  selection[0].start.col,
+                  this.getDataAtCell(
+                    selection[0].start.row,
+                    selection[0].start.col
+                  ),
+                  false
+                );
               },
             },
           },
@@ -160,92 +171,107 @@ export default {
         this.errorMessage = data.v_data.message;
       } else {
         if (context.cmd_type === "explain") {
-          $(`#${this.$refs.explainTab.id}`).tab("show");
-
-          // Adjusting data.
-          let explain_text = data.v_data.data.join("\n");
-
-          if (explain_text.length > 0) {
-            this.query = this.editorContent;
-            this.plan = explain_text;
-          }
+          this.showExplainTab(data.v_data.data);
         } else if (!!context.cmd_type && context.cmd_type.includes("export")) {
-          $(`#${this.$refs.dataTab.id}`).tab("show");
-
-          this.exportFileName = data.v_data.file_name;
-          this.exportDownloadName = data.v_data.download_name;
+          this.showExport(data.v_data);
         } else {
-          $(`#${this.$refs.dataTab.id}`).tab("show");
-
-          if (data.v_data.notices.length) {
-            this.notices = data.v_data.notices;
-          }
-
-          //Show fetch buttons if data has 50 rows
-          if (
-            data.v_data.data.length >= 50 &&
-            context.mode !== this.queryModes.FETCH_ALL
-          ) {
-            this.$emit("showFetchButtons", true);
-          } else {
-            this.$emit("showFetchButtons", false);
-          }
-          if (context.mode === this.queryModes.DATA_OPERATION) {
-            // if no data that means that it is create, upsert, delete operation
-            if (
-              data.v_data.data.length === 0 &&
-              data.v_data.col_names.length === 0
-            ) {
-              this.queryInfoText = data.v_data.status
-                ? data.v_data.status
-                : "Done";
-            } else {
-              this.$refs.hotTableComponent.hotInstance.updateSettings({
-                colHeaders: data.v_data.col_names,
-                copyPaste: {
-                  pasteMode: "",
-                  uiContainer: this.$refs.hotTableInputHolder,
-                },
-              });
-              this.$refs.hotTableComponent.hotInstance.updateData(
-                data.v_data.data
-              );
-            }
-          } else if (
-            context.mode === this.queryModes.FETCH_MORE ||
-            context.mode === this.queryModes.FETCH_ALL
-          ) {
-            let initialData =
-              this.$refs.hotTableComponent.hotInstance.getSourceData();
-
-            data.v_data.data.forEach((row) => {
-              initialData.push(row);
-            });
-
-            this.$refs.hotTableComponent.hotInstance.updateData(initialData);
-          } else {
-            this.queryInfoText = data.v_data.status;
-          }
+          this.showDataTab(data.v_data, context);
 
           let mode = ["CREATE", "DROP", "ALTER"];
           if (!!data.v_data.status && isNaN(data.v_data.status)) {
             let status = data.v_data.status?.split(" ");
-            let status_name = status[1];
             if (mode.includes(status[0])) {
-              //FIXME: replace this with event emitting on tree instance
-              let root_node =
-                v_connTabControl.selectedTab.tag.tree.getRootNode();
-              if (!!status_name) refreshTreeNode(root_node, status_name);
+              let node_type = status[1]
+                ? `${status[1].toLowerCase()}_list`
+                : null;
+
+              if (!!node_type)
+                emitter.emit(`refreshTreeRecursive_${this.connId}`, node_type);
             }
           }
         }
       }
+    },
+    showExplainTab(data) {
+      $(`#${this.$refs.explainTab.id}`).tab("show");
+
+      // Adjusting data.
+      let explain_text = data.join("\n");
+
+      if (explain_text.length > 0) {
+        this.query = this.editorContent;
+        this.plan = explain_text;
+      }
+    },
+    showExport(data) {
+      $(`#${this.$refs.dataTab.id}`).tab("show");
+
+      this.exportFileName = data.file_name;
+      this.exportDownloadName = data.download_name;
+    },
+    showDataTab(data, context) {
+      $(`#${this.$refs.dataTab.id}`).tab("show");
+
+      if (data.notices.length) {
+        this.notices = data.notices;
+      }
+
+      //Show fetch buttons if data has 50 rows
+      if (
+        data.data.length >= 50 &&
+        context.mode !== this.queryModes.FETCH_ALL
+      ) {
+        this.$emit("showFetchButtons", true);
+      } else {
+        this.$emit("showFetchButtons", false);
+      }
+
+      if (context.mode === this.queryModes.DATA_OPERATION) {
+        this.showDataOperationResult(data);
+      } else if (
+        context.mode === this.queryModes.FETCH_MORE ||
+        context.mode === this.queryModes.FETCH_ALL
+      ) {
+        this.fetchData(data);
+      } else {
+        this.queryInfoText = data.status;
+      }
+    },
+    showDataOperationResult(data) {
+      if (data.data.length === 0 && data.col_names.length === 0) {
+        this.queryInfoText = data.status ? data.status : "Done";
+      } else {
+        this.updateHotTable(data);
+      }
+    },
+    updateHotTable(data) {
+      this.$refs.hotTableComponent.hotInstance.updateSettings({
+        colHeaders: data.col_names,
+        copyPaste: {
+          pasteMode: "",
+          uiContainer: this.$refs.hotTableInputHolder,
+        },
+      });
+      this.$refs.hotTableComponent.hotInstance.updateData(data.data);
+    },
+    fetchData(data) {
+      let initialData =
+        this.$refs.hotTableComponent.hotInstance.getSourceData();
+
+      data.data.forEach((row) => {
+        initialData.push(row);
+      });
+
+      this.$refs.hotTableComponent.hotInstance.updateData(initialData);
     },
     clearData() {
       this.notices = [];
       this.queryInfoText = "";
       this.exportDownloadName = "";
       this.exportFileName = "";
+    },
+    toggleFullScreen() {
+      this.$refs.resultDiv.classList.toggle("omnidb__panel-view--full");
     },
   },
 };

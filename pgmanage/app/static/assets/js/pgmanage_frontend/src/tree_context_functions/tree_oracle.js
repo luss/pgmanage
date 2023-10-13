@@ -29,15 +29,15 @@ SOFTWARE.
 import { createApp } from "vue";
 import TreeOracle from '../components/TreeOracle.vue'
 import { tabSQLTemplate } from './tree_postgresql'
-import { renameTabConfirm, toggleConnectionAutocomplete } from '../workspace'
+import { toggleConnectionAutocomplete } from '../workspace'
 import { createMessageModal } from '../notification_control'
-import { querySQL } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
 import { showToast } from "../notification_control";
 import { settingsStore } from "../stores/settings";
+import { emitter } from "../emitter";
 
 /// <summary>
 /// Retrieving tree.
@@ -1243,20 +1243,8 @@ function TemplateSelectOracle(p_schema, p_table) {
             v_connTabControl.tag.createQueryTab(
                 p_schema + '.' + p_table);
 
-            v_connTabControl.selectedTab
-                .tag.tabControl.selectedTab
-                .tag.editor.setValue(p_return.v_data.v_template);
-            v_connTabControl.selectedTab
-                .tag.tabControl.selectedTab
-                .tag.editor.clearSelection();
-            renameTabConfirm(
-                v_connTabControl.selectedTab
-                .tag.tabControl.selectedTab,
-                p_schema + '.' + p_table);
-
-            //minimizeEditor();
-
-            querySQL(0);
+            let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+            emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
         },
         function(p_return) {
             showToast("error", p_return.v_data)

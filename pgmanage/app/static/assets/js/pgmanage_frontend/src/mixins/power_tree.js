@@ -58,6 +58,10 @@ export default {
       this.removeNode(e.node)
     })
 
+    emitter.on(`refreshTreeRecursive_${this.tabId}`, (node_type) => {
+      this.refreshTreeRecursive(node_type)
+    })
+
     // Temporary solution, use Pinia store later
     if (this.getRootNode().title === 'Snippets') {
       v_connTabControl.snippet_tree = this
@@ -192,6 +196,27 @@ export default {
     },
     getRootNode() {
       return this.$refs.tree.getFirstNode()
+    },
+    refreshTreeRecursive(node_type) {
+      const rootNode = this.getRootNode()
+      const getInnerNode = (node, node_type) => {
+        if (!!node.children.length) {
+          if (node.data.type === node_type) {
+            this.refreshTree(node)
+          }
+          for (let i = 0; i < node.children.length; i++) {
+            let childNode = node.children[i];
+    
+            if (childNode.data?.database === this.selectedDatabase) {
+              getInnerNode(childNode, node_type);
+            }
+          }
+        }
+      }
+
+      for (let i = 0; i < rootNode.children.length; i++) {
+        getInnerNode(rootNode.children[i], node_type)
+      }
     }
   },
 };

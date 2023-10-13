@@ -2,7 +2,7 @@ import axios from 'axios'
 import ShortUniqueId from 'short-unique-id';
 
 import { terminalReturn } from "./terminal";
-import { querySQLReturn, cancelSQLTab, querySQL, v_queryResponseCodes } from "./query";
+import { v_queryResponseCodes } from "./query";
 import { queryEditDataReturn, saveEditDataReturn, cancelEditDataTab } from "./tree_context_functions/edit_data";
 import { debugResponse } from "./debug";
 import { showPasswordPrompt } from "./passwords";
@@ -89,24 +89,11 @@ function polling_response(message) {
       if (context) {
         SetAcked(context);
         // temporary development workaround, 
-        if (!message.v_error || message.v_data.chunks || message.v_data.v_chunks) {
-          // temporary development workaround
-          if (!context.vue) {
-            context.tab_tag.tempData = context.tab_tag.tempData.concat(message.v_data.v_data);
-          }
-        }
-        // temporary development workaround, 
-        if (!message.v_data.chunks || message.v_data.last_block || message.v_error
-            || !message.v_data.v_chunks || message.v_data.v_last_block) {
-          if (!context.vue) {
-            message.v_data.v_data = [];
-          }
+        if (!message.v_data.chunks || message.v_data.last_block || message.v_error ) {
           if(context.simple && context.callback!=null) { //used by schema editor only, dont run any legacy rendering for simple requests
             context.callback(message)
-          } else if (context.vue) {
+          } else  {
             context.callback(message, context)
-          } else {
-            querySQLReturn(message, context);
           }
 
           //Remove context
@@ -183,20 +170,10 @@ function QueryPasswordRequired(p_context, p_message) {
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {
-				cancelSQLTab(p_context.tab_tag);
-				//querySQL(p_context.mode);
-				querySQL(p_context.mode,
-								 p_context.all_data,
-								 p_context.query,
-								 p_context.callback,
-								 p_context.log_query,
-								 p_context.save_query,
-								 p_context.cmd_type,
-								 p_context.clear_data,
-								 p_context.tab_title);
+        p_context.passwordSuccessCallback(p_context)
 			},
 			function() {
-				cancelSQLTab(p_context.tab_tag);
+        p_context.passwordFailCalback(p_context)
 			},
 			p_message
 		);

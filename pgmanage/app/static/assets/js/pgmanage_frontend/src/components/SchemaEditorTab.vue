@@ -301,18 +301,18 @@ export default {
     },
     applyChanges() {
       let message_data = {
-				v_sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
-				v_sql_save : false,
-				v_cmd_type: null,
+				sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
+				sql_save : false,
+				cmd_type: null,
 				v_db_index: this.database_index,
 				v_conn_tab_id: v_connTabControl.selectedTab.id,
 				v_tab_id: this.tab_id,
-				v_tab_db_id: this.database_index,
-				v_mode: 0,
-				v_all_data: false,
-				v_log_query: false,
-				v_tab_title: 'schema editor',
-				v_autocommit: true,
+				tab_db_id: this.database_index,
+				mode: 0,
+				all_data: false,
+				log_query: false,
+				tab_title: 'schema editor',
+				autocommit: true,
 				database_name: this.database_name
 			}
 

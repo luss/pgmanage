@@ -40,7 +40,7 @@ import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createRequest } from './long_polling'
-import { v_queryRequestCodes, checkQueryStatus } from './query'
+import { v_queryRequestCodes } from './query'
 import { checkDebugStatus } from './debug'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
@@ -805,7 +805,7 @@ function refreshTreeHeight() {
 
 function checkTabStatus(v_tab) {
 	if (v_tab.tag.tabControl.selectedTab.tag.mode=='query')
-		checkQueryStatus(v_tab.tag.tabControl.selectedTab);
+    emitter.emit(`${v_tab.tag.tabControl.selectedTab.id}_check_query_status`);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='edit')
 		checkEditDataStatus(v_tab.tag.tabControl.selectedTab);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='debug')
@@ -1027,13 +1027,6 @@ function showMenuNewTabOuter(e) {
 function showMenuNewTab(e) {
 	var v_option_list = [
     {
-			label: 'Query Tab New',
-			icon: 'fas cm-all fa-search',
-			onClick: function() {
-				v_connTabControl.tag.createQueryTabNew();
-			}
-		},
-		{
 			label: 'Query Tab',
 			icon: 'fas cm-all fa-search',
 			onClick: function() {

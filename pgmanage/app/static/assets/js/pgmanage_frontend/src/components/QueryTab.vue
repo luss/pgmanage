@@ -97,9 +97,9 @@
           </select>
         </div>
       </div>
-      <QueryResultTabs ref="queryResults" :tab-id="tabId" :editor-content="editorContent" :dialect="dialect"
-        :tab-status="tabStatus" @enable-explain-buttons="toggleExplainButtons" @run-explain="runExplain(0)"
-        @show-fetch-buttons="toggleFetchButtons" />
+      <QueryResultTabs ref="queryResults" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"
+        :dialect="dialect" :tab-status="tabStatus" @enable-explain-buttons="toggleExplainButtons"
+        @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" />
     </pane>
   </splitpanes>
 
@@ -189,34 +189,10 @@ export default {
     },
   },
   mounted() {
-    emitter.on(`${this.tabId}_check_query_status`, () => {
-      this.$refs.editor.focus();
-      if (this.queryState === queryState.Ready) {
-        this.$refs.queryResults.renderResult(this.tempData, this.tempContext);
-      }
-    });
-
-    emitter.on(`${this.tabId}_run_query`, () => {
-      this.queryRunOrExplain();
-    });
-
-    emitter.on(`${this.tabId}_run_explain`, () => {
-      this.runExplain(0);
-    });
-
-    emitter.on(`${this.tabId}_run_explain_analyze`, () => {
-      this.runExplain(1);
-    });
-
-    emitter.on(`${this.tabId}_indent_sql`, () => {
-      this.indentSQL();
-    });
+    this.setupEvents();
   },
   unmounted() {
-    emitter.all.delete(`${this.tabId}_check_query_status`);
-    emitter.all.delete(`${this.tabId}_run_explain`);
-    emitter.all.delete(`${this.tabId}_run_explain_analyze`);
-    emitter.all.delete(`${this.tabId}_indent_sql`);
+    this.clearEvents();
   },
   methods: {
     getQueryEditorValue(raw_query) {
@@ -226,7 +202,7 @@ export default {
       mode,
       cmd_type = null,
       all_data = false,
-      query = this.getQueryEditorValue(false),
+      query = this.getQueryEditorValue(true),
       log_query = true,
       save_query = this.editorContent,
       clear_data = false
@@ -253,7 +229,7 @@ export default {
             sql_save: save_query,
             database_name: this.databaseName,
             cmd_type: cmd_type,
-            all_data: all_data, // maybe not needed, it is used only by export command
+            all_data: all_data,
             log_query: log_query,
             // change the we are getting tab title
             tab_title: tab_tag.tab_title_span.innerHTML,
@@ -268,11 +244,14 @@ export default {
             database_index: this.databaseIndex,
             start_datetime: this.queryStartTime,
             acked: false,
-            vue: true,
-            callback: this.querySQLReturn.bind(this),
-            clear_data: clear_data, // need to clear handsontable when using export
+            clear_data: clear_data,
             cmd_type: cmd_type,
             mode: mode,
+            callback: this.querySQLReturn.bind(this),
+            passwordSuccessCallback: this.passwordSuccessCallback.bind(this),
+            passwordFailCalback: () => {
+              emitter.emit(`${this.tabId}_cancel_query`);
+            },
           };
 
           context.tab_tag.context = context;
@@ -328,7 +307,7 @@ export default {
       }
     },
     runExplain(explainMode) {
-      let command = this.getQueryEditorValue(false);
+      let command = this.getQueryEditorValue(true);
 
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");
@@ -348,7 +327,7 @@ export default {
     },
     queryRunOrExplain() {
       if (this.dialect === "postgresql") {
-        let query = this.getQueryEditorValue(false);
+        let query = this.getQueryEditorValue(true);
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
         if (should_explain) {
@@ -360,7 +339,7 @@ export default {
     },
     exportData() {
       let cmd_type = `export_${this.exportType}`;
-      let query = this.getQueryEditorValue(false);
+      let query = this.getQueryEditorValue(true);
       this.querySQL(
         this.queryModes.DATA_OPERATION,
         cmd_type,
@@ -390,6 +369,53 @@ export default {
     },
     toggleExplainButtons() {
       this.enableExplainButtons = !this.enableExplainButtons;
+    },
+    passwordSuccessCallback(context) {
+      emitter.emit(`${this.tabId}_cancel_query`);
+
+      this.querySQL(
+        context.mode,
+        context.cmd_type,
+        context.all_data,
+        context.query,
+        context.log_query,
+        context.save_query,
+        context.clear_data
+      );
+    },
+    setupEvents() {
+      emitter.on(`${this.tabId}_check_query_status`, () => {
+        this.$refs.editor.focus();
+        if (this.queryState === queryState.Ready) {
+          this.$refs.queryResults.renderResult(this.tempData, this.tempContext);
+        }
+      });
+
+      emitter.on(`${this.tabId}_run_query`, (sql_command) => {
+        if (sql_command) {
+          emitter.emit(`${this.tabId}_copy_to_editor`, sql_command);
+        }
+        this.queryRunOrExplain();
+      });
+
+      emitter.on(`${this.tabId}_run_explain`, () => {
+        this.runExplain(0);
+      });
+
+      emitter.on(`${this.tabId}_run_explain_analyze`, () => {
+        this.runExplain(1);
+      });
+
+      emitter.on(`${this.tabId}_indent_sql`, () => {
+        this.indentSQL();
+      });
+    },
+    clearEvents() {
+      emitter.all.delete(`${this.tabId}_check_query_status`);
+      emitter.all.delete(`${this.tabId}_run_explain`);
+      emitter.all.delete(`${this.tabId}_run_explain_analyze`);
+      emitter.all.delete(`${this.tabId}_indent_sql`);
+      emitter.all.delete(`${this.tabId}_run_query`)
     },
     showCommandList,
   },
