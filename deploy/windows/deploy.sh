@@ -30,7 +30,7 @@ touch pgmanage.db
 
 # Install all required libraries
 pip3 install -r ../../../requirements.txt
-pip3 install pyinstaller
+pip3 install pyinstaller==5.13.0
 
 # set up versions in custom_settins.py
 echo "setting app version in sources to $APP_VERSION"

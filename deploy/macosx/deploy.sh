@@ -64,7 +64,7 @@ source venv/bin/activate
 
 # Install all required libraries
 pip3 install -r ../../../requirements.txt
-pip3 install pyinstaller
+pip3 install pyinstaller==5.13.0
 
 # set up versions in custom_settins.py
 sed -i '' "s/Dev/PgManage $APP_VERSION/" pgmanage/custom_settings.py
