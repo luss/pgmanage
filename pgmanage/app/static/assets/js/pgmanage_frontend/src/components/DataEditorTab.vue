@@ -1,15 +1,16 @@
 <template>
-<div>
+<div class="data-editor">
   <div class="form-row">
-    <div class="form-group col-10">
+    <div class="form-group col-9">
       <form class="form" @submit.prevent>
-        <label class="font-weight-bold mb-2" for="selectServer">Filter</label>
-        <span class='text-primary'> select</span> * <span class='text-primary'>from</span> {{this.schema}}.{{this.table}} t
+        <label class="mb-2" for="selectServer">
+          <span class="font-weight-bold">Filter</span> <span class='text-info'> select</span> * <span class='text-info'>from</span> {{this.schema}}.{{this.table}} t
+        </label>
         <input v-model.trim="query_filter" class="form-control" name="filter"
            placeholder="extra filter criteria" />
       </form>
     </div>
-    <div class="form-group col-1">
+    <div class="form-group col-2">
       <form class="form" @submit.prevent>
         <label class="font-weight-bold mb-2" for="selectServer">Limit</label>
         <select v-model="row_limit" class="form-control">
@@ -31,22 +32,18 @@
   <div class="grid-scrollable">
     <div class="row">
       <div class="col-12">
-        <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
+        <hot-table ref="hotTableComponent" class='data-grid' :settings="hotSettings"></hot-table>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-end align-items-center p-2">
-        <button type="submit" class="btn btn-success btn-sm mr-5" :disabled="!hasChanges"
-          @click.prevent="applyChanges">
-          {{this.applyBtnTitle()}}
-        </button>
-      </div>
-    </div>
+
+  <div class="data-editor__footer d-flex justify-content-end align-items-center p-2">
+    <button type="submit" class="btn btn-success btn-sm mr-5" :disabled="!hasChanges"
+      @click.prevent="applyChanges">
+      {{this.applyBtnTitle()}}
+    </button>
   </div>
 </div>
-
 </template>
 
 <script>
@@ -119,7 +116,7 @@ export default {
         fixedColumnsLeft: 2,
         minSpareRows: 0,
         width: '100%',
-        height: 'calc(100vh - 200px)',
+        height: 'calc(100vh - 210px)',
         editor: CustomEditor,
         renderer: function(instance, td, row, col, prop, value, cellProperties) {
           let newValue = value
@@ -158,6 +155,7 @@ export default {
   methods: {
     actionsRenderer(hotInstance, td, row, column, prop, value, cellProperties) {
       const div = document.createElement('div');
+      div.className = 'btn p-0';
 
       let cellData = value
       if(!cellData)
@@ -191,7 +189,7 @@ export default {
       let col = this.tableColumns[colIndex-1]
       if(col) {
         let prepend = col.is_primary ? '<i class="fas fa-key action-key text-secondary mr-1"></i>' : ''
-        return `${prepend}<span>${col.name}</span><div class='font-weight-light ml-1'>${col.data_type}</div>`
+        return `${prepend}<span>${col.name}</span><div class='font-weight-light'>${col.data_type}</div>`
       }
       return ''
     },

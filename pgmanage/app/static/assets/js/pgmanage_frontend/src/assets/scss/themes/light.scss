@@ -84,7 +84,7 @@ SOFTWARE.
       background-color: #FFFFFF;
     }
     &__div-right {
-      background-color: #F8FAFC;
+      background-color: #F8FAFD;
     }
   }
 
@@ -420,12 +420,12 @@ SOFTWARE.
   }
 
   /* DISABLED */
-  .form-control{
-    &:disabled,
-    &[readonly] {
-      background-color: #E9ECEF !important;
-    }
-  }
+  // .form-control{
+  //   &:disabled,
+  //   &[readonly] {
+  //     background-color: #E9ECEF !important;
+  //   }
+  // }
   .custom-file > input[disabled]+label {
     background-color: #E9ECEF;
   }
@@ -455,6 +455,7 @@ SOFTWARE.
   .modal-footer {
     border-top-color: #d2d2d2;
   }
+
 
   /* SCROLLBAR FIREFOX (new versions) */
   * {
@@ -541,10 +542,6 @@ SOFTWARE.
   }
 
   /* HANDSONTABLE */
-  .handsontable {
-    border-radius: 6px;
-  }
-
   .handsontable th {
     background-color: #FFFFFF;
     color: #9a9a9a;
@@ -555,15 +552,15 @@ SOFTWARE.
       background-color: #FFFFFF;
     }
 
-    thead th,
-    tr th,
-    td {
-      border-color: #E6E7E9 !important;
-      border-bottom-color: #E6E7E9 !important;
-      border-left-color: #E6E7E9 !important;
-      border-right-color: #E6E7E9 !important;
-      border-top-color: #E6E7E9 !important;
-    }
+    // thead th,
+    // tr th,
+    // td {
+    //   border-color: #E6E7E9 !important;
+    //   border-bottom-color: #E6E7E9 !important;
+    //   border-left-color: #E6E7E9 !important;
+    //   border-right-color: #E6E7E9 !important;
+    //   border-top-color: #E6E7E9 !important;
+    // }
   }
 
   .handsontable.simple {
@@ -576,7 +573,7 @@ SOFTWARE.
 
     th,
     thead th {
-        color: #454545;
+        color: #90949A;
         text-align: left;
     }
   }
@@ -642,7 +639,7 @@ SOFTWARE.
 }
 
 .cellReadOnly {
-	background-color: rgb(242, 242, 242) !important;
+	// background-color: rgb(242, 242, 242) !important;
 }
 
 /*.cellEven {

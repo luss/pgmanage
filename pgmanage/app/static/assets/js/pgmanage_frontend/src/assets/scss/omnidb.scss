@@ -1146,35 +1146,6 @@ label.omnidb__switch--label span {
   margin-left: 8px;
 }
 
-/* Handsontable */
-.omnidb__ht__first-col-actions td:first-child {
-  align-items: center;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-around;
-}
-.handsontable td {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: monospace;
-}
-.handsontable .htDimmed {
-  color: inherit;
-}
-
-// data editor row status markings
-.handsontable td.row {
-  &-deleted {
-    background-color: rgba(215, 34, 57, 0.25);
-  }
-  &-dirty {
-    background-color: rgba(215, 161, 34, 0.25);
-  }
-  &-new {
-    background-color: rgba(47, 179, 68, 0.25);
-  }
-
-}
 .omnidb__tooltip {
   .arrow {
     top: 10px;
@@ -1242,13 +1213,6 @@ body {
 
 .tab-icon {
   margin: 0px 4px;
-}
-
-/* Handsontable Customization with font-size */
-.handsontable th, .handsontable td {
-  height: 2rem;
-  padding: 0px 0.36rem 0px 0.36rem;
-  vertical-align: middle;
 }
 
 /* Handsontable invisible */

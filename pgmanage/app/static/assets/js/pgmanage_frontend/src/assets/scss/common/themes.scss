@@ -41,6 +41,8 @@ $pev2CodeBlockBg: 'pev2CodeBlockBg';
 $schemaEditorColumnBg: 'schemaEditorColumnBg';
 $primaryBlueWhiteSwitching: 'primaryBlueWhiteSwitching';
 $erdCardWrapBg: 'erdCardWrapBg';
+$dataEditorTableFixedElsBg: 'dataEditorTableFixedElsBg';
+$modalContentBg: 'modalContentBg';
 
 $themes: (
     light: (
@@ -48,8 +50,8 @@ $themes: (
         border: $borderLight,
         color: $fontColorLight,
         surfaceBg: $bgSurfaceLight,
-        surfaceBgSecondary: $bgSurfaceLight,
-        surfaceBgTertiary: $bgSurfaceLight,
+        surfaceBgSecondary: $bgLightSecondary,
+        surfaceBgTertiary: $bgLightTertiary,
         inputBg: $bgSurfaceLight,
         customFileInputBg: $bgSurfaceLight,
         customFileInputBorder: $borderLight,
@@ -83,6 +85,8 @@ $themes: (
         schemaEditorColumnBg: rgba($primaryBlue, 0.15),
         primaryBlueWhiteSwitching: $primaryBlue,
         erdCardWrapBg: $bgLightSecondary,
+        dataEditorTableFixedElsBg: $bgLight,
+        modalContentBg: $bgSurfaceLight,
     ),
     dark: (
         borderColor: $borderColorDark,
@@ -124,6 +128,8 @@ $themes: (
         schemaEditorColumnBg: rgba($primaryBlue, 0.15),
         primaryBlueWhiteSwitching: $white,
         erdCardWrapBg: $bgDarkSecondary,
+        dataEditorTableFixedElsBg: $bgSurfaceDark,
+        modalContentBg: $bgDarkSecondary,
     ),
 );
 

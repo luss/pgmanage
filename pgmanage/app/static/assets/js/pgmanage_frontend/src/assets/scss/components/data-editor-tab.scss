@@ -1,0 +1,10 @@
+.data-editor {
+    &__footer {
+        width: calc(100% + 30px);
+        margin-left: -15px;
+
+        @include themify() {
+            background: themed($surfaceBgTertiary);
+        }
+    }
+}

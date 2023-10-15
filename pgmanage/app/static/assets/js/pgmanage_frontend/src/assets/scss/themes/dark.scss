@@ -422,10 +422,10 @@ SOFTWARE.
   }
 
   /* DISABLED */
-  .form-control:disabled,
-  .form-control[readonly] {
-    background-color: #32343A !important;
-  }
+  // .form-control:disabled,
+  // .form-control[readonly] {
+  //   background-color: #32343A !important;
+  // }
   .custom-file > input[disabled]+label {
     background-color: #32343A !important;
     border-color: #4c5365;
@@ -774,14 +774,7 @@ SOFTWARE.
     background-color: #373b41 !important;
     color: #ffffff !important;
   }
-  /* Handsontables */
-  .handsontable {
-    border-radius: 6px;
-  }
 
-  .handsontable th .relative {
-    color: #F8FAFC !important;
-  }
   select {
     background-color: #1A2234 !important;
     border: 1px solid #243049 !important;
@@ -789,51 +782,51 @@ SOFTWARE.
     font-size: inherit;
   }
   .handsontable th {
-    color: #2bb2d8 !important;
-    background-color: #29364E !important;
+    // color: #2bb2d8 !important;
+    // background-color: #29364E !important;
   }
-  .handsontable tr:nth-of-type(2n + 1) td {
-    border-right: 1px solid #243049 !important;
-    border-bottom: 1px solid #243049 !important;
-    background-color: #29364E;
-  }
-  .handsontable tr:nth-of-type(2n) td {
-    color: #c5c5c5;
-    border-right: 1px solid #243049 !important;
-    border-bottom: 1px solid #243049 !important;
-    background-color: #29364E;
-  }
+  // .handsontable tr:nth-of-type(2n + 1) td {
+  //   border-right: 1px solid #243049 !important;
+  //   border-bottom: 1px solid #243049 !important;
+  //   background-color: #29364E;
+  // }
+  // .handsontable tr:nth-of-type(2n) td {
+  //   color: #c5c5c5;
+  //   border-right: 1px solid #243049 !important;
+  //   border-bottom: 1px solid #243049 !important;
+  //   background-color: #29364E;
+  // }
 
-  .handsontable tr:first-child th, .handsontable tr:first-child td {
-    border-top: 1px solid #243049 !important;
-  }
+  // .handsontable tr:first-child th, .handsontable tr:first-child td {
+  //   border-top: 1px solid #243049 !important;
+  // }
 
-  .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame + th, .handsontable .htNoFrame + td {
-    border-left: 1px solid #243049 !important;
-  }
+  // .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame + th, .handsontable .htNoFrame + td {
+  //   border-left: 1px solid #243049 !important;
+  // }
 
-  .handsontable th:last-child {
-    border-right: 1px solid #243049!important;
-    border-bottom: 1px solid #243049 !important;
-  }
+  // .handsontable th:last-child {
+  //   border-right: 1px solid #243049!important;
+  //   border-bottom: 1px solid #243049 !important;
+  // }
 
-  .handsontable th, .handsontable td {
-    border-right: 1px solid #243049 !important;
-    border-bottom: 1px solid #243049 !important;
-  }
+  // .handsontable th, .handsontable td {
+  //   border-right: 1px solid #243049 !important;
+  //   border-bottom: 1px solid #243049 !important;
+  // }
 
-  .handsontable tr {
-    background-color: #1D1F21 !important;
-  }
+  // .handsontable tr {
+  //   background-color: #1D1F21 !important;
+  // }
 
-  .handsontable.htRowHeaders thead tr th:nth-child(2) {
-    border-left: 1px solid #243049 !important;
-  }
+  // .handsontable.htRowHeaders thead tr th:nth-child(2) {
+  //   border-left: 1px solid #243049 !important;
+  // }
 
-  .handsontable input, .handsontable textarea {
-    background-color: #1b1b1b !important;
-    color: #fff !important;
-  }
+  // .handsontable input, .handsontable textarea {
+  //   background-color: #1b1b1b !important;
+  //   color: #fff !important;
+  // }
   .handsontable .wtBorder.corner {
     border: 2px solid #5292f7 !important;
   }
@@ -1048,8 +1041,8 @@ SOFTWARE.
   }
 
   .cellReadOnly {
-  	background-color: rgb(47, 49, 51) !important;
-  	color: #969696 !important;
+  	// background-color: rgb(47, 49, 51) !important;
+  	// color: #969696 !important;
   }
   .conversion_table {
   	color: #d7d7d7;
