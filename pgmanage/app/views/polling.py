@@ -430,9 +430,12 @@ def create_request(request, session):
                     tab_object['port'] = v_database_debug.v_connection.ExecuteScalar('show port')
                 except Exception as exc:
                     logger.error('''*** Exception ***\n{0}'''.format(traceback.format_exc()))
+
+                    v_response = {}
+                    v_response['v_context_code'] = v_context_code
                     v_response['v_code'] = response.MessageException
                     v_response['v_data'] = traceback.format_exc().replace('\n','<br>')
-                    queue_response(v_client_object,v_response)
+                    queue_response(client_object,v_response)
 
             v_data['v_context_code'] = v_context_code
             v_data['v_tab_object'] = tab_object
@@ -1669,6 +1672,6 @@ def thread_save_edit_data_new(self,args):
     except Exception as exc:
         logger.error('''*** Exception ***\n{0}'''.format(traceback.format_exc()))
         res['v_error'] = True
-        res['v_data'] = traceback.format_exc().replace('\n','<br>')
+        res['v_data'] = str(exc)
         if not self.cancel:
             queue_response(client_object, res)

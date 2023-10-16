@@ -310,7 +310,7 @@ export default {
     },
     handleSaveResponse(response) {
       if(response.v_error == true) {
-        showToast("error", response.v_data.message)
+        showToast("error", response.v_data)
       } else {
         // let msg = response.v_data.v_status === "CREATE TABLE" ? `Table "${this.localTable.tableName}" created` : `Table "${this.localTable.tableName}" updated`
         showToast("success", 'data updated')
