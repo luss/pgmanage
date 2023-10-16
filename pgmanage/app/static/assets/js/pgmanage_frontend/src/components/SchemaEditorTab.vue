@@ -58,6 +58,7 @@ import { createRequest } from '../long_polling'
 import { v_queryRequestCodes } from '../query'
 import axios from 'axios'
 import { showToast } from '../notification_control'
+import { settingsStore } from '../stores/settings'
 
 export default {
   name: "SchemaEditor",
@@ -181,9 +182,9 @@ export default {
     },
     setupEditor() {
       this.editor = ace.edit(this.$refs.editor);
-      this.editor.setTheme("ace/theme/" + window.v_editor_theme);
+      this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
       this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(Number(window.v_font_size));
+      this.editor.setFontSize(Number(settingsStore.fontSize));
       this.editor.$blockScrolling = Infinity;
       this.editor.clearSelection();
       this.editor.setReadOnly(true);
@@ -300,18 +301,18 @@ export default {
     },
     applyChanges() {
       let message_data = {
-				v_sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
-				v_sql_save : false,
-				v_cmd_type: null,
+				sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
+				sql_save : false,
+				cmd_type: null,
 				v_db_index: this.database_index,
 				v_conn_tab_id: v_connTabControl.selectedTab.id,
 				v_tab_id: this.tab_id,
-				v_tab_db_id: this.database_index,
-				v_mode: 0,
-				v_all_data: false,
-				v_log_query: false,
-				v_tab_title: 'schema editor',
-				v_autocommit: true,
+				tab_db_id: this.database_index,
+				mode: 0,
+				all_data: false,
+				log_query: false,
+				tab_title: 'schema editor',
+				autocommit: true,
 				database_name: this.database_name
 			}
 

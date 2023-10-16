@@ -97,6 +97,7 @@ import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
 import { showToast } from '../notification_control'
+import { emitter } from '../emitter'
 
 export default {
   name: 'ConnectionsModal',
@@ -311,14 +312,9 @@ export default {
 
               }
               currentParent = tab.index
-
               window.v_connTabControl.tag.createQueryTab(tab.title, tab.tab_db_id, tab.database_name);
-              window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(tab.snippet);
-              window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-              window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-                0,
-                0,
-                true);
+              let selectedTab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+              emitter.emit(`${selectedTab.id}_copy_to_editor`, tab.snippet)
             })
             endLoading();
           }

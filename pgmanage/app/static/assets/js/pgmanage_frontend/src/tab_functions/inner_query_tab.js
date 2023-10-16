@@ -1,466 +1,103 @@
-/*
-This file is part of OmniDB.
-OmniDB is open-source software, distributed "AS IS" under the MIT license in the hope that it will be useful.
-
-The MIT License (MIT)
-
-Portions Copyright (c) 2015-2020, The OmniDB Team
-Portions Copyright (c) 2017-2020, 2ndQuadrant Limited
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-import {
-  adjustQueryTabObjects,
-  renameTab,
-  removeTab,
-  showMenuNewTab,
-  toggleExpandToPanelView,
-  indentSQL,
-  resizeVertical,
-} from "../workspace";
 import { beforeCloseTab } from "../create_tab_functions";
-import {
-  getExplain,
-  getExplainReturn,
-} from "../tree_context_functions/tree_postgresql";
-import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
-import ContextMenu from "@imengyu/vue3-context-menu";
-import {
-  getQueryEditorValue,
-  querySQL,
-  checkQueryStatus,
-  cancelSQL,
-} from "../query";
-import {
-  autocomplete_keydown,
-  autocomplete_update_editor_cursor,
-  autocomplete_start,
-} from "../autocomplete";
-import { showCommandList } from "../command_history";
-import { createTabControl } from "../tabs";
-import ace from 'ace-builds'
-import { snippetsStore } from "../stores/snippets";
+import { removeTab, showMenuNewTab, renameTab } from "../workspace";
+import QueryTab from "../components/QueryTab.vue";
+import { createApp } from "vue";
+import { emitter } from "../emitter";
 
-var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) {
+export let createQueryTabFunction = function (
+  name = "Query",
+  tab_db_id = null,
+  tab_db_name
+) {
   // Removing last tab of the inner tab list.
   v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
+  let name_html = `
+    <span id="tab_title">
+      ${name}
+    </span>
+    <span id="tab_loading" style="visibility:hidden;">
+      <i class="tab-icon node-spin"></i>
+    </span>
+    <i title="" id="tab_check" style="display: none;" class="fas fa-check-circle tab-icon icon-check"></i>
+    `;
 
-  // Updating inner tab_name.
-  var v_name = 'Query';
-  if (p_table) {
-    v_name = p_table;
-  }
-  let v_name_html =
-  '<span id="tab_title">' +
-    v_name +
-  '</span>' +
-  '<span id="tab_loading" style="visibility:hidden;">' +
-    '<i class="tab-icon node-spin"></i>' +
-  '</span>' +
-  '<i title="" id="tab_check" style="display: none;" class="fas fa-check-circle tab-icon icon-check"></i>';
+  // Creating query tab in the inner tab list
 
-  // Creating console tab in the inner tab list.
-  var v_tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
-    p_name: v_name_html,
-    p_selectFunction: function() {
-      if(this.tag != null) {
-        this.tag.resize();
-      }
-      if(this.tag != null && this.tag.editor != null) {
-        this.tag.editor.focus();
-        checkQueryStatus(this);
+  let tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
+    p_name: name_html,
+    p_selectFunction: function () {
+      if (this.tag != null) {
+        emitter.emit(`${this.id}_check_query_status`);
       }
     },
-    p_closeFunction: function(e,p_tab) {
-      var v_current_tab = p_tab;
-      beforeCloseTab(e,
-        function() {
-          removeTab(v_current_tab);
-        });
+    p_closeFunction: function (e, tab) {
+      let current_tab = tab;
+      beforeCloseTab(e, function () {
+        current_tab.app.unmount();
+        removeTab(current_tab);
+      });
     },
-    p_dblClickFunction: renameTab
+    p_dblClickFunction: renameTab,
   });
 
   // Selecting newly created tab.
-  v_connTabControl.selectedTab.tag.tabControl.selectTab(v_tab);
+  v_connTabControl.selectedTab.tag.tabControl.selectTab(tab);
 
   // Adding unique names to spans.
-  var v_tab_title_span = document.getElementById('tab_title');
-  v_tab_title_span.id = 'tab_title_' + v_tab.id;
-  var v_tab_loading_span = document.getElementById('tab_loading');
-  v_tab_loading_span.id = 'tab_loading_' + v_tab.id;
-  var v_tab_check_span = document.getElementById('tab_check');
-  v_tab_check_span.id = 'tab_check_' + v_tab.id;
 
-  // Creating the template for the command_history_modal.
-  var command_history_modal =
-  "<div class='modal fade' id='modal_command_history_" + v_tab.id + "' tabindex='-1' role='dialog' aria-hidden='true'>" +
-    "<div class='modal-dialog modal-xl' role='document'>" +
-      "<div class='modal-content'>" +
-        "<div class='modal-header align-items-center'>" +
-          "<h2 class='modal-title font-weight-bold'>" +
-            "Command history" +
-          "</h2>" +
-          "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>" +
-          "<span aria-hidden='true'><i class='fa-solid fa-xmark'></i></span></button>" +
-        "</div>" +
-        "<div class='modal-body'>" +
-          "<div id='command_history_div_" + v_tab.id + "' class='query_command_history'>" +
-            "<div id='command_history_header_" + v_tab.id + "' class='query_command_history_header'></div>" +
-            "<div id='command_history_grid_" + v_tab.id + "' class='query_command_history_grid' style='width: 100%; height: calc(100vh - 16.5rem); overflow: hidden;'></div>" +
-          "</div>" +
-        "</div>" +
-      "</div>" +
-    "</div>" +
-  "</div>";
+  let tab_title_span = document.getElementById("tab_title");
+  tab_title_span.id = `tab_title_${tab.id}`;
+  let tab_loading_span = document.getElementById("tab_loading");
+  tab_loading_span.id = `tab_loading_${tab.id}`;
+  let tab_check_span = document.getElementById("tab_check");
+  tab_check_span.id = `tab_check_${tab.id}`;
 
-  // Creating the template for the inner_query_tab.
-  var v_html =
-  '<div id="txt_query_' + v_tab.id + '" style="width: 100%; height: 200px;"></div>' +
-  '<div id="' + v_tab.id + '_resize_horizontal" class="omnidb__resize-line__container--horizontal"><div class="resize_line_horizontal"></div><div style="height:5px;"></div></div>' +
-  command_history_modal +
-  '<div class="row mb-1">' +
-    '<div class="tab_actions omnidb__tab-actions col-12">' +
-      '<button id="bt_start_' + v_tab.id + '" class="btn btn-sm btn-primary omnidb__tab-actions__btn" title="Run" onclick="v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.queryRunHandler();"><i class="fas fa-play fa-light"></i></button>' +
-      '<button id="bt_indent_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent fa-light"></i></button>' +
-      '<button id="bt_history_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Command History"><i class="fas fa-clock-rotate-left fa-light"></i></button>' +
-      '<div class="btn-group ml-2 mr-2">' +
-      '<button id="bt_explain_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" title="Explain" style="display: none;" disabled="true"><i class="fas fa-chart-simple fa-light"></i></button>' +
-      '<button id="bt_analyze_' + v_tab.id + '" class="dbms_object postgresql_object btn btn-sm btn-secondary" title="Explain Analyze" style="display: none;" disabled="true"><i class="fas fa-magnifying-glass-chart fa-light"></i></button>' +
-      '</div>' +
-      '<div class="dbms_object postgresql_object omnidb__form-check form-check form-check-inline"><input id="check_autocommit_' + v_tab.id + '" class="form-check-input" type="checkbox" checked="checked"><label class="form-check-label dbms_object postgresql_object custom_checkbox query_info" for="check_autocommit_' + v_tab.id + '">Autocommit</label></div>' +
-      '<div class="dbms_object postgresql_object omnidb__tab-status"><i id="query_tab_status_' + v_tab.id + '" title="Not connected" class="fas fa-dot-circle tab-status tab-status-closed dbms_object postgresql_object omnidb__tab-status__icon"></i><span id="query_tab_status_text_' + v_tab.id + '" title="Not connected" class="tab-status-text query_info dbms_object postgresql_object ml-1">Not connected</span></div>' +
-      '<button id="bt_fetch_more_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Run" style="display: none;">Fetch more</button>' +
-      '<button id="bt_fetch_all_' + v_tab.id + '" class="btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Run" style="margin-left: 5px; display: none;">Fetch all</button>' +
-      '<button id="bt_commit_' + v_tab.id + '" class="dbms_object dbms_object_hidden postgresql_object btn btn-sm btn-primary omnidb__tab-actions__btn" title="Run" style="margin-left: 5px; display: none;">Commit</button>' +
-      '<button id="bt_rollback_' + v_tab.id + '" class="dbms_object dbms_object_hidden postgresql_object btn btn-sm btn-secondary omnidb__tab-actions__btn" title="Run" style="margin-left: 5px; display: none;">Rollback</button>' +
-      '<button id="bt_cancel_' + v_tab.id + '" class="btn btn-sm btn-danger omnidb__tab-actions__btn" title="Cancel" style="display: none;">Cancel</button>' +
-      '<div id="div_query_info_' + v_tab.id + '" class="omnidb__query-info"></div>' +
-      '<button class="btn btn-sm btn-primary omnidb__tab-actions__btn ml-auto" title="Export Data" onclick="v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.exportData();"><i class="fas fa-download fa-light"></i></button>' +
-      '<select id="sel_export_type_' + v_tab.id + '" class="form-control" style="width: 80px;"><option selected="selected" value="csv">CSV</option><option value="csv-no_headers">CSV(no headers)</option><option value="xlsx">XLSX</option><option value="xlsx-no_headers">XLSX(no headers)</option></select>' +
-    '</div>' +
-  '</div>' +
-  '<div id="query_result_tabs_container' + v_tab.id + '" class="omnidb__query-result-tabs">' +
-    '<button id="bt_fullscreen_' + v_tab.id + '" style="position:absolute;top:0.25rem;right:0.25rem;" type="button" class="btn btn-sm btn-icon btn-icon-secondary" ><i class="fas fa-expand"></i></button>' +
-    '<div id="query_result_tabs_' + v_tab.id + '">' +
-    '</div>' +
-  '</div>';
+  tab.elementDiv.innerHTML = `<query-tab 
+                                  :conn-id="connId"
+                                  :tab-id="tabId" 
+                                  :database-index="databaseIndex"
+                                  :dialect="dialect"
+                                  :database-name="databaseName"
+                                  :init-tab-database-id="initTabDatabaseId"
+                                  >
+                                </query-tab>`;
 
-  // Updating the html.
-  v_tab.elementDiv.innerHTML = v_html;
-
-  let fullscreen_btn = document.getElementById(`bt_fullscreen_${v_tab.id}`)
-  fullscreen_btn.onclick = function() { toggleExpandToPanelView(`query_result_tabs_container${v_tab.id}`)}
-
-  let indent_btn = document.getElementById(`bt_indent_${v_tab.id}`)
-  indent_btn.onclick = function() { indentSQL() }
-
-  let horizontal_resize_div = document.getElementById(`${v_tab.id}_resize_horizontal`)
-  horizontal_resize_div.onmousedown = (event) => { resizeVertical(event) }
-
-  let btn_explain = document.getElementById(`bt_explain_${v_tab.id}`)
-  btn_explain.onclick = function() { getExplain(0) }
-
-  let btn_analyze = document.getElementById(`bt_analyze_${v_tab.id}`)
-  btn_analyze.onclick = function() { getExplain(1) }
-
-  let btn_fetch_more = document.getElementById(`bt_fetch_more_${v_tab.id}`)
-  btn_fetch_more.onclick = function() { querySQL(1) }
-
-  let btn_fetch_all = document.getElementById(`bt_fetch_all_${v_tab.id}`)
-  btn_fetch_all.onclick = function() { querySQL(2) }
-
-  let btn_commit = document.getElementById(`bt_commit_${v_tab.id}`)
-  btn_commit.onclick = function() { querySQL(3) }
-
-  let btn_rollback = document.getElementById(`bt_rollback_${v_tab.id}`)
-  btn_rollback.onclick = function() { querySQL(4)}
-
-  let btn_cancel = document.getElementById(`bt_cancel_${v_tab.id}`)
-  btn_cancel.onclick = function() { cancelSQL() } 
-
-  let btn_history = document.getElementById(`bt_history_${v_tab.id}`)
-  btn_history.onclick = function() { showCommandList() }
-
-  // Creating tab list at the bottom of the query tab.
-  var v_curr_tabs = createTabControl({ p_div: 'query_result_tabs_' + v_tab.id });
-
-  // Tab selection callback for `data` tab.
-  var v_selectDataTabFunc = function() {
-    v_curr_tabs.selectTabIndex(0);
-    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.currQueryTab = 'data';
-    v_tab.tag.resize();
-    $(v_tab.tag.bt_explain).prop('disabled', true)
-    $(v_tab.tag.bt_analyze).prop('disabled', true)
-  }
-
-  // Tab selection callback for `message` tab.
-  var v_selectMessageTabFunc = function() {
-    v_curr_tabs.selectTabIndex(1);
-    v_tag.currQueryTab = 'message';
-    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_count_notices.style.display = 'none';
-    v_tab.tag.resize();
-    $(v_tab.tag.bt_explain).prop('disabled', true)
-    $(v_tab.tag.bt_analyze).prop('disabled', true)
-  }
-
-  // Tab selection callback for `explain` tab.
-  var v_selectExplainTabFunc = function() {
-    v_curr_tabs.selectTabIndex(2);
-    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.currQueryTab = 'explain';
-    v_tab.tag.resize();
-    $(v_tab.tag.bt_explain).prop('disabled', false)
-    $(v_tab.tag.bt_analyze).prop('disabled', false)
-    // Loads or Updates all tooltips.
-    $('[data-toggle="tooltip"]').tooltip({animation:true});
-  }
-
-  var queryRunOrExplain = function() {
-    if(v_connTabControl.selectedTab.tag.selectedDBMS === 'postgresql') {
-      let query = getQueryEditorValue()
-      let should_explain = query.trim().split(' ')[0].toUpperCase() === 'EXPLAIN'
-      if(should_explain) {
-        return querySQL(0, true, query, getExplainReturn, true);
-      }
-    }
-
-    querySQL(0)
-  }
-
-  // Creating the `data` tab.
-  var v_data_tab = v_curr_tabs.createTab({
-    p_name: 'Data',
-    p_close: false,
-    p_clickFunction: function(e) {
-      v_selectDataTabFunc();
-    }
+  const app = createApp({
+    components: {
+      QueryTab,
+    },
+    data() {
+      return {
+        connId: v_connTabControl.selectedTab.id,
+        tabId: tab.id,
+        databaseIndex: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        dialect: v_connTabControl.selectedTab.tag.selectedDBMS,
+        databaseName: !!tab_db_name
+          ? tab_db_name
+          : v_connTabControl.selectedTab.tag.selectedDatabase,
+        initTabDatabaseId: tab_db_id,
+      };
+    },
   });
 
-  v_data_tab.elementDiv.innerHTML =
-  "<div class='p-2 omnidb__query-result-tabs__content omnidb__theme-border--primary'>" +
-    "<div id='div_result_" + v_tab.id + "' class='omnidb__query-result-tabs__content' style='width: 100%; overflow: hidden;'></div>" +
-  "</div>";
+  tab.app = app;
 
-  // Creating the `message` tab.
-  var v_messages_tab = v_curr_tabs.createTab({
-    p_name: "Messages <div id='query_result_tabs_count_notices_" + v_tab.id + "' class='count_notices' style='display: none;'></div>",
-    p_close: false,
-    p_clickFunction: function(e) {
-      v_selectMessageTabFunc();
-    }
-  });
-  v_messages_tab.elementDiv.innerHTML =
-  "<div class='p-2 omnidb__query-result-tabs__content omnidb__theme-border--primary'>" +
-    "<div id='div_notices_" + v_tab.id + "' class='omnidb__query-result-tabs__content' style='width: 100%; overflow: hidden;'></div>" +
-  "</div>";
-  v_messages_tab.elementA.classList.add('dbms_object');
-  v_messages_tab.elementA.classList.add('postgresql_object');
+  app.mount(`#${tab.elementDiv.id}`);
 
-  // Creating the `explain` tab.
-  var v_explain_tab = v_curr_tabs.createTab({
-    p_name: "Explain",
-    p_close: false,
-    p_clickFunction: function(e) {
-      v_selectExplainTabFunc();
-    }
-  });
-  v_explain_tab.elementDiv.innerHTML =
-  `<div class='p-2 omnidb__query-result-tabs__content omnidb__theme-border--primary'>
-    <div id='div_explain_${v_tab.id}' class='omnidb__query-result-tabs__content omnidb__query-result-tabs__content--explain-default' style='width: 100%; overflow: auto;'>
-      <p class="lead text-center text-muted mt-5">
-        Nothing to visualize. Please click Explain or Analyze button on the toolbar above.
-      </p>
-    </div>
-  </div>`;
-  v_explain_tab.elementA.classList.add('dbms_object');
-  v_explain_tab.elementA.classList.add('postgresql_object');
-
-  // Creating the editor for `query`.
-  var langTools = ace.require("ace/ext/language_tools");
-  var v_editor = ace.edit('txt_query_' + v_tab.id);
-  v_editor.$blockScrolling = Infinity;
-  v_editor.setTheme("ace/theme/" + v_editor_theme);
-  v_editor.session.setMode("ace/mode/sql");
-  v_editor.setFontSize(Number(v_font_size));
-
-  // Setting custom keyboard shortcuts callbacks.
-  $('#txt_query_' + v_tab.id).find('.ace_text-input').on('keyup',function(event){
-    if (v_connTabControl.selectedTab.tag.enable_autocomplete !== false) {
-      autocomplete_start(v_editor,0,event);
-    }
-  });
-  $('#txt_query_' + v_tab.id).find('.ace_text-input').on('keydown',function(event){
-    if (v_connTabControl.selectedTab.tag.enable_autocomplete !== false) {
-      autocomplete_keydown(v_editor,event);
-    }
-    else {
-      autocomplete_update_editor_cursor(v_editor, event);
-    }
-  });
-
-  document.getElementById('txt_query_' + v_tab.id).addEventListener('contextmenu',function(event) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    let option_list = [
-      {
-        label: 'Copy',
-        icon: 'fas cm-all fa-terminal',
-        onClick: function() {
-          // Getting the value
-          var copy_text = v_editor.getValue();
-          // Calling copy to clipboard.
-          uiCopyTextToClipboard(copy_text);
-        }
-      },
-      {
-        label: 'Save as snippet',
-        icon: 'fas cm-all fa-save',
-        children: buildSnippetContextMenuObjects('save', snippetsStore, v_editor)
-      }
-    ];
-
-    if (snippetsStore.files.length != 0 || snippetsStore.folders.length != 0)
-      option_list.push(
-        {
-          label: 'Use snippet',
-          icon: 'fas cm-all fa-file-code',
-          children: buildSnippetContextMenuObjects('load', snippetsStore, v_editor)
-        }
-      )
-      ContextMenu.showContextMenu({
-        theme: "pgmanage",
-        x: event.x,
-        y: event.y,
-        zIndex: 1000,
-        minWidth: 230,
-        items: option_list,
-      });
-  });
-
-
-  // Remove shortcuts from ace in order to avoid conflict with omnidb shortcuts
-  v_editor.commands.bindKey("ctrl-space", null);
-  v_editor.commands.bindKey("alt-e", null);
-  v_editor.commands.bindKey("Cmd-,", null);
-  v_editor.commands.bindKey("Ctrl-,", null);
-  v_editor.commands.bindKey("Cmd-Delete", null);
-  v_editor.commands.bindKey("Ctrl-Delete", null);
-  v_editor.commands.bindKey("Ctrl-Up", null);
-  v_editor.commands.bindKey("Ctrl-Down", null);
-  v_editor.commands.bindKey("Up", null);
-  v_editor.commands.bindKey("Down", null);
-  v_editor.commands.bindKey("Tab", null);
-
-  // Setting the autofocus for the editor component.
-  document.getElementById('txt_query_' + v_tab.id).onclick = function() {
-    v_editor.focus();
-  };
-
-  // Updating the tab_db_id.
-  var v_tab_db_id = null;
-  if (p_tab_db_id) {
-    v_tab_db_id = p_tab_db_id;
-  }
-
-  // Creating the exportData action for the tab.
-  var v_export_data = function() {
-    var v_exp_callback = function(p_data) {
-    	v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.selectDataTabFunc();
-    	var v_text = '<div style="font-size: 14px;">The file is ready. <a class="link_text" href="' + p_data.v_data.v_filename + '" download="'+ p_data.v_data.v_downloadname + '">Save</a></div>';
-    	v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_result.innerHTML = v_text;
-    }
-
-  	var v_exp_query = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.getValue();
-  	var v_exp_type = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.sel_export_type.value;
-  	querySQL(0, true, v_exp_query, v_exp_callback,true,v_exp_query,'export_' + v_exp_type,true);
-  }
-
-  var v_resizeFunction = function () {
-    var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-    if (v_tab_tag.currQueryTab=='data') {
-      v_tab_tag.div_result.style.height = window.innerHeight - $(v_tab_tag.div_result).offset().top - (1.25)*v_font_size + 'px';
-      setTimeout(function(){
-        if (v_tab_tag.ht!=null) {
-          v_tab_tag.ht.render();
-        }
-        if(v_tab_tag.editor != null) {
-          v_tab_tag.editor.resize();
-        }
-      },400);
-    }
-    else if (v_tab_tag.currQueryTab=='message') {
-      v_tab_tag.div_notices.style.height = window.innerHeight - $(v_tab_tag.div_notices).offset().top - (1.25)*v_font_size + 'px';
-    }
-    else if (v_tab_tag.currQueryTab=='explain') {
-      v_tab_tag.div_explain.style.height = window.innerHeight - $(v_tab_tag.div_explain).offset().top - (1.25)*v_font_size + 'px';
-    }
-  }
-
-  // Setting all tab_tag params.
-  var v_tag = {
-    tab_id: v_tab.id,
-    mode: 'query',
-    editor: v_editor,
-    editorDivId: 'txt_query_' + v_tab.id,
-    exportData: v_export_data,
-    query_info: document.getElementById('div_query_info_' + v_tab.id),
-    div_result: document.getElementById('div_result_' + v_tab.id),
-    div_notices: document.getElementById('div_notices_' + v_tab.id),
-    div_explain: document.getElementById(`div_explain_${v_tab.id}`),
-    div_count_notices: document.getElementById('query_result_tabs_count_notices_' + v_tab.id),
-    sel_filtered_data : document.getElementById('sel_filtered_data_' + v_tab.id),
-    sel_export_type : document.getElementById('sel_export_type_' + v_tab.id),
-    tab_title_span : v_tab_title_span,
-    tab_loading_span : v_tab_loading_span,
-    tab_check_span : v_tab_check_span,
-    query_tab_status: document.getElementById('query_tab_status_' + v_tab.id),
-    query_tab_status_text: document.getElementById('query_tab_status_text_' + v_tab.id),
-    bt_start: document.getElementById('bt_start_' + v_tab.id),
-    bt_fetch_more: document.getElementById('bt_fetch_more_' + v_tab.id),
-    bt_fetch_all: document.getElementById('bt_fetch_all_' + v_tab.id),
-    bt_commit: document.getElementById('bt_commit_' + v_tab.id),
-    bt_rollback: document.getElementById('bt_rollback_' + v_tab.id),
-    bt_indent: document.getElementById('bt_indent_' + v_tab.id),
-    bt_explain: document.getElementById('bt_explain_' + v_tab.id),
-    bt_analyze: document.getElementById('bt_analyze_' + v_tab.id),
-    bt_history: document.getElementById('bt_history_' + v_tab.id),
-    bt_cancel: document.getElementById('bt_cancel_' + v_tab.id),
-    bt_export: document.getElementById('bt_export_' + v_tab.id),
-    check_autocommit: document.getElementById('check_autocommit_' + v_tab.id),
-    queryRunHandler: queryRunOrExplain,
-    resize: v_resizeFunction,
-    state : 0,
-    context: null,
+  let tag = {
+    tab_id: tab.id,
+    mode: "query",
+    tab_loading_span: tab_loading_span,
+    tab_check_span: tab_check_span,
+    tab_title_span: tab_title_span,
     tabControl: v_connTabControl.selectedTab.tag.tabControl,
-    queryTabControl: v_curr_tabs,
-    currQueryTab: null,
     connTab: v_connTabControl.selectedTab,
-    currDatabaseIndex: null,
-    currDatabase: !!tab_db_name ? tab_db_name : v_connTabControl.selectedTab.tag.selectedDatabase,
-    tab_db_id: v_tab_db_id,
-    tempData: [],
+    tab_db_id: tab_db_id,
     commandHistory: {
-      modal: document.getElementById('modal_command_history_' + v_tab.id),
-      div: document.getElementById('command_history_div_' + v_tab.id),
-      headerDiv: document.getElementById('command_history_header_' + v_tab.id),
-      gridDiv: document.getElementById('command_history_grid_' + v_tab.id),
+      modal: document.getElementById("modal_command_history_" + tab.id),
+      div: document.getElementById("command_history_div_" + tab.id),
+      headerDiv: document.getElementById("command_history_header_" + tab.id),
+      gridDiv: document.getElementById("command_history_grid_" + tab.id),
       grid: null,
       currentPage: 1,
       pages: 1,
@@ -471,47 +108,32 @@ var v_createQueryTabFunction = function(p_table, p_tab_db_id, tab_db_name=null) 
       inputStartedTo: null,
       inputStartedToLastValue: null,
       inputCommandContains: null,
-      inputCommandContainsLastValue: null
-    }
+      inputCommandContainsLastValue: null,
+    },
   };
 
-  // Setting the v_tab_tag.
-  v_tab.tag = v_tag;
-  v_tag.selectDataTabFunc    = v_selectDataTabFunc;
-  v_tag.selectMessageTabFunc = v_selectMessageTabFunc;
-  v_tag.selectExplainTabFunc = v_selectExplainTabFunc;
+  tab.tag = tag;
 
-  // Selecting the `data` tab by default.
-  v_selectDataTabFunc();
-
-  // Creating `Add` tab in the `inner_query` tab list
-  var v_add_tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
-    p_name: '+',
+  // Creating + tab in the outer tab list
+  let add_tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
+    p_name: "+",
     p_close: false,
-    p_isDraggable: false,
     p_selectable: false,
-    p_clickFunction: function(e) {
+    p_isDraggable: false,
+    p_clickFunction: function (e) {
       showMenuNewTab(e);
-    }
+    },
   });
-  v_add_tab.tag = {
-    mode: 'add'
-  }
 
-  // Loads or Updates all tooltips.
-  $('[data-toggle="tooltip"]').tooltip({animation:true});
-
-  // Requesting an update on the workspace layout and sizes.
-  setTimeout(function() {
-    v_resizeFunction();
-  },10);
-  adjustQueryTabObjects(false);
-  v_editor.focus();
+  add_tab.tag = {
+    mode: "add",
+  };
 
   // Sets a render refresh for the grid on the commandHistory.modal after the modal is fully loaded
-  $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.modal).on('shown.bs.modal', function () {
+  $(
+    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory
+      .modal
+  ).on("shown.bs.modal", function () {
     v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.commandHistory.grid.render();
   });
-}
-
-export { v_createQueryTabFunction }
+};

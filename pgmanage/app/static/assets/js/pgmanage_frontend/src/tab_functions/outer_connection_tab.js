@@ -48,6 +48,7 @@ import { whiteHtmlRenderer } from "../renderers";
 import ace from 'ace-builds'
 import { endLoading } from "../ajax_control";
 import { showToast } from "../notification_control";
+import { settingsStore } from "../stores/settings";
 
 var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name = false, p_tooltip_name = false) {
   // Creating the first outer tab without any connections created.
@@ -309,10 +310,10 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     var langTools = ace.require('ace/ext/language_tools');
     var v_editor = ace.edit(v_ddl_tab.elementDiv);
     v_editor.$blockScrolling = Infinity;
-    v_editor.setTheme('ace/theme/' + v_editor_theme);
+    v_editor.setTheme('ace/theme/' + settingsStore.editorTheme);
     v_editor.session.setMode('ace/mode/sql');
 
-    v_editor.setFontSize(Number(v_font_size));
+    v_editor.setFontSize(Number(settingsStore.fontSize));
 
     v_editor.commands.bindKey('ctrl-space', null);
 

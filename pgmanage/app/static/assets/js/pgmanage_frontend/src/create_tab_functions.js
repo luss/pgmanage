@@ -27,7 +27,6 @@ SOFTWARE.
 */
 import { v_createSnippetTextTabFunction } from './tab_functions/inner_snippet_tab'
 import { v_createConnTabFunction } from './tab_functions/outer_connection_tab'
-import { v_createQueryTabFunction } from './tab_functions/inner_query_tab'
 import { v_createSnippetPanelFunction } from './panel_functions/outer_snippet_panel'
 import { createEditDataTabFunction } from './tab_functions/inner_edit_data_tab'
 import { v_createMonitoringTabFunction } from './tab_functions/inner_monitoring_tab'
@@ -40,6 +39,7 @@ import ContextMenu from '@imengyu/vue3-context-menu'
 import { createDebuggerTabFunction } from './tab_functions/inner_debugger_tab'
 import { showConfirm } from './notification_control'
 import { createConsoleTabFunction } from './tab_functions/inner_console_tab'
+import { createQueryTabFunction } from './tab_functions/inner_query_tab'
 
 function initCreateTabFunctions() {
 
@@ -420,7 +420,7 @@ function initCreateTabFunctions() {
 	v_connTabControl.tag.createWelcomeTab = createWelcomeTabFunction;
 
   // Functions to create tabs inside a connection tab
-	v_connTabControl.tag.createQueryTab = v_createQueryTabFunction;
+	v_connTabControl.tag.createQueryTab = createQueryTabFunction;
   v_connTabControl.tag.createConsoleTab = createConsoleTabFunction;
 
 //   v_connTabControl.tag.createWebsiteTab = v_createWebsiteTabFunction;

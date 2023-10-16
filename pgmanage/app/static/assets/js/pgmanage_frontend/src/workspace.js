@@ -40,7 +40,7 @@ import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createRequest } from './long_polling'
-import { v_queryRequestCodes, checkQueryStatus } from './query'
+import { v_queryRequestCodes } from './query'
 import { checkDebugStatus } from './debug'
 import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
@@ -49,6 +49,7 @@ import { startLoading } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
+import { settingsStore } from './stores/settings'
 
 let v_start_height;
 /// <summary>
@@ -726,7 +727,7 @@ function refreshHeights(p_all) {
     if (v_connTabControl.selectedTab.tag.tabControl != null && v_connTabControl.selectedTab.tag.tabControl.selectedTab) {
       var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
 
-      if (v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_dashboard' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='query' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
+      if (v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_dashboard' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
           v_tab_tag.resize();
       }
       else if (v_tab_tag.mode === 'console') {
@@ -804,7 +805,7 @@ function refreshTreeHeight() {
 
 function checkTabStatus(v_tab) {
 	if (v_tab.tag.tabControl.selectedTab.tag.mode=='query')
-		checkQueryStatus(v_tab.tag.tabControl.selectedTab);
+    emitter.emit(`${v_tab.tag.tabControl.selectedTab.id}_check_query_status`);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='edit')
 		checkEditDataStatus(v_tab.tag.tabControl.selectedTab);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='debug')
@@ -1025,7 +1026,7 @@ function showMenuNewTabOuter(e) {
 
 function showMenuNewTab(e) {
 	var v_option_list = [
-		{
+    {
 			label: 'Query Tab',
 			icon: 'fas cm-all fa-search',
 			onClick: function() {
@@ -1243,7 +1244,8 @@ function uiCopyTextToClipboard(p_value) {
 
 function toggleConnectionAutocomplete(p_toggler_id) {
   let checked = document.getElementById(p_toggler_id).checked;
-  v_connTabControl.selectedTab.tag.enable_autocomplete = (checked);
+  settingsStore.setAutocomplete(checked)
+  //TODO: remove after changing ConsoleTab editor implementation to component based
   emitter.emit(`${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_toggle_autocomplete`, checked)
 }
 

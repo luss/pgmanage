@@ -30,9 +30,10 @@ import { createApp } from "vue";
 import TreeSqlite from "../components/TreeSqlite.vue";
 import { tabSQLTemplate } from "./tree_postgresql";
 import { toggleConnectionAutocomplete } from "../workspace";
-import { querySQL } from "../query";
 import { execAjax } from "../ajax_control";
 import { showToast} from "../notification_control";
+import { settingsStore } from "../stores/settings";
+import { emitter } from "../emitter";
 
 /// <summary>
 /// Retrieving tree.
@@ -56,7 +57,7 @@ function getTreeSqlite(div) {
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
 
-    let autocomplete_switch_status = (v_connTabControl.selectedTab.tag.enable_autocomplete !== false) ? ' checked ' : '';
+    let autocomplete_switch_status = (settingsStore.enableAutocomplete !== false) ? ' checked ' : '';
     let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
     v_connTabControl.selectedTab.tag.divDetails.innerHTML =
         `<i class="fas fa-server mr-1"></i>selected DB: 
@@ -87,14 +88,11 @@ function TemplateSelectSqlite(p_table, p_kind) {
             'p_kind': p_kind
         }),
         function(p_return) {
-            let v_tab_name = p_table;
-            v_connTabControl.tag.createQueryTab(v_tab_name);
+            let tab_name = p_table;
+            v_connTabControl.tag.createQueryTab(tab_name);
 
-            var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-            v_tab_tag.editor.setValue(p_return.v_data.v_template);
-            v_tab_tag.editor.clearSelection();
-
-            querySQL(0);
+            let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
+            emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
         },
         function(p_return) {
             showToast("error", p_return.v_data)

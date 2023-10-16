@@ -1,0 +1,181 @@
+<template>
+  <div ref="editor" @contextmenu.stop.prevent="contextMenu" @keyup="autocompleteStart" @keydown="autocompleteKeyDown">
+  </div>
+</template>
+
+<script>
+import ContextMenu from "@imengyu/vue3-context-menu";
+import { settingsStore } from "../stores/settings";
+import { snippetsStore } from "../stores/snippets";
+import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
+import { uiCopyTextToClipboard } from "../workspace";
+import {
+  autocomplete_start,
+  autocomplete_keydown,
+  autocomplete_update_editor_cursor,
+} from "../autocomplete";
+import { emitter } from "../emitter";
+import { format } from "sql-formatter";
+
+export default {
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+    autocomplete: {
+      type: Boolean,
+      default: true,
+    },
+    tabId: String,
+    tabMode: String,
+    dialect: String,
+  },
+  emits: ["editorChange"],
+  data() {
+    return {
+      editor: "",
+      formatOptions: {
+        tabWidth: 2,
+        keywordCase: "upper",
+        //sql-formatter uses 'plsql' for oracle sql flavor
+        // otherwise - our db technology names match perfectly
+        language: this.dialect === "oracle" ? "plsql" : this.dialect,
+        linesBetweenQueries: 1,
+      },
+    };
+  },
+  computed: {
+    autocompleteMode() {
+      return this.tabMode === "query" ? 0 : 1;
+    },
+  },
+  watch: {
+    readOnly(newValue, oldValue) {
+      this.editor.setReadOnly(newValue);
+    },
+  },
+  mounted() {
+    this.setupEditor();
+
+    emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
+      this.autocompleteStart(event, true);
+    });
+
+    emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
+      this.editor.setValue(command);
+      this.editor.clearSelection();
+      this.editor.gotoLine(0, 0, true);
+    });
+
+    this.editor.on("change", () => {
+      this.$emit("editorChange", this.editor.getValue().trim());
+    });
+
+    settingsStore.$subscribe((mutation, state) => {
+      this.editor.setTheme(`ace/theme/${state.editorTheme}`);
+      this.editor.setFontSize(state.fontSize);
+    });
+  },
+  unmounted() {
+    emitter.all.delete(`${this.tabId}_show_autocomplete_results`);
+    emitter.all.delete(`${this.tabId}_copy_to_editor`);
+  },
+  methods: {
+    setupEditor() {
+      this.editor = ace.edit(this.$refs.editor);
+      this.editor.$blockScrolling = Infinity;
+      this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
+      this.editor.session.setMode("ace/mode/sql");
+      this.editor.setFontSize(settingsStore.fontSize);
+
+      // Remove shortcuts from ace in order to avoid conflict with pgmanage shortcuts
+      this.editor.commands.bindKey("ctrl-space", null);
+      this.editor.commands.bindKey("alt-e", null);
+      this.editor.commands.bindKey("Cmd-,", null);
+      this.editor.commands.bindKey("Cmd-Delete", null);
+      this.editor.commands.bindKey("Ctrl-Delete", null);
+      this.editor.commands.bindKey("Ctrl-Up", null);
+      this.editor.commands.bindKey("Ctrl-Down", null);
+      this.editor.commands.bindKey("Ctrl-,", null);
+      this.editor.commands.bindKey("Up", null);
+      this.editor.commands.bindKey("Down", null);
+      this.editor.commands.bindKey("Tab", null);
+
+      this.editor.focus();
+      this.editor.resize();
+    },
+    getQueryEditorValue(raw_query) {
+      if (raw_query) return this.editor.getValue().trim();
+      let selectedText = this.editor.getSelectedText();
+      return !!selectedText ? selectedText : this.editor.getValue().trim();
+    },
+    contextMenu(event) {
+      //TODO rewrite buildSnippetContextMenuObjects to not use editor directly
+      let option_list = [
+        {
+          label: "Copy",
+          icon: "fas cm-all fa-terminal",
+          onClick: () => {
+            let copy_text = this.getQueryEditorValue(true);
+
+            uiCopyTextToClipboard(copy_text);
+          },
+        },
+        {
+          label: "Save as snippet",
+          icon: "fas cm-all fa-save",
+          children: buildSnippetContextMenuObjects(
+            "save",
+            snippetsStore,
+            this.editor
+          ),
+        },
+      ];
+
+      if (snippetsStore.files.length != 0 || snippetsStore.folders.length != 0)
+        option_list.push({
+          label: "Use snippet",
+          icon: "fas cm-all fa-file-code",
+          children: buildSnippetContextMenuObjects(
+            "load",
+            snippetsStore,
+            this.editor
+          ),
+        });
+      ContextMenu.showContextMenu({
+        theme: "pgmanage",
+        x: event.x,
+        y: event.y,
+        zIndex: 1000,
+        minWidth: 230,
+        items: option_list,
+      });
+    },
+    autocompleteKeyDown(event) {
+      if (settingsStore.enableAutocomplete) {
+        autocomplete_keydown(this.editor, event);
+      } else {
+        autocomplete_update_editor_cursor(this.editor, event);
+      }
+    },
+    autocompleteStart(event, force = null) {
+      if (settingsStore.enableAutocomplete) {
+        autocomplete_start(this.editor, this.autocompleteMode, event, force);
+      }
+    },
+    indentSQL() {
+      let editor_value = this.editor.getValue();
+      let formatted = format(editor_value, this.formatOptions);
+      if (formatted.length) {
+        this.editor.setValue(formatted);
+        this.editor.clearSelection();
+        this.editor.gotoLine(0, 0, true);
+      }
+    },
+    focus() {
+      this.editor.focus();
+    },
+  },
+};
+</script>

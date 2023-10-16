@@ -59,13 +59,11 @@
             Skip Fetch
           </button>
 
-          <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-primary" title="Run"
-            @click="querySQL(3)">
+          <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-primary" title="Run">
             Commit
           </button>
 
-          <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-secondary" title="Run"
-            @click="querySQL(4)">
+          <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-secondary" title="Run">
             Rollback
           </button>
 
@@ -98,7 +96,6 @@
 <script>
 import { showConsoleHistory } from "../console";
 import { uiCopyTextToClipboard } from "../workspace";
-import { querySQL } from "../query";
 import ace from "ace-builds";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -115,7 +112,7 @@ import { snippetsStore } from "../stores/snippets";
 import { showToast } from "../notification_control";
 import ConsoleHistoryModal from "./ConsoleHistoryModal.vue";
 import moment from "moment";
-import { v_queryRequestCodes, refreshTreeNode } from "../query";
+import { v_queryRequestCodes } from "../query";
 import { createRequest, removeContext, SetAcked } from "../long_polling";
 import { format } from "sql-formatter";
 import { settingsStore } from "../stores/settings";
@@ -155,7 +152,7 @@ export default {
       lastCommand: "",
       autocommit: true,
       fetchMoreData: false,
-      openedTransaction: false,
+      openedTransaction: false, //TODO: implement commit/rollback functionality
       data: "",
       context: "",
       tabStatus: tabStatusMap.NOT_CONNECTED,
@@ -474,12 +471,11 @@ export default {
       if (!data.v_error) {
         let mode = ["CREATE", "DROP", "ALTER"];
         let status = data.v_data.v_status.split(" ");
-        let status_name = status[1];
 
         if (mode.includes(status[0])) {
-          //FIXME: replace this with event emitting on tree instance
-          let root_node = v_connTabControl.selectedTab.tag.tree.getRootNode();
-          if (!!status_name) refreshTreeNode(root_node, status_name);
+          let node_type = status[1] ? `${status[1].toLowerCase()}_list` : null 
+          
+          if (!!node_type) emitter.emit(`refreshTreeRecursive_${this.connId}`, node_type)
         }
       }
     },
@@ -524,7 +520,6 @@ export default {
       this.consoleSQL(context.check_command, context.mode);
     },
     showConsoleHistory,
-    querySQL,
   },
 };
 </script>
