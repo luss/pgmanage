@@ -383,7 +383,8 @@ def get_table_columns(request, database):
             columns = database.QueryTablesFields(table)
 
         # generate ORDER BY from table PKs
-        order_by = None
+        order_by = ''
+        pk_column_names = []
         if pk is not None and len(pk.Rows) > 0:
             if database.v_has_schema:
                 pk_cols = database.QueryTablesPrimaryKeysColumns(
@@ -395,7 +396,7 @@ def get_table_columns(request, database):
             cols = ', '.join(['t.'+x['column_name'] for x in pk_cols.Rows])
             order_by = f"ORDER BY {cols}"
 
-        pk_column_names = [x['column_name'] for x in pk_cols.Rows]
+            pk_column_names = [x['column_name'] for x in pk_cols.Rows]
 
         table_columns = []
         for column in columns.Rows:
