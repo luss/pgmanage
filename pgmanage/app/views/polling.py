@@ -1407,7 +1407,6 @@ def thread_query_edit_data_new(self,args):
             else:
                 table_name = table
 
-            print(count)
             table_data = database.QueryTableRecords('*', table_name, filter, count)
 
             table_rows = []
@@ -1651,8 +1650,8 @@ def thread_save_edit_data(self,args):
 
 
 def thread_save_edit_data_new(self,args):
-    response = {
-        'v_code': response.SaveEditDataResult,
+    res = {
+        'v_code': response.SaveEditDataResultNew,
         'v_context_code': args['v_context_code'],
         'v_error': False,
         'v_data': []
@@ -1661,15 +1660,15 @@ def thread_save_edit_data_new(self,args):
     try:
         database = args['v_database']
         client_object  = args['v_client_object']
-        command = 'select 1=1'
+        command = args['v_sql_cmd']
 
         database.v_connection.Execute(command)
 
         if not self.cancel:
-            queue_response(client_object, response)
+            queue_response(client_object, res)
     except Exception as exc:
         logger.error('''*** Exception ***\n{0}'''.format(traceback.format_exc()))
-        response['v_error'] = True
-        response['v_data'] = traceback.format_exc().replace('\n','<br>')
+        res['v_error'] = True
+        res['v_data'] = traceback.format_exc().replace('\n','<br>')
         if not self.cancel:
-            queue_response(client_object, response)
+            queue_response(client_object, res)
