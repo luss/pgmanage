@@ -23,7 +23,7 @@
       </form>
     </div>
     <div class="form-group col-1 d-flex align-items-end pl-0">
-      <button class="btn btn-success mr-2" title="Load Data" @click="getTableData()">
+      <button class="btn btn-primary mr-2" title="Load Data" @click="getTableData()">
         <i class="fa-solid fa-filter"></i>
       </button>
     </div>
@@ -176,15 +176,23 @@ export default {
       }
 
       td.innerText = '' //don't show the actual contents of the cell
-      td.className = 'cellReadOnly'
+
+      let cellClass = ''
+      if(cellData.is_dirty)
+        cellClass = 'row-dirty'
+      if(cellData.is_deleted)
+        cellClass = 'row-deleted'
+      if(cellData.is_new)
+        cellClass = 'row-new'
+      td.className = `'cellReadOnly' ${cellClass}`
       td.appendChild(div);
     },
     colHeaders(colIndex) {
       // TODO: can we render this with vue somehow?
       if(colIndex === 0)
-        return `<button data-action="add" class="btn btn-icon btn-icon-success" title="Add column">
-        <i data-action="add" class="fa-solid fa-circle-plus"></i>
-        </button>`
+        return `<div data-action="add" class="btn p-0" title="Add column">
+        <i data-action="add" class="fa-solid fa-circle-plus text-success"></i>
+        </div>`
 
       let col = this.tableColumns[colIndex-1]
       if(col) {
@@ -375,10 +383,8 @@ export default {
       let query = this.generateSQL()
 
       let message_data = {
-        // query: query,
         v_sql_cmd : query,
         v_sql_save : false,
-        // v_cmd_type: null,
         v_db_index: this.database_index,
         v_conn_tab_id: v_connTabControl.selectedTab.id,
         v_tab_id: this.tab_id,
@@ -391,20 +397,11 @@ export default {
         // database_name: this.database_name
       }
 
-      // let context = {
-      //   tab_tag: null,
-      //   callback: this.handleSaveResponse.bind(this),
-      //   start_time: new Date().getTime(),
-      //   database_index: this.database_index
-      // }
-
       let context = {
         callback: this.handleSaveResponse.bind(this),
       }
 
-      createRequest(v_queryRequestCodes.Query, message_data, context)
-      // createRequest(40, message_data, context)//TODO: add proper name for the request code
-
+      createRequest(v_queryRequestCodes.SaveEditDataNew, message_data, context)
     },
     applyBtnTitle() {
       let count = this.pendingChanges.length
