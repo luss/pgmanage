@@ -238,8 +238,12 @@ export default {
       }
     },
     showDataOperationResult(data) {
-      if (data.data.length === 0 && data.col_names.length === 0) {
-        this.queryInfoText = data.status ? data.status : "Done";
+      if (data.data.length === 0) {
+        if (data.col_names.length === 0) {
+          this.queryInfoText = data.status ? data.status : "Done";
+        } else {
+          this.queryInfoText = "No results";
+        }
       } else {
         this.updateHotTable(data);
       }
