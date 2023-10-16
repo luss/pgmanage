@@ -1025,9 +1025,9 @@ class PostgreSQL:
         v_filter = ''
         if not p_all_schemas:
             if p_table and p_schema:
-                v_filter = "and quote_ident(n.nspname) = '{0}' and quote_ident(c.relname) = '{1}' ".format(p_schema, p_table)
+                v_filter = "and quote_ident(n.nspname) = '{0}' and quote_ident(c.relname) = quote_ident('{1}') ".format(p_schema, p_table)
             elif p_table:
-                v_filter = "and quote_ident(n.nspname) = '{0}' and quote_ident(c.relname) = '{1}' ".format(self.v_schema, p_table)
+                v_filter = "and quote_ident(n.nspname) = '{0}' and quote_ident(c.relname) = quote_ident('{1}') ".format(self.v_schema, p_table)
             elif p_schema:
                 v_filter = "and quote_ident(n.nspname) = '{0}' ".format(p_schema)
             else:
@@ -1347,9 +1347,9 @@ class PostgreSQL:
         v_filter = ''
         if not p_all_schemas:
             if p_table and p_schema:
-                v_filter = "and quote_ident(tc.table_schema) = '{0}' and quote_ident(tc.table_name) = '{1}' ".format(p_schema, p_table)
+                v_filter = "and quote_ident(tc.table_schema) = '{0}' and quote_ident(tc.table_name) = quote_ident('{1}') ".format(p_schema, p_table)
             elif p_table:
-                v_filter = "and quote_ident(tc.table_schema) = '{0}' and quote_ident(tc.table_name) = '{1}' ".format(self.v_schema, p_table)
+                v_filter = "and quote_ident(tc.table_schema) = '{0}' and quote_ident(tc.table_name) = quote_ident('{1}') ".format(self.v_schema, p_table)
             elif p_schema:
                 v_filter = "and quote_ident(tc.table_schema) = '{0}' ".format(p_schema)
             else:
