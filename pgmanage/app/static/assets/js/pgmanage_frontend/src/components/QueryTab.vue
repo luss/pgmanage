@@ -2,7 +2,7 @@
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
       <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
-        @editor-change="updateEditorContent" />
+        :dialect="dialect" @editor-change="updateEditorContent" />
     </pane>
 
     <pane size="70">
@@ -69,7 +69,8 @@
             </button>
           </template>
 
-          <CancelButton v-if="executingState" :tab-id="tabId" :conn-id="connId" @cancelled="cancelSQLTab()" />
+          <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
+            @cancelled="cancelSQLTab()" />
 
           <!-- QUERY INFO DIV-->
           <div :id="`div_query_info_${tabId}`">
@@ -166,6 +167,7 @@ export default {
       showFetchButtons: false,
       readOnlyEditor: false,
       editorContent: "",
+      longQuery: false,
     };
   },
   computed: {
@@ -211,6 +213,7 @@ export default {
       this.queryDuration = "";
       this.cancelled = false;
       this.showFetchButtons = false;
+      this.longQuery = false;
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
@@ -259,6 +262,10 @@ export default {
           createRequest(v_queryRequestCodes.Query, message_data, context);
 
           this.queryState = queryState.Executing;
+
+          setTimeout(() => {
+            this.longQuery = true;
+          }, 1000);
 
           //FIXME: change into event emitting later
           tab_tag.tab_loading_span.style.visibility = "visible";
@@ -322,7 +329,13 @@ export default {
           }
         }
 
-        this.querySQL(this.queryModes.DATA_OPERATION, "explain", true, command);
+        this.querySQL(
+          this.queryModes.DATA_OPERATION,
+          "explain",
+          true,
+          command,
+          false
+        );
       }
     },
     queryRunOrExplain() {
@@ -331,7 +344,13 @@ export default {
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
         if (should_explain) {
-          return this.querySQL(this.queryModes.DATA_OPERATION, "explain", true);
+          return this.querySQL(
+            this.queryModes.DATA_OPERATION,
+            "explain",
+            true,
+            this.getQueryEditorValue(true),
+            false
+          );
         }
       }
 
@@ -415,7 +434,7 @@ export default {
       emitter.all.delete(`${this.tabId}_run_explain`);
       emitter.all.delete(`${this.tabId}_run_explain_analyze`);
       emitter.all.delete(`${this.tabId}_indent_sql`);
-      emitter.all.delete(`${this.tabId}_run_query`)
+      emitter.all.delete(`${this.tabId}_run_query`);
     },
     showCommandList,
   },
