@@ -48,6 +48,7 @@ var v_queryRequestCodes = {
 	Execute: 2,
 	Script: 3,
 	QueryEditData: 4,
+	QueryEditDataNew: 40,
 	SaveEditData: 5,
 	SaveEditDataNew: 55,
 	CancelThread: 6,

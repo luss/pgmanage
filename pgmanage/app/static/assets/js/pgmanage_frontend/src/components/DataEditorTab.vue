@@ -219,7 +219,7 @@ export default {
     },
     getTableData() {
       var message_data = {
-        v_table: this.table,
+        v_table: `"${this.table}"`, //FIXME: we need to solve this identifier quoting in an elegant way
         v_schema: this.schema,
         v_db_index: this.database_index,
         v_filter : this.query_filter,
@@ -235,7 +235,7 @@ export default {
         database_index: this.database_index
       }
 
-      createRequest(40, message_data, context)//TODO: add proper name for the request code
+      createRequest(v_queryRequestCodes.QueryEditDataNew, message_data, context)
       let actionsCol = {
         readOnly: true,
         renderer: this.actionsRenderer
@@ -290,7 +290,7 @@ export default {
     },
     handleResponse(response) {
       if(response.v_error == true) {
-        showToast("error", response.v_data.message)
+        showToast("error", response.v_data)
       } else {
         //store table data into original var, clone it to the working copy
         let pkIndex = this.tableColumns.findIndex((col) => col.is_primary) || 0

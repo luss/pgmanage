@@ -1123,7 +1123,7 @@ class PostgreSQL:
                 THEN CONCAT(udt_name, concat('(', concat(character_maximum_length::varchar(255), ')')))
                 ELSE udt_name
             END as data_type,
-            pg_catalog.col_description(format('%s.%s',isc.table_schema,isc.table_name)::regclass::oid,isc.ordinal_position) as comment
+            pg_catalog.col_description(format('%s.%s',isc.table_schema,quote_ident(isc.table_name))::regclass::oid,isc.ordinal_position) as comment
             FROM information_schema.columns isc
             WHERE table_schema = '{0}' AND table_name = '{1}'
             ORDER BY ordinal_position
@@ -1310,9 +1310,9 @@ class PostgreSQL:
         v_filter = ''
         if not p_all_schemas:
             if p_table and p_schema:
-                v_filter = "AND quote_ident(t.relnamespace::regnamespace::text) = '{0}' AND quote_ident(t.relname) = '{1}' ".format(p_schema, p_table)
+                v_filter = "AND quote_ident(t.relnamespace::regnamespace::text) = '{0}' AND quote_ident(t.relname) = quote_ident('{1}') ".format(p_schema, p_table)
             elif p_table:
-                v_filter = "AND quote_ident(t.relnamespace::regnamespace::text) = '{0}' AND quote_ident(t.relname) = '{1}' ".format(self.v_schema, p_table)
+                v_filter = "AND quote_ident(t.relnamespace::regnamespace::text) = '{0}' AND quote_ident(t.relname) = quote_ident('{1}') ".format(self.v_schema, p_table)
             elif p_schema:
                 v_filter = "AND quote_ident(t.relnamespace::regnamespace::text) = '{0}' ".format(p_schema)
             else:
