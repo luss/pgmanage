@@ -51,6 +51,7 @@ def index(request):
         "editor_theme": theme,
         "theme": user_details.theme,
         "font_size": user_details.font_size,
+        "autocomplete": user_details.autocomplete,
         "user_id": request.user.id,
         "user_key": request.session.session_key,
         "user_name": request.user.username,
@@ -98,6 +99,7 @@ def save_config_user(request, session):
     binary_path = data["binary_path"]
     date_format = data["date_format"]
     pigz_path = data["pigz_path"]
+    autocomplete = data.get("autocomplete", True)
 
     session.v_theme_id = theme
     session.v_font_size = font_size
@@ -112,6 +114,7 @@ def save_config_user(request, session):
     user_details.binary_path = binary_path
     user_details.date_format = date_format
     user_details.pigz_path = pigz_path
+    user_details.autocomplete = autocomplete
     user_details.save()
 
     request.session["pgmanage_session"] = session
