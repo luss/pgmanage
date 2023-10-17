@@ -558,6 +558,7 @@
     var binary_path = '{{ binary_path|addslashes }}';
     var pigz_path = '{{ pigz_path|addslashes}}';
     var date_format = '{{ date_format }}' === 'None' ? 'YYYY-MM-DD, HH:mm:ss' : '{{ date_format }}'
+    var autocomplete = {{ autocomplete|lower }}
     </script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js" defer></script>
   </body>

@@ -276,6 +276,9 @@ export default {
         settingsStore.setTheme(value);
       },
     },
+    autocomplete () {
+      return settingsStore.enableAutocomplete
+    }
   },
   created() {
     this.getShortcuts();
@@ -432,6 +435,12 @@ export default {
     })
 
     this.applyThemes()
+
+    settingsStore.$subscribe((mutation, state) => {
+      if (mutation.events.key === "enableAutocomplete") {
+        this.saveSettingsUser()
+      }
+    });
   },
   methods: {
     getShortcuts() {
@@ -592,7 +601,8 @@ export default {
           "csv_delimiter": this.csvDelimiter,
           "binary_path": this.binaryPath,
           "date_format": this.selectedDateFormat,
-          "pigz_path": this.pigzPath
+          "pigz_path": this.pigzPath,
+          "autocomplete": this.autocomplete,
         })
           .then((resp) => {
             $('#modal_settings').modal('hide');
