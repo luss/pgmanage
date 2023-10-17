@@ -1245,8 +1245,6 @@ function uiCopyTextToClipboard(p_value) {
 function toggleConnectionAutocomplete(p_toggler_id) {
   let checked = document.getElementById(p_toggler_id).checked;
   settingsStore.setAutocomplete(checked)
-  //TODO: remove after changing ConsoleTab editor implementation to component based
-  emitter.emit(`${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_toggle_autocomplete`, checked)
 }
 
 export {

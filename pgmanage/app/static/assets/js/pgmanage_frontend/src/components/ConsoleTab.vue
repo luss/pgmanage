@@ -29,19 +29,7 @@
               <label class="form-check-label" :for="`check_autocommit_${tabId}`">Autocommit</label>
             </div>
 
-            <div class="mr-2">
-              <i :id="`query_tab_status_${tabId}`" :title="statusText"
-                :class="['fas fa-dot-circle tab-status', statusClass]">
-                <div v-if="tabStatus === 1 || tabStatus === 2" class="tab-status-indicator">
-                  <span :class="circleWavesClass">
-                    <span v-for="n in 4" :key="n"></span>
-                  </span>
-                </div>
-              </i>
-              <span :id="`query_tab_status_text_${tabId}`" :title="statusText" class="ml-1">
-                {{ statusText }}
-              </span>
-            </div>
+            <TabStatusIndicator :tab-status="tabStatus" />
           </template>
 
           <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch More"
@@ -67,9 +55,8 @@
             Rollback
           </button>
 
-          <button v-if="executingState" class="btn btn-sm btn-danger" title="Cancel" @click="cancelConsole()">
-            Cancel
-          </button>
+          <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
+            @cancelled="cancelConsoleTab()" />
 
           <div :id="`div_query_info_${tabId}`">
             <span v-if="cancelled">
@@ -85,8 +72,8 @@
           </div>
         </div>
       </div>
-      <div ref="editor" :id="`txt_input_${tabId}`" class="h-100" @keyup="autocompleteStart" @keydown="autocompleteKeyDown"
-        @contextmenu.stop.prevent="contextMenu"></div>
+      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
+        :dialect="dialect" @editor-change="updateEditorContent" />
     </pane>
   </splitpanes>
 
@@ -95,27 +82,19 @@
 
 <script>
 import { showConsoleHistory } from "../console";
-import { uiCopyTextToClipboard } from "../workspace";
-import ace from "ace-builds";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import {
-  autocomplete_start,
-  autocomplete_keydown,
-  autocomplete_update_editor_cursor,
-} from "../autocomplete";
-import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
-import ContextMenu from "@imengyu/vue3-context-menu";
 import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
-import { snippetsStore } from "../stores/snippets";
 import { showToast } from "../notification_control";
 import ConsoleHistoryModal from "./ConsoleHistoryModal.vue";
 import moment from "moment";
 import { v_queryRequestCodes } from "../query";
-import { createRequest, removeContext, SetAcked } from "../long_polling";
-import { format } from "sql-formatter";
+import { createRequest } from "../long_polling";
 import { settingsStore } from "../stores/settings";
+import TabStatusIndicator from "./TabStatusIndicator.vue";
+import QueryEditor from "./QueryEditor.vue";
+import CancelButton from "./CancelSQLButton.vue";
 
 const consoleState = {
   Idle: 0,
@@ -137,6 +116,9 @@ export default {
     Splitpanes,
     Pane,
     ConsoleHistoryModal,
+    TabStatusIndicator,
+    QueryEditor,
+    CancelButton,
   },
   props: {
     connId: String,
@@ -147,7 +129,6 @@ export default {
   },
   data() {
     return {
-      autocomplete: true,
       consoleState: consoleState.Idle,
       lastCommand: "",
       autocommit: true,
@@ -158,15 +139,10 @@ export default {
       tabStatus: tabStatusMap.NOT_CONNECTED,
       queryDuration: "",
       queryStartTime: "",
-      formatOptions: {
-        tabWidth: 2,
-        keywordCase: "upper",
-        //sql-formatter uses 'plsql' for oracle sql flavor
-        // otherwise - our db technology names match perfectly
-        language: this.dialect === "oracle" ? "plsql" : this.dialect,
-        linesBetweenQueries: 1,
-      },
       cancelled: false,
+      readOnlyEditor: false,
+      editorContent: "",
+      longQuery: false,
     };
   },
   computed: {
@@ -176,48 +152,15 @@ export default {
     idleState() {
       return this.consoleState === consoleState.Idle;
     },
-    statusText() {
-      const statusMap = {
-        0: "Not Connected",
-        1: "Idle",
-        2: "Running",
-        3: "Idle in transaction",
-        4: "Idle in transaction (aborted)",
-      };
-      return statusMap[this.tabStatus] || "";
-    },
-    statusClass() {
-      const statusClassMap = {
-        0: "tab-status-closed",
-        1: "tab-status-idle position-relative",
-        2: "tab-status-running position-relative",
-        3: "tab-status-idle_in_transaction",
-        4: "tab-status-idle_in_transaction_aborted",
-      };
-
-      return `${statusClassMap[this.tabStatus] || ""}`;
-    },
-    circleWavesClass() {
-      return {
-        "omnis__circle-waves":
-          this.tabStatus === tabStatusMap.IDLE ||
-          this.tabStatus === tabStatusMap.RUNNING,
-        "omnis__circle-waves--idle": this.tabStatus === tabStatusMap.IDLE,
-        "omnis__circle-waves--running": this.tabStatus === tabStatusMap.RUNNING,
-      };
-    },
     postgresqlDialect() {
       return this.dialect === "postgresql";
     },
   },
   mounted() {
-    this.setupEditor();
     this.setupTerminal();
     this.setupEvents();
 
     settingsStore.$subscribe((mutation, state) => {
-      this.editor.setTheme(`ace/theme/${state.editorTheme}`);
-      this.editor.setFontSize(state.fontSize);
       this.terminal.options.theme = state.terminalTheme;
       this.terminal.options.fontSize = state.fontSize;
     });
@@ -230,29 +173,6 @@ export default {
     this.clearEvents();
   },
   methods: {
-    setupEditor() {
-      //TODO: move into mixin
-      this.editor = ace.edit(this.$refs.editor);
-      this.editor.$blockScrolling = Infinity;
-      this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
-      this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(settingsStore.fontSize);
-
-      // Remove shortcuts from ace in order to avoid conflict with pgmanage shortcuts
-      this.editor.commands.bindKey("ctrl-space", null);
-      this.editor.commands.bindKey("Cmd-,", null);
-      this.editor.commands.bindKey("Cmd-Delete", null);
-      this.editor.commands.bindKey("Ctrl-Delete", null);
-      this.editor.commands.bindKey("Ctrl-Up", null);
-      this.editor.commands.bindKey("Ctrl-Down", null);
-      this.editor.commands.bindKey("Ctrl-,", null);
-      this.editor.commands.bindKey("Up", null);
-      this.editor.commands.bindKey("Down", null);
-      this.editor.commands.bindKey("Tab", null);
-
-      this.editor.focus();
-      this.editor.resize();
-    },
     setupTerminal() {
       this.terminal = new Terminal({
         fontSize: settingsStore.fontSize,
@@ -270,18 +190,8 @@ export default {
       this.fitAddon.fit();
     },
     setupEvents() {
-      emitter.on(`${this.tabId}_toggle_autocomplete`, (checked) => {
-        this.autocomplete = checked;
-      });
-
       emitter.on(`${this.tabId}_resize`, () => {
         this.onResize();
-      });
-
-      emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
-        this.editor.setValue(command);
-        this.editor.clearSelection();
-        this.editor.gotoLine(0, 0, true);
       });
 
       emitter.on(`${this.tabId}_check_console_status`, () => {
@@ -293,91 +203,21 @@ export default {
       emitter.on(`${this.tabId}_run_console`, (check_command) => {
         this.consoleSQL(check_command);
       });
-
-      emitter.on(`${this.tabId}_cancel_query`, () => {
-        this.cancelConsole();
-      });
-
-      emitter.on(`${this.tabId}_indent_sql`, () => {
-        this.indentSQL();
-      });
-
-      emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
-        this.autocompleteStart(event, true);
-      });
     },
     clearEvents() {
-      emitter.all.delete(`${this.tabId}_autocomplete`);
       emitter.all.delete(`${this.tabId}_resize`);
-      emitter.all.delete(`${this.tabId}_copy_to_editor`);
       emitter.all.delete(`${this.tabId}_check_console_status`);
       emitter.all.delete(`${this.tabId}_run_console`);
-      emitter.all.delete(`${this.tabId}_cancel_query`);
-      emitter.all.delete(`${this.tabId}_indent_sql`);
-      emitter.all.delete(`${this.tabId}_show_autocomplete_results`);
-    },
-    autocompleteKeyDown(event) {
-      if (this.autocomplete) {
-        autocomplete_keydown(this.editor, event);
-      } else {
-        autocomplete_update_editor_cursor(this.editor, event);
-      }
-    },
-    autocompleteStart(event, force = null) {
-      if (this.autocomplete) {
-        autocomplete_start(this.editor, 1, event, force);
-      }
-    },
-    contextMenu(event) {
-      let option_list = [
-        {
-          label: "Copy",
-          icon: "fas cm-all fa-terminal",
-          onClick: () => {
-            let copy_text = this.editor.getValue();
-
-            uiCopyTextToClipboard(copy_text);
-          },
-        },
-        {
-          label: "Save as snippet",
-          icon: "fas cm-all fa-save",
-          children: buildSnippetContextMenuObjects(
-            "save",
-            snippetsStore,
-            this.editor
-          ),
-        },
-      ];
-
-      if (snippetsStore.files.length != 0 || snippetsStore.folders.length != 0)
-        option_list.push({
-          label: "Use snippet",
-          icon: "fas cm-all fa-file-code",
-          children: buildSnippetContextMenuObjects(
-            "load",
-            snippetsStore,
-            this.editor
-          ),
-        });
-      ContextMenu.showContextMenu({
-        theme: "pgmanage",
-        x: event.x,
-        y: event.y,
-        zIndex: 1000,
-        minWidth: 230,
-        items: option_list,
-      });
     },
     onResize() {
       this.fitAddon.fit();
-      this.editor.resize();
     },
     consoleSQL(check_command = true, mode = 0) {
-      const command = this.editor.getValue().trim();
+      const command = this.editorContent.trim();
       let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
       this.queryDuration = "";
       this.cancelled = false;
+      this.longQuery = false;
 
       if (!check_command || command[0] === "\\") {
         if (!this.idleState) {
@@ -387,8 +227,7 @@ export default {
           if (command === "" && mode === 0) {
             showToast("info", "Please provide a string.");
           } else {
-            this.editor.setValue("");
-            this.editor.clearSelection();
+            emitter.emit(`${this.tabId}_copy_to_editor`, "");
             this.lastCommand = command;
 
             let message_data = {
@@ -400,7 +239,7 @@ export default {
               v_autocommit: this.autocommit,
             };
 
-            this.editor.setReadOnly(true);
+            this.readOnlyEditor = true;
 
             this.queryStartTime = moment().format();
 
@@ -415,7 +254,9 @@ export default {
               new: true,
               callback: this.consoleReturn.bind(this),
               passwordSuccessCallback: this.passwordSuccessCallback.bind(this),
-              passwordFailCalback: this.cancelConsoleTab.bind(this),
+              passwordFailCalback: () => {
+                emitter.emit(`${this.tabId}_cancel_query`);
+              },
             };
 
             context.tab_tag.context = context;
@@ -423,6 +264,10 @@ export default {
             createRequest(v_queryRequestCodes.Console, message_data, context);
 
             this.consoleState = consoleState.Executing;
+
+            setTimeout(() => {
+              this.longQuery = true;
+            }, 1000);
 
             //FIXME: change into event emitting later
             tab_tag.tab_loading_span.style.visibility = "visible";
@@ -457,7 +302,7 @@ export default {
       this.consoleState = consoleState.Idle;
 
       this.tabStatus = data.v_data.v_con_status;
-      this.editor.setReadOnly(false);
+      this.readOnlyEditor = false;
 
       this.terminal.write(data.v_data.v_data);
 
@@ -473,9 +318,10 @@ export default {
         let status = data.v_data.v_status.split(" ");
 
         if (mode.includes(status[0])) {
-          let node_type = status[1] ? `${status[1].toLowerCase()}_list` : null 
-          
-          if (!!node_type) emitter.emit(`refreshTreeRecursive_${this.connId}`, node_type)
+          let node_type = status[1] ? `${status[1].toLowerCase()}_list` : null;
+
+          if (!!node_type)
+            emitter.emit(`refreshTreeRecursive_${this.connId}`, node_type);
         }
       }
     },
@@ -484,40 +330,25 @@ export default {
       this.terminal.write(this.consoleHelp);
     },
     indentSQL() {
-      let editor_value = this.editor.getValue();
-      let formatted = format(editor_value, this.formatOptions);
-      if (formatted.length) {
-        this.editor.setValue(formatted);
-        this.editor.clearSelection();
-        this.editor.gotoLine(0, 0, true);
-      }
+      emitter.emit(`${this.connId}_indent_sql`);
     },
-    cancelConsole() {
-      let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-      let message_data = { tab_id: this.tabId, conn_tab_id: this.connId };
-
-      createRequest(v_queryRequestCodes.CancelThread, message_data, null);
-
-      this.cancelConsoleTab(tab_tag);
-    },
-    cancelConsoleTab(tab_tag) {
-      this.editor.setReadOnly(false);
+    cancelConsoleTab() {
+      this.readOnlyEditor = false;
 
       this.consoleState = consoleState.Idle;
       this.tabStatus = tabStatusMap.NOT_CONNECTED;
 
       this.cancelled = true;
-
-      removeContext(tab_tag.context.v_context_code);
-      SetAcked(tab_tag.context);
     },
     passwordSuccessCallback(context) {
-      this.cancelConsoleTab(context.tab_tag);
+      emitter.emit(`${this.tabId}_cancel_query`);
 
-      this.editor.setValue(this.lastCommand);
-      this.editor.clearSelection();
+      emitter.emit(`${this.tabId}_copy_to_editor`, this.lastCommand);
 
       this.consoleSQL(context.check_command, context.mode);
+    },
+    updateEditorContent(newContent) {
+      this.editorContent = newContent;
     },
     showConsoleHistory,
   },
@@ -525,16 +356,6 @@ export default {
 </script>
 
 <style scoped>
-.tab-status-indicator {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  overflow: visible;
-  left: 0px;
-  top: 0px;
-  display: block;
-}
-
 .console-body {
   height: calc(100vh - 60px);
 }
