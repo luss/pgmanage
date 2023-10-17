@@ -57,17 +57,7 @@ export default {
   },
   mounted() {
     this.setupEditor();
-
-    emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
-      this.autocompleteStart(event, true);
-    });
-
-    emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
-      this.editor.setValue(command);
-      this.editor.clearSelection();
-      this.editor.gotoLine(0, 0, true);
-    });
-
+    this.setupEvents();
     this.editor.on("change", () => {
       this.$emit("editorChange", this.editor.getValue().trim());
     });
@@ -78,8 +68,7 @@ export default {
     });
   },
   unmounted() {
-    emitter.all.delete(`${this.tabId}_show_autocomplete_results`);
-    emitter.all.delete(`${this.tabId}_copy_to_editor`);
+    this.clearEvents();
   },
   methods: {
     setupEditor() {
@@ -175,6 +164,26 @@ export default {
     },
     focus() {
       this.editor.focus();
+    },
+    setupEvents() {
+      emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
+        this.autocompleteStart(event, true);
+      });
+
+      emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
+        this.editor.setValue(command);
+        this.editor.clearSelection();
+        this.editor.gotoLine(0, 0, true);
+      });
+
+      emitter.on(`${this.tabId}_indent_sql`, () => {
+        this.indentSQL();
+      });
+    },
+    clearEvents() {
+      emitter.all.delete(`${this.tabId}_show_autocomplete_results`);
+      emitter.all.delete(`${this.tabId}_copy_to_editor`);
+      emitter.all.delete(`${this.tabId}_indent_sql`);
     },
   },
 };

@@ -378,7 +378,7 @@ export default {
       this.cancelled = true;
     },
     indentSQL() {
-      this.$refs.editor.indentSQL();
+      emitter.emit(`${this.connId}_indent_sql`)
     },
     updateEditorContent(newContent) {
       this.editorContent = newContent;
@@ -424,16 +424,11 @@ export default {
       emitter.on(`${this.tabId}_run_explain_analyze`, () => {
         this.runExplain(1);
       });
-
-      emitter.on(`${this.tabId}_indent_sql`, () => {
-        this.indentSQL();
-      });
     },
     clearEvents() {
       emitter.all.delete(`${this.tabId}_check_query_status`);
       emitter.all.delete(`${this.tabId}_run_explain`);
       emitter.all.delete(`${this.tabId}_run_explain_analyze`);
-      emitter.all.delete(`${this.tabId}_indent_sql`);
       emitter.all.delete(`${this.tabId}_run_query`);
     },
     showCommandList,
