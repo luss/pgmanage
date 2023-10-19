@@ -6,7 +6,7 @@ const useSettingsStore = defineStore("settings", {
     theme: window.v_theme,
     editorTheme: window.v_editor_theme,
     terminalTheme: "",
-    enableAutocomplete: true
+    enableAutocomplete: window.autocomplete
   }),
   actions: {
     setFontSize(fontSize) {
