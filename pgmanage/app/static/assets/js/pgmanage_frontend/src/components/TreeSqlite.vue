@@ -30,6 +30,7 @@ import {
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
+import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 
 export default {
   name: "TreeSqlite",
@@ -102,6 +103,16 @@ export default {
                 icon: "fas cm-all fa-table",
                 onClick: () => {
                   v_startEditData(this.selectedNode.title);
+                },
+              },
+              {
+                label: "New Edit Data",
+                icon: "fas cm-all fa-table",
+                onClick: () => {
+                  createDataEditorTab(
+                    this.selectedNode.title,
+                    null
+                  );
                 },
               },
               {
