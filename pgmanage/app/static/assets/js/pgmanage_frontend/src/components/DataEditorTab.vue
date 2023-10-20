@@ -31,6 +31,7 @@
 
   <div ref="gridContainer" :style="{height: `calc(100vh - ${heightSubtract}px)`}" class="grid-scrollable">
      <hot-table ref="hotTableComponent" v-show='dataLoaded' class='data-grid' :settings="hotSettings"></hot-table>
+     <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
   </div>
 
   <div ref="bottomToolbar" class="data-editor__footer d-flex justify-content-end align-items-center p-2">
@@ -222,6 +223,10 @@ export default {
 
           this.$refs.hotTableComponent.hotInstance.updateSettings({
             columns: columns,
+            copyPaste: {
+              pasteMode:"",
+              uiContainer: this.$refs.hotTableInputHolder
+            }
           })
           this.dataLoaded = true
         })
