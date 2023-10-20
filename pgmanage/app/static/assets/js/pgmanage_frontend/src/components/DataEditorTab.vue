@@ -4,7 +4,7 @@
     <div class="form-group col-9">
       <form class="form" @submit.prevent>
         <label class="mb-2" for="selectServer">
-          <span class="font-weight-bold">Filter</span> <span class='text-info'> select</span> * <span class='text-info'>from</span> {{this.schema}}.{{this.table}} t
+          <span class="font-weight-bold">Filter</span> <span class='text-info'> select</span> * <span class='text-info'>from</span> {{this.schema ? `${this.schema}.${this.table}` : `${this.table}`}}
         </label>
         <input v-model.trim="queryFilter" class="form-control" name="filter"
            placeholder="extra filter criteria" />
