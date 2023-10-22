@@ -54,11 +54,11 @@ SOFTWARE.
   }
 
   .omnidb__theme-border--primary {
-    border: 1px solid #DEDEDE;
+    border: 1px solid #CAD0D8;
   }
 
   .omnidb__theme-border-top--primary {
-    border-top: 1px solid #DEDEDE;
+    border-top: 1px solid #CAD0D8;
   }
 
 
@@ -198,16 +198,14 @@ SOFTWARE.
 
   /* SECONDARY TAB */
   .omnidb__tab-menu--secondary {
-    border-bottom-color: #DEDEDE;
 
     .nav-tabs {
       border-bottom-color: transparent !important;
     }
 
     .omnidb__tab-menu__link {
-      background-color: transparent;
-      border-color: #CAD0D8;
-      border-bottom-color: #F8FAFC;
+      background-color: rgba(116, 125, 141, .05); //$secondaryGrey
+      border-width: 2px 1px 0 1px;
       border-radius: 4px 4px 0 0;
 
       &.active {
@@ -215,6 +213,12 @@ SOFTWARE.
         border-color: #CAD0D8;
         border-bottom-color: #F8FAFC;
         border-top: 2px solid #1560AD;
+        font-weight: 500;
+      }
+
+      &:not(.active):hover {
+        transition: all .3s ease-in;
+        background-color: rgba(116, 125, 141, 0.1);
       }
     }
 
@@ -238,12 +242,14 @@ SOFTWARE.
         background-color: transparent;
         border-color: #CAD0D8;
         border-bottom-color: #F8FAFC;
-
+        color: #16171E;
+        
         &.active {
           background-color: transparent;
           border-color: #CAD0D8;
           border-bottom-color: #FFFFFF;
           border-top: 2px solid #1560AD;
+          font-weight: 500;
         }
       }
 
@@ -254,33 +260,30 @@ SOFTWARE.
   }
 
   /* QUERY RESULT TABS */
-  .omnidb__query-result-tabs .omnidb__tab-menu {
-    .nav-tabs {
-      border-bottom-color: transparent !important;
-    }
-
-    .omnidb__tab-menu__link {
-      background-color: transparent;
-      border-color: #CAD0D8;
-      border-bottom-color: #DEDEDE;
-
-      &.active {
-        background-color: transparent;
-        border-color: #CAD0D8;
-        border-bottom-color: #F8FAFC;
-        border-top: 2px solid #1560AD;
+  .omnidb__query-result-tabs {
+    .omnidb__tab-menu {
+      .omnidb__tab-menu__link {
+        background-color: rgba(116, 125, 141, .05); //$secondaryGrey
+        border-width: 2px 1px 0 1px;
+        border-style: solid;
+  
+        &.active {
+          background-color: #F8FAFD;
+          border-top-color: #1560AD;
+          font-weight: 500;
+        }
+      }
+  
+      .omnidb__tab-menu__link-name {
+        color: #16171E !important;
+      }
+  
+      .omnidb__tab-menu__link-icon {
+        background-color: #E2E2E2 !important;
       }
     }
-
-    .omnidb__tab-menu__link-name {
-      color: #585858 !important;
-    }
-
-    .omnidb__tab-menu__link-icon {
-      background-color: #E2E2E2 !important;
-    }
   }
-
+ 
   /* MODAL CONFIG */
   .omnidb__modal-config {
     .nav-tabs {
@@ -324,80 +327,6 @@ SOFTWARE.
       }
     }
   }
-
-  /* DATERANGEPICKER */
-  // .daterangepicker {
-  //   background-color: #ffffff;
-  //   border: 1px solid #dfdfdf;
-
-  //   &:after,
-  //   &:before {
-  //     border-bottom: 7px solid #007bff;
-  //   }
-
-  //   .ranges {
-  //     background-color: #f8f9fa;
-
-  //     li {
-  //       &.active {
-  //         background-color: #4A81D4;
-  //         color: #FFF;
-  //       }
-
-  //       &:hover {
-  //         background-color: #eee;
-  //       }
-  //     }
-  //   }
-
-  //   .drp-buttons {
-  //     border-top: 1px solid #dfdfdf;
-  //   }
-
-  //   .cancelBtn {
-  //     color: #FFF;
-  //     background-color: #d26363;
-  //   }
-
-  //   &.show-ranges.ltr .drp-calendar.left {
-  //     border-left: 1px solid #dfdfdf;
-  //   }
-
-  //   .calendar-table {
-  //     background-color: #ffffff;
-  //     border: 1px solid #dfdfdf;
-  //   }
-
-  //   td {
-  //     &.off {
-  //       background-color: #ffffff;
-  //       color: #999;
-
-  //       &.in-range,
-  //       &.start-date,
-  //       &.end-date {
-  //         background-color: #ffffff;
-  //         color: #999;
-  //       }
-  //     }
-
-  //     &.in-range {
-  //       background-color: #EBF4F8;
-  //     }
-
-  //     &.active:hover {
-  //       background-color: #357EBD;
-  //       color: #FFF;
-  //     }
-
-  //   }
-
-  //   td.available:hover,
-  //   th.available:hover {
-  //     background-color: #EEE;
-  //   }
-  // }
-
 
   /* FORMS */
   ::placeholder {
@@ -525,17 +454,6 @@ SOFTWARE.
     border-color: #dee2e6;
   }
 
-  /* RESIZE LINES */
-  .resize_line_horizontal {
-    border-bottom: 1px solid #eee !important;
-  }
-  .resize_line_vertical {
-    border-right: 1px solid #eee !important;
-  }
-  .omnidb__workspace-resize-grid__draggable .resize_line_vertical {
-    border-right: 1px dashed #A2AFC1 !important;
-  }
-
   /* Workspace Connection Info */
   .omnidb__workspace__connection-details b {
     color: #1560AD;
@@ -617,10 +535,6 @@ SOFTWARE.
   }
 
   /* Tree Component */
-  .aimara_tree a.nav-link:hover {
-    background-color: #f3f3f3;
-  }
-
   span.node_selected span {
     color: #284AC6;
   }

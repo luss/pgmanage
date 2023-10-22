@@ -386,7 +386,11 @@ button.close {
 .omnidb__query-result-tabs .omnidb__tab-menu__link,
 .omnidb__modal-config .nav-link {
   line-height: 1;
-  margin-right: 5px;
+  margin-right: 3px;
+
+  &:not(.active):hover {
+    border-color: transparent;
+  }
 }
 .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon,
 .omnidb__tree-tabs .omnidb__tab-menu__link-icon,
@@ -637,37 +641,24 @@ button.close {
 .omnidb__resize-line__container--horizontal {
   cursor: row-resize;
   width: 100%;
-  height: 7px;
+  height: 4px;
 }
 .omnidb__resize-line__container--horizontal .resize_line_horizontal {
   box-sizing: border-box;
   position: relative;
   flex-shrink: 0;
-  height: 7px;
-  background-color: #fff;
-  border-top: 1px solid #eee;
+  height: 3px;
   margin-top: -1px;
   z-index: 1;
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    background-color: rgba(0, 0, 0, .15);
-    transition: background-color 0.3s;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 1px;
+  transition: all .1s ease-in;
+  &:hover {
+    background-color: #1560AD;
   }
-  &:before {margin-top: -2px;}
-  &:after {margin-top: 1px;}
-  &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
 }
 .omnidb__resize-line__container--vertical {
   position:absolute;
   height: 100%;
-  width: 10px;
+  width: 3px;
   cursor: col-resize;
   top: 0px;
   right: 0px;
@@ -675,28 +666,15 @@ button.close {
 .omnidb__resize-line__container--vertical .resize_line_vertical {
   height: 100%;
   z-index: 1;
-  width: 10px;
-  border-left: 1px solid #eee;
+  width: 3px;
   margin-left: -1px;
   flex-shrink: 0;
-  background-color: #fff;
   box-sizing: border-box;
   position: relative;
-  &:before, &:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    background-color: rgba(0, 0, 0, .15);
-    transition: background-color 0.3s;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 30px;
+  transition: all .1s ease-in;
+  &:hover {
+    background-color: #1560AD;
   }
-  &:before {margin-left: -2px;}
-  &:after {margin-left: 1px;}
-  &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
-
 }
 #horizontal-resize-line {
   position: absolute;
@@ -1709,5 +1687,4 @@ body {
 @import 'node-icon';
 @import 'themes/dark';
 @import 'themes/light';
-// @import './../lib/aimaraJS/scss/Aimara';
 @import '../daterangepicker/scss/daterangepicker';

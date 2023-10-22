@@ -8,7 +8,7 @@
       </div>
     </i>
 
-    <span :title="statusText" class="ml-1">
+    <span :title="statusText" class="mx-1">
       {{ statusText }}
     </span>
   </div>
