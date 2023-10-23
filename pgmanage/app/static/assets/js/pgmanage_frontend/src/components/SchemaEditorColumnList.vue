@@ -111,7 +111,7 @@
     emits: ["columns:changed"],
     methods: {
       addColumn() {
-        let colName = `column-${this.columns.length}`
+        let colName = `column_${this.columns.length}`
         const defaultCol = {
           dataType: 'integer',
           name: colName,

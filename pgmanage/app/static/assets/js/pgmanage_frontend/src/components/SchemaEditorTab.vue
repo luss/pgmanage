@@ -193,6 +193,7 @@ export default {
       //add knex error handing with notification to the user
       let tabledef = this.localTable
       let k = this.knex.schema.withSchema(tabledef.schema)
+
       this.hasChanges = false
       if(this.mode === 'alter') {
         let changes = {
@@ -204,7 +205,8 @@ export default {
           'renames': [],
           'comments': []
         }
-
+        // TODO: add support for altering Primary Keys
+        // TODO: add support for composite PKs
         let originalColumns = this.initialTable.columns
         this.localTable.columns.forEach((column, idx) => {
           if(column.deleted) changes.drops.push(column.name)
