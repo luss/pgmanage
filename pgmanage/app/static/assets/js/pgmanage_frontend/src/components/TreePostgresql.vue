@@ -3327,11 +3327,8 @@ export default {
         .then((resp) => {
           // Fix this not to use v_connTabControl
           v_connTabControl.tag.createQueryTab(`${node.title} Comment`);
-          let editor =
-            v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor;
-          editor.setValue(resp.data.data);
-          editor.clearSelection();
-          editor.gotoLine(0, 0, true);
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4219,16 +4216,10 @@ export default {
           schema: node.data.schema,
         })
         .then((resp) => {
+          
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4766,16 +4757,8 @@ export default {
           schema: node.data.schema,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4873,15 +4856,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4968,15 +4944,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5021,15 +4990,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5074,15 +5036,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5169,15 +5124,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

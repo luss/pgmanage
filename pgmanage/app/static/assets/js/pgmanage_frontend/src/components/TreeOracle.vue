@@ -21,17 +21,16 @@
 <script>
 import TreeMixin from "../mixins/power_tree.js";
 import { PowerTree } from "@onekiloparsec/vue-power-tree";
-import { renameTabConfirm } from "../workspace";
 import {
   TemplateUpdateOracle,
   TemplateInsertOracle,
   TemplateSelectOracle,
 } from "../tree_context_functions/tree_oracle";
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { querySQL } from "../query";
 import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
 import { createDataEditorTab } from "../tab_functions/data_editor_tab";
+import { emitter } from "../emitter";
 export default {
   name: "TreeOracle",
   components: {
@@ -469,21 +468,13 @@ export default {
             icon: "fas cm-all fa-search",
             onClick: () => {
               // FIX this to use TemplateSelectMariadb
-              let table_name;
-              table_name = `${this.templates.username}.${this.selectedNode.title}`;
+              let table_name = `${this.templates.username}.${this.selectedNode.title}`;
 
               v_connTabControl.tag.createQueryTab(this.selectedNode.title);
 
-              v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-                `-- Querying Data\nselect t.*\nfrom ${table_name} t`
-              );
-              v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-              renameTabConfirm(
-                v_connTabControl.selectedTab.tag.tabControl.selectedTab,
-                this.selectedNode.title
-              );
-
-              querySQL(0);
+              let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+              let command = `-- Querying Data\nselect t.*\nfrom ${table_name} t`
+              emitter.emit(`${tab.id}_run_query`, command)
             },
           },
           {
@@ -1263,15 +1254,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1351,15 +1335,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1439,15 +1416,8 @@ export default {
         })
         .then((resp) => {
           // Fix this not to use v_connTabControl
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-            resp.data.data
-          );
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-            0,
-            0,
-            true
-          );
+          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

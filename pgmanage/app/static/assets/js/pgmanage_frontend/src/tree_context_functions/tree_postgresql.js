@@ -37,21 +37,18 @@ import {
 import { Plan } from "pev2";
 // import "pev2/dist/style.css";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { querySQL, getQueryEditorValue } from "../query";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { createTabControl } from "../tabs";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
 import { settingsStore } from "../stores/settings";
+import { emitter } from "../emitter";
 
-function tabSQLTemplate(p_tab_name, p_template, p_showTip=true) {
-    v_connTabControl.tag.createQueryTab(p_tab_name);
-    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.setValue(
-        p_template);
-    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.clearSelection();
-    v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor.gotoLine(
-        0, 0, true);
+function tabSQLTemplate(tab_name, template, showTip=true) {
+    v_connTabControl.tag.createQueryTab(tab_name);
+    let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+    emitter.emit(`${tab.id}_copy_to_editor`, template)
 
     // if(p_showTip) {
     //   var v_instance = new Tooltip($(v_connTabControl.selectedTab.tag.tabControl.selectedLi),{
@@ -1170,25 +1167,22 @@ function getDebugProcedureDefinitionPostgresql(node) {
 /// <summary>
 /// Retrieving SELECT SQL template.
 /// </summary>
-function TemplateSelectPostgresql(p_schema, p_table, p_kind) {
+function TemplateSelectPostgresql(schema, table, kind) {
 
     execAjax('/template_select_postgresql/',
         JSON.stringify({
             "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
             "p_tab_id": v_connTabControl.selectedTab.id,
-            "p_table": p_table,
-            "p_schema": p_schema,
-            "p_kind": p_kind
+            "p_table": table,
+            "p_schema": schema,
+            "p_kind": kind
         }),
         function(p_return) {
-            let v_tab_name = `${v_connTabControl.selectedTab.tag.selectedDatabase}@${p_schema}.${p_table}`
-            v_connTabControl.tag.createQueryTab(v_tab_name);
+            let tab_name = `${v_connTabControl.selectedTab.tag.selectedDatabase}@${schema}.${table}`
+            v_connTabControl.tag.createQueryTab(tab_name);
 
-            var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-            v_tab_tag.editor.setValue(p_return.v_data.v_template);
-            v_tab_tag.editor.clearSelection();
-
-            querySQL(0);
+            let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+            emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
         },
         function(p_return) {
             showToast("error", p_return.v_data)
@@ -1343,74 +1337,6 @@ function postgresqlTerminateBackend(row) {
   );
 }
 
-function getExplain(p_mode) {
-
-    var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-
-    var v_query;
-    var v_selected_text = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-        .tag.editor.getSelectedText();
-
-    if (v_selected_text != '')
-        v_query = v_selected_text;
-    else
-        v_query = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.editor
-        .getValue();
-
-    if (v_query.trim() == '') {
-        showToast("info", "Please provide a string.")
-    }
-    else {
-        let should_prepend = v_query.trim().split(' ')[0].toUpperCase() !== 'EXPLAIN'
-        // do not prepend the query with explain stuff if it already have it
-        if(should_prepend) {
-            if (p_mode == 0) {
-                v_query = 'explain ' + v_query;
-            }
-            else if (p_mode == 1) {
-                v_query = 'explain (analyze, buffers) ' + v_query;
-            }
-
-        }
-
-        querySQL(0, true, v_query, getExplainReturn, true);
-    }
-}
-
-function getExplainReturn(p_data) {
-    let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-
-    tab_tag.selectExplainTabFunc();
-    if (p_data.v_error) {
-        tab_tag.div_explain.innerHTML = `<div class="error_text">${p_data.v_data.message}</div>`;
-    } else {
-
-        // Adjusting data.
-        let explain_text = p_data.v_data.v_data.join('\n');
-
-        if (v_explain_control.context === 'default') {
-          v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.div_explain.style.display = 'block';
-          if (explain_text.length > 0) {
-            let query = getQueryEditorValue();
-            tab_tag.div_explain.innerHTML= `<pev2 class="h-100" :plan-source="plan" :plan-query="query" />`;
-
-            const app = createApp({
-                data() {
-                  return {
-                    plan: explain_text,
-                    query: query,
-                  }
-                },
-              })
-            app.component("pev2", Plan);
-            app.mount(`#${tab_tag.div_explain.id}`)
-            }
-        }
-    }
-
-    refreshHeights();
-}
-
 export {
   getTreePostgresql,
   postgresqlTerminateBackend, 
@@ -1418,7 +1344,5 @@ export {
   TemplateSelectPostgresql,
   TemplateUpdatePostgresql,
   TemplateInsertPostgresql,
-  getExplain,
-  getExplainReturn,
   getDebugFunctionDefinitionPostgresql
 };

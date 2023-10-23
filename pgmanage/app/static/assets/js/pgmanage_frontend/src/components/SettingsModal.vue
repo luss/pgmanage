@@ -322,9 +322,7 @@ export default {
       shortcut_cancel_query: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_cancel_query`)
-          } else if(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
+          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
             emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_cancel_query`)
           }
         }
@@ -332,9 +330,7 @@ export default {
       shortcut_indent: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_indent_sql`)
-          } else if ( window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
+          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
             emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_indent_sql`)
           }
         }
@@ -392,10 +388,7 @@ export default {
       },
       shortcut_autocomplete: function (e) {
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-              emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_show_autocomplete_results`, e)
-            }
-            else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console') {
+          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
               emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_show_autocomplete_results`, e)
             }
         }
