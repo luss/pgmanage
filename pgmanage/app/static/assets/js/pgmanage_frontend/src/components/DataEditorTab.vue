@@ -34,7 +34,8 @@
      <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
   </div>
 
-  <div ref="bottomToolbar" class="data-editor__footer d-flex justify-content-end align-items-center p-2">
+  <div ref="bottomToolbar" class="data-editor__footer d-flex align-items-center justify-content-end p-2">
+    <p class="text-info mr-2" v-if="!hasPK" ><i class="fa-solid fa-circle-info"></i> The table has no primary key, existing rows can not be updated</p>
     <button type="submit" class="btn btn-success btn-sm mr-5" :disabled="!hasChanges"
       @click.prevent="applyChanges">
       {{this.applyBtnTitle()}}
@@ -53,6 +54,12 @@ import { createRequest } from '../long_polling'
 import { HotTable } from '@handsontable/vue3';
 import { TextEditor } from 'handsontable/editors/textEditor';
 import { registerAllModules } from 'handsontable/registry';
+
+// TODO: add support for other dbs
+// TODO: run query in transaction
+// TODO: remove old code, update request code numbers
+// TODO: redraw the grid on font size change
+// TODO: handle font size change - recalculate top/bottom toolbar dimensions
 
 // register Handsontable's modules, needed for column auto-sizing
 registerAllModules();
@@ -122,8 +129,14 @@ export default {
       return this.pendingChanges.length > 0
     },
     pendingChanges() {
-      return this.tableDataLocal.filter((row) => row[0].is_dirty || row[0].is_new || row[0].is_deleted)
+      if(this.hasPK)
+        return this.tableDataLocal.filter((row) => row[0].is_dirty || row[0].is_new || row[0].is_deleted)
+      else
+        return this.tableDataLocal.filter((row) => row[0].is_new)
     },
+    hasPK() {
+      return this.tableColumns.some(c => c.is_primary)
+    }
   },
   mounted() {
     this.knex = Knex({ client: this.dialect || 'postgres'})
@@ -236,7 +249,7 @@ export default {
     },
     getTableData() {
       var message_data = {
-        v_table: `"${this.table}"`, //FIXME: we need to solve this identifier quoting in an elegant way
+        v_table: this.table,
         v_schema: this.schema,
         v_db_index: this.database_index,
         v_filter : this.queryFilter,
@@ -281,6 +294,8 @@ export default {
       }
     },
     htAfterChange(changes, source) {
+      if(!this.hasPK)
+        return
       if(source === 'edit') {
         let hotInstance = this.$refs.hotTableComponent.hotInstance
         //changes are [[row prop old new]]
@@ -298,6 +313,9 @@ export default {
       // this function is a workaround which enables cell editing on double click
       // this should be working out of the box in handsontable but it doesn't
       let hotInstance = this.$refs.hotTableComponent.hotInstance
+      if(!hotInstance)
+        return
+
       let selection = hotInstance.getSelected()[0]
       let singleCellSelected = selection[0] === selection[2] && selection[1] === selection[3]
       if(singleCellSelected)
@@ -362,7 +380,10 @@ export default {
       let inserts = []
       let updates = []
       let changes = this.pendingChanges
-      let pkColName = this.tableColumns.find((col) => col.is_primary).name || 'id'
+      let pkColName = 'id'
+
+      if(this.hasPK)
+        pkColName = this.tableColumns.find((col) => col.is_primary).name || 'id'
 
       changes.forEach(function(change) {
         let rowMeta = change[0]

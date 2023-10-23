@@ -1394,23 +1394,17 @@ def thread_query_edit_data_new(self,args):
 
     try:
         database = args['v_database']
-
         table          = args['v_table']
-
-        if database.v_has_schema:
-            schema         = args['v_schema']
-
+        schema         = args['v_schema']
         filter         = args['v_filter']
         count          = str(args['v_count'])
         client_object  = args['v_client_object']
 
         try:
             if database.v_has_schema:
-                table_name = schema + '.' + table
+                table_data = database.QueryTableRecords('*', table, schema, filter, count)
             else:
-                table_name = table
-
-            table_data = database.QueryTableRecords('*', table_name, filter, count)
+                table_data = database.QueryTableRecords('*', table, filter, count)
 
             table_rows = []
             for row in table_data.Rows:

@@ -38,6 +38,7 @@ export let  createDataEditorTab = function(table, schema = '') {
     };
     tab.tag = tag;
 
+    let dialect =  v_connTabControl.selectedTab.tag.selectedDBMS
     let app = createApp({
       components: {
           "data-editor-tab": DataEditorTab,
@@ -47,7 +48,7 @@ export let  createDataEditorTab = function(table, schema = '') {
         tab_id: v_connTabControl.selectedTab.id,
         table: table_name,
         schema: schema,
-        dialect: 'postgres',
+        dialect: 'oracledb',//dialect === 'mariadb' ? 'mysql' : dialect,
         query_filter: '' //to be used in the future for passing extra filters when tab is opened
     });
 

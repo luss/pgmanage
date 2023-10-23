@@ -2034,7 +2034,11 @@ class PostgreSQL:
             return self.v_connection.Query(p_query, True)
 
     @lock_required
-    def QueryTableRecords(self, p_column_list, p_table, p_filter, p_count=-1):
+    def QueryTableRecords(self, p_column_list, p_table, p_schema, p_filter, p_count=-1):
+        table_name = self.v_connection.Query("select quote_ident('{0}')".format(p_table), False).Rows[0][0]
+        if p_schema is not None:
+            table_name = "{0}.{1}".format(p_schema, table_name)
+
         v_limit = ''
         if p_count != -1:
             v_limit = ' limit ' + p_count
@@ -2045,7 +2049,7 @@ class PostgreSQL:
             {3}
         '''.format(
                 p_column_list,
-                p_table,
+                table_name,
                 p_filter,
                 v_limit
             ), False

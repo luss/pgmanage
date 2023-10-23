@@ -31,6 +31,7 @@ import { renameTabConfirm } from "../workspace";
 import { querySQL } from "../query";
 import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
+import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 export default {
   name: "TreeMariaDB",
   components: {
@@ -152,6 +153,16 @@ export default {
                   v_startEditData(
                     this.selectedNode.title,
                     this.getParentNodeDeep(this.selectedNode, 2).title
+                  );
+                },
+              },
+              {
+                label: "New Edit Data",
+                icon: "fas cm-all fa-table",
+                onClick: () => {
+                  createDataEditorTab(
+                    this.selectedNode.title,
+                    null
                   );
                 },
               },
