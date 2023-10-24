@@ -304,7 +304,8 @@ export default {
           let rowMeta = hotInstance.getDataAtCell(rowNum,0)
           let originalRow = this.tableData.find((row) => row[0].initial_id == rowMeta.initial_id)
           //compare rows without metadata
-          rowMeta.is_dirty = !isEqual(rowData.slice(1), originalRow.slice(1)) && !rowMeta.is_new
+          if(originalRow)
+            rowMeta.is_dirty = !isEqual(rowData.slice(1), originalRow.slice(1)) && !rowMeta.is_new
         })
       }
     },
