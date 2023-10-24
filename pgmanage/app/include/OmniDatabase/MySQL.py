@@ -568,7 +568,7 @@ class MySQL:
         else:
             return self.Query(p_query, True)
 
-    def QueryTableRecords(self, p_column_list, p_table, p_filter, p_count=-1):
+    def QueryTableRecords(self, p_column_list, p_table, p_schema, p_filter, p_count=-1):
         v_limit = ''
         if p_count != -1:
             v_limit = ' limit ' + p_count

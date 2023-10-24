@@ -26,8 +26,8 @@ import {
   TemplateInsertMariadb,
   TemplateUpdateMariadb,
 } from "../tree_context_functions/tree_mariadb";
-import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
+import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { emitter } from "../emitter";
 
 export default {
@@ -148,9 +148,9 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  v_startEditData(
+                  createDataEditorTab(
                     this.selectedNode.title,
-                    this.getParentNodeDeep(this.selectedNode, 2).title
+                    null
                   );
                 },
               },

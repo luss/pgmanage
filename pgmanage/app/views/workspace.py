@@ -369,6 +369,53 @@ def start_edit_data(request, v_database):
 
 
 @user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_table_columns(request, database):
+    data = request.data
+    table = data["table"]
+
+    if database.v_has_schema:
+        schema = data["schema"]
+
+    try:
+        if database.v_has_schema:
+            pk = database.QueryTablesPrimaryKeys(table, False, schema)
+            columns = database.QueryTablesFields(table, False, schema)
+        else:
+            pk = database.QueryTablesPrimaryKeys(table)
+            columns = database.QueryTablesFields(table)
+
+        # generate ORDER BY from table PKs
+        order_by = ''
+        pk_column_names = []
+        if pk is not None and len(pk.Rows) > 0:
+            if database.v_has_schema:
+                pk_cols = database.QueryTablesPrimaryKeysColumns(
+                    pk.Rows[0]["constraint_name"], table, False, schema
+                )
+            else:
+                pk_cols = database.QueryTablesPrimaryKeysColumns(table)
+
+            cols = ', '.join(['t.'+x['column_name'] for x in pk_cols.Rows])
+            order_by = f"ORDER BY {cols}"
+
+            pk_column_names = [x['column_name'] for x in pk_cols.Rows]
+
+        table_columns = []
+        for column in columns.Rows:
+            table_columns.append({
+                "data_type": column['data_type'],
+                "name": column['column_name'],
+                "is_primary": column['column_name'] in pk_column_names,
+            })
+
+    except Exception as exc:
+        return JsonResponse(data={'data': str(exc)}, status=400)
+
+    return JsonResponse(data={'columns': table_columns, 'initial_orderby': order_by})
+
+
+@user_authenticated
 @database_required(p_check_timeout=True, p_open_connection=True)
 def get_completions_table(request, v_database):
     response_data = create_response_template()

@@ -26,8 +26,6 @@ $cronLightInputColor: 'cronLightInputColor';
 $cronLightInputBg: 'cronLightInputBg';
 $cronLightInputHover: 'cronLightInputHover';
 $tooltipBg: 'tooltipBg';
-$splitterBg: 'splitterBg';
-$splitterLines: 'splitterLines';
 $pev2Bg: 'pev2Bg';
 $pev2NavLinkColor: 'pev2NavLinkColor';
 $pev2ProgressBorder: 'pev2ProgressBorder';
@@ -41,6 +39,8 @@ $pev2CodeBlockBg: 'pev2CodeBlockBg';
 $schemaEditorColumnBg: 'schemaEditorColumnBg';
 $primaryBlueWhiteSwitching: 'primaryBlueWhiteSwitching';
 $erdCardWrapBg: 'erdCardWrapBg';
+$dataEditorTableFixedElsBg: 'dataEditorTableFixedElsBg';
+$modalContentBg: 'modalContentBg';
 
 $themes: (
     light: (
@@ -48,8 +48,8 @@ $themes: (
         border: $borderLight,
         color: $fontColorLight,
         surfaceBg: $bgSurfaceLight,
-        surfaceBgSecondary: $bgSurfaceLight,
-        surfaceBgTertiary: $bgSurfaceLight,
+        surfaceBgSecondary: $bgLightSecondary,
+        surfaceBgTertiary: $bgLightTertiary,
         inputBg: $bgSurfaceLight,
         customFileInputBg: $bgSurfaceLight,
         customFileInputBorder: $borderLight,
@@ -69,20 +69,20 @@ $themes: (
         cronLightInputBg: transparent,
         cronLightInputHover: rgba($primaryBlue, 0.15),
         tooltipBg: #C6DAF3,
-        splitterBg: rgba($primaryBlue, 0.1),
-        splitterLines:  rgba($primaryBlue, 0.5),
         pev2Bg: $bgLight,
         pev2NavLinkColor: $primaryBlue,
         pev2TableRowHighlight: rgba($primaryBlue, 0.25),
-        pev2PlanNodeHeader: #CCDFF6,
+        pev2PlanNodeHeader: $bgLightTertiary,
         pev2MutedText: rgba($primaryDark, 0.6),
-        pev2StatsTableBg: #CCDFF6,
-        pev2StatsTableTheadLight: rgba($primaryBlue, 0.25),
-        pev2StatsTableTheadDark: rgba($primaryBlue, 0.45),
-        pev2CodeBlockBg: #CCDFF6,
+        pev2StatsTableBg: $bgLightTertiary,
+        pev2StatsTableTheadLight: rgba($primaryBlue, 0.05),
+        pev2StatsTableTheadDark: rgba($primaryBlue, 0.1),
+        pev2CodeBlockBg: $bgLightTertiary,
         schemaEditorColumnBg: rgba($primaryBlue, 0.15),
         primaryBlueWhiteSwitching: $primaryBlue,
         erdCardWrapBg: $bgLightSecondary,
+        dataEditorTableFixedElsBg: $bgLight,
+        modalContentBg: $bgSurfaceLight,
     ),
     dark: (
         borderColor: $borderColorDark,
@@ -110,8 +110,6 @@ $themes: (
         cronLightInputBg: rgba($primaryBlue, 0.15),
         cronLightInputHover: $primaryBlue,
         tooltipBg: $bgSurfaceSecondaryDark,
-        splitterBg: rgba(255, 255, 255, 0.1),
-        splitterLines: rgba(255, 255, 255, 0.4),
         pev2Bg: $bgSurfaceDark,
         pev2NavLinkColor: $white,
         pev2TableRowHighlight: rgba($white, 0.1),
@@ -124,6 +122,8 @@ $themes: (
         schemaEditorColumnBg: rgba($primaryBlue, 0.15),
         primaryBlueWhiteSwitching: $white,
         erdCardWrapBg: $bgDarkSecondary,
+        dataEditorTableFixedElsBg: $bgSurfaceSecondaryDark,
+        modalContentBg: $bgDarkSecondary,
     ),
 );
 

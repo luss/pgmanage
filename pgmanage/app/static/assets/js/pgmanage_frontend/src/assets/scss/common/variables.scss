@@ -14,6 +14,7 @@ $scrollbarSize: 7px;
 
 //typography
 $fontFamily: 'Poppins', sans-serif;
+$fontFamilyMonospace: 'Ubuntu Mono', monospace;
 $fontSize: 0.875rem;
 $fontWeight: 400;
 $fontWeightMedium: 500;
@@ -22,7 +23,7 @@ $lineHeight: 1.4;
 
 //light mode
 $bgLight: $primaryLight;
-$bgLightSecondary: #F8FAFD;
+$bgLightSecondary: #F3F7FC;
 $bgLightTertiary: #E8EFF8;
 $fontColorLight: $primaryDark;
 $bgSurfaceLight: $white;

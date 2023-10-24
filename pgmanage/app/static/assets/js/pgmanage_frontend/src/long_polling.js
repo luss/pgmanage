@@ -3,7 +3,6 @@ import ShortUniqueId from 'short-unique-id';
 
 import { terminalReturn } from "./terminal";
 import { v_queryResponseCodes } from "./query";
-import { queryEditDataReturn, saveEditDataReturn, cancelEditDataTab } from "./tree_context_functions/edit_data";
 import { debugResponse } from "./debug";
 import { showPasswordPrompt } from "./passwords";
 import { getCookie } from './ajax_control'
@@ -88,7 +87,7 @@ function polling_response(message) {
     case parseInt(v_queryResponseCodes.QueryResult): {
       if (context) {
         SetAcked(context);
-        // temporary development workaround, 
+        // temporary development workaround,
         if (!message.v_data.chunks || message.v_data.last_block || message.v_error ) {
           if(context.simple && context.callback!=null) { //used by schema editor only, dont run any legacy rendering for simple requests
             context.callback(message)
@@ -107,7 +106,7 @@ function polling_response(message) {
       if (context) {
         if (message.v_data.v_last_block || message.v_error) {
           context.callback(message, context)
-          
+
           //Remove context
           removeContext(context_code);
         }
@@ -122,15 +121,14 @@ function polling_response(message) {
     }
     case parseInt(v_queryResponseCodes.QueryEditDataResult): {
       if (context) {
-        SetAcked(context);
-        queryEditDataReturn(message, context);
+        context.callback(message)
         removeContext(context_code);
       }
       break;
     }
     case parseInt(v_queryResponseCodes.SaveEditDataResult): {
       if (context) {
-        saveEditDataReturn(message, context);
+        context.callback(message)
         removeContext(context_code);
       }
       break;
@@ -174,19 +172,6 @@ function QueryPasswordRequired(p_context, p_message) {
 			},
 			function() {
         p_context.passwordFailCalback(p_context)
-			},
-			p_message
-		);
-	}
-	else if (p_context.tab_tag.mode=='edit') {
-		showPasswordPrompt(
-			p_context.database_index,
-			function() {
-				cancelEditDataTab(p_context.tab_tag);
-				//queryEditData();
-			},
-			function() {
-				cancelEditDataTab(p_context.tab_tag);
 			},
 			p_message
 		);

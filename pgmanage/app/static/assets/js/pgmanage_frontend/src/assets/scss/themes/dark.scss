@@ -237,7 +237,13 @@ SOFTWARE.
       background-color: transparent;
       border-color: #2C3B5A;
       border-radius: 4px 4px 0 0;
-      border-bottom-width: 0;
+      border-width: 2px 1px 0 1px;
+
+      &.active {
+        background-color: #16243C;
+        border-color: #2C3B5A;
+        border-top-color: #0054A6;    
+      } 
 
       &-name {
         color: #DCDDDE !important;
@@ -245,11 +251,11 @@ SOFTWARE.
 
       &-icon {
         background-color: unset;
+
         &.active {
-          background-color: transparent;
+          background-color: #16243C;
           border-color: #2C3B5A;
-          border-bottom-color: #101D2E;
-          border-top: 2px solid #0054A6;
+          border-top-color: #0054A6;    
         }      
       }
     }
@@ -265,7 +271,7 @@ SOFTWARE.
     border-color: #2C3B5A;
   }
   .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
-    color: #DCDDDE !important;
+    color: #F8FAFD !important;
   }
   .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-icon {
     background-color: #2F3136 !important;
@@ -278,11 +284,18 @@ SOFTWARE.
   }
 
   /* QUERY RESULT TABS */
+  .omnidb__query-result-tabs {
+    .tab-pane {
+      background-color: #16243C;
+    }
+  }
+
   .omnidb__query-result-tabs .omnidb__tab-menu .nav-tabs {
     border-bottom-color: transparent !important;
   }
   .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
     background-color: transparent;
+    border-width: 2px 1px 0 1px;
     border-color: #2C3B5A;
   }
   .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
@@ -292,9 +305,8 @@ SOFTWARE.
     background-color: #2F3136 !important;
   }
   .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
-    background-color: transparent;
+    background-color: #16243C;
     border-color: #2C3B5A;
-    border-bottom-color: #161D2D;
     border-top: 2px solid #0054A6;
   }
 
@@ -422,10 +434,10 @@ SOFTWARE.
   }
 
   /* DISABLED */
-  .form-control:disabled,
-  .form-control[readonly] {
-    background-color: #32343A !important;
-  }
+  // .form-control:disabled,
+  // .form-control[readonly] {
+  //   background-color: #32343A !important;
+  // }
   .custom-file > input[disabled]+label {
     background-color: #32343A !important;
     border-color: #4c5365;
@@ -565,28 +577,16 @@ SOFTWARE.
   }
 
   /* RESIZE LINES */
-
-  .resize_line_vertical,
-  .resize_line_horizontal {
-    border: 1px solid #162D4E;
-    background-color: #161D2D;
-    transition: all .3s ease-in-out;
-
-    &:hover {
-      background-color: #16243c;
-    }
-
-    &:before, &:after {
-      background-color: #164b84;
-
-    }
-    &:hover:before, &:hover:after {
-      background-color: #165699;
-    }
-  }
-
+  // .resize_line_vertical,
   // .resize_line_horizontal {
-  //   border-bottom: 1px dashed #6b7284 !important;
+  //   transition: all .3s ease-in-out;
+
+  //   &:hover {
+  //     background-color: rgba(255, 255, 255, 0.1);
+  //     &:before, &:after {
+  //       background-color: rgba(255, 255, 255, 0.4);
+  //     }
+  //   }
   // }
 
   /* Workspace Connection Info */
@@ -774,14 +774,7 @@ SOFTWARE.
     background-color: #373b41 !important;
     color: #ffffff !important;
   }
-  /* Handsontables */
-  .handsontable {
-    border-radius: 6px;
-  }
 
-  .handsontable th .relative {
-    color: #F8FAFC !important;
-  }
   select {
     background-color: #1A2234 !important;
     border: 1px solid #243049 !important;
@@ -789,51 +782,51 @@ SOFTWARE.
     font-size: inherit;
   }
   .handsontable th {
-    color: #2bb2d8 !important;
-    background-color: #29364E !important;
+    // color: #2bb2d8 !important;
+    // background-color: #29364E !important;
   }
-  .handsontable tr:nth-of-type(2n + 1) td {
-    border-right: 1px solid #243049 !important;
-    border-bottom: 1px solid #243049 !important;
-    background-color: #29364E;
-  }
-  .handsontable tr:nth-of-type(2n) td {
-    color: #c5c5c5;
-    border-right: 1px solid #243049 !important;
-    border-bottom: 1px solid #243049 !important;
-    background-color: #29364E;
-  }
+  // .handsontable tr:nth-of-type(2n + 1) td {
+  //   border-right: 1px solid #243049 !important;
+  //   border-bottom: 1px solid #243049 !important;
+  //   background-color: #29364E;
+  // }
+  // .handsontable tr:nth-of-type(2n) td {
+  //   color: #c5c5c5;
+  //   border-right: 1px solid #243049 !important;
+  //   border-bottom: 1px solid #243049 !important;
+  //   background-color: #29364E;
+  // }
 
-  .handsontable tr:first-child th, .handsontable tr:first-child td {
-    border-top: 1px solid #243049 !important;
-  }
+  // .handsontable tr:first-child th, .handsontable tr:first-child td {
+  //   border-top: 1px solid #243049 !important;
+  // }
 
-  .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame + th, .handsontable .htNoFrame + td {
-    border-left: 1px solid #243049 !important;
-  }
+  // .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame + th, .handsontable .htNoFrame + td {
+  //   border-left: 1px solid #243049 !important;
+  // }
 
-  .handsontable th:last-child {
-    border-right: 1px solid #243049!important;
-    border-bottom: 1px solid #243049 !important;
-  }
+  // .handsontable th:last-child {
+  //   border-right: 1px solid #243049!important;
+  //   border-bottom: 1px solid #243049 !important;
+  // }
 
-  .handsontable th, .handsontable td {
-    border-right: 1px solid #243049 !important;
-    border-bottom: 1px solid #243049 !important;
-  }
+  // .handsontable th, .handsontable td {
+  //   border-right: 1px solid #243049 !important;
+  //   border-bottom: 1px solid #243049 !important;
+  // }
 
-  .handsontable tr {
-    background-color: #1D1F21 !important;
-  }
+  // .handsontable tr {
+  //   background-color: #1D1F21 !important;
+  // }
 
-  .handsontable.htRowHeaders thead tr th:nth-child(2) {
-    border-left: 1px solid #243049 !important;
-  }
+  // .handsontable.htRowHeaders thead tr th:nth-child(2) {
+  //   border-left: 1px solid #243049 !important;
+  // }
 
-  .handsontable input, .handsontable textarea {
-    background-color: #1b1b1b !important;
-    color: #fff !important;
-  }
+  // .handsontable input, .handsontable textarea {
+  //   background-color: #1b1b1b !important;
+  //   color: #fff !important;
+  // }
   .handsontable .wtBorder.corner {
     border: 2px solid #5292f7 !important;
   }
@@ -1048,8 +1041,8 @@ SOFTWARE.
   }
 
   .cellReadOnly {
-  	background-color: rgb(47, 49, 51) !important;
-  	color: #969696 !important;
+  	// background-color: rgb(47, 49, 51) !important;
+  	// color: #969696 !important;
   }
   .conversion_table {
   	color: #d7d7d7;

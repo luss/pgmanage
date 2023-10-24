@@ -37,11 +37,12 @@
                 border: 0 !important;
             }
 
-            &:hover {
-                transition: all .3s ease-in-out;
-                backdrop-filter: brightness(95%);
-                // background-color: darken(rgba($primaryBlue, 0.15), 10%) !important;
-            }
+            &:not(:disabled) {
+                &:hover, &:focus {
+                    transition: all .3s ease-in-out;
+                    backdrop-filter: brightness(95%);
+                }
+            }   
         } 
 
         .custom-checkbox {

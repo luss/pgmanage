@@ -7,7 +7,7 @@
 
     <pane size="70">
       <!-- ACTION BUTTONS-->
-      <div class="row mb-1">
+      <div class="row mb-1 p-1 d-flex align-items-center">
         <div class="tab-actions col-12">
           <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary" title="Run" @click="queryRunOrExplain()">
             <i class="fas fa-play fa-light"></i>
@@ -73,17 +73,17 @@
             @cancelled="cancelSQLTab()" />
 
           <!-- QUERY INFO DIV-->
-          <div :id="`div_query_info_${tabId}`">
-            <span v-if="cancelled">
+          <div :id="`div_query_info_${tabId}`" class="">
+            <p class="m-0 h6" v-if="cancelled">
               <b>Cancelled</b>
-            </span>
-            <span v-else-if="queryStartTime && queryDuration" class="mr-2">
-              <b>Start time:</b> {{ queryStartTime }} <b>Duration:</b>
-              {{ queryDuration }}
-            </span>
-            <span v-else-if="queryStartTime">
+            </p>
+            <p v-else-if="queryStartTime && queryDuration" class="h6 m-0  mr-2">
+              <b>Start time:</b> {{ queryStartTime }}<br/>
+              <b>Duration:</b> {{ queryDuration }}
+            </p>
+            <p v-else-if="queryStartTime" class=" m-0 h6">
               <b>Start time:</b> {{ queryStartTime }}
-            </span>
+            </p>
           </div>
 
           <!-- EXPORT BUTTON with SELECT OPTIONS -->
@@ -91,11 +91,13 @@
             <i class="fas fa-download fa-light"></i>
           </button>
 
-          <select v-model="exportType" :id="`sel_export_type${tabId}`" class="form-control" style="width: 80px">
-            <option v-for="(name, value) in exportTypes" :value="value">
-              {{ name }}
-            </option>
-          </select>
+          <div class="form-group mb-0">
+            <select v-model="exportType" :id="`sel_export_type${tabId}`" class="form-control" style="width: 80px;">
+              <option v-for="(name, value) in exportTypes" :value="value">
+                {{ name }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
       <QueryResultTabs ref="queryResults" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"

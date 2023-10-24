@@ -6,6 +6,7 @@
     border-radius: $borderRadius;
     box-sizing: border-box;
     transition: all .3s;
+    white-space: nowrap;
 
     &:disabled {
         opacity: .4;

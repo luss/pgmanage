@@ -39,7 +39,7 @@ input {
             user-select: none;
 
             @include themify {
-                background-color: themed($disabledInputBg)!important; //workaround! to be removed when new stylesheets are implemented;
+                background-color: themed($disabledInputBg);
             }
         }
     }

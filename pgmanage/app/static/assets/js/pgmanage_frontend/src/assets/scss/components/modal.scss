@@ -13,7 +13,7 @@ $modalPadding: 24px;
         border-radius: $borderRadius;
 
         @include themify() {
-            background: themed($surfaceBgSecondary);
+            background: themed($modalContentBg);
         }
     }
 
@@ -58,7 +58,7 @@ $modalPadding: 24px;
         min-height: 3.5rem;
 
         @include themify() {
-            background-color: themed($surfaceBgSecondary);
+            background-color: themed($modalContentBg);
             border-top: themed($border);
         }
 
