@@ -25,6 +25,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+// TODO: remove this file and the related stuff in workspace.js, renderers, inner_edit_data_tab etc
+// see exports for the reference
+
 import { SetAcked, removeContext, createRequest } from "../long_polling";
 import { v_queryRequestCodes } from "../query";
 import { editDataActionRenderer } from '../renderers'

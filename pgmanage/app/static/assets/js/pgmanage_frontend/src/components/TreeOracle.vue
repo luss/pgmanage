@@ -27,7 +27,6 @@ import {
   TemplateSelectOracle,
 } from "../tree_context_functions/tree_oracle";
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
 import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { emitter } from "../emitter";
@@ -111,16 +110,6 @@ export default {
               },
               {
                 label: "Edit Data",
-                icon: "fas cm-all fa-table",
-                onClick: () => {
-                  v_startEditData(
-                    this.selectedNode.title,
-                    this.templates.username
-                  );
-                },
-              },
-              {
-                label: "New Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
                   createDataEditorTab(

@@ -8,7 +8,7 @@ import DataEditorTab from "../components/DataEditorTab.vue";
 import { beforeCloseTab } from "../create_tab_functions";
 
 export let  createDataEditorTab = function(table, schema = '') {
-    let tab_name = schema ? `Edit data: ${table}.${schema}` : `Edit data: ${table}`
+    let tab_name = schema ? `Edit data: ${schema}.${table}` : `Edit data: ${table}`
     let table_name = table.replace(/^"(.*)"$/, '$1')
     v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
@@ -36,9 +36,15 @@ export let  createDataEditorTab = function(table, schema = '') {
         tab_id: tab.id,
         div_result: document.getElementById(`data_editor_tab_${tab.id}`),
     };
-    tab.tag = tag;
+    tab.tag = tag
+
+    const DIALECT_MAP = {
+      'oracle': 'oracledb',
+      'mariadb': 'mysql'
+    }
 
     let dialect =  v_connTabControl.selectedTab.tag.selectedDBMS
+    let mapped_dialect = DIALECT_MAP[dialect] || dialect
     let app = createApp({
       components: {
           "data-editor-tab": DataEditorTab,
@@ -48,7 +54,7 @@ export let  createDataEditorTab = function(table, schema = '') {
         tab_id: v_connTabControl.selectedTab.id,
         table: table_name,
         schema: schema,
-        dialect: 'oracledb',//dialect === 'mariadb' ? 'mysql' : dialect,
+        dialect: mapped_dialect,
         query_filter: '' //to be used in the future for passing extra filters when tab is opened
     });
 

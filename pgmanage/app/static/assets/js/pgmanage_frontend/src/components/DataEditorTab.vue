@@ -264,7 +264,7 @@ export default {
         database_index: this.database_index
       }
 
-      createRequest(v_queryRequestCodes.QueryEditDataNew, message_data, context)
+      createRequest(v_queryRequestCodes.QueryEditData, message_data, context)
     },
     handleResize() {
       if(this.$refs === null)
@@ -430,7 +430,7 @@ export default {
         callback: this.handleSaveResponse.bind(this),
       }
 
-      createRequest(v_queryRequestCodes.SaveEditDataNew, message_data, context)
+      createRequest(v_queryRequestCodes.SaveEditData, message_data, context)
     },
     applyBtnTitle() {
       let count = this.pendingChanges.length

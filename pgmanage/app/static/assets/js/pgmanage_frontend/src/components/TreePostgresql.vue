@@ -39,7 +39,6 @@ import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
-import { v_startEditData } from "../tree_context_functions/edit_data";
 import { getProperties, clearProperties } from "../properties";
 import { startMonitorDashboard } from "../monitoring";
 import { showConfirm, showToast } from '../notification_control';
@@ -291,16 +290,6 @@ export default {
               },
               {
                 label: "Edit Data",
-                icon: "fas cm-all fa-table",
-                onClick: () => {
-                  v_startEditData(
-                    this.selectedNode.title,
-                    this.selectedNode.data.schema
-                  );
-                },
-              },
-              {
-                label: "New Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
                   createDataEditorTab(
@@ -1258,7 +1247,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  v_startEditData(
+                  createDataEditorTab(
                     this.selectedNode.title,
                     this.selectedNode.data.schema
                   );
@@ -4216,7 +4205,7 @@ export default {
           schema: node.data.schema,
         })
         .then((resp) => {
-          
+
           // Fix this not to use v_connTabControl
           let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
           emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
