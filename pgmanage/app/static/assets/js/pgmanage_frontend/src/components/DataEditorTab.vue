@@ -55,7 +55,6 @@ import { HotTable } from '@handsontable/vue3';
 import { TextEditor } from 'handsontable/editors/textEditor';
 import { registerAllModules } from 'handsontable/registry';
 
-// TODO: add support for other dbs
 // TODO: run query in transaction
 // TODO: remove old code, update request code numbers
 // TODO: redraw the grid on font size change
@@ -412,7 +411,7 @@ export default {
       if(inserts.length)
         insQ = this.knex(this.table).insert(inserts)
 
-      return [].concat(updates, insQ, deletes, '').join(';\n')
+      return [].concat(updates, insQ, deletes).join(';\n')
     },
     applyChanges() {
       let query = this.generateSQL()
