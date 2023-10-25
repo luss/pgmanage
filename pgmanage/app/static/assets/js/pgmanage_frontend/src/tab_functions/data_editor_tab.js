@@ -9,7 +9,6 @@ import { beforeCloseTab } from "../create_tab_functions";
 
 export let  createDataEditorTab = function(table, schema = '') {
     let tab_name = schema ? `Edit data: ${schema}.${table}` : `Edit data: ${table}`
-    let table_name = table.replace(/^"(.*)"$/, '$1')
     v_connTabControl.selectedTab.tag.tabControl.removeLastTab();
 
     let tab = v_connTabControl.selectedTab.tag.tabControl.createTab({
@@ -52,7 +51,7 @@ export let  createDataEditorTab = function(table, schema = '') {
       },{
         database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
         tab_id: v_connTabControl.selectedTab.id,
-        table: table_name,
+        table: table,
         schema: schema,
         dialect: mapped_dialect,
         query_filter: '' //to be used in the future for passing extra filters when tab is opened

@@ -2058,9 +2058,7 @@ class PostgreSQL:
 
     @lock_required
     def QueryTableRecords(self, p_column_list, p_table, p_schema, p_filter, p_count=-1):
-        table_name = self.v_connection.Query("select quote_ident('{0}')".format(p_table), False).Rows[0][0]
-        if p_schema is not None:
-            table_name = "{0}.{1}".format(p_schema, table_name)
+        table_name = "{0}.{1}".format(p_schema, p_table) if p_schema else p_table
 
         v_limit = ''
         if p_count != -1:
