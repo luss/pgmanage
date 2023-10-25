@@ -259,7 +259,10 @@ def draw_graph(request, database):
         q_fks = database.QueryTablesForeignKeys(None, False, schema)
 
         for fk in q_fks.Rows:
-            if fk["r_table_schema"] == schema:
+            # ensure that the new edge stays within the same schema and points to an existing table
+            # table partitions are *not* included in the node list
+            # FIXME: resolve FKs of partitioned table from its partitions
+            if fk["r_table_schema"] == schema and fk["table_name"] in node_dict.keys():
                 edge_dict[fk["constraint_name"]] = {
                     "from": fk["table_name"],
                     "to": fk["r_table_name"],
