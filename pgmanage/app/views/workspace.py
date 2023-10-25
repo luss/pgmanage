@@ -243,7 +243,7 @@ def draw_graph(request, database):
             }
 
             table_columns = database.QueryTablesFields(
-                table["table_name"], False, schema
+                table["name_raw"], False, schema
             ).Rows
 
             node_data['columns'] = list(({

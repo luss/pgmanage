@@ -1025,7 +1025,7 @@ def export_data(sql_cmd: str, database, encoding: str, delimiter: str, cmd_type:
     while has_more_records:
         data = database.v_connection.QueryBlock(sql_cmd, 1000, False, True)
 
-        if database.connection.v_start:
+        if database.v_connection.v_start:
             file.Write(data)
             has_more_records = False
         elif len(data.Rows) > 0:
