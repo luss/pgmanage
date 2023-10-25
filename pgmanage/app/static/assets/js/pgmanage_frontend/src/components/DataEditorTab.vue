@@ -124,6 +124,9 @@ export default {
         renderer: this.cellRenderer
       }
     },
+    talbleUnquoted() {
+      return this.table.replace(/^"(.*)"$/, '$1')
+    },
     hasChanges() {
       return this.pendingChanges.length > 0
     },
@@ -316,7 +319,12 @@ export default {
       if(!hotInstance)
         return
 
-      let selection = hotInstance.getSelected()[0]
+      let selected = hotInstance.getSelected()
+      if(!selected)
+        return
+
+      let selection = selected[0]
+
       let singleCellSelected = selection[0] === selection[2] && selection[1] === selection[3]
       if(singleCellSelected)
         hotInstance.getActiveEditor().enableFullEditMode();
@@ -400,17 +408,17 @@ export default {
             }
           })
 
-          updates.push(this.knex(this.table).where(pkColName, rowMeta.initial_id).update(updateArgs))
+          updates.push(this.knex(this.talbleUnquoted).where(pkColName, rowMeta.initial_id).update(updateArgs))
         }
       }, this)
 
       let deletableIds = changes.filter((c) => c[0].is_deleted).map((c) => {return c[0].initial_id})
       if(deletableIds.length > 0)
-        deletes.push(this.knex(this.table).whereIn(pkColName, deletableIds).del())
+        deletes.push(this.knex(this.talbleUnquoted).whereIn(pkColName, deletableIds).del())
 
       let insQ = []
       if(inserts.length)
-        insQ = this.knex(this.table).insert(inserts)
+        insQ = this.knex(this.talbleUnquoted).insert(inserts)
 
       return [].concat(updates, insQ, deletes).join(';\n')
     },
