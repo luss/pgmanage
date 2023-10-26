@@ -306,8 +306,8 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.doubleClickNode(this.getRootNode())
       setTimeout(() => {
+        this.doubleClickNode(this.getRootNode())
         this.doubleClickNode(this.$refs.tree.getNode([0, 0]))
       }, 200)
     })
