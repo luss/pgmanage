@@ -645,8 +645,8 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.doubleClickNode(this.getRootNode())
       setTimeout(() => {
+        this.doubleClickNode(this.getRootNode())
         const databasesNode = this.$refs.tree.getNode([0, 0])
         if (databasesNode)
           this.doubleClickNode(databasesNode)
