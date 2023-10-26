@@ -38,5 +38,3 @@ axios.interceptors.response.use(response => {
 });
 
 moment.defaultFormat = date_format;
-
-console.log('Hello from Vite')

@@ -15,7 +15,8 @@ export default defineConfig({
     inject({
       $: "jquery",
       jQuery: "jquery",
-      include: '**/*.js'
+      include: '**/*.js',
+      sourceMap: false
     },),
     vue(),
     Components({
