@@ -241,9 +241,9 @@ def draw_graph(request, database):
                 "group": 1,
                 "columns": []
             }
-
+            table_name = table.get('name_raw') or table["table_name"]
             table_columns = database.QueryTablesFields(
-                table["name_raw"], False, schema
+                table_name, False, schema
             ).Rows
 
             node_data['columns'] = list(({
