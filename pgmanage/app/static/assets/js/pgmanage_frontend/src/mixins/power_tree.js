@@ -182,7 +182,7 @@ export default {
     nodeOpenError(error_response, node) {
       if (error_response.response.data?.password_timeout) {
         showPasswordPrompt(
-          this.database_index,
+          this.databaseIndex,
           () => {
             this.refreshNode();
           },
