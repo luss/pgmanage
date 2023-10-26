@@ -40,6 +40,42 @@ Once all app requirements are installed cd to **pgmanage** subdirectory and star
 ```
 Once you see that he application server is ready, open http://localhost:8000 URL in your preferred browser. Then login with **admin:admin** credentials
 
+# PgManage 1.0 Beta 3
+
+## Release Date: Nov 4 2023
+
+## Release Notes
+
+ - New features:
+   - added UI for creating/altering DB tables (currently for Postgres only)
+   - added new Entity Relationship Diagram for all supported databases
+   - added PIGZ support for database backup and restore
+   - added UI for PG Cron extension
+
+ - Major Bugs fixed:
+   - fixed the issue when "Test Connection" action fails on previously saved DB connection
+   - fixed SQL autocomplete issues
+
+ - UI/UX Improvements:
+   - default TCP port in database connection form is now prepopulated based on selected database type
+   - improved styling for Pev2 Query Explain component
+   - major dark theme improvements
+   - the data editor tab is rewritten in Vuejs with various UX improvements like revert changed, display number of changes made etc
+   - the state of autocomplete toggle switch is now saved to application settings
+   - in DB Query tab the Cancel Query button is now displayed for long running queries only (>1000ms)
+   - various layout improvements on DB Query tab, application pane separators etc.
+   - minimized UI visual clutter
+  
+ - Other changes
+   - database object tree was fully rewritten in Vuejs
+   - moved SQL formatting/indentation to front-end
+   - refactored DB Object APIs
+   - JS assets are now managed with NPM and bundled with Vite
+   - Long-polling code cleaned up and refactored
+   - DB console tab was fully rewritten in Vuejs
+   - DB query tab was fully rewritten in Vuejs
+
+
 # PgManage 1.0 Beta 2
 
 ## Release Date: Jun 15 2023
