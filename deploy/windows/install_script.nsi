@@ -2,6 +2,7 @@
 ;Include Modern UI
 
   !include "MUI2.nsh"
+  !include WinVer.nsh  ;Include the WinVer.nsh script to check Windows version
 
 ;--------------------------------
 ;General
@@ -53,6 +54,12 @@
 
 Section "Program" AppFiles
   SectionIn RO
+
+  ;Check if the Windows version is at least Windows 10
+  ${IfNot} ${AtLeastWin10}
+    DetailPrint "This version of Windows is not supported."
+    Abort
+  ${EndIf}
 
   ;Add check for directory existence and delete if it exists
   IfFileExists "$INSTDIR\pgmanage-server" 0 +2
