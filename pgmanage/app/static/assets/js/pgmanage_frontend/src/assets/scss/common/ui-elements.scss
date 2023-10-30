@@ -1,6 +1,30 @@
 .border {
     @include themify() {
-        border: themed($border);
+        border: themed($border) !important;
+    }
+}
+
+.border-top {
+    @include themify() {
+        border-top: themed($border) !important;
+    }
+}
+
+.border-bottom {
+    @include themify() {
+        border-bottom: themed($border) !important;
+    }
+}
+
+.border-left {
+    @include themify() {
+        border-left: themed($border) !important;
+    }
+}
+
+.border-right {
+    @include themify() {
+        border-right: themed($border) !important;
     }
 }
 

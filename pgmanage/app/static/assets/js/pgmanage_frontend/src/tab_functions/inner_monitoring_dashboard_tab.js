@@ -66,7 +66,7 @@ var v_createMonitorDashboardTabFunction = function() {
   var v_html =
     `<div class='omnidb__monitoring-result-tabs'>
       <div class='container-fluid'>
-        <button id='${v_tab.id}_refresh_dashboard' class='btn btn-primary btn-sm my-2 mr-1'>
+        <button id='${v_tab.id}_refresh_dashboard' class='btn btn-primary btn-sm my-2 mr-2'>
         <i class='fas fa-sync-alt mr-2'></i>Refresh All</button>
         <button id='${v_tab.id}_manage_units' class='btn btn-primary btn-sm my-2'>Manage Units</button>
         <div id='dashboard_${v_tab.id}' class='dashboard_all row'></div>

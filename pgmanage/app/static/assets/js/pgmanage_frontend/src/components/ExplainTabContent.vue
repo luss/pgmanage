@@ -1,6 +1,6 @@
 <template>
   <div class="tab-pane" :id="`nav_explain_${tabId}`" role="tabpanel" :aria-labelledby="`nav_explain_tab_${tabId}`">
-    <div class="omnidb__theme-border--primary pt-2">
+    <div class="explain-wrap pt-2">
       <div class="result-div">
         <template v-if="!query && !plan">
           <p class="lead text-center text-muted mt-5">
@@ -43,7 +43,7 @@ export default {
 </script>
 
 <style scoped>
-.omnidb__theme-border--primary {
+.explain-wrap {
   height: calc(100% - 20px);
 }
 

@@ -21,7 +21,7 @@ export let createConfTab = function () {
   v_connTabControl.selectedTab.tag.tabControl.selectTab(tab);
 
   tab.elementDiv.innerHTML = `
-  <div id='configuration_tab_${tab.id}' class="pt-3">
+  <div id='configuration_tab_${tab.id}' class="p-2">
     <config-tab></config-tab>
   </div>`;
 

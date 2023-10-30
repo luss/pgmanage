@@ -81,10 +81,10 @@ SOFTWARE.
   .omnidb__workspace,
   .omnidb__snippets {
     &__div-left {
-      background-color: #FFFFFF;
+      background-color:  #F3F7FC;
     }
     &__div-right {
-      background-color: #F8FAFD;
+      background-color: #FFFFFF;
     }
   }
 
@@ -204,16 +204,23 @@ SOFTWARE.
     }
 
     .omnidb__tab-menu__link {
-      background-color: rgba(116, 125, 141, .05); //$secondaryGrey
       border-width: 2px 1px 0 1px;
       border-radius: 4px 4px 0 0;
 
       &.active {
-        background-color: transparent;
+        background-color: #FFFFFF;
         border-color: #CAD0D8;
         border-bottom-color: #F8FAFC;
         border-top: 2px solid #1560AD;
         font-weight: 500;
+
+        .omnidb__tab-menu__link-close {
+          color: #1560AD;
+        }
+      }
+
+      &:first-of-type.active {
+        border-left: transparent;
       }
 
       &:not(.active):hover {
@@ -262,24 +269,19 @@ SOFTWARE.
   /* QUERY RESULT TABS */
   .omnidb__query-result-tabs {
     .omnidb__tab-menu {
-      .omnidb__tab-menu__link {
-        background-color: rgba(116, 125, 141, .05); //$secondaryGrey
-        border-width: 2px 1px 0 1px;
+      &__link {
+        border-width: 0 0 2px 0;
         border-style: solid;
   
         &.active {
-          background-color: #F8FAFD;
-          border-top-color: #1560AD;
+          background-color: #FFFFFF;
+          border-bottom-color: #1560AD;
           font-weight: 500;
         }
-      }
-  
-      .omnidb__tab-menu__link-name {
-        color: #16171E !important;
-      }
-  
-      .omnidb__tab-menu__link-icon {
-        background-color: #E2E2E2 !important;
+
+        &-name {
+          color: #16171E !important;
+        }
       }
     }
   }
@@ -308,11 +310,6 @@ SOFTWARE.
         border-bottom-color: #FFFFFF;
       }
     }
-  }
-
-  /* MONITORING */
-  .omnidb__monitoring-result-tabs {
-    border: 1px solid #DEDEDE;
   }
 
   /* CARD */
@@ -398,48 +395,6 @@ SOFTWARE.
    }
   .toast-header {
     background-color: rgba(255,255,255,.85);
-  }
-
-  /* TOOLTIPS */
-  .tooltip {
-    &[x-placement='top']{
-      .arrow::before {
-        border-top-color: #c6daf3;
-      }
-    }
-
-    &[x-placement='bottom']{
-      .arrow::before {
-        border-bottom-color: #c6daf3;
-      }
-    }
-
-    &[x-placement='left']{
-      .arrow::before {
-        border-left-color: #c6daf3;
-      }
-    }
-
-    &[x-placement='right']{
-      .arrow::before {
-        border-right-color: #c6daf3;
-      }
-    }
-
-    &-inner {
-      color: #1D273B;
-      background-color: #c6daf3;
-      border-radius: 6px;
-      padding: 8px;
-
-      ul {
-        padding-left: 20px;
-      }
-    }
-
-    &.show {
-      opacity: 1 !important;
-    }
   }
 
   /* JSON BUILDER */

@@ -1,6 +1,10 @@
 .plan-diagram {
   line-height: 1rem;
   padding-right: $spaceSm;
+  
+  @include themify {
+    border-right: themed($border);
+  }
 
   &.plan-diagram-top {
     max-height: 30%;
@@ -69,7 +73,6 @@
   
       &.selected {
         outline: 1px solid $primaryBlue;
-        box-shadow: 0px 0px 9px 6px rgba($primaryBlue, 0.15);
       }
     }
 

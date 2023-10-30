@@ -4,72 +4,70 @@
       <div ref="console" :id="`txt_console_${tabId}`" class="omnidb__txt-console h-100"></div>
     </pane>
 
-    <pane size="20">
-      <div class="row mb-1">
-        <div class="tab-actions col-12">
-          <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)">
-            <i class="fas fa-play fa-light"></i>
-          </button>
+    <pane size="20" class="pl-2 border-top">
+      <div class="tab-actions py-2 d-flex align-items-center">
+        <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)">
+          <i class="fas fa-play fa-light"></i>
+        </button>
 
-          <button class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
-            <i class="fas fa-indent fa-ligth"></i>
-          </button>
+        <button class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
+          <i class="fas fa-indent fa-ligth"></i>
+        </button>
 
-          <button class="btn btn-sm btn-secondary" title="Clear Console" @click="clearConsole()">
-            <i class="fas fa-broom fa-ligth"></i>
-          </button>
+        <button class="btn btn-sm btn-secondary" title="Clear Console" @click="clearConsole()">
+          <i class="fas fa-broom fa-ligth"></i>
+        </button>
 
-          <button class="btn btn-sm btn-secondary" title="Command History" @click="showConsoleHistory()">
-            <i class="fas fa-clock-rotate-left fa-light"></i>
-          </button>
+        <button class="btn btn-sm btn-secondary" title="Command History" @click="showConsoleHistory()">
+          <i class="fas fa-clock-rotate-left fa-light"></i>
+        </button>
 
-          <template v-if="postgresqlDialect">
-            <div class="omnidb__form-check form-check form-check-inline">
-              <input :id="`check_autocommit_${tabId}`" class="form-check-input" type="checkbox" v-model="autocommit" />
-              <label class="form-check-label" :for="`check_autocommit_${tabId}`">Autocommit</label>
-            </div>
-
-            <TabStatusIndicator :tab-status="tabStatus" />
-          </template>
-
-          <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch More"
-            @click="consoleSQL(false, 1)">
-            Fetch more
-          </button>
-
-          <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch All"
-            @click="consoleSQL(false, 2)">
-            Fetch all
-          </button>
-
-          <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Skip Fetch"
-            @click="consoleSQL(false, 3)">
-            Skip Fetch
-          </button>
-
-          <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-primary" title="Run">
-            Commit
-          </button>
-
-          <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-secondary" title="Run">
-            Rollback
-          </button>
-
-          <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
-            @cancelled="cancelConsoleTab()" />
-
-          <div :id="`div_query_info_${tabId}`">
-            <span v-if="cancelled">
-              <b>Cancelled</b>
-            </span>
-            <span v-else-if="queryStartTime && queryDuration" class="mr-2">
-              <b>Start time:</b> {{ queryStartTime }} <b>Duration:</b>
-              {{ queryDuration }}
-            </span>
-            <span v-else-if="queryStartTime">
-              <b>Start time:</b> {{ queryStartTime }}
-            </span>
+        <template v-if="postgresqlDialect">
+          <div class="omnidb__form-check form-check form-check-inline">
+            <input :id="`check_autocommit_${tabId}`" class="form-check-input" type="checkbox" v-model="autocommit" />
+            <label class="form-check-label" :for="`check_autocommit_${tabId}`">Autocommit</label>
           </div>
+
+          <TabStatusIndicator :tab-status="tabStatus" />
+        </template>
+
+        <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch More"
+          @click="consoleSQL(false, 1)">
+          Fetch more
+        </button>
+
+        <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch All"
+          @click="consoleSQL(false, 2)">
+          Fetch all
+        </button>
+
+        <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Skip Fetch"
+          @click="consoleSQL(false, 3)">
+          Skip Fetch
+        </button>
+
+        <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-primary" title="Run">
+          Commit
+        </button>
+
+        <button v-if="openedTransaction && !executingState" class="btn btn-sm btn-secondary" title="Run">
+          Rollback
+        </button>
+
+        <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
+          @cancelled="cancelConsoleTab()" />
+
+        <div :id="`div_query_info_${tabId}`">
+          <span v-if="cancelled">
+            <b>Cancelled</b>
+          </span>
+          <span v-else-if="queryStartTime && queryDuration" class="mr-2">
+            <b>Start time:</b> {{ queryStartTime }} <b>Duration:</b>
+            {{ queryDuration }}
+          </span>
+          <span v-else-if="queryStartTime">
+            <b>Start time:</b> {{ queryStartTime }}
+          </span>
         </div>
       </div>
       <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
@@ -177,7 +175,7 @@ export default {
       this.terminal = new Terminal({
         fontSize: settingsStore.fontSize,
         theme: settingsStore.terminalTheme,
-        fontFamily: "Monospace",
+        fontFamily: "'Ubuntu Mono', monospace",
         rendererType: "dom", //FIXME: investigate in detail, for no use dom renderer because in nwjs we had some text rendering bugs on light theme
       });
 

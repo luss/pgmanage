@@ -11,7 +11,7 @@
         th {
             color: $primaryMutedColor !important;
             text-align: left;
-            padding: 0px 0.36rem 0px 0.36rem;
+            padding: 0.25rem 0.36rem 0 0.36rem;
 
             @include themify() {
                 background-color: themed($dataEditorTableFixedElsBg) !important;
@@ -52,7 +52,7 @@
             &:nth-of-type(even){
                 td, th {
                     @include themify() {
-                        background-color: themed($surfaceBgTertiary);
+                        background-color: themed($surfaceBgSecondary);
                         color: themed($color);
                     }
                 }
@@ -61,7 +61,7 @@
             &:nth-of-type(odd){
                 td, th {
                     @include themify() {
-                        background-color: themed($surfaceBgSecondary);
+                        background-color: themed($surfaceBg);
                         color: themed($color);
                     }
                 }

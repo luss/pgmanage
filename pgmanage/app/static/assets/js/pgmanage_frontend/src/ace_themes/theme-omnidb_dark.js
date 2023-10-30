@@ -5,7 +5,7 @@ ace.define("ace/theme/omnidb_dark",["require","exports","module","ace/lib/dom"],
 exports.isDark = true;
 exports.cssClass = "ace-omnidb_dark";
 exports.cssText = ".ace-omnidb_dark .ace_gutter {\
-background: #162d4e;\
+background: #16171E;\
 font-size: 1em;\
 color: #747D8D;\
 }\
@@ -14,14 +14,14 @@ width: 1px;\
 background: #25282c\
 }\
 .ace-omnidb_dark {\
-background-color: #16243c;\
+background-color: #16171E;\
 color: #F8FAFC\
 }\
 .ace-omnidb_dark .ace_cursor {\
 color: #F8FAFC\
 }\
 .ace-omnidb_dark .ace_marker-layer .ace_selection {\
-background: #1d4d86;\
+background: #162D4E;\
 }\
 .ace-omnidb_dark.ace_multiselect .ace_selection.ace_start {\
 box-shadow: 0 0 3px 0px #1D1F21;\

@@ -184,7 +184,7 @@ import { emitter } from '../emitter'
 import { settingsStore } from '../stores/settings'
 
 const light_terminal_theme = {
-      background: '#e8eff8',
+      background: '#FFFFFF',
       brightBlue: '#006de2',
       brightGreen: '#4b9800',
       foreground: '#454545',
@@ -194,7 +194,7 @@ const light_terminal_theme = {
     }
 
 const dark_terminal_theme = {
-      background: '#1D273B',
+      background: '#16171E',
       selection: '#1560AD',
       foreground: '#F8FAFD',
     }

@@ -27,7 +27,7 @@ export let  createDataEditorTab = function(table, schema = '') {
     v_connTabControl.selectedTab.tag.tabControl.selectTab(tab);
 
     tab.elementDiv.innerHTML = `
-    <div id='data_editor_tab_${tab.id}' class="pt-3">
+    <div id='data_editor_tab_${tab.id}' class="p-2">
       <data-editor-tab></data-editor-tab>
     </div>`;
 
