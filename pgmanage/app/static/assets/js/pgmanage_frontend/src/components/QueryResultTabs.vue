@@ -33,33 +33,31 @@
       </div>
 
       <div class="tab-content">
-        <div class="tab-pane active" :id="`nav_data_${tabId}`" role="tabpanel" :aria-labelledby="`nav_data_tab_${tabId}`">
-          <div class="omnidb__theme-border--primary p-2">
-            <div class="result-div">
-              <template v-if="exportFileName && exportDownloadName">
-                The file is ready.
-                <a class="link_text" :href="exportFileName" :download="exportDownloadName">Save</a>
-              </template>
-              <template v-else-if="errorMessage" class="error_text" style="white-space: pre">
-                {{ errorMessage }}
-              </template>
-              <template v-else-if="queryInfoText">
-                <div class="query_info">
-                  {{ queryInfoText }}
-                </div>
-              </template>
-              <template v-else>
-                <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
-                <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
-              </template>
-            </div>
+        <div class="tab-pane active pt-2" :id="`nav_data_${tabId}`" role="tabpanel" :aria-labelledby="`nav_data_tab_${tabId}`">
+          <div class="result-div">
+            <template v-if="exportFileName && exportDownloadName">
+              The file is ready.
+              <a class="link_text" :href="exportFileName" :download="exportDownloadName">Save</a>
+            </template>
+            <template v-else-if="errorMessage" class="error_text" style="white-space: pre">
+              {{ errorMessage }}
+            </template>
+            <template v-else-if="queryInfoText">
+              <div class="query_info">
+                {{ queryInfoText }}
+              </div>
+            </template>
+            <template v-else>
+              <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
+              <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
+            </template>
           </div>
         </div>
 
         <template v-if="postgresqlDialect">
           <div class="tab-pane" :id="`nav_messages_${tabId}`" role="tabpanel"
             :aria-labelledby="`nav_messages_tab_${tabId}`">
-            <div class="omnidb__theme-border--primary p-2">
+            <div class="messages__wrap p-2">
               <div class="result-div">
                 <p v-for="notice in notices">{{ notice }}</p>
               </div>
@@ -287,7 +285,7 @@ export default {
 }
 
 .tab-content,
-.omnidb__theme-border--primary {
+.messages__wrap {
   height: calc(100% - 20px);
 }
 

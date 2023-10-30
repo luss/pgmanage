@@ -48,7 +48,7 @@ SOFTWARE.
     }
   }
   .omnidb__theme-bg--menu-utilities {
-    background-color: #0054A6;
+    background-color: #1560AD;
   }
   .omnidb__theme-border--primary {
     border: 1px solid #2C3B5A;
@@ -65,7 +65,7 @@ SOFTWARE.
   }
   .omnidb__workspace__div-right,
   .omnidb__snippets__div-right {
-    background-color: #161D2D;
+    background-color: #16171E;
   }
   .omnidb__theme-bg--light {
     background-color: #282A2F;
@@ -76,7 +76,7 @@ SOFTWARE.
     background-color: rgba(47,49,54,0.25);
     svg {
       .icon-body {
-        fill: #0054A6;
+        fill: #1560AD;
       }
       .icon-bg {
         fill: white;
@@ -144,7 +144,7 @@ SOFTWARE.
 
   /* CONSOLE */
   .omnidb__txt-console {
-    border-color: #2C3B5A;
+    border-color: #16171E;
   }
 
   /* TABS */
@@ -157,14 +157,14 @@ SOFTWARE.
   .nav-tabs .nav-link.active {
     background-color: inherit;
   }
-  .nav-tabs .nav-link:focus,
-  .nav-tabs .nav-link:hover {
-    border-color: #383b42 #383b42 #383b42;
-    color: #555;
-  }
-  .nav-tabs .nav-link.active {
-    border-top: 2px solid #0054A6;
-  }
+  // .nav-tabs .nav-link:focus,
+  // .nav-tabs .nav-link:hover {
+  //   border-color: #383b42 #383b42 #383b42;
+  //   color: #555;
+  // }
+  // .nav-tabs .nav-link.active {
+  //   border-top: 2px solid #0054A6;
+  // }
   .omnidb__tab-menu--primary .nav-tabs .nav-link {
     border-top: 0;
     transition: all .3s ease-in-out;
@@ -234,19 +234,21 @@ SOFTWARE.
     }
 
     .omnidb__tab-menu__link {
-      background-color: transparent;
-      border-color: #2C3B5A;
+      background-color: #161D2D;
       border-radius: 4px 4px 0 0;
       border-width: 2px 1px 0 1px;
+      opacity: 0.7;
 
       &.active {
-        background-color: #16243C;
-        border-color: #2C3B5A;
-        border-top-color: #0054A6;    
+        background-color: #16171E;
+        border-color: #162D4E;
+        border-top-color: #1560AD;
+        border-bottom-color: transparent;
+        opacity: 1;    
       } 
 
       &-name {
-        color: #DCDDDE !important;
+        color: #F8FAFD !important;
       }
 
       &-icon {
@@ -254,7 +256,7 @@ SOFTWARE.
 
         &.active {
           background-color: #16243C;
-          border-color: #2C3B5A;
+          border-color: #162D4E;
           border-top-color: #0054A6;    
         }      
       }
@@ -286,33 +288,38 @@ SOFTWARE.
   /* QUERY RESULT TABS */
   .omnidb__query-result-tabs {
     .tab-pane {
-      background-color: #16243C;
+      background-color: #16171E;
     }
-  }
 
-  .omnidb__query-result-tabs .omnidb__tab-menu .nav-tabs {
-    border-bottom-color: transparent !important;
-  }
-  .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
-    background-color: transparent;
-    border-width: 2px 1px 0 1px;
-    border-color: #2C3B5A;
-  }
-  .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
-    color: #DCDDDE !important;
-  }
-  .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link-icon {
-    background-color: #2F3136 !important;
-  }
-  .omnidb__query-result-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
-    background-color: #16243C;
-    border-color: #2C3B5A;
-    border-top: 2px solid #0054A6;
+    .omnidb__tab-menu  {
+        &__link {
+          background-color: transparent;
+          border-width: 0 0 2px 0;
+          border-style: solid;
+          opacity: .7;
+
+          &.active {
+            background-color: #16171E;
+            border-color: #2C3B5A;
+            border-bottom-color: #1560AD;
+            opacity: 1;
+            font-weight: 500;
+          }
+
+          &-name {
+            color: #F8FAFD !important;
+          }
+
+          &-icon {
+            background-color: #2F3136 !important;
+          }
+        }
+    }
   }
 
   /* PANEL FULL VIEW */
   .omnidb__panel-view--full {
-    background-color: #16243C;
+    background-color: #16171E;
   }
 
   /* MODAL CONFIG */
@@ -509,50 +516,6 @@ SOFTWARE.
   .toast-header {
     background-color: #1d1f21;
   }
-
-  /* TOOLTIPS */
-  .tooltip {
-    &[x-placement='top']{
-      .arrow::before {
-        border-top-color: #29364E;
-      }
-    }
-
-    &[x-placement='bottom']{
-      .arrow::before {
-        border-bottom-color: #29364E;
-      }
-    }
-
-    &[x-placement='left']{
-      .arrow::before {
-        border-left-color: #29364E;
-      }
-    }
-
-    &[x-placement='right']{
-      .arrow::before {
-        border-right-color: #29364E;
-      }
-    }
-
-    &-inner {
-      color: #F8FAFC;
-      background-color: #29364E;
-      border-radius: 6px;
-      padding: 8px;
-      box-shadow: 0 0.5rem 1rem rgba(0,  0,  0,  0.15);
-
-      ul {
-        padding-left: 20px;
-      }
-    }
-
-    &.show {
-      opacity: 1 !important;
-    }
-  }
-
 
   /* JSON BUILDER */
   .jsonBuilder--template-2 .jsonBuilder__label {

@@ -5,13 +5,8 @@ ace.define("ace/theme/omnidb",["require","exports","module","ace/lib/dom"], func
 exports.isDark = false;
 exports.cssClass = "ace-omnidb";
 exports.cssText = ".ace-omnidb {\
-background-color: #F8FAFC;\
+background-color: #FFFFFF;\
 font-size: 1em;\
-}\
-.ace-omnidb .ace_gutter {\
-background: rgb(233,240,249);\
-color: rgb(102,115,130);\
-border: 1px solid rgba(4, 32, 69, 0.14);\
 }\
 .ace-omnidb .ace_print-margin {\
 width: 1px;\
@@ -22,7 +17,7 @@ color: #206bc4;\
 opacity: 0.5\
 }\
 .ace-omnidb .ace_marker-layer .ace_selection {\
-background: #C0D8F7\
+background: #E8EFF8;\
 }\
 .ace-omnidb.ace_multiselect .ace_selection.ace_start {\
 box-shadow: 0 0 3px 0px #FFFFFF;\

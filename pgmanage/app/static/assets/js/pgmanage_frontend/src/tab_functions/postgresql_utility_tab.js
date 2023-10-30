@@ -34,7 +34,7 @@ export let createUtilityTab = function (
   v_connTabControl.selectedTab.tag.tabControl.selectTab(tab);
 
   tab.elementDiv.innerHTML = `
-  <div id='${mode}_tab_${tab.id}' class="backup-tab-scrollable pt-3 pr-2">
+  <div id='${mode}_tab_${tab.id}' class="backup-tab-scrollable p-2">
     <component :is="currentComp" v-bind="currentProps"></component>
   </div>`;
   let tag = {

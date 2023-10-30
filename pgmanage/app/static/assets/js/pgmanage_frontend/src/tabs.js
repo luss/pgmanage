@@ -94,7 +94,7 @@ function createTabControl({ p_div, p_hierarchy, p_layout}) {
   v_div_tab_content_list.className = 'tab-content omnidb__tab-content';
 
   var v_tab_menu = document.createElement('div');
-  v_tab_menu.className = 'omnidb__tab-menu';
+  v_tab_menu.className = 'omnidb__tab-menu border-bottom';
 
   var css_tab_menu_variations = [
     'omnidb__tab-menu--',
@@ -454,7 +454,7 @@ function createTabControl({ p_div, p_hierarchy, p_layout}) {
       }
 
       var v_close = document.createElement('i');
-      v_close.className = 'fas fa-times tab-icon icon-close omnidb__tab-menu__link-close';
+      v_close.className = 'fas fa-times tab-icon omnidb__tab-menu__link-close';
 
 			v_tab.elementClose = v_close;
 

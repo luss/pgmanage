@@ -1,5 +1,5 @@
 <template>
-  <div class="schema-editor-scrollable p-1 pr-2">
+  <div class="schema-editor-scrollable px-2">
     <div class="form-row">
       <div class="form-group col-2">
           <label class="font-weight-bold mb-2" for="tableNameInput">Table Name</label>

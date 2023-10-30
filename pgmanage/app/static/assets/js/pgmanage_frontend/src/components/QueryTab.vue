@@ -5,10 +5,10 @@
         :dialect="dialect" @editor-change="updateEditorContent" />
     </pane>
 
-    <pane size="70">
+    <pane size="70" class="px-2 border-top">
       <!-- ACTION BUTTONS-->
-      <div class="row mb-1 p-1 d-flex align-items-center">
-        <div class="tab-actions col-12">
+      <div class="py-2 d-flex align-items-center">
+        <div class="tab-actions d-flex w-100">
           <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary" title="Run" @click="queryRunOrExplain()">
             <i class="fas fa-play fa-light"></i>
           </button>
@@ -441,6 +441,7 @@ export default {
 <style scoped>
 .query-body {
   height: calc(100vh - 60px);
+  padding-top: 16px;
 }
 
 .tab-actions {

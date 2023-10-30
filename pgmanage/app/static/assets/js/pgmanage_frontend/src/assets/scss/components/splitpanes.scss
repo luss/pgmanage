@@ -45,6 +45,15 @@
 
     &__splitter {
       touch-action: none;
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        z-index: 1;
+      }
     }
 
     &.default-theme {
@@ -75,11 +84,24 @@
     .splitpanes--vertical > .splitpanes__splitter {
       width: 3px;
       margin-left: -1px;
+
+      &:before {
+        left: -5px;
+        right: -5px;
+        height: 100%;
+      }
     }
   
     &.splitpanes--horizontal > .splitpanes__splitter, 
     .splitpanes--horizontal > .splitpanes__splitter {
       height: 3px;
+      margin-bottom: -2px;
+
+      &:before {
+        top: -5px;
+        bottom: -5px;
+        width: 100%;
+      }
     }
   }
   

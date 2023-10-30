@@ -24,6 +24,8 @@ $theme-map: null; //important! do not delete this
 @import './components/erd-card';
 @import './components/handsontable';
 @import './components/data-editor-tab';
+@import './components/splitpanes';
+@import './components/bootstrap-tooltips';
 
 body {
     font-family: $fontFamily;
@@ -32,6 +34,10 @@ body {
 }
 
 .backup-tab-scrollable {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 45px);
     overflow: hidden scroll;
+}
+
+.xterm-screen {
+    padding: 1rem;
 }

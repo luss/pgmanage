@@ -202,7 +202,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
             // "<div onmousedown='resizeHorizontal(event)' style='width: 10px; height: 100%; cursor: ew-resize; position: absolute; top: 0px; right: 0px;'><div class='resize_line_vertical' style='width: 5px; height: 100%; border-right: 1px dashed #acc4e8;'></div><div style='width:5px;'></div></div>" +
 
 
-            '<div class="omnidb__workspace__content-left">' +
+            '<div class="omnidb__workspace__content-left border-right">' +
               '<div id="' + v_tab.id + '_details" class="omnidb__workspace__connection-details"></div>' +
               '<div id="' + v_tab.id + '_tree" style="overflow: auto; flex-grow: 1; transition: scroll 0.3s;"></div>' +
               '<div id="' + v_tab.id + '_left_resize_line_horizontal" class="omnidb__resize-line__container--horizontal"><div class="resize_line_horizontal"></div><div style="height:5px;"></div></div>' +
@@ -222,9 +222,9 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
           '</div>' +
           '<div id="' + v_tab.id + '_left_resize_line_vertical" class="omnidb__resize-line__container--vertical"><div class="resize_line_vertical"></div></div>' +
         '</div>' +//.div_left
-        '<div id="' + v_tab.id + '_div_right" class="omnidb__workspace__div-right col" style="position: relative;">' +
+        '<div id="' + v_tab.id + '_div_right" class="omnidb__workspace__div-right" style="position: relative;">' +
           // "<div class='row'>" +
-            '<button id="' + v_tab.id + '_tree_toggler" type="button" class="py-4 px-0 btn btn-secondary omnidb__tree__toggler"><i class="fas fa-arrows-alt-h"></i></button>' +
+             '<button id="' + v_tab.id + '_tree_toggler" type="button" class="py-4 px-0 btn btn-secondary omnidb__tree__toggler"><i class="fas fa-arrows-alt-h"></i></button>' +
             '<div id="' + v_tab.id + '_tabs" class="w-100"></div>' +
           // "</div>" +
         '</div>' +//.div_right
