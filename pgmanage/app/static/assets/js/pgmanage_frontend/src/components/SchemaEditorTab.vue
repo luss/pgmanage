@@ -188,6 +188,7 @@ export default {
       this.editor.$blockScrolling = Infinity;
       this.editor.clearSelection();
       this.editor.setReadOnly(true);
+      this.editor.setShowPrintMargin(false)
     },
     generateSQL() {
       //add knex error handing with notification to the user
