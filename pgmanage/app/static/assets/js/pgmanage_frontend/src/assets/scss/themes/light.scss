@@ -81,7 +81,7 @@ SOFTWARE.
   .omnidb__workspace,
   .omnidb__snippets {
     &__div-left {
-      background-color:  #F3F7FC;
+      background-color: #F8FAFD;
     }
     &__div-right {
       background-color: #FFFFFF;
@@ -248,13 +248,12 @@ SOFTWARE.
       .omnidb__tab-menu__link {
         background-color: transparent;
         border-color: #CAD0D8;
-        border-bottom-color: #F8FAFC;
+        border-width: 2px 1px 0 1px;
         color: #16171E;
-        
+
         &.active {
-          background-color: transparent;
+          background-color: #F8FAFD;
           border-color: #CAD0D8;
-          border-bottom-color: #FFFFFF;
           border-top: 2px solid #1560AD;
           font-weight: 500;
         }
@@ -272,7 +271,8 @@ SOFTWARE.
       &__link {
         border-width: 0 0 2px 0;
         border-style: solid;
-  
+        border-radius: 0;
+
         &.active {
           background-color: #FFFFFF;
           border-bottom-color: #1560AD;
@@ -285,7 +285,7 @@ SOFTWARE.
       }
     }
   }
- 
+
   /* MODAL CONFIG */
   .omnidb__modal-config {
     .nav-tabs {
