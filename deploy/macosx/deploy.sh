@@ -27,10 +27,6 @@ mkdir release_$APP_VERSION tmp
 cp -R ../../pgmanage/ tmp
 cd tmp/
 
-# Do a small clean-up
-echo -n "Removing sass and map files"
-find ./ -name "*.map" -delete
-find ./ -name "*.scss" -delete
 
 echo -n "Switching to Release Mode..."
 sed -i -e 's/DEV_MODE = True/DEV_MODE = False/g' pgmanage/custom_settings.py
@@ -45,6 +41,11 @@ cd app/static/assets/js/pgmanage_frontend/
 npm install
 npm run build
 cd ../../../../../
+
+# Do a small clean-up
+echo -n "Removing sass and map files"
+find ./ -name "*.map" -delete
+find ./ -name "*.scss" -delete
 
 rm -rf pgmanage.db pgmanage.log
 touch pgmanage.db

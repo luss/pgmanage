@@ -30,20 +30,17 @@ import { createApp } from "vue";
 import TreePostgresql from "../components/TreePostgresql.vue";
 import { createMessageModal, showAlert, showConfirm, showToast } from "../notification_control";
 import {
-  toggleConnectionAutocomplete,
   refreshHeights,
   removeTab,
 } from "../workspace";
-import { Plan } from "pev2";
-// import "pev2/dist/style.css";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { createTabControl } from "../tabs";
 import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
 import axios from "axios";
-import { settingsStore } from "../stores/settings";
 import { emitter } from "../emitter";
+import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 
 function tabSQLTemplate(tab_name, template, showTip=true) {
     v_connTabControl.tag.createQueryTab(tab_name);
@@ -1084,24 +1081,9 @@ function getTreePostgresql(div) {
 
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
-    let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
-    let autocomplete_switch_status =
-      settingsStore.enableAutocomplete !== false
-        ? " checked "
-        : "";
-    v_connTabControl.selectedTab.tag.divDetails.innerHTML = `<i class="fas fa-server mr-1"></i>selected DB:
-        <b>${v_connTabControl.selectedTab.tag.selectedDatabase}</b>
-        <div class="omnidb__switch omnidb__switch--sm float-right" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>">
-    	    <input type="checkbox" ${autocomplete_switch_status} id="${autocomplete_btn_id}" class="omnidb__switch--input">
-    	    <label for="${autocomplete_btn_id}" class="omnidb__switch--label">
-                <span>
-                    <i class="fas fa-spell-check"></i>
-                </span>
-            </label>
-		</div>`;
 
-    let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
-    autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
+    let tab_tag = v_connTabControl.selectedTab.tag
+    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase)
 }
 
 /// <summary>
