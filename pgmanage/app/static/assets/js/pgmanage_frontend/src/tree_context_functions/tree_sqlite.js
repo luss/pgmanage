@@ -29,11 +29,10 @@ SOFTWARE.
 import { createApp } from "vue";
 import TreeSqlite from "../components/TreeSqlite.vue";
 import { tabSQLTemplate } from "./tree_postgresql";
-import { toggleConnectionAutocomplete } from "../workspace";
 import { execAjax } from "../ajax_control";
 import { showToast} from "../notification_control";
-import { settingsStore } from "../stores/settings";
 import { emitter } from "../emitter";
+import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 
 /// <summary>
 /// Retrieving tree.
@@ -57,22 +56,9 @@ function getTreeSqlite(div) {
     // save tree referece in the tab, it will be later used to destroy tree instance on tab close
     v_connTabControl.selectedTab.tree = app
 
-    let autocomplete_switch_status = (settingsStore.enableAutocomplete !== false) ? ' checked ' : '';
-    let autocomplete_btn_id = `autocomplete_toggler_${v_connTabControl.selectedTab.tag.tab_id}`
-    v_connTabControl.selectedTab.tag.divDetails.innerHTML =
-        `<i class="fas fa-server mr-1"></i>selected DB: 
-        <b>${truncateText(v_connTabControl.selectedTab.tag.selectedDatabase, 10)}</b>
-        <div class="omnidb__switch omnidb__switch--sm float-right" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>">
-    	    <input type="checkbox" ${autocomplete_switch_status} id="${autocomplete_btn_id}" class="omnidb__switch--input">
-    	    <label for="${autocomplete_btn_id}" class="omnidb__switch--label">
-                <span>
-                    <i class="fas fa-spell-check"></i>
-                </span>
-            </label>
-		</div>`;
-
-    let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
-    autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
+    let tab_tag = v_connTabControl.selectedTab.tag
+    let databaseName = truncateText(tab_tag.selectedDatabase, 10)
+    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, databaseName)
 }
 
 /// <summary>

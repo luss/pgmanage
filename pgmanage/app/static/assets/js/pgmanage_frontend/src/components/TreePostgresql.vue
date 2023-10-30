@@ -43,6 +43,7 @@ import { createMessageModal } from "../notification_control";
 import { getProperties, clearProperties } from "../properties";
 import { startMonitorDashboard } from "../monitoring";
 import { showConfirm, showToast } from "../notification_control";
+import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 
 export default {
   name: "TreePostgresql",
@@ -3221,20 +3222,21 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
-              v_connTabControl.selectedTab.tag.divDetails.innerHTML = `<i class="fas fa-server mr-1"></i>selected DB: <b>${node.data.database}</b>`;
+              let tab_tag = v_connTabControl.selectedTab.tag
+              addDbTreeHeader(tab_tag.divDetails, this.tabId, node.data.database)
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
               database_nodes.forEach((el) => {
                 if (node.data.database === el.title) {
                   this.selectedDatabase = node.data.database;
-                  v_connTabControl.selectedTab.tag.selectedDatabase =
+                  tab_tag.selectedDatabase =
                     node.data.database;
-                  v_connTabControl.selectedTab.tag.selectedDatabaseNode = el;
+                    tab_tag.selectedDatabaseNode = el;
 
-                  if (v_connTabControl.selectedTab.tag.selectedTitle != "")
-                    v_connTabControl.selectedTab.tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${v_connTabControl.selectedTab.tag.selectedDBMS}_medium.png"/>${v_connTabControl.selectedTab.tag.selectedTitle} - ${this.selectedDatabase}`;
+                  if (tab_tag.selectedTitle != "")
+                  tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>${tab_tag.selectedTitle} - ${this.selectedDatabase}`;
                   else
-                    v_connTabControl.selectedTab.tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${v_connTabControl.selectedTab.tag.selectedDBMS}_medium.png"/>
+                  tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>
                       ${this.selectedDatabase}`;
                 }
               });
