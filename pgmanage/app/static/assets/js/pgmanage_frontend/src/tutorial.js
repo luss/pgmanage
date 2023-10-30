@@ -451,6 +451,7 @@ function startTutorial(p_tutorial_name) {
           </li>
         </ul>
         `,
+        p_position: function() {var v_target = v_connTabControl.selectedTab.tag.divTree; return { x:v_target.getBoundingClientRect().right, y:v_target.getBoundingClientRect().top }},
         p_target: function(){var v_target = v_connTabControl.selectedTab.tag.divTree; return v_target;},
         p_title: 'Database Tree'
       },
