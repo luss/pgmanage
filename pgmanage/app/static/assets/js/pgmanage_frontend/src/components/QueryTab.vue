@@ -7,7 +7,7 @@
 
     <pane size="70" class="px-2 border-top">
       <!-- ACTION BUTTONS-->
-      <div class="py-2 d-flex align-items-center">
+      <div class="py-2 pr-1 d-flex align-items-center">
         <div class="tab-actions d-flex w-100">
           <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary" title="Run" @click="queryRunOrExplain()">
             <i class="fas fa-play fa-light"></i>

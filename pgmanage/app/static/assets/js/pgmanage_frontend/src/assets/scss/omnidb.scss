@@ -189,10 +189,9 @@ a:not([href]):not([tabindex]){
   }
 
   .omnidb__utilities-menu {
-    padding: 0.25rem 0.125rem;
     position: fixed;
-    right: 1rem;
-    top: 0.5rem;
+    right: 0.5rem;
+    top: 0.15rem;
     z-index: 1001;
   }
   .omnidb__utilities-menu .omnidb__menu__btn.nav-link,
@@ -205,7 +204,7 @@ a:not([href]):not([tabindex]){
     transition: 0.35s;
   }
   .omnidb__utilities-menu.omnidb__utilities-menu--show .omnidb__menu__btn.nav-link {
-    width: 27px;
+    width: 23px;
     margin-left: 0.25rem;
     margin-right: 0.25rem;
   }
@@ -251,7 +250,7 @@ a:not([href]):not([tabindex]){
     transition: 0.35s;
   }
   .omnidb__utilities-menu.omnidb__utilities-menu--show .omnidb__menu__btn.nav-link {
-    width: 27px;
+    width: 23px;
     margin-left: 0.25rem;
     margin-right: 0.25rem;
   }
@@ -643,8 +642,8 @@ button.close {
   position: relative;
   flex-shrink: 0;
   height: 3px;
-  margin-top: -1px;
-  z-index: 1;
+  z-index: 10;
+  transform: translateY(100%);
   transition: all .1s ease-in;
   &:hover {
     background-color: #1560AD;
@@ -655,7 +654,6 @@ button.close {
     opacity: 0;
     z-index: 1;
     top: -5px;
-    bottom: -5px;
     width: 100%;
   }
 }
@@ -669,12 +667,12 @@ button.close {
 }
 .omnidb__resize-line__container--vertical .resize_line_vertical {
   height: 100%;
-  z-index: 1;
+  z-index: 10;
   width: 3px;
-  margin-left: -1px;
   flex-shrink: 0;
   box-sizing: border-box;
   position: relative;
+  transform: translateX(100%);
   transition: all .1s ease-in;
   &:hover {
     background-color: #1560AD;
@@ -685,8 +683,7 @@ button.close {
     left: 0;
     top: 0;
     opacity: 0;
-    z-index: 1;
-    left: -5px;
+    z-index: 1;;
     right: -5px;
     height: 100%;
   }
@@ -826,7 +823,7 @@ button.close {
 #omnidb__utilities-menu__link-toggle {
   margin-left: 0.15rem;
   margin-right: 0.15rem;
-  width: 27px;
+  width: 23px;
 }
 #omnidb__utilities-menu__link-toggle i {
   height: 27px;
