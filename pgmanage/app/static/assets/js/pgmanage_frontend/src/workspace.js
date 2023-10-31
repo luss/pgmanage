@@ -464,7 +464,12 @@ function resizeTreeVertical(event) {
 		'mousemove',
 		getVerticalLinePosition
 	)
+  document.body.addEventListener("mouseup", resizeTreeVerticalEnd);
+
   let node = event.target.parentElement.nextElementSibling
+  if(!node)
+    return
+
   if ($(`#${node.id}`).hasClass('omnidb__tree-tabs--not-in-view')) {
     if ($(`#${node.id}`).css('flex-basis') !== 'auto') {
       $(`#${node.id}`).css('flex-basis', 'auto');
