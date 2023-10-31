@@ -33,7 +33,8 @@
       </div>
 
       <div class="tab-content">
-        <div class="tab-pane active pt-2" :id="`nav_data_${tabId}`" role="tabpanel" :aria-labelledby="`nav_data_tab_${tabId}`">
+        <div class="tab-pane active pt-2" :id="`nav_data_${tabId}`" role="tabpanel"
+          :aria-labelledby="`nav_data_tab_${tabId}`">
           <div class="result-div">
             <template v-if="exportFileName && exportDownloadName">
               The file is ready.
@@ -47,11 +48,9 @@
                 {{ queryInfoText }}
               </div>
             </template>
-              <hot-table v-show="showTable" ref="hotTableComponent" :settings="hotSettings"></hot-table>
-              <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
+            <hot-table v-show="showTable" ref="hotTableComponent" :settings="hotSettings"></hot-table>
           </div>
         </div>
-
         <template v-if="postgresqlDialect">
           <div class="tab-pane" :id="`nav_messages_${tabId}`" role="tabpanel"
             :aria-labelledby="`nav_messages_tab_${tabId}`">
@@ -66,6 +65,7 @@
       </div>
     </div>
   </div>
+  <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
 </template>
 
 <script>
@@ -148,8 +148,12 @@ export default {
       return this.notices.length;
     },
     showTable() {
-      return !((!!this.exportFileName && !!this.exportDownloadName) || !!this.errorMessage || !!this.queryInfoText)
-    }
+      return !(
+        (!!this.exportFileName && !!this.exportDownloadName) ||
+        !!this.errorMessage ||
+        !!this.queryInfoText
+      );
+    },
   },
   mounted() {
     if (this.dialect === "postgresql") {
@@ -258,9 +262,9 @@ export default {
       });
       this.$refs.hotTableComponent.hotInstance.updateData(data.data);
 
-      this.$nextTick(() =>{
-        this.$refs.hotTableComponent.hotInstance.render()
-      })
+      this.$nextTick(() => {
+        this.$refs.hotTableComponent.hotInstance.render();
+      });
     },
     fetchData(data) {
       let initialData =
