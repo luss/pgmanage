@@ -3618,6 +3618,7 @@ export default {
               contextMenu: "cm_schema",
               schema: el.name,
               schema_raw: el.name_raw,
+              raw_value: el.name_raw,
               oid: el.oid,
             });
           }, null);

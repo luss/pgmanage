@@ -47,10 +47,8 @@
                 {{ queryInfoText }}
               </div>
             </template>
-            <template v-else>
-              <hot-table ref="hotTableComponent" :settings="hotSettings"></hot-table>
+              <hot-table v-show="showTable" ref="hotTableComponent" :settings="hotSettings"></hot-table>
               <div ref="hotTableInputHolder" class="handsontableInputHolder" style="z-index: -1"></div>
-            </template>
           </div>
         </div>
 
@@ -148,6 +146,9 @@ export default {
     noticesCount() {
       return this.notices.length;
     },
+    showTable() {
+      return !((!!this.exportFileName && !!this.exportDownloadName) || !!this.errorMessage || !!this.queryInfoText)
+    }
   },
   mounted() {
     if (this.dialect === "postgresql") {
@@ -255,6 +256,10 @@ export default {
         },
       });
       this.$refs.hotTableComponent.hotInstance.updateData(data.data);
+
+      this.$nextTick(() =>{
+        this.$refs.hotTableComponent.hotInstance.render()
+      })
     },
     fetchData(data) {
       let initialData =
@@ -271,6 +276,7 @@ export default {
       this.queryInfoText = "";
       this.exportDownloadName = "";
       this.exportFileName = "";
+      this.errorMessage = "";
     },
     toggleFullScreen() {
       this.$refs.resultDiv.classList.toggle("omnidb__panel-view--full");

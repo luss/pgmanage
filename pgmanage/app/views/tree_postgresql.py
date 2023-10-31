@@ -1520,7 +1520,7 @@ def get_partitions_parents(request, database):
                 "name": f'{table["table_schema"]}.{table["table_name"]}',
                 "name_raw": f'{table["table_schema_raw"]}.{table["name_raw"]}',
             }
-        list_tables.append(table_data)
+            list_tables.append(table_data)
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=400)
 

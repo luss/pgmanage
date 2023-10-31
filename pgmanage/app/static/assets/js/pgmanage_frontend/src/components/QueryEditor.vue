@@ -84,6 +84,7 @@ export default {
       this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
       this.editor.session.setMode("ace/mode/sql");
       this.editor.setFontSize(settingsStore.fontSize);
+      this.editor.setShowPrintMargin(false)
 
       // Remove shortcuts from ace in order to avoid conflict with pgmanage shortcuts
       this.editor.commands.bindKey("ctrl-space", null);

@@ -112,6 +112,7 @@ var v_createSnippetTextTabFunction = function(p_snippet = null) {
   v_editor.session.setMode("ace/mode/sql");
 
   v_editor.setFontSize(Number(settingsStore.fontSize));
+  v_editor.setShowPrintMargin(false)
 
   v_editor.commands.bindKey("ctrl-space", null);
 
