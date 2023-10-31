@@ -97,12 +97,13 @@ export default {
       queryInfoText: "",
       hotSettings: {
         data: [],
-        height: "auto",
+        height: "90%",
         width: "100%",
         readOnly: true,
         rowHeaders: true,
         fillHandle: false,
         manualColumnResize: true,
+        renderAllRows: false,
         licenseKey: "non-commercial-and-evaluation",
         contextMenu: {
           items: {
