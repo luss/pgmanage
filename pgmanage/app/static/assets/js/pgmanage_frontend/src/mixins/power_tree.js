@@ -135,6 +135,12 @@ export default {
         }
       );
     },
+    insertNodes(node, child_nodes) {
+      this.$refs.tree.insert(
+        {node: node, placement: "inside"},
+        child_nodes
+      )
+    },
     getParentNode(node) {
       const parentNode = this.$refs.tree.getNode(node.path.slice(0, -1));
       return parentNode;

@@ -3222,21 +3222,24 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
-              let tab_tag = v_connTabControl.selectedTab.tag
-              addDbTreeHeader(tab_tag.divDetails, this.tabId, node.data.database)
+              let tab_tag = v_connTabControl.selectedTab.tag;
+              addDbTreeHeader(
+                tab_tag.divDetails,
+                this.tabId,
+                node.data.database
+              );
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
               database_nodes.forEach((el) => {
                 if (node.data.database === el.title) {
                   this.selectedDatabase = node.data.database;
-                  tab_tag.selectedDatabase =
-                    node.data.database;
-                    tab_tag.selectedDatabaseNode = el;
+                  tab_tag.selectedDatabase = node.data.database;
+                  tab_tag.selectedDatabaseNode = el;
 
                   if (tab_tag.selectedTitle != "")
-                  tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>${tab_tag.selectedTitle} - ${this.selectedDatabase}`;
+                    tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>${tab_tag.selectedTitle} - ${this.selectedDatabase}`;
                   else
-                  tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>
+                    tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>
                       ${this.selectedDatabase}`;
                 }
               });
@@ -5018,18 +5021,27 @@ export default {
             title: `Functions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
-            this.insertNode(node, el.name, {
-              icon: "fas node-all fa-cog node-function",
-              type: "function",
-              contextMenu: "cm_function",
-              schema: node.data.schema,
-              schema_raw: node.data.schema_raw,
-              function_oid: el.function_oid,
-              id: el.id,
-              raw_value: el.name_raw,
-            });
+          let childNodes = resp.data.map((el) => {
+            return {
+              title: el.name,
+              isLeaf: false,
+              isExpanded: false,
+              isDraggable: false,
+              data: {
+                database: this.selectedDatabase,
+                icon: "fas node-all fa-cog node-function",
+                type: "function",
+                contextMenu: "cm_function",
+                schema: node.data.schema,
+                schema_raw: node.data.schema_raw,
+                function_oid: el.function_oid,
+                id: el.id,
+                raw_value: el.name_raw,
+              },
+            };
           });
+
+          this.insertNodes(node, childNodes);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
