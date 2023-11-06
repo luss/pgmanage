@@ -27,10 +27,6 @@ mkdir release_$APP_VERSION tmp
 cp -R ../../pgmanage/ tmp
 cd tmp/
 
-# Do a small clean-up
-echo -n "Removing sass and map files"
-find ./ -name "*.map" -delete
-find ./ -name "*.scss" -delete
 
 echo -n "Switching to Release Mode..."
 sed -i -e 's/DEV_MODE = True/DEV_MODE = False/g' pgmanage/custom_settings.py
@@ -39,6 +35,17 @@ echo "Done."
 echo -n "Switching to Desktop Mode... "
 sed -i -e 's/DESKTOP_MODE = False/DESKTOP_MODE = True/g' pgmanage/custom_settings.py
 echo "Done."
+
+# building vite bundle
+cd app/static/assets/js/pgmanage_frontend/
+npm install
+npm run build
+cd ../../../../../
+
+# Do a small clean-up
+echo -n "Removing sass and map files"
+find ./ -name "*.map" -delete
+find ./ -name "*.scss" -delete
 
 rm -rf pgmanage.db pgmanage.log
 touch pgmanage.db
@@ -58,7 +65,7 @@ source venv/bin/activate
 
 # Install all required libraries
 pip3 install -r ../../../requirements.txt
-pip3 install pyinstaller
+pip3 install pyinstaller==5.13.0
 
 # set up versions in custom_settins.py
 sed -i '' "s/Dev/PgManage $APP_VERSION/" pgmanage/custom_settings.py

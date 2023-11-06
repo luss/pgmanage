@@ -1,5 +1,4 @@
 import functools
-import json
 import operator
 import os
 from abc import abstractmethod
@@ -124,6 +123,8 @@ class BackupMessage(IJobDesc):
         for arg in args:
             if arg and len(arg) >= 2 and arg[:2] == "--":
                 self.cmd += " " + arg
+            elif len(arg.split()) > 3:
+                self.cmd += f" {arg}"
             else:
                 self.cmd += cmd_arg(arg)
 
@@ -278,7 +279,26 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
             operator.iconcat, map(lambda t: ["--table", t], data.get("tables", [])), []
         )
     )
+    if backup_obj_type == "objects":
+        args.append(data["database"])
 
+    if data.get("pigz"):
+        file_name = args[1]
+
+        pigz_number_of_jobs = (
+            f"-p{data.get('pigz_number_of_jobs')}"
+            if data.get("pigz_number_of_jobs") != "auto"
+            else ""
+        )
+
+        pigz_compression_ratio = f"-{data.get('pigz_compression_ratio')}"
+        pigz_path = data.get("pigz_path", "pigz")
+
+        pigz_line = [
+            f"| {pigz_path} {pigz_number_of_jobs} {pigz_compression_ratio} > {file_name}"
+        ]
+        new_args = args[2:] + pigz_line
+        return new_args
     return args
 
 
@@ -290,11 +310,9 @@ def create_backup(request, database):
     (Backup Database(s)/Schema(s)/Table(s))
     """
 
-    data = json.loads(request.body) if request.body else {}
+    backup_type_str = request.data.get("backup_type", "objects")
 
-    backup_type_str = data.get("backup_type", "objects")
-
-    data = data.get("data", {})
+    data = request.data.get("data", {})
 
     backup_file = data.get("fileName")
 
@@ -308,13 +326,21 @@ def create_backup(request, database):
     utility_path = None
     try:
         utility_path = get_utility_path(utility, request.user)
-    except FileNotFoundError as e:
+    except FileNotFoundError as exc:
         return JsonResponse(
-            data={
-                "data": str(e)
-            },
+            data={"data": str(exc)},
             status=400,
         )
+
+    if data.get("pigz"):
+        try:
+            pigz_path = get_utility_path("pigz", request.user)
+            data["pigz_path"] = pigz_path
+        except FileNotFoundError as exc:
+            return JsonResponse(
+                data={"data": str(exc)},
+                status=400,
+            )
 
     args = get_args_params_values(data, database, backup_type_str, backup_file)
 
@@ -324,8 +350,6 @@ def create_backup(request, database):
         backup_type = Backup.get_backup_type(backup_type_str)
 
         if backup_type_str == "objects":
-            args.append(data["database"])
-            escaped_args.append(data["database"])
             job = BatchJob(
                 description=BackupMessage(
                     Backup.create(backup_type),
@@ -365,11 +389,9 @@ def create_backup(request, database):
 @database_required_new(check_timeout=True, open_connection=True)
 @user_authenticated
 def preview_command(request, database):
-    data = json.loads(request.body) if request.body else {}
+    backup_type_str = request.data.get("backup_type", "objects")
 
-    backup_type_str = data.get("backup_type", "objects")
-
-    data = data.get("data", {})
+    data = request.data.get("data", {})
 
     backup_file = data.get("fileName")
 
@@ -383,14 +405,18 @@ def preview_command(request, database):
     utility_path = None
     try:
         utility_path = get_utility_path(utility, request.user)
-    except FileNotFoundError as e:
+    except FileNotFoundError as exc:
         return JsonResponse(
-            data={
-                "data": str(e)
-            },
+            data={"data": str(exc)},
             status=400,
         )
 
+    if data.get("pigz"):
+        try:
+            pigz_path = get_utility_path("pigz", request.user)
+            data["pigz_path"] = pigz_path
+        except FileNotFoundError as exc:
+            return JsonResponse(data={"data": str(exc)}, status=400)
     args = get_args_params_values(data, database, backup_type_str, backup_file)
 
     backup_type = Backup.get_backup_type(backup_type_str)

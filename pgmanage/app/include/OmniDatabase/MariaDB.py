@@ -368,7 +368,17 @@ class MariaDB:
         else:
             if p_table:
                 v_filter = "and i.table_name = '{0}' ".format(p_table)
-        v_filter = v_filter + "and i.constraint_name = '{0}' ".format(p_fkey)
+
+        if type(p_fkey) == list:
+                fkeys = p_fkey
+        else:
+            fkeys = [p_fkey]
+
+        fkey_list = ', '.join(list(f'\'{str(e)}\'' for e in fkeys))
+
+        if fkey_list:
+            v_filter = v_filter + "and i.constraint_name in ({0}) ".format(fkey_list)
+
         return self.Query('''
             select distinct i.constraint_name,
                    i.table_name,
@@ -557,7 +567,7 @@ class MariaDB:
         else:
             return self.Query(p_query, True)
 
-    def QueryTableRecords(self, p_column_list, p_table, p_filter, p_count=-1):
+    def QueryTableRecords(self, p_column_list, p_table, p_schema, p_filter, p_count=-1):
         v_limit = ''
         if p_count != -1:
             v_limit = ' limit ' + p_count

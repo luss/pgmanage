@@ -1,340 +1,198 @@
-from django.http import HttpResponse
-from django.template import loader
-from django.http import JsonResponse
-from django.core import serializers
-import json
-
-import sys
-
-import app.include.Spartacus as Spartacus
-import app.include.Spartacus.Database as Database
-import app.include.Spartacus.Utils as Utils
-from app.include.Session import Session
-
-from django.contrib.auth.models import User
-from app.models.main import *
-
 from datetime import datetime
+from typing import List, Optional
+
+from app.models.main import SnippetFile, SnippetFolder
+from app.utils.decorators import session_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, JsonResponse
 from django.utils.timezone import make_aware
 
+
+@session_required(include_session=False)
 def get_all_snippets(request):
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
+    folders = SnippetFolder.objects.filter(user=request.user)
+    files = SnippetFile.objects.filter(user=request.user)
 
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
+    root = {"id": None, "files": [], "folders": []}
 
-    v_session = request.session.get('pgmanage_session')
+    build_snippets_object_recursive(folders, files, root)
 
-    v_folders = SnippetFolder.objects.filter(user=request.user)
-    v_files = SnippetFile.objects.filter(user=request.user)
+    return JsonResponse(root)
 
-    v_root = {
-        'id': None,
-        'files': [],
-        'folders': []
-    }
 
-    build_snippets_object_recursive(v_folders,v_files,v_root)
-
-    return JsonResponse(v_root)
-
-def build_snippets_object_recursive(p_folders,p_files,p_current_object):
+def build_snippets_object_recursive(
+    folders: Optional[List[SnippetFolder]],
+    files: Optional[List[SnippetFile]],
+    current_object: dict,
+) -> None:
     # Adding files
-    for file in p_files:
+    for file in files:
         # Match
-        if ((file.parent == None and p_current_object['id'] == None) or (file.parent!=None and file.parent.id == p_current_object['id'])):
-            p_current_object['files'].append(
-            {
-                'id': file.id,
-                'name': file.name
-            }
-            )
+        if (file.parent is None and current_object["id"] is None) or (
+            file.parent is not None and file.parent.id == current_object["id"]
+        ):
+            current_object["files"].append({"id": file.id, "name": file.name})
     # Adding folders
-    for folder in p_folders:
+    for folder in folders:
         # Match
-        if ((folder.parent == None and p_current_object['id'] == None) or (folder.parent!=None and folder.parent.id == p_current_object['id'])):
-            v_folder = {
-                'id': folder.id,
-                'name': folder.name,
-                'files': [],
-                'folders': []
+        if (folder.parent is None and current_object["id"] is None) or (
+            folder.parent is not None and folder.parent.id == current_object["id"]
+        ):
+            folder_object = {
+                "id": folder.id,
+                "name": folder.name,
+                "files": [],
+                "folders": [],
             }
 
-            build_snippets_object_recursive(p_folders,p_files,v_folder)
+            build_snippets_object_recursive(folders, files, folder_object)
 
-            p_current_object['folders'].append(v_folder)
+            current_object["folders"].append(folder_object)
 
 
+@session_required(include_session=False)
 def get_node_children(request):
+    snippet_id = request.data["snippet_id"]
 
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
+    data = {"list_nodes": [], "list_texts": []}
 
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
+    for folder in SnippetFolder.objects.filter(user=request.user, parent=snippet_id):
+        node_data = {"id": folder.id, "name": folder.name}
+        data["list_nodes"].append(node_data)
 
-    v_session = request.session.get('pgmanage_session')
+    for file in SnippetFile.objects.filter(user=request.user, parent=snippet_id):
+        node_data = {"id": file.id, "name": file.name}
+        data["list_texts"].append(node_data)
 
-    json_object = json.loads(request.POST.get('data', None))
-    v_sn_id_parent = json_object['p_sn_id_parent']
+    return JsonResponse(data=data)
 
-    v_return['v_data'] = {
-        'v_list_nodes': [],
-        'v_list_texts': []
-    }
 
-    try:
-        for folder in SnippetFolder.objects.filter(user=request.user,parent=v_sn_id_parent):
-            v_node_data = {
-                'v_id': folder.id,
-                'v_name': folder.name
-            }
-            v_return['v_data']['v_list_nodes'].append(v_node_data)
-    except Exception as exc:
-        None
-
-    try:
-        for file in SnippetFile.objects.filter(user=request.user,parent=v_sn_id_parent):
-            v_node_data = {
-                'v_id': file.id,
-                'v_name': file.name
-            }
-            v_return['v_data']['v_list_texts'].append(v_node_data)
-    except Exception as exc:
-        None
-
-    return JsonResponse(v_return)
-
+@session_required(include_session=False)
 def get_snippet_text(request):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
-
-    v_session = request.session.get('pgmanage_session')
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_st_id = json_object['p_st_id']
+    snippet_id = request.data["snippet_id"]
 
     try:
-        v_return['v_data'] = SnippetFile.objects.get(id=v_st_id).text
-    except Exception as exc:
-        None
+        snippet_text = SnippetFile.objects.get(id=snippet_id).text
+    except ObjectDoesNotExist as exc:
+        return JsonResponse({"data": str(exc)}, status=400)
+    return JsonResponse({"data": snippet_text})
 
-    return JsonResponse(v_return)
 
+@session_required(include_session=False)
 def new_node_snippet(request):
+    data = request.data
+    snippet_id = data["snippet_id"]
+    mode = data["mode"]
+    name = data["name"]
 
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
-
-    v_session = request.session.get('pgmanage_session')
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_sn_id_parent = json_object['p_sn_id_parent']
-    v_mode = json_object['p_mode']
-    v_name = json_object['p_name']
-
-    if v_sn_id_parent:
-        v_parent = SnippetFolder.objects.get(id=v_sn_id_parent)
-    else:
-        v_parent = None
+    parent = SnippetFolder.objects.filter(id=snippet_id).first()
 
     try:
         new_date = make_aware(datetime.now())
-        if v_mode == 'node':
+        if mode == "node":
             folder = SnippetFolder(
                 user=request.user,
-                parent=v_parent,
-                name=v_name,
+                parent=parent,
+                name=name,
                 create_date=new_date,
-                modify_date=new_date
+                modify_date=new_date,
             )
             folder.save()
         else:
             file = SnippetFile(
                 user=request.user,
-                parent=v_parent,
-                name=v_name,
+                parent=parent,
+                name=name,
                 create_date=new_date,
                 modify_date=new_date,
-                text=''
+                text="",
             )
             file.save()
     except Exception as exc:
-        v_return['v_data'] = str(exc)
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
+        return JsonResponse({"data": str(exc)}, status=400)
+    return JsonResponse({"data": "created"}, status=201)
 
-        v_return['v_data'] = ''
 
-    return JsonResponse(v_return)
-
+@session_required(include_session=False)
 def delete_node_snippet(request):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
-
-    v_session = request.session.get('pgmanage_session')
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_id = json_object['p_id']
-    v_mode = json_object['p_mode']
+    data = request.data
+    snippet_id = data["id"]
+    mode = data["mode"]
 
     try:
-        if v_mode == 'node':
-            folder = SnippetFolder.objects.get(id=v_id)
+        if mode == "node":
+            folder = SnippetFolder.objects.get(id=snippet_id)
             folder.delete()
         else:
-            file = SnippetFile.objects.get(id=v_id)
+            file = SnippetFile.objects.get(id=snippet_id)
             file.delete()
 
     except Exception as exc:
-        v_return['v_data'] = str(exc)
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
+        return JsonResponse({"data": str(exc)}, status=400)
+    return HttpResponse(status=204)
 
 
-        v_return['v_data'] = ''
-
-    return JsonResponse(v_return)
-
+@session_required(include_session=False)
 def save_snippet_text(request):
+    data = request.data
+    snippet_id = data["id"]
+    name = data["name"]
+    parent_id = data["parent_id"]
+    text = data["text"]
 
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
-
-    v_session = request.session.get('pgmanage_session')
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_id = json_object['p_id']
-    v_name = json_object['p_name']
-    v_parent_id = json_object['p_parent']
-    v_text = json_object['p_text']
-
-    if v_parent_id:
-        v_parent = SnippetFolder.objects.get(id=v_parent_id)
-    else:
-        v_parent = None
+    parent = SnippetFolder.objects.filter(id=parent_id).first()
 
     try:
-        #new snippet
+        # new snippet
         new_date = make_aware(datetime.now())
-        if not v_id:
+        if not snippet_id:
             file = SnippetFile(
                 user=request.user,
-                parent=v_parent,
-                name=v_name,
+                parent=parent,
+                name=name,
                 create_date=new_date,
                 modify_date=new_date,
-                text=v_text
+                text=text,
             )
             file.save()
-        #existing snippet
+        # existing snippet
         else:
-            file = SnippetFile.objects.get(id=v_id)
-            file.text = v_text.replace("'", "''")
-            file.modify_date=new_date
+            file = SnippetFile.objects.get(id=snippet_id)
+            file.text = text
+            file.modify_date = new_date
             file.save()
 
-        v_return['v_data'] = {
-            'type': 'snippet',
-            'id': file.id,
-            'parent': v_parent_id,
-            'name': file.name
+        data = {
+            "type": "snippet",
+            "id": file.id,
+            "parent": parent_id,
+            "name": file.name,
         }
 
-
     except Exception as exc:
-        v_return['v_data'] = str(exc)
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
-
-    return JsonResponse(v_return)
+        return JsonResponse({"data": str(exc)}, status=400)
+    return JsonResponse(data)
 
 
+@session_required(include_session=False)
 def rename_node_snippet(request):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
-
-    #Invalid session
-    if not request.session.get('pgmanage_session'):
-        v_return['v_error'] = True
-        v_return['v_error_id'] = 1
-        return JsonResponse(v_return)
-
-    v_session = request.session.get('pgmanage_session')
-
-    json_object = json.loads(request.POST.get('data', None))
-    v_id = json_object['p_id']
-    v_name = json_object['p_name']
-    v_mode = json_object['p_mode']
+    data = request.data
+    node_id = data["id"]
+    name = data["name"]
+    mode = data["mode"]
 
     try:
-        #node
-        if v_mode=='node':
-            folder = SnippetFolder.objects.get(id=v_id)
-            folder.name = v_name.replace("'", "''")
-            folder.modify_date=make_aware(datetime.now())
+        if mode == "node":
+            folder = SnippetFolder.objects.get(id=node_id)
+            folder.name = name
+            folder.modify_date = make_aware(datetime.now())
             folder.save()
-        #snippet
         else:
-            file = SnippetFile.objects.get(id=v_id)
-            file.name = v_name.replace("'", "''")
-            file.modify_date=make_aware(datetime.now())
+            file = SnippetFile.objects.get(id=node_id)
+            file.name = name
+            file.modify_date = make_aware(datetime.now())
             file.save()
 
-
     except Exception as exc:
-        v_return['v_data'] = str(exc)
-        v_return['v_error'] = True
-        return JsonResponse(v_return)
-
-        v_return['v_data'] = ''
-
-    return JsonResponse(v_return)
+        return JsonResponse({"data": str(exc)}, status=400)
+    return JsonResponse({"data": "success"})

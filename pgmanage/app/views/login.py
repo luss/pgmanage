@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.shortcuts import redirect
 from pgmanage import settings
-import json
 
 import sys
 
@@ -24,6 +23,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from app.utils.decorators import user_authenticated
 from app.utils.key_manager import key_manager
+from app.utils.response_helpers import create_response_template
 
 import logging
 
@@ -62,6 +62,7 @@ def check_session(request):
 def index(request):
     context = {
         'pgmanage_short_version': settings.PGMANAGE_SHORT_VERSION,
+        # FIXME: rename this to base_path
         'url_folder': settings.PATH,
         'csrf_cookie_name': settings.CSRF_COOKIE_NAME
     }
@@ -91,11 +92,7 @@ def logout(request):
     return redirect(settings.PATH + '/pgmanage_login')
 
 def check_session_message(request):
-
-    v_return = {}
-    v_return['v_data'] = ''
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
+    v_return = create_response_template()
 
     if request.session.get('omnidb_alert_message'):
         v_return['v_data'] = request.session.get('omnidb_alert_message')
@@ -140,10 +137,8 @@ def create_user_session(request, user, user_details):
 
 
 def sign_in(request):
-    v_return = {}
+    v_return = create_response_template()
     v_return['v_data'] = -1
-    v_return['v_error'] = False
-    v_return['v_error_id'] = -1
 
     valid_token = custom_settings.APP_TOKEN
 
@@ -151,9 +146,9 @@ def sign_in(request):
         v_return['v_data'] = -2
         return JsonResponse(v_return)
 
-    json_object = json.loads(request.POST.get('data', None))
-    username = json_object['p_username']
-    pwd = json_object['p_pwd']
+    data = request.data
+    username = data['p_username']
+    pwd = data['p_pwd']
 
     user = authenticate(username=username, password=pwd)
     if user is not None:

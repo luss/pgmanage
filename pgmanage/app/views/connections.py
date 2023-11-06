@@ -1,31 +1,22 @@
 import io
-import json
 
 import paramiko
 from app.include import OmniDatabase
 from app.models import Connection, Group, GroupConnection, Tab, Technology
 from app.utils.crypto import decrypt, encrypt
+from app.utils.decorators import session_required, user_authenticated
 from app.utils.key_manager import key_manager
-from app.utils.decorators import user_authenticated
 from django.db.models import Q
 from django.http import JsonResponse
 from sshtunnel import SSHTunnelForwarder
 
 
-def session_required(func):
-    def containing_func(request, *args, **kwargs):
-        if not request.session.get('pgmanage_session'):
-            return JsonResponse({'status': 'error', 'error_id': 1 })
-        return func(request, *args, **kwargs)
-    return containing_func
-
 @user_authenticated
-def get_connections(request):
+@session_required
+def get_connections(request, session):
     response_data = {'data': [], 'status': 'success'}
 
-    session = request.session.get("pgmanage_session")
-    request_data = json.loads(request.POST.get('data', '{}'))
-    active_connection_ids = request_data.get('active_connection_ids',[])
+    active_connection_ids = request.data.get('active_connection_ids',[])
 
     tech_list = [tech.name for tech in Technology.objects.all()] #convert to values_list
 
@@ -103,7 +94,7 @@ def get_connections(request):
 
 
 @user_authenticated
-@session_required
+@session_required(include_session=False)
 def get_groups(request):
     response_data = {'data': [], 'status': 'success'}
 
@@ -125,8 +116,7 @@ def get_groups(request):
 def delete_group(request):
     response_data = {'data': '', 'status': 'success'}
 
-    group_object = json.loads(request.body)
-    group_id = group_object['id']
+    group_id = request.data['id']
 
     try:
         group = Group.objects.get(id=group_id)
@@ -150,7 +140,7 @@ def delete_group(request):
 def save_group(request):
     response_data = {'data': '', 'status': 'success'}
 
-    group_object = json.loads(request.body)
+    group_object = request.data
     group_id = group_object.get('id', None)
     group_name = group_object['name']
 
@@ -198,15 +188,11 @@ def save_group(request):
 
 
 @user_authenticated
+@session_required(include_session=False)
 def test_connection(request):
     response_data = {'data': '', 'status': 'success'}
-    # Invalid session
-    if not request.session.get('pgmanage_session'):
-        response_data['status'] = 'failed'
-        response_data['data'] = 'invalid session'
-        return JsonResponse(response_data)
 
-    conn_object = json.loads(request.body)
+    conn_object = request.data
     conn_id = conn_object['id']
     conn_type = conn_object['technology']
 
@@ -216,15 +202,16 @@ def test_connection(request):
     password = conn_object['password'].strip()
     ssh_password = conn_object['tunnel']['password'].strip()
     ssh_key = conn_object['tunnel']['key']
+    key = key_manager.get(request.user)
 
     if conn_id:
         conn = Connection.objects.get(id=conn_id)
         if conn_object['password'].strip() == '':
-            password = conn.password
+            password = decrypt(conn.password, key) if conn.password else ''
         if conn_object['tunnel']['password'].strip() == '':
-            ssh_password = conn.ssh_password
+            ssh_password = decrypt(conn.ssh_password, key) if conn.ssh_password else ''
         if conn_object['tunnel']['key'].strip() == '':
-            ssh_key = conn.ssh_key
+            ssh_key = decrypt(conn.ssh_key, key) if conn.ssh_key else ''
 
     # if conn_object['temp_password']:
     #     password = conn_object['temp_password']
@@ -317,12 +304,12 @@ def test_connection(request):
 
 
 @user_authenticated
-def save_connection(request):
+@session_required
+def save_connection(request, session):
     response_data = {'data': '', 'status': 'success'}
-    session = request.session.get('pgmanage_session')
     key = key_manager.get(request.user)
 
-    conn_object = json.loads(request.body)
+    conn_object = request.data
     conn_id = conn_object['id']
 
     try:
@@ -444,12 +431,11 @@ def save_connection(request):
 
 
 @user_authenticated
-def delete_connection(request):
+@session_required
+def delete_connection(request, session):
     response_data = {'data': '', 'status': 'success'}
-    session = request.session.get('pgmanage_session')
 
-    conn_object = json.loads(request.body)
-    conn_id = conn_object['id']
+    conn_id = request.data['id']
 
     try:
         conn = Connection.objects.get(id=conn_id)
@@ -472,8 +458,8 @@ def delete_connection(request):
 
 
 @user_authenticated
-def get_existing_tabs(request):
-    session = request.session.get("pgmanage_session")
+@session_required
+def get_existing_tabs(request, session):
 
     existing_tabs = []
     for tab in Tab.objects.filter(user=request.user).order_by("connection"):

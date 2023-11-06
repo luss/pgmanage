@@ -49,8 +49,8 @@ base_urlpatterns = [
     re_path(r'^reset_master_password/', views.workspace.reset_master_password, name='reset_master_password'),
     re_path(r'^draw_graph/', views.workspace.draw_graph, name='draw_graph'),
     re_path(r'^start_edit_data/', views.workspace.start_edit_data, name='start_edit_data'),
+    re_path(r'^get_table_columns/', views.workspace.get_table_columns, name='get_table_columns'),
     re_path(r'^get_completions_table/', views.workspace.get_completions_table, name='get_completions_table'),
-    re_path(r'^indent_sql/', views.workspace.indent_sql, name='indent_sql'),
     re_path(r'^refresh_monitoring/', views.workspace.refresh_monitoring, name='refresh_monitoring'),
     re_path(r'^get_autocomplete_results/', views.workspace.get_autocomplete_results, name='get_autocomplete_results'),
     re_path(r'^delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
@@ -111,6 +111,8 @@ base_urlpatterns = [
     re_path(r'^get_procedure_fields_postgresql/', views.tree_postgresql.get_procedure_fields, name='get_procedure_fields'),
     re_path(r'^get_procedure_definition_postgresql/', views.tree_postgresql.get_procedure_definition, name='get_procedure_definition'),
     re_path(r'^get_procedure_debug_postgresql/', views.tree_postgresql.get_procedure_debug, name='get_procedure_debug'),
+    # new endpoint used by schema builder
+    re_path(r'^get_table_definition_postgresql/', views.tree_postgresql.get_table_definition, name='get_table_definition'),
     re_path(r'^get_triggerfunctions_postgresql/', views.tree_postgresql.get_triggerfunctions, name='get_triggerfunctions'),
     re_path(r'^get_triggerfunction_definition_postgresql/', views.tree_postgresql.get_triggerfunction_definition, name='get_triggerfunction_definition'),
     re_path(r'^get_eventtriggerfunctions_postgresql/', views.tree_postgresql.get_eventtriggerfunctions, name='get_eventtriggerfunctions'),
@@ -154,7 +156,15 @@ base_urlpatterns = [
     re_path(r'^change_active_database/', views.workspace.change_active_database, name='change_active_database'),
     re_path(r'^get_postgresql_version/', views.tree_postgresql.get_version, name='get_version'),
     re_path(r'^change_role_password_postgresql/', views.tree_postgresql.change_role_password, name='change_role_password'),
-    re_path(r'^get_object_description_postgresql/', views.tree_postgresql.get_object_description, name='get_object_description'),
+    re_path(r'^get_object_description_postgresql/', views.tree_postgresql.get_object_description, name='get_object_description'),\
+
+    #PG_CRON
+    re_path(r'^get_pgcron_jobs/', views.pgextras.get_pgcron_jobs, name='get_pgcron_jobs'),
+    re_path(r'^get_pgcron_job_details/', views.pgextras.get_pgcron_job_details, name='get_pgcron_job_details'),
+    re_path(r'^get_pgcron_job_logs/', views.pgextras.get_pgcron_job_logs, name='get_pgcron_job_logs'),
+    re_path(r'^delete_pgcron_job_logs/', views.pgextras.delete_pgcron_job_logs, name='delete_pgcron_job_logs'),
+    re_path(r'^save_pgcron_job/', views.pgextras.save_pgcron_job, name='save_pgcron_job'),
+    re_path(r'^delete_pgcron_job/', views.pgextras.delete_pgcron_job, name='delete_pgcron_job'),
 
     #TREE_ORACLE
     re_path(r'^get_tree_info_oracle/', views.tree_oracle.get_tree_info, name='get_tree_info'),
@@ -279,12 +289,10 @@ base_urlpatterns = [
     re_path(r'^get_triggers_sqlite/', views.tree_sqlite.get_triggers, name='get_triggers'),
     re_path(r'^get_views_sqlite/', views.tree_sqlite.get_views, name='get_views'),
     re_path(r'^get_views_columns_sqlite/', views.tree_sqlite.get_views_columns, name='get_views_columns'),
-    re_path(r'^get_view_definition_sqlite/', views.tree_sqlite.get_view_definition, name='get_view_definition'),
     re_path(r'^get_properties_sqlite/', views.tree_sqlite.get_properties, name='get_properties'),
     re_path(r'^template_select_sqlite/', views.tree_sqlite.template_select, name='template_select'),
     re_path(r'^template_insert_sqlite/', views.tree_sqlite.template_insert, name='template_insert'),
     re_path(r'^template_update_sqlite/', views.tree_sqlite.template_update, name='template_update'),
-    re_path(r'^get_sqlite_version/', views.tree_sqlite.get_version, name='get_version'),
 
     #MONITORING SYSTEM
     re_path(r'^test_monitor_script/', views.monitor_dashboard.test_monitor_script, name='test_monitor_script'),

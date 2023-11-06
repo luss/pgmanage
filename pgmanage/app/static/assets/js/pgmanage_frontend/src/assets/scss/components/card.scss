@@ -1,0 +1,26 @@
+.card {
+    border-radius: $borderRadius;
+    overflow: hidden;
+    background-color: initial;
+
+    @include themify() {
+        border: themed($border);
+        background-color: themed($surfaceBgSecondary);
+    }
+
+    &-header {
+        background-color: rgba($primaryBlue, .2);
+
+        @include themify() {
+            border-bottom: themed($border) !important;
+        }
+    }
+
+    &-body {
+        padding: 24px;
+
+        @include themify() {
+            background-color: themed($surfaceBgSecondary);
+        }
+    }
+}

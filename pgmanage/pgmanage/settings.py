@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_vite',
 ]
 
 if DEBUG:
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.DataUnpackMiddleware'
 ]
 
 ROOT_URLCONF = 'pgmanage.urls'
@@ -189,3 +191,16 @@ CH_CMDS_PER_PAGE               = 20
 PWD_TIMEOUT_TOTAL              = 1800
 PWD_TIMEOUT_REFRESH            = 300
 THREAD_POOL_MAX_WORKERS        = 2
+
+DJANGO_VITE_DEV_MODE = DEBUG
+
+if not DEBUG:
+    DJANGO_VITE_MANIFEST_PATH = os.path.join(STATIC_ROOT, 'assets', 'js', 'dist', 'manifest.json')
+    DJANGO_VITE_STATIC_URL_PREFIX = os.path.join('assets', 'js', 'dist')
+    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, os.path.join('assets', 'js', 'dist' ))
+else:
+    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, os.path.join('assets', 'js', 'pgmanage_frontend'))
+
+STATICFILES_DIRS = [
+    DJANGO_VITE_ASSETS_PATH,
+]

@@ -1,5 +1,13 @@
 # PgManage macOS Build
 
+The build should be done on Windows 10 x86_64 OS.
+The following software should be installed prior to runnig the build script:
+
+Official Python 3.9.* macOs release
+
+- Node.js
+- npm
+
 ## Building
 1. Simply run in command line deploy script:
 ```

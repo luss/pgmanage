@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker run -e VERSION="$1" -v $PWD:/tmp --rm pgmanage/tarbuild
+docker run -e VERSION="$1" -v $PWD:/deploy --rm pgmanage/tarbuild
 
 sudo chown $USER:$USER *.tar.gz
 sudo chown $USER:$USER *.AppImage

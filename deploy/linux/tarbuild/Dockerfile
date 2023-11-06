@@ -22,7 +22,10 @@ RUN add-apt-repository --yes ppa:deadsnakes/ppa
 RUN apt-get update && apt-get install -y python3.9 python3-pip python3.9-dev python3.9-distutils
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 RUN python3 -m pip install --upgrade pip setuptools
-RUN pip3 install pyinstaller setuptools-rust staticx
+RUN pip3 install setuptools-rust staticx
+RUN curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt install nodejs
 COPY entrypoint.sh $HOME
 
 ENTRYPOINT ["/root/entrypoint.sh"]

@@ -1,7 +1,5 @@
-import json
 import os
 import random
-import shutil
 import string
 import subprocess
 import sys
@@ -11,13 +9,14 @@ import sqlparse
 from app.client_manager import client_manager
 from app.models.main import Connection, Shortcut, UserDetails
 from app.utils.crypto import make_hash
-from app.utils.decorators import database_required, user_authenticated
+from app.utils.decorators import database_required, database_required_new, user_authenticated
 from app.utils.key_manager import key_manager
 from app.utils.master_password import (
     reset_master_pass,
     set_masterpass_check_text,
     validate_master_password,
 )
+from app.utils.response_helpers import create_response_template, error_response
 from app.views.connections import session_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -47,18 +46,12 @@ def index(request):
 
     theme = "omnidb" if user_details.theme == "light" else "omnidb_dark"
 
-    if user_details.binary_path:
-        binary_path = user_details.binary_path
-    else:
-        binary_path = (
-            os.path.dirname(shutil.which("psql")) if shutil.which("psql") else ""
-        )
-
     context = {
         "session": None,
         "editor_theme": theme,
         "theme": user_details.theme,
         "font_size": user_details.font_size,
+        "autocomplete": user_details.autocomplete,
         "user_id": request.user.id,
         "user_key": request.session.session_key,
         "user_name": request.user.username,
@@ -72,12 +65,13 @@ def index(request):
         "tab_token": "".join(
             random.choice(string.ascii_lowercase + string.digits) for i in range(20)
         ),
-        "url_folder": settings.PATH,
+        "url_folder": settings.PATH, # FIXME: rename this to base_path
         "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
         "master_key": "new"
         if not bool(user_details.masterpass_check)
         else bool(key_manager.get(request.user)),
-        "binary_path": binary_path,
+        "binary_path": user_details.get_binary_path(),
+        "pigz_path": user_details.get_pigz_path(),
         "date_format": user_details.date_format,
     }
 
@@ -92,20 +86,20 @@ def index(request):
 
 @user_authenticated
 @session_required
-def save_config_user(request):
+def save_config_user(request, session):
     response_data = {"data": "", "status": "success"}
 
-    session = request.session.get("pgmanage_session")
+    data = request.data
 
-    request_data = json.loads(request.body) if request.body else {}
-
-    font_size = request_data["font_size"]
-    theme = request_data["theme"]
-    password = request_data["password"]
-    csv_encoding = request_data["csv_encoding"]
-    csv_delimiter = request_data["csv_delimiter"]
-    binary_path = request_data["binary_path"]
-    date_format = request_data["date_format"]
+    font_size = data["font_size"]
+    theme = data["theme"]
+    password = data["password"]
+    csv_encoding = data["csv_encoding"]
+    csv_delimiter = data["csv_delimiter"]
+    binary_path = data["binary_path"]
+    date_format = data["date_format"]
+    pigz_path = data["pigz_path"]
+    autocomplete = data.get("autocomplete", True)
 
     session.v_theme_id = theme
     session.v_font_size = font_size
@@ -119,6 +113,8 @@ def save_config_user(request):
     user_details.csv_delimiter = csv_delimiter
     user_details.binary_path = binary_path
     user_details.date_format = date_format
+    user_details.pigz_path = pigz_path
+    user_details.autocomplete = autocomplete
     user_details.save()
 
     request.session["pgmanage_session"] = session
@@ -133,14 +129,14 @@ def save_config_user(request):
 
 
 @user_authenticated
-@session_required
+@session_required(include_session=False)
 def shortcuts(request):
     response_data = {"data": "", "status": "success"}
 
     if request.method == "POST":
-        request_data = json.loads(request.body) if request.body else {}
-        shortcut_list = request_data.get("shortcuts")
-        current_os = request_data.get("current_os")
+        data = request.data
+        shortcut_list = data.get("shortcuts")
+        current_os = data.get("current_os")
 
         try:
             # Delete existing user shortcuts
@@ -184,21 +180,12 @@ def shortcuts(request):
 
 
 @user_authenticated
-def change_active_database(request):
-    response_data = {"v_data": {}, "v_error": False, "v_error_id": -1}
-
-    # Invalid session
-    if not request.session.get("pgmanage_session"):
-        response_data["v_error"] = True
-        response_data["v_error_id"] = 1
-        return JsonResponse(response_data)
-
-    session = request.session.get("pgmanage_session")
-
-    json_object = json.loads(request.POST.get("data", None))
-    tab_id = json_object["p_tab_id"]
-    new_database = json_object["p_database"]
-    conn_id = json_object["p_database_index"]
+@session_required
+def change_active_database(request, session):
+    data = request.data
+    tab_id = data["tab_id"]
+    new_database = data["database"]
+    conn_id = data["database_index"]
 
     session.v_tabs_databases[tab_id] = new_database
 
@@ -208,24 +195,17 @@ def change_active_database(request):
 
     request.session["pgmanage_session"] = session
 
-    return JsonResponse(response_data)
+    return JsonResponse(data={"data": "database changed"})
 
 
 @user_authenticated
-def renew_password(request):
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
+@session_required(use_old_error_format=True)
+def renew_password(request, session):
+    response_data = create_response_template()
 
-    # Invalid session
-    if not request.session.get("pgmanage_session"):
-        response_data["v_error"] = True
-        response_data["v_error_id"] = 1
-        return JsonResponse(response_data)
-
-    session = request.session.get("pgmanage_session")
-
-    json_object = json.loads(request.POST.get("data", None))
-    database_index = json_object["p_database_index"]
-    password = json_object["p_password"]
+    data = request.data
+    database_index = data["p_database_index"]
+    password = data["p_password"]
 
     database_object = session.v_databases[database_index]
     database_object["database"].v_connection.v_password = password
@@ -244,99 +224,80 @@ def renew_password(request):
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def draw_graph(request, v_database):
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
-
-    json_object = json.loads(request.POST.get("data", None))
-    complete = json_object["p_complete"]
-    schema = json_object["p_schema"]
-
-    nodes = []
-    edges = []
+@database_required_new(check_timeout=True, open_connection=True)
+def draw_graph(request, database):
+    response_data = create_response_template()
+    schema = request.data.get("schema", '')
+    edge_dict = {}
+    node_dict = {}
 
     try:
-        tables = v_database.QueryTables(False, schema)
+        tables = database.QueryTables(False, schema)
+
         for table in tables.Rows:
             node_data = {
                 "id": table["table_name"],
                 "label": table["table_name"],
                 "group": 1,
+                "columns": []
             }
+            table_name = table.get('name_raw') or table["table_name"]
+            table_columns = database.QueryTablesFields(
+                table_name, False, schema
+            ).Rows
 
-            if complete:
-                node_data["label"] += "\n"
-                columns = v_database.QueryTablesFields(
-                    table["table_name"], False, schema
-                )
-                for column in columns.Rows:
-                    node_data["label"] += (
-                        column["column_name"] + " : " + column["data_type"] + "\n"
-                    )
+            node_data['columns'] = list(({
+                'name': c['column_name'],
+                'type': c['data_type'],
+                'cgid': None,
+                'is_pk': False,
+                'is_fk': False,
+                } for c in table_columns))
 
-            nodes.append(node_data)
+            node_dict[table["table_name"]] = node_data
 
-        data = v_database.QueryTablesForeignKeys(None, False, schema)
+        q_fks = database.QueryTablesForeignKeys(None, False, schema)
 
-        curr_constraint = ""
-        curr_from = ""
-        curr_to = ""
-        curr_to_schema = ""
-
-        for fk in data.Rows:
-            if curr_constraint != "" and curr_constraint != fk["constraint_name"]:
-                edge = {
-                    "from": curr_from,
-                    "to": curr_to,
+        for fk in q_fks.Rows:
+            # ensure that the new edge stays within the same schema and points to an existing table
+            # table partitions are *not* included in the node list
+            # FIXME: resolve FKs of partitioned table from its partitions
+            if fk["r_table_schema"] == schema and fk["table_name"] in node_dict.keys():
+                edge_dict[fk["constraint_name"]] = {
+                    "from": fk["table_name"],
+                    "to": fk["r_table_name"],
+                    "from_col": None,
+                    "to_col": None,
                     "label": "",
                     "arrows": "to",
+                    "cgid": None
                 }
 
-                # FK referencing other schema, create a new node if it isn't in v_nodes list.
-                if v_database.v_schema != curr_to_schema:
-                    found = False
-                    for k in range(len(nodes) - 1, 0):
-                        if nodes[k]["label"] == curr_to:
-                            found = True
-                            break
+        q_fkcols = database.QueryTablesForeignKeysColumns(list(edge_dict.keys()), None, False, schema)
+        for fkcol in q_fkcols.Rows:
+            cgid = fkcol['constraint_name']
+            edge = edge_dict[fkcol['constraint_name']]
+            edge['from_col'] = fkcol['column_name']
+            edge['to_col'] = fkcol['r_column_name']
+            edge['cgid'] = cgid
+            table = node_dict[fkcol['table_name']]
+            r_table = node_dict[fkcol['r_table_name']]
+            for col in table['columns']:
+                if col['name'] == fkcol['column_name']:
+                    col['is_fk'] = True
+                    col['cgid'] = cgid
 
-                    if not found:
-                        node = {"id": curr_to, "label": curr_to, "group": 0}
-                        nodes.append(node)
+            for col in r_table['columns']:
+                if col['name'] == fkcol['r_column_name']:
+                    # FIXME: this is incomplete, seting PK based on FK constraints is not enough
+                    # there may be unreferenced PKs which will be missed
+                    col['is_pk'] = True
+                    col['cgid'] = f"{fkcol['r_table_name']}-{fkcol['r_column_name']}"
 
-                edges.append(edge)
-                curr_constraint = ""
-
-            curr_from = fk["table_name"]
-            curr_to = fk["r_table_name"]
-            curr_constraint = fk["constraint_name"]
-            curr_to_schema = fk["r_table_schema"]
-
-        if curr_constraint != "":
-            edge = {"from": curr_from, "to": curr_to, "label": "", "arrows": "to"}
-
-            edges.append(edge)
-
-            # FK referencing other schema, create a new node if it isn't in v_nodes list.
-            if v_database.v_schema != curr_to_schema:
-                found = False
-
-                for k in range(len(nodes) - 1, 0):
-                    if nodes[k]["label"] == curr_to:
-                        found = True
-                        break
-
-                if not found:
-                    node = {"id": curr_to, "label": curr_to, "group": 0}
-
-                    nodes.append(node)
-
-        response_data["v_data"] = {"v_nodes": nodes, "v_edges": edges}
+        response_data["v_data"] = {"nodes": list(node_dict.values()), "edges": list(edge_dict.values())}
 
     except Exception as exc:
-        response_data["v_data"] = {"password_timeout": True, "message": str(exc)}
-        response_data["v_error"] = True
-        return JsonResponse(response_data)
+        return error_response(message=str(exc), password_timeout=True)
 
     return JsonResponse(response_data)
 
@@ -344,17 +305,13 @@ def draw_graph(request, v_database):
 @user_authenticated
 @database_required(p_check_timeout=True, p_open_connection=True)
 def start_edit_data(request, v_database):
-    response_data = {
-        "v_data": {"v_pk": [], "v_cols": [], "v_ini_orderby": ""},
-        "v_error": False,
-        "v_error_id": -1,
-    }
-
-    json_object = json.loads(request.POST.get("data", None))
-    table = json_object["p_table"]
+    response_data = create_response_template()
+    response_data["v_data"] = {"v_pk": [], "v_cols": [], "v_ini_orderby": ""}
+    data = request.data
+    table = data["p_table"]
 
     if v_database.v_has_schema:
-        schema = json_object["p_schema"]
+        schema = data["p_schema"]
 
     try:
         if v_database.v_has_schema:
@@ -409,20 +366,66 @@ def start_edit_data(request, v_database):
             index += 1
 
     except Exception as exc:
-        response_data["v_data"] = {"password_timeout": True, "message": str(exc)}
-        response_data["v_error"] = True
+        return error_response(message=str(exc), password_timeout=True)
 
     return JsonResponse(response_data)
 
 
 @user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_table_columns(request, database):
+    data = request.data
+    table = data["table"]
+
+    if database.v_has_schema:
+        schema = data["schema"]
+
+    try:
+        if database.v_has_schema:
+            pk = database.QueryTablesPrimaryKeys(table, False, schema)
+            columns = database.QueryTablesFields(table, False, schema)
+        else:
+            pk = database.QueryTablesPrimaryKeys(table)
+            columns = database.QueryTablesFields(table)
+
+        # generate ORDER BY from table PKs
+        order_by = ''
+        pk_column_names = []
+        if pk is not None and len(pk.Rows) > 0:
+            if database.v_has_schema:
+                pk_cols = database.QueryTablesPrimaryKeysColumns(
+                    pk.Rows[0]["constraint_name"], table, False, schema
+                )
+            else:
+                pk_cols = database.QueryTablesPrimaryKeysColumns(table)
+
+            cols = ', '.join(['t.'+x['column_name'] for x in pk_cols.Rows])
+            order_by = f"ORDER BY {cols}"
+
+            pk_column_names = [x['column_name'] for x in pk_cols.Rows]
+
+        table_columns = []
+        for column in columns.Rows:
+            table_columns.append({
+                "data_type": column['data_type'],
+                "name": column['column_name'],
+                "is_primary": column['column_name'] in pk_column_names,
+            })
+
+    except Exception as exc:
+        return JsonResponse(data={'data': str(exc)}, status=400)
+
+    return JsonResponse(data={'columns': table_columns, 'initial_orderby': order_by})
+
+
+@user_authenticated
 @database_required(p_check_timeout=True, p_open_connection=True)
 def get_completions_table(request, v_database):
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
+    response_data = create_response_template()
 
-    json_object = json.loads(request.POST.get("data", None))
-    table = json_object["p_table"]
-    schema = json_object["p_schema"]
+    data = request.data
+    table = data["p_table"]
+    schema = data["p_schema"]
 
     if v_database.v_has_schema:
         table_name = schema + "." + table
@@ -436,9 +439,7 @@ def get_completions_table(request, v_database):
             "select x.* from " + table_name + " x where 1 = 0"
         )
     except Exception as exc:
-        response_data["v_data"] = {"password_timeout": True, "message": str(exc)}
-        response_data["v_error"] = True
-        return JsonResponse(response_data)
+        return error_response(message=str(exc), password_timeout=True)
 
     score = 100
 
@@ -460,30 +461,11 @@ def get_completions_table(request, v_database):
 
 
 @user_authenticated
-def indent_sql(request):
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
-
-    # Invalid session
-    if not request.session.get("pgmanage_session"):
-        response_data["v_error"] = True
-        response_data["v_error_id"] = 1
-        return JsonResponse(response_data)
-
-    json_object = json.loads(request.POST.get("data", None))
-    sql = json_object["p_sql"]
-
-    response_data["v_data"] = sqlparse.format(sql, reindent=True)
-
-    return JsonResponse(response_data)
-
-
-@user_authenticated
 @database_required(p_check_timeout=True, p_open_connection=True)
 def refresh_monitoring(request, v_database):
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
+    response_data = create_response_template()
 
-    json_object = json.loads(request.POST.get("data", None))
-    sql = json_object["p_query"]
+    sql = request.data["p_query"]
 
     try:
         data = v_database.Query(sql, True, True)
@@ -493,8 +475,7 @@ def refresh_monitoring(request, v_database):
             "v_query_info": f"Number of records: {len(data.Rows)}",
         }
     except Exception as exc:
-        response_data["v_data"] = {"password_timeout": True, "message": str(exc)}
-        response_data["v_error"] = True
+        return error_response(message=str(exc), password_timeout=True)
 
     return JsonResponse(response_data)
 
@@ -527,12 +508,12 @@ def get_alias(p_sql, p_pos, p_val):
 @user_authenticated
 @database_required(p_check_timeout=True, p_open_connection=True)
 def get_autocomplete_results(request, v_database):
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
+    response_data = create_response_template()
 
-    json_object = json.loads(request.POST.get("data", None))
-    sql = json_object["p_sql"]
-    value = json_object["p_value"]
-    pos = json_object["p_pos"]
+    data = request.data
+    sql = data["p_sql"]
+    value = data["p_value"]
+    pos = data["p_pos"]
     num_dots = value.count(".")
 
     result = []
@@ -622,9 +603,7 @@ def get_autocomplete_results(request, v_database):
                     result.append(current_group)
 
         except Exception as exc:
-            response_data["v_data"] = {"password_timeout": True, "message": str(exc)}
-            response_data["v_error"] = True
-            return JsonResponse(response_data)
+            return error_response(message=str(exc), password_timeout=True)
 
     response_data["v_data"] = {
         "data": result,
@@ -636,24 +615,17 @@ def get_autocomplete_results(request, v_database):
 
 
 @user_authenticated
-def master_password(request):
+@session_required(use_old_error_format=True)
+def master_password(request, session):
     """
     Set the master password and store in the memory
     This password will be used to encrypt/decrypt saved server passwords
     """
 
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
+    response_data = create_response_template()
 
-    session = request.session.get("pgmanage_session")
-
-    # Invalid session
-    if not session:
-        response_data["v_error"] = True
-        response_data["v_error_id"] = 1
-        return JsonResponse(response_data)
-
-    json_object = json.loads(request.POST.get("data", None))
-    master_pass = json_object["master_password"]
+    data = request.data
+    master_pass = data["master_password"]
 
     master_pass_hash = make_hash(master_pass, request.user)
     user_details = UserDetails.objects.get(user=request.user)
@@ -662,21 +634,17 @@ def master_password(request):
     if user_details.masterpass_check and not validate_master_password(
         user_details, master_pass_hash
     ):
-        response_data["v_error"] = True
-        response_data["v_data"] = "Master password is not correct."
-        return JsonResponse(response_data)
+        return error_response(message="Master password is not correct.")
 
-    if json_object != "" and json_object.get("master_password", "") != "":
+    if data != "" and data.get("master_password", "") != "":
         # store the master pass in the memory
         key_manager.set(request.user, master_pass_hash)
 
         # set the encrypted sample text with the new master pass
         set_masterpass_check_text(user_details, master_pass_hash)
 
-    elif json_object.get("master_password", "") == "":
-        response_data["v_error"] = True
-        response_data["v_data"] = "Master password cannot be empty."
-        return JsonResponse(response_data)
+    elif data.get("master_password", "") == "":
+        return error_response(message="Master password cannot be empty.")
 
     # refreshing database session list with provided master password
     session.RefreshDatabaseList()
@@ -694,7 +662,7 @@ def reset_master_password(request):
     This password will be used to encrypt/decrypt saved server passwords
     """
 
-    response_data = {"v_data": "", "v_error": False, "v_error_id": -1}
+    response_data = create_response_template()
 
     user_details = UserDetails.objects.get(user=request.user)
 
@@ -705,9 +673,11 @@ def reset_master_password(request):
 
 @user_authenticated
 def validate_binary_path(request):
-    data = json.loads(request.body) if request.body else {}
+    data = request.data
 
     binary_path = data.get("binary_path")
+
+    utilities = data.get("utilities")
 
     result = {}
 
@@ -716,7 +686,7 @@ def validate_binary_path(request):
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         env.pop("LD_LIBRARY_PATH", None)
 
-    for utility in ["pg_dump", "pg_dumpall", "pg_restore", "psql"]:
+    for utility in utilities:
         full_path = os.path.join(
             binary_path, utility if os.name != "nt" else (utility + ".exe")
         )

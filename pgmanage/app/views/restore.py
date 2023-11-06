@@ -1,4 +1,3 @@
-import json
 import os
 
 from app.bgjob.jobs import BatchJob, IJobDesc
@@ -27,6 +26,8 @@ class RestoreMessage(IJobDesc):
         for arg in args:
             if arg and len(arg) >= 2 and arg[:2] == "--":
                 self.cmd += " " + arg
+            elif len(arg.split()) >= 3:
+                self.cmd = f"{arg} | {self.cmd}"
             else:
                 self.cmd += cmd_arg(arg)
 
@@ -51,9 +52,13 @@ class RestoreMessage(IJobDesc):
         return "Restoring backup on the server"
 
     def details(self, cmd):
+        command = cmd + self.cmd
+        if "|" in self.cmd:
+            command = self.cmd.replace("|", f"| {cmd}")
+
         return {
             "message": self.message,
-            "cmd": cmd + self.cmd,
+            "cmd": command,
             "server": self.get_connection_name(),
             "object": getattr(self, "database", ""),
             "type": "Restore",
@@ -61,7 +66,6 @@ class RestoreMessage(IJobDesc):
 
 
 def get_args_param_values(data, conn, backup_file, listing_file=None):
-
     host, port = (conn.v_server, str(conn.v_port))
 
     args = [
@@ -75,9 +79,12 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
     ]
 
     def set_value(key, param, data, args):
-        if data.get(key):
+        val = data.get(key)
+        if val:
+            if isinstance(val, int):
+                val = str(val)
             args.append(param)
-            args.append(data.get(key))
+            args.append(val)
 
     def set_param(key, param, data, args):
         if data.get(key):
@@ -85,11 +92,25 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
             return True
         return False
 
+    if data.get("pigz"):
+        pigz_number_of_jobs = (
+            f"-p{data.get('pigz_number_of_jobs')}"
+            if data.get("pigz_number_of_jobs") != "auto"
+            else ""
+        )
+        pigz_path = data.get("pigz_path", "pigz")
+        pigz_line = [f"{pigz_path} -dc {pigz_number_of_jobs} {backup_file}"]
+
     if data.get("type") == "server":
         set_param("quiet", "--quiet", data, args)
         set_param("echo_queries", "--echo-queries", data, args)
-        args.extend(["-f", backup_file])
+
+        if data.get("pigz"):
+            args.extend(pigz_line)
+        else:
+            args.extend(["-f", backup_file])
         return args
+
     set_value("role", "--role", data, args)
     set_value("database", "--dbname", data, args)
 
@@ -102,7 +123,7 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
         set_param("dns_privilege", "--no-privileges", data, args)
         set_param("dns_tablespace", "--no-tablespaces", data, args)
 
-    set_param('no_comments', '--no-comments', data, args)
+    set_param("no_comments", "--no-comments", data, args)
 
     if not set_param("only_schema", "--schema-only", data, args):
         set_param("disable_trigger", "--disable-triggers", data, args)
@@ -124,32 +145,40 @@ def get_args_param_values(data, conn, backup_file, listing_file=None):
     set_value("trigger", "--trigger", data, args)
     set_value("function", "--function", data, args)
 
-    args.append(backup_file)
+    if data.get("pigz"):
+        args.extend(pigz_line)
+        return args
 
+    args.append(backup_file)
     return args
 
 
 @database_required_new(check_timeout=True, open_connection=True)
 @user_authenticated
 def create_restore(request, database):
-
-    data = json.loads(request.body) if request.body else {}
-
-    data = data.get("data", {})
+    data = request.data.get("data", {})
 
     utility = "psql" if data.get("type") == "server" else "pg_restore"
     utility_path = None
     try:
         utility_path = get_utility_path(utility, request.user)
-    except FileNotFoundError as e:
+    except FileNotFoundError as exc:
         return JsonResponse(
-            data={
-                "data": str(e)
-            },
+            data={"data": str(exc)},
             status=400,
         )
 
     backup_file = data.get("fileName")
+
+    if data.get("pigz"):
+        try:
+            pigz_path = get_utility_path("pigz", request.user)
+            data["pigz_path"] = pigz_path
+        except FileNotFoundError as exc:
+            return JsonResponse(
+                data={"data": str(exc)},
+                status=400,
+            )
 
     try:
         FileManager(request.user).check_access_permission(backup_file)
@@ -180,9 +209,7 @@ def create_restore(request, database):
 @database_required_new(check_timeout=True, open_connection=True)
 @user_authenticated
 def preview_command(request, database):
-    data = json.loads(request.body) if request.body else {}
-
-    data = data.get("data", {})
+    data = request.data.get("data", {})
 
     backup_file = data.get("fileName")
 
@@ -196,13 +223,18 @@ def preview_command(request, database):
     utility_path = None
     try:
         utility_path = get_utility_path(utility, request.user)
-    except FileNotFoundError as e:
+    except FileNotFoundError as exc:
         return JsonResponse(
-            data={
-                "data": str(e)
-            },
+            data={"data": str(exc)},
             status=400,
         )
+
+    if data.get("pigz"):
+        try:
+            pigz_path = get_utility_path("pigz", request.user)
+            data["pigz_path"] = pigz_path
+        except FileNotFoundError as exc:
+            return JsonResponse(data={"data": str(exc)}, status=400)
 
     args = get_args_param_values(data, database, backup_file)
 

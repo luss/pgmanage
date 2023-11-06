@@ -30,12 +30,18 @@ touch pgmanage.db
 
 # Install all required libraries
 pip3 install -r ../../../requirements.txt
-pip3 install pyinstaller
+pip3 install pyinstaller==5.13.0
 
 # set up versions in custom_settins.py
 echo "setting app version in sources to $APP_VERSION"
 sed -i "s/Dev/PgManage $APP_VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$APP_VERSION/" pgmanage/custom_settings.py
+
+# building vite bundle
+cd app/static/assets/js/pgmanage_frontend/
+npm install
+npm run build
+cd ../../../../../
 
 echo "running pyinstaller"
 pyinstaller ./pgmanage-win.spec
