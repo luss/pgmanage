@@ -1,4 +1,6 @@
 # PgManage
+![](https://pgmanage.readthedocs.io/en/latest/_images/intro.png)
+
 PgManage is a Postgres management GUI, though we will be adding features for
 developers the initial focus is on the "management" of Postgres.
 
@@ -209,4 +211,3 @@ removed the option to make connections public in desktop variant of the app (whi
   - added postgresql 14 and 15  support
   - application data directory and db/log file naming was changed from omnidb* to pgmanage*.
 
-![](https://pgmanage.readthedocs.io/en/latest/_images/intro.png)
