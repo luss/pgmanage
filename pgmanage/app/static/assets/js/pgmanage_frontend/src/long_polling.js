@@ -43,6 +43,10 @@ function call_polling(startup) {
       });
       call_polling(false)
     })
+    .catch((error) => {
+      polling_busy = false
+      console.log(error)
+    })
 }
 
 function polling_response(message) {

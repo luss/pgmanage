@@ -31,8 +31,10 @@ axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 axios.interceptors.response.use(response => {
   return response;
 }, error => {
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     showAlert('User not authenticated, please reload the page.');
+  } else if (error.code === 'ERR_NETWORK') {
+    showAlert(`${error.message}. Try reloading application if issue persist.`)
   }
   return Promise.reject(error);
 });
