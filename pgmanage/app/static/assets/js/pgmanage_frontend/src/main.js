@@ -34,7 +34,7 @@ axios.interceptors.response.use(response => {
   if (error.response && error.response.status === 401) {
     showAlert('User not authenticated, please reload the page.');
   } else if (error.code === 'ERR_NETWORK') {
-    showAlert(`${error.message}. Try reloading application if issue persist.`)
+    showAlert(`${error.message}. Try reloading the application if the issue persists.`)
   }
   return Promise.reject(error);
 });
