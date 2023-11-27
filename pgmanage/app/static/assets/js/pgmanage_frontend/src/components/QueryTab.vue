@@ -2,7 +2,7 @@
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
       <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
-        :dialect="dialect" @editor-change="updateEditorContent" />
+        :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)"/>
     </pane>
 
     <pane size="70" class="px-2 border-top">
@@ -171,6 +171,8 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
+      commandsModalVisible: false,
+      lastQuery: null
     };
   },
   computed: {
@@ -218,6 +220,7 @@ export default {
       this.showFetchButtons = false;
       this.longQuery = false;
       this.tempData = [];
+      this.lastQuery = query
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
@@ -348,9 +351,9 @@ export default {
         );
       }
     },
-    queryRunOrExplain() {
+    queryRunOrExplain(use_raw_query=true) {
+      let query = this.getQueryEditorValue(use_raw_query)
       if (this.dialect === "postgresql") {
-        let query = this.getQueryEditorValue(true);
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
         if (should_explain) {
@@ -358,17 +361,17 @@ export default {
             this.queryModes.DATA_OPERATION,
             "explain",
             true,
-            this.getQueryEditorValue(true),
+            query,
             false
           );
         }
       }
 
-      this.querySQL(this.queryModes.DATA_OPERATION);
+      this.querySQL(this.queryModes.DATA_OPERATION, null, false, query=query)
     },
     exportData() {
       let cmd_type = `export_${this.exportType}`;
-      let query = this.getQueryEditorValue(true);
+      let query = this.lastQuery || this.getQueryEditorValue(true)
       this.querySQL(
         this.queryModes.DATA_OPERATION,
         cmd_type,
@@ -425,6 +428,10 @@ export default {
           emitter.emit(`${this.tabId}_copy_to_editor`, sql_command);
         }
         this.queryRunOrExplain();
+      });
+
+      emitter.on(`${this.tabId}_run_selection`, (sql_command) => {
+        this.queryRunOrExplain(false)
       });
 
       emitter.on(`${this.tabId}_run_explain`, () => {
