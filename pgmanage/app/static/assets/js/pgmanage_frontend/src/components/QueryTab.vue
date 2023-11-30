@@ -154,8 +154,9 @@ export default {
       autocommit: true,
       queryStartTime: "",
       queryDuration: "",
-      tempData: "",
-      tempContext: "",
+      data: "",
+      context: "",
+      tempData: [],
       tabDatabaseId: this.initTabDatabaseId,
       cancelled: false,
       enableExplainButtons: false,
@@ -216,6 +217,7 @@ export default {
       this.cancelled = false;
       this.showFetchButtons = false;
       this.longQuery = false;
+      this.tempData = [];
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
@@ -278,6 +280,10 @@ export default {
       }
     },
     querySQLReturn(data, context) {
+      if (!data.v_error) {
+        this.tempData = this.tempData.concat(data.v_data.data)
+      }
+
       //Update tab_db_id if not null in response
       if (data.v_data.inserted_id) {
         this.tabDatabaseId = data.v_data.inserted_id;
@@ -285,14 +291,16 @@ export default {
 
       //If query wasn't canceled already
 
-      if (!this.idleState) {
+      if (!this.idleState && (data.v_data.last_block || data.v_error)) {
+        data.v_data.data = this.tempData;
+
         if (
           this.tabId === context.tab_tag.tabControl.selectedTab.id &&
           this.connId ===
           context.tab_tag.connTab.tag.connTabControl.selectedTab.id
         ) {
-          this.tempContext = "";
-          this.tempData = "";
+          this.context = "";
+          this.data = "";
           this.readOnlyEditor = false;
           this.queryState = queryState.Idle;
 
@@ -306,8 +314,8 @@ export default {
           context.tab_tag.tab_check_span.style.display = "none";
         } else {
           this.queryState = queryState.Ready;
-          this.tempData = data;
-          this.tempContext = context;
+          this.data = data;
+          this.context = context;
 
           //FIXME: change into event emitting later
           context.tab_tag.tab_loading_span.style.visibility = "hidden";
@@ -380,7 +388,7 @@ export default {
       this.cancelled = true;
     },
     indentSQL() {
-      emitter.emit(`${this.connId}_indent_sql`)
+      emitter.emit(`${this.connId}_indent_sql`);
     },
     updateEditorContent(newContent) {
       this.editorContent = newContent;
@@ -408,7 +416,7 @@ export default {
       emitter.on(`${this.tabId}_check_query_status`, () => {
         this.$refs.editor.focus();
         if (this.queryState === queryState.Ready) {
-          this.$refs.queryResults.renderResult(this.tempData, this.tempContext);
+          this.$refs.queryResults.renderResult(this.data, this.context);
         }
       });
 
