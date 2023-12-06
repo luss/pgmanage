@@ -293,7 +293,7 @@ export default {
 
       //If query wasn't canceled already
 
-      if (!this.idleState && (data.v_data.last_block || data.v_error)) {
+      if (!this.idleState && (data.v_data.last_block || data.v_data.file_name || data.v_error )) {
         data.v_data.data = this.tempData;
 
         if (
