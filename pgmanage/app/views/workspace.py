@@ -3,7 +3,7 @@ import random
 import string
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 import sqlparse
 from app.client_manager import client_manager
@@ -191,7 +191,7 @@ def change_active_database(request, session):
 
     conn = Connection.objects.get(id=conn_id)
     conn.last_used_database = new_database
-    conn.last_access_date = datetime.now()
+    conn.last_access_date = datetime.now(tz=timezone.utc)
     conn.save()
 
     request.session["pgmanage_session"] = session
