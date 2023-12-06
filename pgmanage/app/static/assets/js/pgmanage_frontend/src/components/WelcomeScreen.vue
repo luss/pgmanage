@@ -71,6 +71,8 @@ import { connectionsStore } from '../stores/connections.js'
 import { showConfigUser } from '../header_actions'
 import { startTutorial } from '../tutorial'
 import { endLoading } from "../ajax_control";
+import { default_shortcuts } from '../shortcuts'
+
 export default {
   name: "WelcomeScreen",
   props: {
@@ -86,6 +88,13 @@ export default {
         .sort((a, b) => (moment(a.last_access_date) > moment(b.last_access_date)) ? -1 : 1)
         .slice(0, 5)
     },
+    currentOS() {
+      if (navigator.userAgent.indexOf("Win") != -1) return "windows"
+      if (navigator.userAgent.indexOf("Mac") != -1) return  "macos"
+      if (navigator.userAgent.indexOf("X11") != -1) return  "linux"
+      if (navigator.userAgent.indexOf("Linux") != -1) return  "linux"
+      return "Unknown OS"
+    }
   },
   data() {
     return {
@@ -115,6 +124,13 @@ export default {
       axios.get('/shortcuts/')
         .then((resp) => {
           this.shortcuts = resp.data.data
+          let shortcut_keys = Object.keys(this.shortcuts)
+          Object.keys(default_shortcuts).forEach((key) => {
+            if(!shortcut_keys.includes(key)) {
+              this.shortcuts[key] = Object.assign({}, default_shortcuts[key][this.currentOS])
+            }
+          })
+          // merge missing shortcuts forom default_shortcuts
         })
         .catch((error) => {
           console.log(error)
@@ -138,6 +154,7 @@ export default {
     shortcutLabel(shortcut) {
       const LABEL_MAP = {
         'shortcut_run_query': 'Run Query',
+        'shortcut_run_selection': 'Run Selection',
         'shortcut_cancel_query': 'Cancel Query',
         'shortcut_indent': 'Indent Code',
         'shortcut_new_inner_tab': 'New Tab',

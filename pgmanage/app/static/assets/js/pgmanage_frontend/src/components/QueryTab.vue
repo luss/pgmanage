@@ -171,7 +171,6 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
-      commandsModalVisible: false,
       lastQuery: null
     };
   },
