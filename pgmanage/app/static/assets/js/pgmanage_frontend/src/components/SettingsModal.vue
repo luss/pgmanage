@@ -276,9 +276,6 @@ export default {
         settingsStore.setTheme(value);
       },
     },
-    autocomplete () {
-      return settingsStore.enableAutocomplete
-    }
   },
   created() {
     this.getShortcuts();
@@ -445,7 +442,9 @@ export default {
 
     settingsStore.$onAction((action) => {
       if (action.name === "setAutocomplete") {
-        this.saveSettingsUser();
+        action.after(() => {
+          this.saveSettingsUser();
+        })
       }
     });
   },
@@ -610,7 +609,7 @@ export default {
           "binary_path": this.binaryPath,
           "date_format": this.selectedDateFormat,
           "pigz_path": this.pigzPath,
-          "autocomplete": this.autocomplete,
+          "autocomplete": settingsStore.enableAutocomplete,
         })
           .then((resp) => {
             $('#modal_settings').modal('hide');
