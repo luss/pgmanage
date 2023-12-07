@@ -443,9 +443,9 @@ export default {
 
     this.applyThemes()
 
-    settingsStore.$subscribe((mutation, state) => {
-      if (mutation.events.key === "enableAutocomplete") {
-        this.saveSettingsUser()
+    settingsStore.$onAction((action) => {
+      if (action.name === "setAutocomplete") {
+        this.saveSettingsUser();
       }
     });
   },
