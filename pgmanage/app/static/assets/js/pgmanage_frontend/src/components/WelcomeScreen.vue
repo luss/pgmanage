@@ -44,16 +44,16 @@
                   <i class="fa-solid fa-circle-info"></i>
                   Get Started
                 </a>
-                <a href='https://pgmanage.readthedocs.io' class='welcome-link text-muted d-block mb-4' title="Handbook">
+                <a href='https://pgmanage.readthedocs.io' target='_blank' class='welcome-link text-muted d-block mb-4' title="Handbook">
                   <i class="fa-solid fa-book-bookmark"></i>
                   PgManage Handbook
                 </a>
                 <h1>Get Involved</h1>
-                <a href='https://github.com/commandprompt/pgmanage/discussions/' class='welcome-link text-muted d-block' title="Discuss">
+                <a href='https://github.com/commandprompt/pgmanage/discussions/' target='_blank' class='welcome-link text-muted d-block' title="Discuss">
                   <i class="fa-solid fa-comments"></i>
                   Discuss
                 </a>
-                <a href='https://github.com/commandprompt/pgmanage/issues' class='welcome-link text-muted d-block' title="Report a Bug">
+                <a href='https://github.com/commandprompt/pgmanage/issues' target='_blank' class='welcome-link text-muted d-block' title="Report a Bug">
                   <i class="fa-solid fa-bug"></i>
                   Report a Bug
                 </a>
