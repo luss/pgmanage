@@ -18,9 +18,10 @@
           </button>
 
           <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History"
-            @click="showCommandList()">
+            @click="showCommandsHistory()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
+
 
           <template v-if="postgresqlDialect">
             <!-- EXPLAIN ANALYZE BUTTONS-->
@@ -106,7 +107,7 @@
     </pane>
   </splitpanes>
 
-  <CommandsHistoryModal :tab-id="tabId" />
+  <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
 </template>
 
 <script>
@@ -115,18 +116,14 @@ import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
 import { v_queryRequestCodes } from "../query";
-import { registerAllModules } from "handsontable/registry";
 import { queryModes, queryState, tabStatusMap } from "../constants";
 import CancelButton from "./CancelSQLButton.vue";
 import QueryEditor from "./QueryEditor.vue";
 import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
-import { showCommandList } from "../command_history";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
 
-// register Handsontable's modules
-registerAllModules();
 
 export default {
   name: "QueryTab",
@@ -171,6 +168,7 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
+      commandsModalVisible: false,
       lastQuery: null
     };
   },
@@ -447,7 +445,9 @@ export default {
       emitter.all.delete(`${this.tabId}_run_explain_analyze`);
       emitter.all.delete(`${this.tabId}_run_query`);
     },
-    showCommandList,
+    showCommandsHistory() {
+      this.commandsModalVisible = true
+    }
   },
 };
 </script>
