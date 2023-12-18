@@ -284,7 +284,7 @@ export default {
     fetchData(data) {
       let initialData = this.table.getData();
       data.data.unshift(...initialData);
-      this.table.setData(data.data);
+      this.table.replaceData(data.data)
     },
     clearData() {
       this.notices = [];
