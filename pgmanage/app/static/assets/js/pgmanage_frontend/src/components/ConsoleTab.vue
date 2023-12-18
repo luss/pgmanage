@@ -86,26 +86,12 @@ import { emitter } from "../emitter";
 import { showToast } from "../notification_control";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
-import { v_queryRequestCodes } from "../query";
 import { createRequest } from "../long_polling";
 import { settingsStore } from "../stores/settings";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
-
-const consoleState = {
-  Idle: 0,
-  Executing: 1,
-  Ready: 2,
-};
-
-const tabStatusMap = {
-  NOT_CONNECTED: 0,
-  IDLE: 1,
-  RUNNING: 2,
-  IDLE_IN_TRANSACTION: 3,
-  IDLE_IN_TRANSACTION_ABORTED: 4,
-};
+import { tabStatusMap, requestState, queryRequestCodes } from "../constants";
 
 export default {
   name: "ConsoleTab",
@@ -126,7 +112,7 @@ export default {
   },
   data() {
     return {
-      consoleState: consoleState.Idle,
+      consoleState: requestState.Idle,
       lastCommand: "",
       autocommit: true,
       fetchMoreData: false,
@@ -145,10 +131,10 @@ export default {
   },
   computed: {
     executingState() {
-      return this.consoleState === consoleState.Executing;
+      return this.consoleState === requestState.Executing;
     },
     idleState() {
-      return this.consoleState === consoleState.Idle;
+      return this.consoleState === requestState.Idle;
     },
     postgresqlDialect() {
       return this.dialect === "postgresql";
@@ -193,7 +179,7 @@ export default {
       });
 
       emitter.on(`${this.tabId}_check_console_status`, () => {
-        if (this.consoleState === consoleState.Ready) {
+        if (this.consoleState === requestState.Ready) {
           this.consoleReturnRender(this.data, this.context);
         }
       });
@@ -259,9 +245,9 @@ export default {
 
             context.tab_tag.context = context;
 
-            createRequest(v_queryRequestCodes.Console, message_data, context);
+            createRequest(queryRequestCodes.Console, message_data, context);
 
-            this.consoleState = consoleState.Executing;
+            this.consoleState = requestState.Executing;
 
             setTimeout(() => {
               this.longQuery = true;
@@ -286,7 +272,7 @@ export default {
         ) {
           this.consoleReturnRender(data, context);
         } else {
-          this.consoleState = consoleState.Ready;
+          this.consoleState = requestState.Ready;
           this.data = data;
           this.context = context;
 
@@ -297,7 +283,7 @@ export default {
       }
     },
     consoleReturnRender(data, context) {
-      this.consoleState = consoleState.Idle;
+      this.consoleState = requestState.Idle;
 
       this.tabStatus = data.v_data.v_con_status;
       this.readOnlyEditor = false;
@@ -333,7 +319,7 @@ export default {
     cancelConsoleTab() {
       this.readOnlyEditor = false;
 
-      this.consoleState = consoleState.Idle;
+      this.consoleState = requestState.Idle;
       this.tabStatus = tabStatusMap.NOT_CONNECTED;
 
       this.cancelled = true;

@@ -40,7 +40,7 @@ import {
 import { beforeCloseTab } from "../create_tab_functions";
 import { connectionsStore } from "../stores/connections.js";
 import { createRequest } from "../long_polling";
-import { v_queryRequestCodes } from "../query";
+import { queryRequestCodes } from "../constants";
 import { cancelMonitorUnits } from "../monitoring";
 import { createTabControl } from "../tabs";
 import ace from 'ace-builds'
@@ -156,7 +156,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
             v_tabs_to_remove.push(v_message_data);
 
             if (v_tabs_to_remove.length>0) {
-              createRequest(v_queryRequestCodes.CloseTab, v_tabs_to_remove);
+              createRequest(queryRequestCodes.CloseTab, v_tabs_to_remove);
             }
             if (!!v_this_tab.tree) {
               v_this_tab.tree.unmount()

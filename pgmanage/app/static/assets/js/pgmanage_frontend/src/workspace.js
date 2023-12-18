@@ -40,7 +40,7 @@ import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createRequest } from './long_polling'
-import { v_queryRequestCodes } from './query'
+import { queryRequestCodes } from './constants'
 import { checkDebugStatus } from './debug'
 import { startMonitorDashboard } from './monitoring'
 import { createTabControl } from './tabs'
@@ -314,7 +314,7 @@ function removeTab(p_tab) {
       v_message_data.tab_db_id = p_tab.tag.tab_db_id;
     }
 
-    createRequest(v_queryRequestCodes.CloseTab, [v_message_data]);
+    createRequest(queryRequestCodes.CloseTab, [v_message_data]);
 	}
 	p_tab.removeTab();
 

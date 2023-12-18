@@ -47,7 +47,7 @@ import axios from 'axios'
 import Knex from 'knex'
 import { isEqual, zipObject } from 'lodash';
 import { showToast } from "../notification_control";
-import { v_queryRequestCodes } from '../query'
+import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
 
@@ -223,7 +223,7 @@ export default {
         database_index: this.database_index
       }
 
-      createRequest(v_queryRequestCodes.QueryEditData, message_data, context)
+      createRequest(queryRequestCodes.QueryEditData, message_data, context)
     },
     handleResize() {
       if(this.$refs === null)
@@ -260,7 +260,6 @@ export default {
       let originalRow = this.tableData.find((row) => row[0].initial_id == rowMeta.initial_id)
 
       if (originalRow) {
-        debugger
         rowMeta.is_dirty = !isEqual(rowData.slice(1), originalRow.slice(1)) && !rowMeta.is_new
       }
 
@@ -372,7 +371,7 @@ export default {
         callback: this.handleSaveResponse.bind(this),
       }
 
-      createRequest(v_queryRequestCodes.SaveEditData, message_data, context)
+      createRequest(queryRequestCodes.SaveEditData, message_data, context)
     },
     applyBtnTitle() {
       let count = this.pendingChanges.length
