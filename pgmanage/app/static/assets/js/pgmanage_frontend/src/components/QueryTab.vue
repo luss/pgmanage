@@ -223,7 +223,7 @@ export default {
         showToast("info", "Tab with activity in progress.");
       } else {
         if (!query) {
-          showToast("info", "Please provice a string.");
+          showToast("info", "Please provide a string.");
         } else {
           let message_data = {
             sql_cmd: query,
