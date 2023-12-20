@@ -312,7 +312,7 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
     //Properties Grid
     v_properties_tab.elementDiv.innerHTML =
     "<div class='p-2'>" +
-      "<div id='div_properties_result_" + v_tab.id + "' class='tabulator-custom' style='width: 100%; overflow: hidden;'></div>" +
+      "<div id='div_properties_result_" + v_tab.id + "' class='tabulator-custom simple' style='width: 100%; overflow: hidden;'></div>" +
     "</div>";
     var v_divProperties = document.getElementById('div_properties_result_' + v_tab.id);
     // v_divProperties.classList.add('omnidb__theme-border--primary');
@@ -322,18 +322,18 @@ var v_createConnTabFunction = function(p_index,p_create_query_tab = true, p_name
 
     let tabulator = new Tabulator(v_divProperties, {
       columnDefaults: {
-        headerHozAlign: "center",
+        headerHozAlign: "left",
         headerSort: false,
       },
       data: [],
       columns: [
         {
-          title: "Property",
+          title: "property",
           field: "0",
           resizable: false,
         },
         {
-          title: "Value",
+          title: "value",
           field: "1",
           resizable: false,
         },
