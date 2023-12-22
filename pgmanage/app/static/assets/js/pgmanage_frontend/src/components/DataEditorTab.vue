@@ -80,7 +80,7 @@ export default {
       queryFilter: '',
       rowLimit: 10,
       dataLoaded: false,
-      heightSubtract: 200,
+      heightSubtract: 200, //default safe value, recalculated in handleResize
       tabulator: null
     };
   },
@@ -102,6 +102,7 @@ export default {
     }
   },
   mounted() {
+    this.handleResize()
     this.tabulator = new Tabulator(this.$refs.tabulator, {
       height: `calc(100vh - ${this.heightSubtract}px)`,
       layout: 'fitDataStretch',
@@ -117,7 +118,6 @@ export default {
 
     this.knex = Knex({ client: this.dialect || 'postgres'})
     this.getTableColumns().then(this.getTableData)
-    this.handleResize()
   },
   methods: {
     actionsFormatter(cell, formatterParams, onRendered) {
