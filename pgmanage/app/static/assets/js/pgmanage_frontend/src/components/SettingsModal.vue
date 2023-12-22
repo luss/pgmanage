@@ -439,13 +439,6 @@ export default {
 
     this.applyThemes()
 
-    settingsStore.$onAction((action) => {
-      if (action.name === "setAutocomplete") {
-        action.after(() => {
-          this.saveSettingsUser();
-        })
-      }
-    });
   },
   methods: {
     getShortcuts() {
@@ -608,7 +601,6 @@ export default {
           "binary_path": this.binaryPath,
           "date_format": this.selectedDateFormat,
           "pigz_path": this.pigzPath,
-          "autocomplete": settingsStore.enableAutocomplete,
         })
           .then((resp) => {
             $('#modal_settings').modal('hide');
