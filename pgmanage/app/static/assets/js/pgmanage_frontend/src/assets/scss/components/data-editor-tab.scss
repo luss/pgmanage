@@ -3,7 +3,7 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-        margin-left: -8px;
+        margin-left: -0.5rem;
 
         @include themify() {
             background: themed($surfaceBgTertiary);
