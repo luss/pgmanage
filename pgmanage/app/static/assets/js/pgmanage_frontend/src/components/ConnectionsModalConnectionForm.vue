@@ -204,7 +204,7 @@
   <div class="modal-footer mt-auto justify-content-between w-100">
     <ConfirmableButton v-if="connectionLocal.id" :callbackFunc="deleteConnection" class="btn btn-danger" />
     <button type="button"
-      @click="trySave(this.connectionLocal)"
+      @click="trySave()"
       :disabled="connectionLocal.locked"
       class="btn btn-primary ml-auto">Save changes</button>
   </div>
@@ -450,7 +450,7 @@ import ConfirmableButton from './ConfirmableButton.vue'
         let event = new CustomEvent('connection:selected', { detail: connection })
         document.dispatchEvent(event)
       },
-      trySave(connection) {
+      trySave() {
         this.v$.connectionLocal.$validate()
         if(!this.v$.$invalid) {
           this.$emit('connection:save', this.connectionLocal)
