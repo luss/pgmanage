@@ -30,6 +30,8 @@ import { resizeSnippetPanel, resizeSnippetHorizontal } from '../workspace'
 import { createTabControl } from '../tabs';
 
 var toggleSnippetPanel = function(p_set_state = false) {
+  $('.omnidb__panel-view--full').removeClass('omnidb__panel-view--full');
+
   let v_element = $('#' + v_connTabControl.snippet_tag.divPanel.getAttribute('id'));
   var v_snippet_tag = v_connTabControl.snippet_tag;
 
