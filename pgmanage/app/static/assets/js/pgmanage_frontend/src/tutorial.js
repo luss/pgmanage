@@ -33,6 +33,8 @@ function startTutorial(p_tutorial_name) {
   if (v_omnis.omnis_ui_assistant) {
     v_omnis.omnis_ui_assistant.self_destruct();
   }
+  // workaround to prevent ability to scroll the app UI while side-panel "waves" are shown
+  $('body').css('overflow','hidden');
   // Disabling interactions with omnis.
   v_omnis.div.classList.add('omnis--active');
   // Instantiate the component.
@@ -508,7 +510,7 @@ function startTutorial(p_tutorial_name) {
         </ol>
         `,
         p_position: function() {
-          let v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.result-div')[0]; 
+          let v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.result-div')[0];
           if (!v_target) {
             v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.ace_editor')[0]
           }
