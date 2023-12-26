@@ -423,10 +423,12 @@ function refreshOuterConnectionHeights() {
   }
 }
 
-function addDbTreeHeader(header_div, tab_id, database_name) {
+function addDbTreeHeader(header_div, tab_id, database_name, conn_id) {
   let autocomplete_btn_id = `autocomplete_toggler_${tab_id}`
+  let connection = connectionsStore.getConnection(conn_id)
+
   let autocomplete_switch_status =
-    settingsStore.enableAutocomplete !== false
+    connection.autocomplete !== false
       ? " checked "
       : "";
 
@@ -442,7 +444,7 @@ function addDbTreeHeader(header_div, tab_id, database_name) {
   </div>`;
 
   let autocomplete_btn = document.getElementById(`${autocomplete_btn_id}`)
-  autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id) }
+  autocomplete_btn.onchange = function() { toggleConnectionAutocomplete(autocomplete_btn_id, connection.id) }
 }
 
 export { v_createConnTabFunction, refreshOuterConnectionHeights, addDbTreeHeader }

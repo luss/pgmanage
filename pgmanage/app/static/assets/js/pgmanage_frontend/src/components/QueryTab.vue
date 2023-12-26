@@ -2,7 +2,7 @@
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
       <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
-        :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)"/>
+        :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
     </pane>
 
     <pane size="70" class="px-2 border-top">
@@ -122,6 +122,7 @@ import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
+import { connectionsStore } from '../stores/connections.js'
 
 
 export default {
@@ -190,6 +191,9 @@ export default {
     queryModes() {
       return queryModes;
     },
+    autocomplete() {
+      return connectionsStore.getConnection(this.databaseIndex).autocomplete
+    }
   },
   mounted() {
     this.setupEvents();

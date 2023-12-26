@@ -15,6 +15,11 @@ const useConnectionsStore = defineStore({
     remote_terminals: (state) =>
       state.connections.filter((conn) => conn.technology === "terminal"),
   },
+  actions: {
+    getConnection(conn_id) {
+      return this.connections.find((conn) => conn.id === conn_id)
+    }
+  }
 });
 
 const connectionsStore = useConnectionsStore();

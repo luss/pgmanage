@@ -48,7 +48,6 @@ import { startLoading } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
-import { settingsStore } from './stores/settings'
 import { startTutorial } from './tutorial'
 import { welcomeScreenInit } from './tab_functions/welcome_screen'
 
@@ -1253,9 +1252,13 @@ function uiCopyTextToClipboard(p_value) {
   showAlert('<b>Text copied:</b> \n<div class="mt-2 p-2 border-1 omnidb__theme-bg--light"><code>' + p_value + '</code></div>');
 }
 
-function toggleConnectionAutocomplete(p_toggler_id) {
-  let checked = document.getElementById(p_toggler_id).checked;
-  settingsStore.setAutocomplete(checked)
+function toggleConnectionAutocomplete(toggler_id, conn_id) {
+  let checked = document.getElementById(toggler_id).checked;
+
+  let connection = connectionsStore.getConnection(conn_id)
+
+  connection.autocomplete = checked
+  emitter.emit('connection-save', connection)
 }
 
 export {

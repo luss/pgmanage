@@ -522,7 +522,7 @@ function getTreeOracle(div) {
     v_connTabControl.selectedTab.tree = app
 
     let tab_tag = v_connTabControl.selectedTab.tag
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase)
+    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase, tab_tag.selectedDatabaseIndex)
 }
 
 

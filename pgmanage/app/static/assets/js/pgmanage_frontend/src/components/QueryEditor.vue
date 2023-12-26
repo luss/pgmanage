@@ -158,14 +158,14 @@ export default {
       });
     },
     autocompleteKeyDown(event) {
-      if (settingsStore.enableAutocomplete) {
+      if (this.autocomplete) {
         autocomplete_keydown(this.editor, event);
       } else {
         autocomplete_update_editor_cursor(this.editor, event);
       }
     },
     autocompleteStart(event, force = null) {
-      if (settingsStore.enableAutocomplete) {
+      if (this.autocomplete) {
         autocomplete_start(this.editor, this.autocompleteMode, event, force);
       }
     },

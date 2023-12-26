@@ -71,7 +71,7 @@
         </div>
       </div>
       <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
-        :dialect="dialect" @editor-change="updateEditorContent" />
+        :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
     </pane>
   </splitpanes>
 
@@ -88,6 +88,7 @@ import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
 import { createRequest } from "../long_polling";
 import { settingsStore } from "../stores/settings";
+import { connectionsStore } from "../stores/connections";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
@@ -139,6 +140,9 @@ export default {
     postgresqlDialect() {
       return this.dialect === "postgresql";
     },
+    autocomplete() {
+      return connectionsStore.getConnection(this.databaseIndex).autocomplete
+    }
   },
   mounted() {
     this.setupTerminal();

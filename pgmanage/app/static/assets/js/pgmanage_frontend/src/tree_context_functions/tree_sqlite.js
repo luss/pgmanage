@@ -58,7 +58,7 @@ function getTreeSqlite(div) {
 
     let tab_tag = v_connTabControl.selectedTab.tag
     let databaseName = truncateText(tab_tag.selectedDatabase, 10)
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, databaseName)
+    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, databaseName, tab_tag.selectedDatabaseIndex)
 }
 
 /// <summary>

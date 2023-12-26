@@ -53,7 +53,8 @@ def get_connections(request, session):
                 },
                 'connection_params': conn.connection_params,
                 'last_used_database': conn.last_used_database,
-                'last_access_date': conn.last_access_date
+                'last_access_date': conn.last_access_date,
+                'autocomplete': conn.autocomplete,
             }
             database_object = session.v_databases.get(conn.id)
 
@@ -380,6 +381,7 @@ def save_connection(request, session):
 
             conn.use_tunnel = conn_object['tunnel']['enabled']
             conn.conn_string = conn_object['conn_string']
+            conn.autocomplete = conn_object.get('autocomplete')
             conn.save()
 
 
