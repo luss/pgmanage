@@ -1224,7 +1224,8 @@ function close_autocomplete(p_additional_text) {
     if (!!p_additional_text) {
       v_editor.session.replace(v_autocomplete_object.range, p_additional_text);
     }
-    v_editor.focus();
+    if(v_autocomplete_object.active)
+      v_editor.focus();
   }
 }
 
