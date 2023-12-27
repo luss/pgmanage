@@ -3226,7 +3226,8 @@ export default {
               addDbTreeHeader(
                 tab_tag.divDetails,
                 this.tabId,
-                node.data.database
+                node.data.database,
+                this.databaseIndex,
               );
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
