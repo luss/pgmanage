@@ -5,7 +5,8 @@ set -e -e
 
 APP_VERSION="$1"
 REPO="https://github.com/commandprompt/pgmanage"
-BRANCH="master"
+
+BRANCH="${2:-master}"
 DEPLOY_DIR=$(pwd)
 TEMP_DIR=$DEPLOY_DIR/tmp
 
@@ -39,7 +40,7 @@ source venv/Scripts/activate
 # Install all required libraries
 echo "installing python dependencies"
 pip3 install -r requirements.txt
-pip3 install pyinstaller==5.13.0
+pip3 install pyinstaller==5.13.2
 
 cd pgmanage/
 
