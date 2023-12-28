@@ -75,9 +75,16 @@
 
                 <div class="form-group col-6">
                   <label for="txt_csv_delimiter" class="font-weight-bold mb-2">CSV Delimiter</label>
-                  <input type="text" class="form-control" id="txt_csv_delimiter" placeholder="Delimiter"
+                  <input type="text" id="txt_csv_delimiter" placeholder="Delimiter"
+                    :class="['form-control', { 'is-invalid': v$.csvDelimiter.$invalid }]"
                     v-model="csvDelimiter">
+                  <div class="invalid-feedback">
+                    <span v-for="error of v$.csvDelimiter.$errors" :key="error.$uid">
+                      {{ error.$message }}
+                    </span>
+                  </div>
                 </div>
+
               </div>
 
               <div class="form-row">
@@ -182,6 +189,9 @@ import moment from 'moment'
 import { emitter } from '../emitter'
 import { settingsStore } from '../stores/settings'
 
+import { useVuelidate } from '@vuelidate/core'
+import { required, maxLength } from '@vuelidate/validators'
+
 const light_terminal_theme = {
       background: '#FFFFFF',
       brightBlue: '#006de2',
@@ -245,6 +255,18 @@ export default {
       ],
       dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A']
     }
+  },
+  validations() {
+    let baseRules = {
+      csvDelimiter: {
+        required: required,
+        maxLength: maxLength(1),
+      }
+    }
+    return baseRules
+  },
+  setup() {
+    return { v$: useVuelidate({ $lazy: true }) }
   },
   computed: {
     fontSizeOptions() {
@@ -592,24 +614,27 @@ export default {
       else if ((this.password === this.passwordConfirm) && (this.password.length < 8 && this.password.length >= 1))
         showToast("error", "New Password and Confirm New Password fields must be longer than 8.")
       else {
-        axios.post('/save_config_user/', {
-          "font_size": this.fontSize,
-          "theme": this.theme,
-          "password": this.password,
-          "csv_encoding": this.selectedCSVEncoding,
-          "csv_delimiter": this.csvDelimiter,
-          "binary_path": this.binaryPath,
-          "date_format": this.selectedDateFormat,
-          "pigz_path": this.pigzPath,
-        })
-          .then((resp) => {
-            $('#modal_settings').modal('hide');
-            moment.defaultFormat = this.selectedDateFormat
-            showToast("success", "Configuration saved.");
+        this.v$.csvDelimiter.$validate()
+        if(!this.v$.$invalid) {
+          axios.post('/save_config_user/', {
+            "font_size": this.fontSize,
+            "theme": this.theme,
+            "password": this.password,
+            "csv_encoding": this.selectedCSVEncoding,
+            "csv_delimiter": this.csvDelimiter,
+            "binary_path": this.binaryPath,
+            "date_format": this.selectedDateFormat,
+            "pigz_path": this.pigzPath,
           })
-          .catch((error) => {
-            console.log(error)
-          })
+            .then((resp) => {
+              $('#modal_settings').modal('hide');
+              moment.defaultFormat = this.selectedDateFormat
+              showToast("success", "Configuration saved.");
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
       }
     },
     checkPassword() {
