@@ -444,7 +444,7 @@ var resizeSnippetPanel = async function(p_left_pos_x = false) {
         }
         v_snippet_tag.divPanel.style.height = v_target_tag_div_result_top + 'px';
         v_snippet_tag.divTree.style.height = v_target_tag_div_result_top + 'px';
-        v_inner_snippet_tag.editorDiv.style.height = v_target_tag_div_result_top - (7)*v_font_size + 'px';
+        v_inner_snippet_tag.editorDiv.style.height = v_target_tag_div_result_top - $(v_snippet_tag.divRight).find('.row').height() * 2 + 'px'
         v_inner_snippet_tag.editor.resize();
       }
     });
@@ -707,7 +707,6 @@ $(window).resize(function() {
 /// Refresh divs sizes and components of the currently selected tab
 /// </summary>
 function refreshHeights(p_all) {
-
   setTimeout(function(){
     //Adjusting tree height
     // if (p_all) {
