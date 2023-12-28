@@ -104,22 +104,6 @@ $(function () {
   // Creating the snippets panel.
   v_connTabControl.tag.createSnippetPanel();
 
-  passwordModalsInit()
-  // Ask for master password
-  if (master_key === 'new') {
-    showNewMasterPassPrompt(`Please set your master password. It will be used to secure your connection credentials.`);
-  } else if (master_key == 'False'){
-    showMasterPassPrompt(`Please provide your master password to unlock your connection credentials for this session.`);
-  } else {
-    conn_app.mount("#connections-modal-wrap");
-  }
-
-  // Updating explain component choice.
-  updateExplainComponent();
-
-  // Retrieving global snippets
-  getAllSnippets();
-
   // Creating omnis.
   v_omnis.root = document.getElementById('omnidb__main');
   v_omnis.div = document.createElement('div');
@@ -128,11 +112,29 @@ $(function () {
   v_omnis.div.style.top = v_omnis.root.getBoundingClientRect().height - 45 + 'px';
   v_omnis.div.style.left = v_omnis.root.getBoundingClientRect().width - 45 + 'px';
   v_omnis.div.style['z-index'] = '99999999';
+  v_omnis.div.style.opacity = 0
   v_omnis.div.innerHTML = v_omnis.template;
   document.body.appendChild(v_omnis.div);
   v_omnis.div.addEventListener('click',function(){
     startTutorial('getting_started');
   });
+
+  passwordModalsInit()
+  // Ask for master password
+  if (master_key === 'new') {
+    showNewMasterPassPrompt(`Please set your master password. It will be used to secure your connection credentials.`);
+  } else if (master_key == 'False'){
+    showMasterPassPrompt(`Please provide your master password to unlock your connection credentials for this session.`);
+  } else {
+    conn_app.mount("#connections-modal-wrap");
+    v_omnis.div.style.opacity = 1
+  }
+
+  // Updating explain component choice.
+  updateExplainComponent();
+
+  // Retrieving global snippets
+  getAllSnippets();
 
   // Loads or Updates all tooltips.
   $('[data-toggle="tooltip"]').tooltip({animation:true});
