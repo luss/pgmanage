@@ -113,7 +113,7 @@
                       <div v-if="desktopMode" class="input-group-append">
                         <label class="btn btn-outline-secondary mb-0" type="button">
                           Select
-                          <input type="file" @change="onFile" nwdirectory hidden>
+                          <input type="file" @change="setPostgresqlPath" nwdirectory hidden>
                         </label>
                       </div>
                     </div>
@@ -134,7 +134,7 @@
                       <div v-if="desktopMode" class="input-group-append">
                         <label class="btn btn-outline-secondary mb-0" type="button">
                           Select
-                          <input type="file" @change="onFile" nwdirectory hidden>
+                          <input type="file" @change="setPigzPath" nwdirectory hidden>
                         </label>
                       </div>
                     </div>
@@ -706,9 +706,13 @@ export default {
           showToast("error", error.response.data.data)
         })
     },
-    onFile(e) {
+    setPostgresqlPath(e) {
       const [file] = e.target.files
       this.binaryPath = file?.path
+    },
+    setPigzPath(e) {
+      const [file] = e.target.files
+      this.pigzPath = file?.path
     },
   }
 }
