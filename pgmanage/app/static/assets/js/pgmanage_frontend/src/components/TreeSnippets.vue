@@ -45,7 +45,7 @@ export default {
           isDraggable: false,
           data: {
             icon: "fas node-all fa-list-alt node-snippet-list",
-            type: "node",
+            type: "folder",
             contextMenu: "cm_node_root",
             id: null,
           },
@@ -79,7 +79,7 @@ export default {
             label: "New Folder",
             icon: "fas cm-all fa-folder-plus",
             onClick: () => {
-              this.newNodeSnippet(this.selectedNode, "node");
+              this.newNodeSnippet(this.selectedNode, "folder");
             },
           },
           {
@@ -141,7 +141,7 @@ export default {
     },
     refreshTree(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
-      if (node.data.type === "node") {
+      if (node.data.type === "folder") {
         this.getChildSnippetNodes(node);
       }
     },
@@ -164,7 +164,6 @@ export default {
                 id: el.id,
                 id_parent: node.data.id,
                 name: el.name,
-                parent: node,
               },
               true
             );
@@ -173,12 +172,11 @@ export default {
           resp.data.list_nodes.forEach((el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-folder node-snippet-folder",
-              type: "node",
+              type: "folder",
               contextMenu: "cm_node",
               id: el.id,
               id_parent: node.data.id,
               name: el.name,
-              parent: node,
             });
           });
         })

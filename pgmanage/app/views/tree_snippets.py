@@ -89,7 +89,7 @@ def new_node_snippet(request):
 
     try:
         new_date = make_aware(datetime.now())
-        if mode == "node":
+        if mode == "folder":
             folder = SnippetFolder(
                 user=request.user,
                 parent=parent,
