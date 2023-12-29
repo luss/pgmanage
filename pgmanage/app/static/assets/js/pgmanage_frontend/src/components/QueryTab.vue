@@ -2,7 +2,7 @@
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
       <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
-        :dialect="dialect" @editor-change="updateEditorContent" />
+        :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
     </pane>
 
     <pane size="70" class="px-2 border-top">
@@ -18,9 +18,10 @@
           </button>
 
           <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History"
-            @click="showCommandList()">
+            @click="showCommandsHistory()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
+
 
           <template v-if="postgresqlDialect">
             <!-- EXPLAIN ANALYZE BUTTONS-->
@@ -106,7 +107,7 @@
     </pane>
   </splitpanes>
 
-  <CommandsHistoryModal :tab-id="tabId" />
+  <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
 </template>
 
 <script>
@@ -114,19 +115,15 @@ import { Splitpanes, Pane } from "splitpanes";
 import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { v_queryRequestCodes } from "../query";
-import { registerAllModules } from "handsontable/registry";
-import { queryModes, queryState, tabStatusMap } from "../constants";
+import { queryModes, requestState, tabStatusMap, queryRequestCodes } from "../constants";
 import CancelButton from "./CancelSQLButton.vue";
 import QueryEditor from "./QueryEditor.vue";
 import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
-import { showCommandList } from "../command_history";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
+import { connectionsStore } from '../stores/connections.js'
 
-// register Handsontable's modules
-registerAllModules();
 
 export default {
   name: "QueryTab",
@@ -149,13 +146,14 @@ export default {
   },
   data() {
     return {
-      queryState: queryState.Idle,
+      queryState: requestState.Idle,
       tabStatus: tabStatusMap.NOT_CONNECTED,
       autocommit: true,
       queryStartTime: "",
       queryDuration: "",
-      tempData: "",
-      tempContext: "",
+      data: "",
+      context: "",
+      tempData: [],
       tabDatabaseId: this.initTabDatabaseId,
       cancelled: false,
       enableExplainButtons: false,
@@ -170,6 +168,8 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
+      commandsModalVisible: false,
+      lastQuery: null
     };
   },
   computed: {
@@ -177,10 +177,10 @@ export default {
       return this.dialect === "postgresql";
     },
     idleState() {
-      return this.queryState === queryState.Idle;
+      return this.queryState === requestState.Idle;
     },
     executingState() {
-      return this.queryState === queryState.Executing;
+      return this.queryState === requestState.Executing;
     },
     activeTransaction() {
       return [
@@ -191,6 +191,9 @@ export default {
     queryModes() {
       return queryModes;
     },
+    autocomplete() {
+      return connectionsStore.getConnection(this.databaseIndex).autocomplete
+    }
   },
   mounted() {
     this.setupEvents();
@@ -216,12 +219,14 @@ export default {
       this.cancelled = false;
       this.showFetchButtons = false;
       this.longQuery = false;
+      this.tempData = [];
+      this.lastQuery = query
 
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
       } else {
         if (!query) {
-          showToast("info", "Please provice a string.");
+          showToast("info", "Please provide a string.");
         } else {
           let message_data = {
             sql_cmd: query,
@@ -261,9 +266,9 @@ export default {
 
           context.tab_tag.context = context;
 
-          createRequest(v_queryRequestCodes.Query, message_data, context);
+          createRequest(queryRequestCodes.Query, message_data, context);
 
-          this.queryState = queryState.Executing;
+          this.queryState = requestState.Executing;
 
           setTimeout(() => {
             this.longQuery = true;
@@ -278,6 +283,10 @@ export default {
       }
     },
     querySQLReturn(data, context) {
+      if (!data.v_error) {
+        this.tempData = this.tempData.concat(data.v_data.data)
+      }
+
       //Update tab_db_id if not null in response
       if (data.v_data.inserted_id) {
         this.tabDatabaseId = data.v_data.inserted_id;
@@ -285,16 +294,18 @@ export default {
 
       //If query wasn't canceled already
 
-      if (!this.idleState) {
+      if (!this.idleState && (data.v_data.last_block || data.v_data.file_name || data.v_error )) {
+        data.v_data.data = this.tempData;
+
         if (
           this.tabId === context.tab_tag.tabControl.selectedTab.id &&
           this.connId ===
           context.tab_tag.connTab.tag.connTabControl.selectedTab.id
         ) {
-          this.tempContext = "";
-          this.tempData = "";
+          this.context = "";
+          this.data = "";
           this.readOnlyEditor = false;
-          this.queryState = queryState.Idle;
+          this.queryState = requestState.Idle;
 
           this.$refs.queryResults.renderResult(data, context);
 
@@ -305,9 +316,9 @@ export default {
           context.tab_tag.tab_loading_span.style.visibility = "hidden";
           context.tab_tag.tab_check_span.style.display = "none";
         } else {
-          this.queryState = queryState.Ready;
-          this.tempData = data;
-          this.tempContext = context;
+          this.queryState = requestState.Ready;
+          this.data = data;
+          this.context = context;
 
           //FIXME: change into event emitting later
           context.tab_tag.tab_loading_span.style.visibility = "hidden";
@@ -340,9 +351,9 @@ export default {
         );
       }
     },
-    queryRunOrExplain() {
+    queryRunOrExplain(use_raw_query=true) {
+      let query = this.getQueryEditorValue(use_raw_query)
       if (this.dialect === "postgresql") {
-        let query = this.getQueryEditorValue(true);
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
         if (should_explain) {
@@ -350,17 +361,17 @@ export default {
             this.queryModes.DATA_OPERATION,
             "explain",
             true,
-            this.getQueryEditorValue(true),
+            query,
             false
           );
         }
       }
 
-      this.querySQL(this.queryModes.DATA_OPERATION);
+      this.querySQL(this.queryModes.DATA_OPERATION, null, false, query=query)
     },
     exportData() {
       let cmd_type = `export_${this.exportType}`;
-      let query = this.getQueryEditorValue(true);
+      let query = this.lastQuery || this.getQueryEditorValue(true)
       this.querySQL(
         this.queryModes.DATA_OPERATION,
         cmd_type,
@@ -374,13 +385,13 @@ export default {
     cancelSQLTab() {
       this.readOnlyEditor = false;
 
-      this.queryState = queryState.Idle;
+      this.queryState = requestState.Idle;
       this.tabStatus = tabStatusMap.NOT_CONNECTED;
 
       this.cancelled = true;
     },
     indentSQL() {
-      emitter.emit(`${this.connId}_indent_sql`)
+      emitter.emit(`${this.connId}_indent_sql`);
     },
     updateEditorContent(newContent) {
       this.editorContent = newContent;
@@ -407,8 +418,8 @@ export default {
     setupEvents() {
       emitter.on(`${this.tabId}_check_query_status`, () => {
         this.$refs.editor.focus();
-        if (this.queryState === queryState.Ready) {
-          this.$refs.queryResults.renderResult(this.tempData, this.tempContext);
+        if (this.queryState === requestState.Ready) {
+          this.$refs.queryResults.renderResult(this.data, this.context);
         }
       });
 
@@ -417,6 +428,10 @@ export default {
           emitter.emit(`${this.tabId}_copy_to_editor`, sql_command);
         }
         this.queryRunOrExplain();
+      });
+
+      emitter.on(`${this.tabId}_run_selection`, (sql_command) => {
+        this.queryRunOrExplain(false)
       });
 
       emitter.on(`${this.tabId}_run_explain`, () => {
@@ -433,7 +448,9 @@ export default {
       emitter.all.delete(`${this.tabId}_run_explain_analyze`);
       emitter.all.delete(`${this.tabId}_run_query`);
     },
-    showCommandList,
+    showCommandsHistory() {
+      this.commandsModalVisible = true
+    }
   },
 };
 </script>

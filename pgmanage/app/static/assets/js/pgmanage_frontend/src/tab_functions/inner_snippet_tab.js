@@ -80,7 +80,7 @@ var v_createSnippetTextTabFunction = function(p_snippet = null) {
 
   var v_html =
   '<div id="txt_snippet_' + v_tab.id + '" style="width: 100%; height: 200px;"></div>' +
-  '<div class="row mt-2">' +
+  '<div class="row mt-2 px-2">' +
     '<div class="tab_actions omnidb__tab-actions col-12">' +
       '<button id="bt_indent_' + v_tab.id + '" class="btn btn-secondary omnidb__tab-actions__btn" title="Indent SQL"><i class="fas fa-indent mr-2"></i>Indent</button>' +
       '<button id="bt_save_' + v_tab.id + '" class="btn btn-primary omnidb__tab-actions__btn" title="Save" style="margin-top: 5px; margin-bottom: 5px; margin-right: 5px; display: inline-block;"><i class="fas fa-save mr-2"></i>Save</button>' +

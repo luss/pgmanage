@@ -63,6 +63,38 @@ python3.9 -mvenv .env
     - Username: admin
     - Password: admin
 
+# PgManage 1.0 RC 1
+
+## Release Date: Jan 4 2024
+
+## Release Notes
+
+ - New features:
+   - new welcome screen which displays app shortcuts and recent connections list
+   - added "run selection" feature in query editor
+   - autocomplete setting is now stored separately for each DB connection
+   - added SQLite3 support in table editor
+
+ - Major Bugs fixed:
+   - various layout fixes on snippets panel
+   - fixed memory leak in snippets panel tree view
+   - fixed postgres binary path corruption when pigz binary path is changed in settings dialog
+   - added snippet and snippet folder name validation
+   - added CSV delimiter validation in app settings
+   - multiple fixes in Getting Started wizard
+   - fixed query editor re-focusing when autocomplete widget closes
+   - added connection group name validation
+   - fixed disabled DB connection string input when creating new connection
+
+ - UI/UX Improvements:
+   - slightly improved app startup speed
+
+ - Other changes
+   - improved error handling when app back-end is down or unavailable due to network issues
+   - application data grids migrated from Handsontable to Tabulator.js
+   - updated Vuejs and Bootstrap libraries
+
+
 # PgManage 1.0 Beta 3
 
 ## Release Date: Nov 4 2023

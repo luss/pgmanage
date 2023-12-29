@@ -33,6 +33,8 @@ function startTutorial(p_tutorial_name) {
   if (v_omnis.omnis_ui_assistant) {
     v_omnis.omnis_ui_assistant.self_destruct();
   }
+  // workaround to prevent ability to scroll the app UI while side-panel "waves" are shown
+  $('body').css('overflow','hidden');
   // Disabling interactions with omnis.
   v_omnis.div.classList.add('omnis--active');
   // Instantiate the component.
@@ -208,7 +210,7 @@ function startTutorial(p_tutorial_name) {
       {
         p_message: `
         <p>Type the port of the server.</p>
-        <p>i.e: PostgreSQL uses 5432 by default, but if you are using pgbouncer, you may want to use 6432 as the entry point.</p>
+        <p>i.e: PostgreSQL uses 5432 by default.<br>If you are using pgbouncer, you may want to use 6432 as the entry point.</p>
         `,
         p_target: function() {var v_target = document.getElementById('connectionPort'); return v_target},
         p_title: 'Port'
@@ -223,7 +225,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_message: `
-        <p>Type the name of the user with priviledges to access the database.</p>
+        <p>Type the name of the user with privileges to access the database.</p>
         <p>i.e: postgres.</p>
         `,
         p_target: function() {var v_target = document.getElementById('connectionUsername'); return v_target},
@@ -240,7 +242,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_message: `
-        <p>You may want to hit 'test' before saving the conntion.</p>
+        <p>You may want to hit 'Test' before saving the connection.</p>
         <p>After that, click save.</p>
         `,
         p_target: function() {var v_target = document.getElementById('connectionTestButton'); return v_target},
@@ -411,16 +413,16 @@ function startTutorial(p_tutorial_name) {
     'selecting_connection': [
       {
         p_message: `
-        <p>The <strong>outer_tab</strong> contains global panels related to workspace and also access to created connections.</p>
+        <p>The side panel allows you to switch between open Database Sessions and access Homepage and Snippets.</p>
         <ol style="padding-left: 1.5rem;">
           <li class="mb-2">
             To access a connection, click on the <i class="fas fa-bolt"></i> button.
           </li>
           <li class="mb-2">
-            Navigate to the proper technology on the custom menu.
+            Navigate to the proper connection group.
           </li>
           <li class="mb-2">
-            Click on the connection.
+            Click on the connection item.
           </li>
         </ol>
         <p>Now you can close this walkthrough and open a new connection.</p>
@@ -457,7 +459,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_message: `
-        <p>These tabs provide additional info to the node you interact with in the Aimara Tree.</p>
+        <p>These tabs provide additional info on the node selcted in the Database Object Tree.</p>
         <p>Keep in mind that every node interaction that returns this type of info needs to query for consistency.</p>
         <p>To minimize queries, these only run when one of these tabs is visible.</p>
         <p><strong>Recommendation</strong>: Only open the property/ddl when you need to update this info.</p>
@@ -467,7 +469,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_message: `
-        <p>There are two types of inner_tabs available.</p>
+        <p>There are multiple types of tabs available.</p>
         <ol style="padding-left: 1.5rem;">
           <li class="mb-1">
             <strong><i class="fas fa-terminal"></i> Console Tab</strong>: Contains a psql console.
@@ -475,8 +477,13 @@ function startTutorial(p_tutorial_name) {
           <li class="mb-1">
             <strong>Query Tabs</strong>: These have SQL editors whose commands are executed on the selected database.
           </li>
+          <li class="mb-1">
+          <strong>Monitoring Dashboard</strong>: Displays various performance metrics for the current DB connection.
+          </li>
+          <li class="mb-1">
+          <strong>Backends</strong>: Displays a list of running database server backends of the current DB connection.
+        </li>
         </ol>
-        <div class="alert-info p-2">Keep in mind that when you run a query from the contextual menu of the Aimara Tree, it will open a new query tab and execute it.</div>
         `,
         p_target: function(){var v_target = v_connTabControl.selectedTab.tag.tabControl.tabList[0].elementA; return v_target;},
         p_title: 'Inner Tabs'
@@ -508,7 +515,7 @@ function startTutorial(p_tutorial_name) {
         </ol>
         `,
         p_position: function() {
-          let v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.result-div')[0]; 
+          let v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.result-div')[0];
           if (!v_target) {
             v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.ace_editor')[0]
           }

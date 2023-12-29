@@ -19,7 +19,6 @@ class UserDetails(models.Model):
     binary_path = models.CharField(max_length=256, null=True)
     date_format = models.CharField(max_length=200, null=True)
     pigz_path = models.CharField(max_length=256, null=True)
-    autocomplete = models.BooleanField(default=True)
 
     def get_pigz_path(self):
 
@@ -70,6 +69,8 @@ class Connection(models.Model):
     public = models.BooleanField(default=False)
     connection_params = models.JSONField(default=dict)
     last_used_database = models.CharField(max_length=200, null=True)
+    last_access_date = models.DateTimeField(null=True)
+    autocomplete = models.BooleanField(default=True)
 
 class SnippetFolder(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -146,7 +147,7 @@ class ConfigHistory(models.Model):
     start_time = models.DateTimeField()
     config_snapshot = models.TextField(blank=False)
     commit_comment = models.TextField(blank=True)
-    
+
 
 class Job(models.Model):
     id = models.TextField(null=False, primary_key=True)

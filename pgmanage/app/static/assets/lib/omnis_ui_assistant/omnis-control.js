@@ -199,6 +199,8 @@ function createOmnisUiAssistant({p_callback_end = false, p_omnis, p_steps = []})
                 v_control.divClonedElement.style.left = v_target_bounding_rect_left;
                 v_control.divClonedElement.style.top = v_target_bounding_rect_top;
                 v_cloned_element.style.width = v_target_bounding_rect_width;
+                let clone_z_index = window.getComputedStyle(v_target).getPropertyValue('z-index')-1
+                v_control.divWavesElement.style.zIndex = clone_z_index;
                 v_control.updateClonedElementContent(v_cloned_element);
                 v_control.divBackdropElement.style.display = '';
                 v_cloned_element.addEventListener('click',function(){v_control.goToStep(v_control.stepSelected + 1)});
@@ -353,6 +355,7 @@ function createOmnisUiAssistant({p_callback_end = false, p_omnis, p_steps = []})
     },
     setStateDisabled: function() {
       this.stateActive = false;
+      $('body').css('overflow','unset');
       this.renderStep();
     },
     updateClonedElementContent: function(p_content_element) {

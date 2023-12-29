@@ -22,10 +22,11 @@ $theme-map: null; //important! do not delete this
 @import './components/schema-editor';
 @import './components/vue-power-tree';
 @import './components/erd-card';
-@import './components/handsontable';
+@import './components/tabulator';
 @import './components/data-editor-tab';
 @import './components/splitpanes';
 @import './components/bootstrap-tooltips';
+@import './components/welcome-screen';
 
 body {
     font-family: $fontFamily;
@@ -39,5 +40,5 @@ body {
 }
 
 .xterm-screen {
-    padding: 1rem;
+    padding: 0.5rem 1rem;
 }

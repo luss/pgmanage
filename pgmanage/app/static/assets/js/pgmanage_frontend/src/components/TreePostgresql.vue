@@ -3226,7 +3226,8 @@ export default {
               addDbTreeHeader(
                 tab_tag.divDetails,
                 this.tabId,
-                node.data.database
+                node.data.database,
+                this.databaseIndex,
               );
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
@@ -3261,7 +3262,7 @@ export default {
     getPropertiesConfirm(node) {
       let schema = node.data.schema_raw ? node.data.schema_raw : null;
       let table = null;
-      let object = node.data.raw_value;
+      let object = node.data.raw_value ?? node.title;
       let handledTypes = [
         "role",
         "tablespace",

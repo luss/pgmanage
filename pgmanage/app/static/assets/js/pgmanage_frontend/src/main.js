@@ -22,6 +22,7 @@ import axios from 'axios'
 import { getCookie } from './ajax_control.js';
 import { showAlert } from './notification_control.js';
 import moment from 'moment';
+import "tabulator-tables/dist/css/tabulator.min.css"
 
 window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
@@ -31,8 +32,10 @@ axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 axios.interceptors.response.use(response => {
   return response;
 }, error => {
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     showAlert('User not authenticated, please reload the page.');
+  } else if (error.code === 'ERR_NETWORK') {
+    showAlert(`${error.message}. Try reloading the application if the issue persists.`)
   }
   return Promise.reject(error);
 });

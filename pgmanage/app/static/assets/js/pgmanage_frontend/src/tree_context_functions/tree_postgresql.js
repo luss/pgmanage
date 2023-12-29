@@ -1083,7 +1083,8 @@ function getTreePostgresql(div) {
     v_connTabControl.selectedTab.tree = app
 
     let tab_tag = v_connTabControl.selectedTab.tag
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase)
+
+    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase, tab_tag.selectedDatabaseIndex)
 }
 
 /// <summary>
@@ -1312,9 +1313,9 @@ function postgresqlTerminateBackendConfirm(pid) {
 
 function postgresqlTerminateBackend(row) {
   createMessageModal(
-    `Are you sure you want to terminate backend ${row[2]}?`,
+    `Are you sure you want to terminate backend ${row.pid}?`,
     function () {
-      postgresqlTerminateBackendConfirm(row[2]);
+      postgresqlTerminateBackendConfirm(row.pid);
     }
   );
 }

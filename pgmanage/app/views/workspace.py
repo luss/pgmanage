@@ -1,9 +1,10 @@
+import json
 import os
 import random
 import string
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 import sqlparse
 from app.client_manager import client_manager
@@ -51,7 +52,6 @@ def index(request):
         "editor_theme": theme,
         "theme": user_details.theme,
         "font_size": user_details.font_size,
-        "autocomplete": user_details.autocomplete,
         "user_id": request.user.id,
         "user_key": request.session.session_key,
         "user_name": request.user.username,
@@ -99,7 +99,6 @@ def save_config_user(request, session):
     binary_path = data["binary_path"]
     date_format = data["date_format"]
     pigz_path = data["pigz_path"]
-    autocomplete = data.get("autocomplete", True)
 
     session.v_theme_id = theme
     session.v_font_size = font_size
@@ -114,7 +113,6 @@ def save_config_user(request, session):
     user_details.binary_path = binary_path
     user_details.date_format = date_format
     user_details.pigz_path = pigz_path
-    user_details.autocomplete = autocomplete
     user_details.save()
 
     request.session["pgmanage_session"] = session
@@ -191,6 +189,7 @@ def change_active_database(request, session):
 
     conn = Connection.objects.get(id=conn_id)
     conn.last_used_database = new_database
+    conn.last_access_date = datetime.now(tz=timezone.utc)
     conn.save()
 
     request.session["pgmanage_session"] = session
@@ -469,10 +468,10 @@ def refresh_monitoring(request, v_database):
 
     try:
         data = v_database.Query(sql, True, True)
+
         response_data["v_data"] = {
-            "v_col_names": data.Columns,
-            "v_data": data.Rows,
-            "v_query_info": f"Number of records: {len(data.Rows)}",
+            "col_names": data.Columns,
+            "data": json.loads(data.Jsonify()),
         }
     except Exception as exc:
         return error_response(message=str(exc), password_timeout=True)

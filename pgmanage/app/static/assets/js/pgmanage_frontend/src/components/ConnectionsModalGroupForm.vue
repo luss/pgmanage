@@ -4,7 +4,13 @@
     <div class="modal-connections__forms_group group-edit-form position-absolute">
       <div class="form-group mb-3">
         <label for="groupName" class="font-weight-bold mb-2">Group Name</label>
-        <input v-model="groupLocal.name" type="text" class="form-control" id="groupName" placeholder="Group name">
+        <input v-model="groupLocal.name" type="text"
+          :class="['form-control', { 'is-invalid': v$.groupLocal.name.$invalid }]" id="groupName" placeholder="Group name">
+        <div class="invalid-feedback">
+          <span v-for="error of v$.groupLocal.name.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </span>
+        </div>
       </div>
 
       <label class="font-weight-bold mb-2">Group connections</label>
@@ -33,12 +39,14 @@
   </div>
   <div class="modal-footer mt-auto justify-content-between w-100">
     <button v-if="groupLocal.id" type="button" @click="$emit('group:delete', this.groupLocal)" class="btn btn-danger">Delete</button>
-    <button type="button" @click="$emit('group:save', this.groupLocal)" class="btn btn-primary ml-auto">Save changes</button>
+    <button type="button" @click="trySave()" class="btn btn-primary ml-auto">Save changes</button>
   </div>
 </div>
 </template>
 
 <script>
+  import { useVuelidate } from '@vuelidate/core'
+  import { required, maxLength } from '@vuelidate/validators'
   export default {
     name: 'ConnectionsModalGroupForm',
     data() {
@@ -49,6 +57,20 @@
           conn_list: []
         },
       }
+    },
+    validations() {
+      let baseRules = {
+        groupLocal: {
+          name: {
+            required: required,
+            maxLength: maxLength(30),
+          },
+        }
+      }
+      return baseRules
+    },
+    setup() {
+      return { v$: useVuelidate({ $lazy: true }) }
     },
     props: {
       visible: Boolean,
@@ -72,6 +94,14 @@
         return [...this.ungroupedConnections, ...this.initialGroup.connections]
           .sort((a, b) => (a.alias > b.alias) ? 1 : -1)
       }
+    },
+    methods: {
+      trySave() {
+        this.v$.groupLocal.$validate()
+        if(!this.v$.$invalid) {
+          this.$emit('group:save', this.groupLocal)
+        }
+      },
     },
     watch: {
       initialGroup(newVal, oldVal) {

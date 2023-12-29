@@ -134,6 +134,7 @@ function saveMasterPass() {
         JSON.stringify({"master_password": v_pwd.value}),
 				function(p_return) {
           conn_app.mount("#connections-modal-wrap");
+          v_omnis.div.style.opacity = 1
           showToast("success", "Master password created.")
 				});
 	}
@@ -178,6 +179,7 @@ function showMasterPassPrompt(p_message) {
       JSON.stringify({"master_password": v_modal_password_input.value}),
       function(p_return) {
         conn_app.mount("#connections-modal-wrap");
+        v_omnis.div.style.opacity = 1
       },
       function(p_return) {
         setTimeout(function() {showMasterPassPrompt(p_return.v_data)}

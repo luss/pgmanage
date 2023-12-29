@@ -75,9 +75,16 @@
 
                 <div class="form-group col-6">
                   <label for="txt_csv_delimiter" class="font-weight-bold mb-2">CSV Delimiter</label>
-                  <input type="text" class="form-control" id="txt_csv_delimiter" placeholder="Delimiter"
+                  <input type="text" id="txt_csv_delimiter" placeholder="Delimiter"
+                    :class="['form-control', { 'is-invalid': v$.csvDelimiter.$invalid }]"
                     v-model="csvDelimiter">
+                  <div class="invalid-feedback">
+                    <span v-for="error of v$.csvDelimiter.$errors" :key="error.$uid">
+                      {{ error.$message }}
+                    </span>
+                  </div>
                 </div>
+
               </div>
 
               <div class="form-row">
@@ -106,7 +113,7 @@
                       <div v-if="desktopMode" class="input-group-append">
                         <label class="btn btn-outline-secondary mb-0" type="button">
                           Select
-                          <input type="file" @change="onFile" nwdirectory hidden>
+                          <input type="file" @change="setPostgresqlPath" nwdirectory hidden>
                         </label>
                       </div>
                     </div>
@@ -127,7 +134,7 @@
                       <div v-if="desktopMode" class="input-group-append">
                         <label class="btn btn-outline-secondary mb-0" type="button">
                           Select
-                          <input type="file" @change="onFile" nwdirectory hidden>
+                          <input type="file" @change="setPigzPath" nwdirectory hidden>
                         </label>
                       </div>
                     </div>
@@ -173,7 +180,6 @@
 <script>
 import { refreshHeights } from '../workspace'
 import { terminalRun } from '../terminal'
-import { queryEditData } from '../tree_context_functions/edit_data'
 import { default_shortcuts } from '../shortcuts'
 import { changeTheme } from '../header_actions'
 import ace from 'ace-builds'
@@ -182,6 +188,9 @@ import { showAlert, showToast } from '../notification_control'
 import moment from 'moment'
 import { emitter } from '../emitter'
 import { settingsStore } from '../stores/settings'
+
+import { useVuelidate } from '@vuelidate/core'
+import { required, maxLength } from '@vuelidate/validators'
 
 const light_terminal_theme = {
       background: '#FFFFFF',
@@ -240,12 +249,24 @@ export default {
         "utf-8-sig", "windows-1252"
       ],
       shortcutLabels: [
-        "Run Query", "Cancel Query", "Indent", "New Inner Tab",
+        "Run Query", "Run Selection", "Cancel Query", "Indent", "New Inner Tab",
         "Remove Current Inner Tab", "Select Left Inner Tab", "Select Right Inner Tab",
         "Autocomplete", "Run Explain", "Run Explain Analyze",
       ],
       dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A']
     }
+  },
+  validations() {
+    let baseRules = {
+      csvDelimiter: {
+        required: required,
+        maxLength: maxLength(1),
+      }
+    }
+    return baseRules
+  },
+  setup() {
+    return { v$: useVuelidate({ $lazy: true }) }
   },
   computed: {
     fontSizeOptions() {
@@ -276,9 +297,6 @@ export default {
         settingsStore.setTheme(value);
       },
     },
-    autocomplete () {
-      return settingsStore.enableAutocomplete
-    }
   },
   created() {
     this.getShortcuts();
@@ -301,10 +319,17 @@ export default {
           else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console')
             emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_console`, false)
           else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'edit')
-            queryEditData();
+            console.log('Not implemented') //TODO: implement shortcut functionality for new edit data
         }
         else if (window.v_connTabControl.selectedTab.tag.mode == 'outer_terminal')
           terminalRun();
+      },
+      shortcut_run_selection: function () {
+        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
+          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
+            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_selection`)
+          }
+        }
       },
       shortcut_explain: function () {
 
@@ -436,11 +461,6 @@ export default {
 
     this.applyThemes()
 
-    settingsStore.$subscribe((mutation, state) => {
-      if (mutation.events.key === "enableAutocomplete") {
-        this.saveSettingsUser()
-      }
-    });
   },
   methods: {
     getShortcuts() {
@@ -465,7 +485,8 @@ export default {
         shortcuts: this.shortcutList
       })
         .then((resp) => {
-          showToast("success", "Shortcuts saved.");
+          showToast("success", "Shortcuts saved.")
+          emitter.emit('shortcuts_updated', "")
         })
         .catch((error) => {
           console.log(error);
@@ -593,25 +614,27 @@ export default {
       else if ((this.password === this.passwordConfirm) && (this.password.length < 8 && this.password.length >= 1))
         showToast("error", "New Password and Confirm New Password fields must be longer than 8.")
       else {
-        axios.post('/save_config_user/', {
-          "font_size": this.fontSize,
-          "theme": this.theme,
-          "password": this.password,
-          "csv_encoding": this.selectedCSVEncoding,
-          "csv_delimiter": this.csvDelimiter,
-          "binary_path": this.binaryPath,
-          "date_format": this.selectedDateFormat,
-          "pigz_path": this.pigzPath,
-          "autocomplete": this.autocomplete,
-        })
-          .then((resp) => {
-            $('#modal_settings').modal('hide');
-            moment.defaultFormat = this.selectedDateFormat
-            showToast("success", "Configuration saved.");
+        this.v$.csvDelimiter.$validate()
+        if(!this.v$.$invalid) {
+          axios.post('/save_config_user/', {
+            "font_size": this.fontSize,
+            "theme": this.theme,
+            "password": this.password,
+            "csv_encoding": this.selectedCSVEncoding,
+            "csv_delimiter": this.csvDelimiter,
+            "binary_path": this.binaryPath,
+            "date_format": this.selectedDateFormat,
+            "pigz_path": this.pigzPath,
           })
-          .catch((error) => {
-            console.log(error)
-          })
+            .then((resp) => {
+              $('#modal_settings').modal('hide');
+              moment.defaultFormat = this.selectedDateFormat
+              showToast("success", "Configuration saved.");
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
       }
     },
     checkPassword() {
@@ -683,9 +706,13 @@ export default {
           showToast("error", error.response.data.data)
         })
     },
-    onFile(e) {
+    setPostgresqlPath(e) {
       const [file] = e.target.files
       this.binaryPath = file?.path
+    },
+    setPigzPath(e) {
+      const [file] = e.target.files
+      this.pigzPath = file?.path
     },
   }
 }

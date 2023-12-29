@@ -353,7 +353,7 @@ function getTreeMariadb(div) {
     v_connTabControl.selectedTab.tree = app
 
     let tab_tag = v_connTabControl.selectedTab.tag
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase)
+    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase, tab_tag.selectedDatabaseIndex)
 }
 
 /// <summary>
@@ -905,7 +905,7 @@ function mariadbTerminateBackendConfirm(pid) {
         showPasswordPrompt(
           v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
           function () {
-            mariadbTerminateBackend(pid);
+            mariadbTerminateBackendConfirm(pid);
           },
           null,
           error.response.data.data
@@ -916,11 +916,11 @@ function mariadbTerminateBackendConfirm(pid) {
     });
 }
 
-function mariadbTerminateBackend(p_row) {
+function mariadbTerminateBackend(row) {
   createMessageModal(
-    `Are you sure you want to terminate process ${p_row[0]}?`,
+    `Are you sure you want to terminate process ${row.ID}?`,
     function () {
-      mariadbTerminateBackendConfirm(p_row[0]);
+      mariadbTerminateBackendConfirm(row.ID);
     }
   );
 }
@@ -930,4 +930,5 @@ export {
   TemplateSelectMariadb,
   TemplateInsertMariadb,
   TemplateUpdateMariadb,
+  mariadbTerminateBackend
 };

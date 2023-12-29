@@ -328,6 +328,10 @@ export default {
     this.loadData(true)
     $('#connections-modal').on("shown.bs.modal", () => {
       this.loadData(false)})
+
+    emitter.on("connection-save", (connection) => {
+      this.saveConnection(connection)
+    })
   },
 }
 </script>

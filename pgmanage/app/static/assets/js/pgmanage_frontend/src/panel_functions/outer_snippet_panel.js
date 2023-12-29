@@ -30,6 +30,8 @@ import { resizeSnippetPanel, resizeSnippetHorizontal } from '../workspace'
 import { createTabControl } from '../tabs';
 
 var toggleSnippetPanel = function(p_set_state = false) {
+  $('.omnidb__panel-view--full').removeClass('omnidb__panel-view--full');
+
   let v_element = $('#' + v_connTabControl.snippet_tag.divPanel.getAttribute('id'));
   var v_snippet_tag = v_connTabControl.snippet_tag;
 
@@ -79,7 +81,7 @@ var v_createSnippetPanelFunction = function(p_index) {
           "</div>" +
           "<div id='" + v_tab.id + "_snippet_resize_line_vertical' class='omnidb__resize-line__container--vertical'><div class='resize_line_vertical'></div></div>" +
         "</div>" +//.div_left
-        "<div id='" + v_tab.id + "_snippet_div_right' class='omnidb__snippets__div-right col pt-0' style='position: relative;'>" +
+        "<div id='" + v_tab.id + "_snippet_div_right' class='omnidb__snippets__div-right pt-0' style='position: relative;'>" +
           // "<div class='row'>" +
             "<div id='" + v_tab.id + "_snippet_tabs' class='w-100'></div>" +
           // "</div>" +

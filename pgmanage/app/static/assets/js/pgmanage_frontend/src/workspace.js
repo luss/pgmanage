@@ -31,8 +31,8 @@ import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_
 import { getAllSnippets } from './tree_context_functions/tree_snippets'
 import { getTreePostgresql, postgresqlTerminateBackend } from './tree_context_functions/tree_postgresql'
 import { getTreeMysql, mysqlTerminateBackend } from './tree_context_functions/tree_mysql'
-import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
-import { getTreeOracle } from './tree_context_functions/tree_oracle'
+import { getTreeMariadb, mariadbTerminateBackend } from './tree_context_functions/tree_mariadb'
+import { getTreeOracle, oracleTerminateBackend } from './tree_context_functions/tree_oracle'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
@@ -40,17 +40,16 @@ import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createRequest } from './long_polling'
-import { v_queryRequestCodes } from './query'
+import { queryRequestCodes } from './constants'
 import { checkDebugStatus } from './debug'
-import { checkEditDataStatus } from './tree_context_functions/edit_data'
 import { startMonitorDashboard } from './monitoring'
 import { createTabControl } from './tabs'
 import { startLoading } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
-import { settingsStore } from './stores/settings'
 import { startTutorial } from './tutorial'
+import { welcomeScreenInit } from './tab_functions/welcome_screen'
 
 let v_start_height;
 /// <summary>
@@ -101,26 +100,9 @@ $(function () {
   initCreateTabFunctions();
 
   // Creating the welcome tab.
-  v_connTabControl.tag.createWelcomeTab();
-
+  welcomeScreenInit()
   // Creating the snippets panel.
   v_connTabControl.tag.createSnippetPanel();
-
-  passwordModalsInit()
-  // Ask for master password
-  if (master_key === 'new') {
-    showNewMasterPassPrompt(`Please set your master password. It will be used to secure your connection credentials.`);
-  } else if (master_key == 'False'){
-    showMasterPassPrompt(`Please provide your master password to unlock your connection credentials for this session.`);
-  } else {
-    conn_app.mount("#connections-modal-wrap");
-  }
-
-  // Updating explain component choice.
-  updateExplainComponent();
-
-  // Retrieving global snippets
-  getAllSnippets();
 
   // Creating omnis.
   v_omnis.root = document.getElementById('omnidb__main');
@@ -130,11 +112,29 @@ $(function () {
   v_omnis.div.style.top = v_omnis.root.getBoundingClientRect().height - 45 + 'px';
   v_omnis.div.style.left = v_omnis.root.getBoundingClientRect().width - 45 + 'px';
   v_omnis.div.style['z-index'] = '99999999';
+  v_omnis.div.style.opacity = 0
   v_omnis.div.innerHTML = v_omnis.template;
   document.body.appendChild(v_omnis.div);
   v_omnis.div.addEventListener('click',function(){
     startTutorial('getting_started');
   });
+
+  passwordModalsInit()
+  // Ask for master password
+  if (master_key === 'new') {
+    showNewMasterPassPrompt(`Please set your master password. It will be used to secure your connection credentials.`);
+  } else if (master_key == 'False'){
+    showMasterPassPrompt(`Please provide your master password to unlock your connection credentials for this session.`);
+  } else {
+    conn_app.mount("#connections-modal-wrap");
+    v_omnis.div.style.opacity = 1
+  }
+
+  // Updating explain component choice.
+  updateExplainComponent();
+
+  // Retrieving global snippets
+  getAllSnippets();
 
   // Loads or Updates all tooltips.
   $('[data-toggle="tooltip"]').tooltip({animation:true});
@@ -315,7 +315,7 @@ function removeTab(p_tab) {
       v_message_data.tab_db_id = p_tab.tag.tab_db_id;
     }
 
-    createRequest(v_queryRequestCodes.CloseTab, [v_message_data]);
+    createRequest(queryRequestCodes.CloseTab, [v_message_data]);
 	}
 	p_tab.removeTab();
 
@@ -444,7 +444,7 @@ var resizeSnippetPanel = async function(p_left_pos_x = false) {
         }
         v_snippet_tag.divPanel.style.height = v_target_tag_div_result_top + 'px';
         v_snippet_tag.divTree.style.height = v_target_tag_div_result_top + 'px';
-        v_inner_snippet_tag.editorDiv.style.height = v_target_tag_div_result_top - (7)*v_font_size + 'px';
+        v_inner_snippet_tag.editorDiv.style.height = v_target_tag_div_result_top - $(v_snippet_tag.divRight).find('.row').last().height() * 2 + 'px'
         v_inner_snippet_tag.editor.resize();
       }
     });
@@ -521,7 +521,7 @@ function resizeTreeVerticalEnd(event) {
   v_result_div.style.height = v_inner_height;
 
 	if (v_tag.currTreeTab=='properties') {
-    v_tag.gridProperties.render();
+    v_tag.gridProperties.redraw();
   }
 	else if (v_tag.currTreeTab=='ddl') {
     v_tag.ddlEditor.resize();
@@ -707,7 +707,6 @@ $(window).resize(function() {
 /// Refresh divs sizes and components of the currently selected tab
 /// </summary>
 function refreshHeights(p_all) {
-
   setTimeout(function(){
     //Adjusting tree height
     // if (p_all) {
@@ -725,7 +724,7 @@ function refreshHeights(p_all) {
       refreshOuterConnectionHeights();
     }
     else if (v_connTabControl.selectedTab.tag.mode=='outer_terminal') {
-      v_connTabControl.selectedTab.tag.div_console.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.div_console).offset().top - (1.25)*v_font_size + 'px';
+      v_connTabControl.selectedTab.tag.div_console.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.div_console).offset().top - (0.2)*v_font_size + 'px';
       v_connTabControl.selectedTab.tag.fitAddon.fit();
     }
 
@@ -800,7 +799,7 @@ function refreshTreeHeight() {
 	if (v_tag.currTreeTab=='properties') {
 		var v_height  = window.innerHeight - $(v_tag.divProperties).offset().top - 15;
 		v_tag.divProperties.style.height = v_height + "px";
-		v_tag.gridProperties.render();
+		v_tag.gridProperties.redraw(true);
 	}
 	else if (v_tag.currTreeTab=='ddl') {
 		var v_height  = window.innerHeight - $(v_tag.divDDL).offset().top - 15;
@@ -813,7 +812,7 @@ function checkTabStatus(v_tab) {
 	if (v_tab.tag.tabControl.selectedTab.tag.mode=='query')
     emitter.emit(`${v_tab.tag.tabControl.selectedTab.id}_check_query_status`);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='edit')
-		checkEditDataStatus(v_tab.tag.tabControl.selectedTab);
+    console.log('Not implemented') // TODO: implement check tab status functionality for edit tab
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='debug')
 		checkDebugStatus(v_tab.tag.tabControl.selectedTab);
 	else if (v_tab.tag.tabControl.selectedTab.tag.mode=='console')
@@ -1072,7 +1071,7 @@ function showMenuNewTab(e) {
 					v_connTabControl.tag.createMonitoringTab(
 							'Backends',
 							'select * from pg_stat_activity', [{
-									icon: 'fas fa-times action-grid action-close text-danger',
+									icon: 'fas fa-times action-grid action-close',
 									title: 'Terminate',
 									action: 'postgresqlTerminateBackend'
 							}]);
@@ -1089,7 +1088,7 @@ function showMenuNewTab(e) {
 					v_connTabControl.tag.createMonitoringTab(
 							'Process List',
 							'select * from information_schema.processlist', [{
-									icon: 'fas fa-times action-grid action-close text-danger',
+									icon: 'fas fa-times action-grid action-close',
 									title: 'Terminate',
 									action: 'mysqlTerminateBackend'
 							}]);
@@ -1182,7 +1181,7 @@ function drop(event, grid_container, div_left, div_right) {
     for (let i = 0; i < cols.length; i++) {
       document.getElementsByClassName('omnidb__workspace-resize-grid__column')[i].classList.remove('omnidb__workspace-resize-grid__column--enter');
     }
-    v_connTabControl.selectedTab.tag.gridProperties.render();
+    v_connTabControl.selectedTab.tag.gridProperties.redraw();
   }
   catch (e) {
 
@@ -1221,13 +1220,19 @@ function updateExplainComponent() {
 }
 
 
-function monitoringAction(p_row_index, p_function) {
-  let handlerFn = p_function === 'postgresqlTerminateBackend' ? postgresqlTerminateBackend : mysqlTerminateBackend
-	var v_row_data = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.ht.getDataAtRow(p_row_index);
-	v_row_data.shift();
-	if(typeof handlerFn === 'function') {
-		handlerFn(v_row_data);
-	}
+function monitoringAction(row_data, p_function) {
+  const handlerFnMap = {
+    postgresqlTerminateBackend: postgresqlTerminateBackend,
+    mysqlTerminateBackend: mysqlTerminateBackend,
+    oracleTerminateBackend: oracleTerminateBackend,
+    mariadbTerminateBackend: mariadbTerminateBackend,
+  };
+
+  let handlerFn = handlerFnMap[p_function];
+
+  if (handlerFn && typeof handlerFn === "function") {
+    handlerFn(row_data);
+  }
 }
 
 function uiCopyTextToClipboard(p_value) {
@@ -1248,9 +1253,13 @@ function uiCopyTextToClipboard(p_value) {
   showAlert('<b>Text copied:</b> \n<div class="mt-2 p-2 border-1 omnidb__theme-bg--light"><code>' + p_value + '</code></div>');
 }
 
-function toggleConnectionAutocomplete(p_toggler_id) {
-  let checked = document.getElementById(p_toggler_id).checked;
-  settingsStore.setAutocomplete(checked)
+function toggleConnectionAutocomplete(toggler_id, conn_id) {
+  let checked = document.getElementById(toggler_id).checked;
+
+  let connection = connectionsStore.getConnection(conn_id)
+
+  connection.autocomplete = checked
+  emitter.emit('connection-save', connection)
 }
 
 export {
