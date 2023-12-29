@@ -724,7 +724,7 @@ function refreshHeights(p_all) {
       refreshOuterConnectionHeights();
     }
     else if (v_connTabControl.selectedTab.tag.mode=='outer_terminal') {
-      v_connTabControl.selectedTab.tag.div_console.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.div_console).offset().top - (1.25)*v_font_size + 'px';
+      v_connTabControl.selectedTab.tag.div_console.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.div_console).offset().top - (0.2)*v_font_size + 'px';
       v_connTabControl.selectedTab.tag.fitAddon.fit();
     }
 

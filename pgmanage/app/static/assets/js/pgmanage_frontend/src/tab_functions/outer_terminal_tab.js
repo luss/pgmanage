@@ -69,11 +69,11 @@ let createOuterTerminalTabFunction = function(p_conn_id = -1, p_alias = 'Termina
   v_connTabControl.selectTab(v_tab);
 
   var v_html =
-  '<div class="container-fluid mt-2">' +
+  '<div class="container-fluid px-0">' +
     '<div class="row">' +
       '<div class="col">' +
-        '<div class="omnidb__txt-console p-2">' +
-          '<div id="txt_console_' + v_tab.id + '" style="width: 100%; height: 120px;">' +
+        '<div class="omnidb__txt-console">' +
+          '<div id="txt_console_' + v_tab.id + '" style="width: 100%; height: 100vh;">' +
           '</div>' +
         '</div>' +
       '</div>' +
