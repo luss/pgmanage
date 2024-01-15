@@ -1,11 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from collections import OrderedDict
-
 import json
 
 from pgmanage import settings
-import app.include.OmniDatabase.SQLite
+
 import app.include.Spartacus.Utils
 from .utils_testing import (
     build_client_ajax_request,
@@ -179,59 +178,7 @@ class LoginNoSession(TestCase):
         v_content = get_client_ajax_response_content(p_response=response)
         self.assertTrue(v_content['v_data'] >= 0)
         self.assertFalse(v_content['v_error'])
-        # v_omnidb_session = get_client_omnidb_session(p_client=self.client)
-        # # self.assertIsNotNone(v_omnidb_session)
 
-        # v_omnidb_database = get_omnidb_database_connection()
-
-        # v_user_table = v_omnidb_database.v_connection.Query(
-        #     p_sql='''
-        #         SELECT u.user_id,
-        #                u.password,
-        #                t.theme_id,
-        #                t.theme_name,
-        #                t.theme_type,
-        #                u.editor_font_size,
-        #                (CASE WHEN u.chat_enabled IS NULL
-        #                      THEN 1
-        #                      ELSE u.chat_enabled
-        #                 END
-        #                ) AS chat_enabled,
-        #                (CASE WHEN u.super_user IS NULL
-        #                      THEN 0
-        #                      ELSE u.super_user
-        #                 END
-        #                ) AS super_user,
-        #                u.csv_encoding,
-        #                u.csv_delimiter,
-        #                u.interface_font_size
-        #         FROM users u,
-        #              themes t
-        #         WHERE u.theme_id = t.theme_id
-        #           AND u.user_name = '{p_user}'
-        #     '''.format(
-        #         p_user=self.user['user']
-        #     )
-        # )
-
-        # self.assertEquals(len(v_user_table.Rows), 1)
-        # v_user_row = v_user_table.Rows[0]
-        # self.assertEquals(v_omnidb_session.v_user_id, v_user_row['user_id'])
-        # self.assertEquals(v_omnidb_session.v_user_name, self.user['user'])
-        # self.assertIsInstance(v_omnidb_session.v_omnidb_database, OmniDB_app.include.OmniDatabase.SQLite)
-        # self.assertEquals(v_omnidb_session.v_editor_theme, v_user_row['theme_name'])
-        # self.assertEquals(v_omnidb_session.v_theme_type, v_user_row['theme_type'])
-        # self.assertEquals(v_omnidb_session.v_theme_id, v_user_row['theme_id'])
-        # self.assertEquals(v_omnidb_session.v_editor_font_size, v_user_row['editor_font_size'])
-        # self.assertEquals(v_omnidb_session.v_interface_font_size, v_user_row['interface_font_size'])
-        # self.assertEquals(v_omnidb_session.v_enable_omnichat, int(v_user_row['chat_enabled']))
-        # self.assertEquals(v_omnidb_session.v_super_user, int(v_user_row['super_user']))
-        # self.assertIsInstance(v_omnidb_session.v_database_index, int)
-        # self.assertTrue(isinstance(v_omnidb_session.v_databases, OrderedDict) or isinstance(v_omnidb_session.v_databases, dict))
-        # self.assertEquals(v_omnidb_session.v_user_key, self.client.session.session_key)
-        # self.assertEquals(v_omnidb_session.v_csv_encoding, v_user_row['csv_encoding'])
-        # self.assertEquals(v_omnidb_session.v_csv_delimiter, v_user_row['csv_delimiter'])
-        # self.assertIsInstance(v_omnidb_session.v_tab_connections, dict)
 
 
 class LoginSession(TestCase):
@@ -386,59 +333,40 @@ class LoginSession(TestCase):
         )
 
         self.assertEquals(response.status_code, 200)
-        v_content = get_client_ajax_response_content(p_response=response)
-        self.assertTrue(v_content['v_data'] >= 0)
-        self.assertFalse(v_content['v_error'])
-        v_omnidb_session = get_client_omnidb_session(p_client=self.client)
-        self.assertIsNotNone(v_omnidb_session)
+        ajax_response = get_client_ajax_response_content(p_response=response)
+        self.assertTrue(ajax_response['v_data'] >= 0)
+        self.assertFalse(ajax_response['v_error'])
+        app_session = get_client_omnidb_session(p_client=self.client)
+        self.assertIsNotNone(app_session)
 
-        v_omnidb_database = get_omnidb_database_connection()
+        app_database = get_omnidb_database_connection()
 
-        v_user_table = v_omnidb_database.v_connection.Query(
+        user_table = app_database.v_connection.Query(
             p_sql='''
-                SELECT u.user_id,
-                       u.password,
-                       t.theme_id,
-                       t.theme_name,
-                       t.theme_type,
-                       u.editor_font_size,
-                       (CASE WHEN u.chat_enabled IS NULL
-                             THEN 1
-                             ELSE u.chat_enabled
-                        END
-                       ) AS chat_enabled,
-                       (CASE WHEN u.super_user IS NULL
-                             THEN 0
-                             ELSE u.super_user
-                        END
-                       ) AS super_user,
-                       u.csv_encoding,
-                       u.csv_delimiter,
-                       u.interface_font_size
-                FROM users u,
-                     themes t
-                WHERE u.theme_id = t.theme_id
-                  AND u.user_name = '{p_user}'
+                SELECT t.id
+                    , t.password
+                    , t.last_login
+                    , t.is_superuser
+                    , t.username
+                    , t.last_name
+                    , t.email
+                    , t.is_staff
+                    , t.is_active
+                    , t.date_joined
+                    , t.first_name
+                FROM 'auth_user' t
+                WHERE t.username = '{p_user}'
+                ORDER BY t.id
             '''.format(
                 p_user=self.user['user']
             )
         )
 
-        self.assertEquals(len(v_user_table.Rows), 1)
-        v_user_row = v_user_table.Rows[0]
-        self.assertEquals(v_omnidb_session.v_user_id, v_user_row['user_id'])
-        self.assertEquals(v_omnidb_session.v_user_name, self.user['user'])
-        self.assertIsInstance(v_omnidb_session.v_omnidb_database, OmniDB_app.include.OmniDatabase.SQLite)
-        self.assertEquals(v_omnidb_session.v_editor_theme, v_user_row['theme_name'])
-        self.assertEquals(v_omnidb_session.v_theme_type, v_user_row['theme_type'])
-        self.assertEquals(v_omnidb_session.v_theme_id, v_user_row['theme_id'])
-        self.assertEquals(v_omnidb_session.v_editor_font_size, v_user_row['editor_font_size'])
-        self.assertEquals(v_omnidb_session.v_interface_font_size, v_user_row['interface_font_size'])
-        self.assertEquals(v_omnidb_session.v_enable_omnichat, int(v_user_row['chat_enabled']))
-        self.assertEquals(v_omnidb_session.v_super_user, int(v_user_row['super_user']))
-        self.assertIsInstance(v_omnidb_session.v_database_index, int)
-        self.assertTrue(isinstance(v_omnidb_session.v_databases, OrderedDict) or isinstance(v_omnidb_session.v_databases, dict))
-        self.assertEquals(v_omnidb_session.v_user_key, self.client.session.session_key)
-        self.assertEquals(v_omnidb_session.v_csv_encoding, v_user_row['csv_encoding'])
-        self.assertEquals(v_omnidb_session.v_csv_delimiter, v_user_row['csv_delimiter'])
-        self.assertIsInstance(v_omnidb_session.v_tab_connections, dict)
+        self.assertEquals(len(user_table.Rows), 1)
+        user_row = user_table.Rows[0]
+        self.assertEquals(app_session.v_user_id, user_row['id'])
+        self.assertEquals(app_session.v_user_name, user_row['username'])
+        self.assertEquals(app_session.v_super_user, bool(user_row['is_superuser']))
+        self.assertIsInstance(app_session.v_database_index, int)
+        self.assertTrue(isinstance(app_session.v_databases, OrderedDict) or isinstance(app_session.v_databases, dict))
+        self.assertEquals(app_session.v_user_key, self.client.session.session_key)

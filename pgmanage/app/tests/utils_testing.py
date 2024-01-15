@@ -2,8 +2,11 @@ import django.http.response
 import django.test
 from django.urls import reverse
 import json
+import os
 
 from pgmanage import settings
+PGMANAGE_DATABASE = os.path.join(settings.BASE_DIR, 'pgmanage-test.db')
+
 import app.include.OmniDatabase as OmniDatabase
 import app.include.Spartacus.Utils as Utils
 
@@ -162,18 +165,18 @@ def get_session_alert_message(p_client=None):
     return None
 
 
+
 def get_omnidb_database_connection():
     """Get omnidb.db database connection
 
         Returns:
             OmniDB_app.include.OmniDatabase.SQLite: a connection to the omnidb database.
     """
-
     return OmniDatabase.Generic.InstantiateDatabase(
         p_db_type='sqlite',
         p_server='',
         p_port='',
-        p_service=settings.DATABASES['TEST']['NAME'],
+        p_service=PGMANAGE_DATABASE,
         p_user='',
         p_password='',
         p_conn_id='0',
