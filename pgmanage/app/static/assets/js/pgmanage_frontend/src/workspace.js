@@ -25,6 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { settingsModalInit } from './settings_modal.js'
 import { initCreateTabFunctions } from './create_tab_functions'
 import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
 import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
@@ -36,7 +37,6 @@ import { getTreeOracle, oracleTerminateBackend } from './tree_context_functions/
 import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
-import { settingsModalInit } from './settings_modal.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { createRequest } from './long_polling'
@@ -101,6 +101,10 @@ $(function () {
 
   // Creating the welcome tab.
   welcomeScreenInit()
+
+  // Retrieving global snippets
+  getAllSnippets();
+  
   // Creating the snippets panel.
   v_connTabControl.tag.createSnippetPanel();
 
@@ -133,8 +137,6 @@ $(function () {
   // Updating explain component choice.
   updateExplainComponent();
 
-  // Retrieving global snippets
-  getAllSnippets();
 
   // Loads or Updates all tooltips.
   $('[data-toggle="tooltip"]').tooltip({animation:true});
@@ -336,20 +338,8 @@ var resizeSnippetPanel = async function(p_left_pos_x = false) {
       // Updating the max top position considering if a tab is selected.
       if (v_connTabControl.selectedTab && v_connTabControl.selectedTab !== null) {
         if (v_connTabControl.selectedTab.tag.tabControl) {
-          var v_target_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-          let current_query_tab = v_target_tag.currQueryTab;
-          if (current_query_tab === 'data') {
-            v_target_tag_div_result_top = v_target_tag.div_result.getBoundingClientRect().height - 25;
-          }
-          else if (current_query_tab === 'explain') {
-            v_target_tag_div_result_top = v_target_tag.div_explain.getBoundingClientRect().height - 25;
-          }
-          else if (current_query_tab === 'message') {
-            v_target_tag_div_result_top = v_target_tag.div_notices.getBoundingClientRect().height - 25;
-          }
-          else {
-            v_target_tag_div_result_top = document.getElementsByClassName('omnidb__main')[0].getBoundingClientRect().height - 25;
-          }
+          let heightSubtract = v_selected_tab.tag.divRight.getElementsByClassName('omnidb__tab-menu border-bottom')[0].getBoundingClientRect().height;
+          v_target_tag_div_result_top = document.getElementsByClassName('omnidb__main')[0].getBoundingClientRect().height - heightSubtract;
         }
         else {
           v_target_tag_div_result_top = document.getElementsByClassName('omnidb__main')[0].getBoundingClientRect().height - 25;
@@ -406,20 +396,8 @@ var resizeSnippetPanel = async function(p_left_pos_x = false) {
         // Updating the max top position considering if a tab is selected.
         if (v_connTabControl.selectedTab && v_connTabControl.selectedTab !== null) {
           if (v_connTabControl.selectedTab.tag.tabControl) {
-            var v_target_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-            let current_query_tab = v_target_tag.currQueryTab;
-            if (current_query_tab === 'data') {
-              v_target_tag_div_result_top = v_target_tag.div_result.getBoundingClientRect().height - 25;
-            }
-            else if (current_query_tab === 'explain') {
-              v_target_tag_div_result_top = v_target_tag.div_explain.getBoundingClientRect().height - 25;
-            }
-            else if (current_query_tab === 'message') {
-              v_target_tag_div_result_top = v_target_tag.div_notices.getBoundingClientRect().height - 25;
-            }
-            else {
-              v_target_tag_div_result_top = document.getElementsByClassName('omnidb__main')[0].getBoundingClientRect().height - 25;
-            }
+            let heightSubtract = v_connTabControl.selectedTab.tag.divRight.getElementsByClassName('omnidb__tab-menu border-bottom')[0].getBoundingClientRect().height;
+            v_target_tag_div_result_top = document.getElementsByClassName('omnidb__main')[0].getBoundingClientRect().height - heightSubtract;
           }
           else {
             v_target_tag_div_result_top = document.getElementsByClassName('omnidb__main')[0].getBoundingClientRect().height - 25;
