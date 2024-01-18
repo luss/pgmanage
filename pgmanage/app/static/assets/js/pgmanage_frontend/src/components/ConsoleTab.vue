@@ -1,7 +1,7 @@
 <template>
   <splitpanes class="default-theme console-body" horizontal @resized="onResize">
     <pane size="80">
-      <div ref="console" :id="`txt_console_${tabId}`" class="omnidb__txt-console h-100"></div>
+      <div ref="console" :id="`txt_console_${tabId}`" class="omnidb__txt-console mr-2 h-100"></div>
     </pane>
 
     <pane size="20" class="pl-2 border-top">
@@ -70,7 +70,7 @@
           </span>
         </div>
       </div>
-      <QueryEditor ref="editor" class="h-100" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
+      <QueryEditor ref="editor" class="h-100 mr-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
         :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
     </pane>
   </splitpanes>
