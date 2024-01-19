@@ -9,8 +9,14 @@
       <!-- ACTION BUTTONS-->
       <div class="py-2 pr-1 d-flex align-items-center">
         <div class="tab-actions d-flex w-100">
-          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary" title="Run" @click="queryRunOrExplain()">
+          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run" @click="queryRunOrExplain()">
             <i class="fas fa-play fa-light"></i>
+          </button>
+
+          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)">
+            [
+            <i class="fas fa-play fa-light"></i>
+            ]
           </button>
 
           <button :id="`bt_indent_${tabId}`" class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
@@ -474,5 +480,16 @@ export default {
 
 .splitpanes .splitpanes__pane {
   transition: none;
+}
+
+.btn-run {
+  padding-left: 2px;
+  padding-right: 2px;
+  min-width: 2rem;
+}
+
+.btn-run i {
+    margin-left: -3px;
+    margin-right: -3px;
 }
 </style>
