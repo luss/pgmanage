@@ -70,8 +70,9 @@
           </span>
         </div>
       </div>
-      <QueryEditor ref="editor" class="h-100 mr-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
-        :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
+      <!--FIXME: add proper editor height recalculation-->
+        <QueryEditor ref="editor" class="custom-editor mr-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
+          :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
     </pane>
   </splitpanes>
 
@@ -346,6 +347,9 @@ export default {
 </script>
 
 <style scoped>
+.custom-editor {
+  height: calc(100% - 50px);
+}
 .console-body {
   height: calc(100vh - 60px);
 }
