@@ -905,6 +905,20 @@ PUBLICATION pub_name [, ...]
             'reorder'
         ])
 
+
+    def test_get_table_definition_postgresql_nosession(self):
+        response = self.client_nosession.post('/get_table_definition_postgresql/')
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert 1 == data['v_error_id']
+
+    def test_get_table_definition_postgresql_session(self):
+        response = self.client_session.post('/get_table_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "inventory"}'})
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert self.lists_equal([a['name'] for a in data['data']], ['prod_id', 'quan_in_stock', 'sales'])
+
+
     def test_get_schemas_postgresql_nosession(self):
         response = self.client_nosession.post('/get_schemas_postgresql/')
         assert 200 == response.status_code
