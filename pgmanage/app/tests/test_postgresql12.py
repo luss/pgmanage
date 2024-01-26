@@ -1438,3 +1438,55 @@ CREATE MATERIALIZED VIEW public.mvw_omnidb_test AS
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], ['test_slot'])
         self.database.v_connection.Execute("select pg_drop_replication_slot('test_slot')")
+
+    def test_get_extension_details_postgresql_nosession(self):
+        response = self.client_nosession.post('/get_extension_details/')
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert 1 == data['v_error_id']
+
+    def test_get_extension_details_postgresql_session(self):
+        response = self.client_session.post('/get_extension_details/', {'data': '{"database_index": 0, "ext_name": "nonexistentextension", "tab_id": 0}'})
+        assert 400 == response.status_code
+        data = json.loads(response.content.decode())
+        assert "does not exist" in data['data']
+
+        response = self.client_session.post('/get_extension_details/', {'data': '{"database_index": 0, "ext_name": "plpgsql", "tab_id": 0}'})
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert data['name'] == 'plpgsql'
+
+    def test_save_postgresql_extension_session(self):
+        response = self.client_session.post('/save_postgresql_extension/', {'data': '{"database_index": 0, "tab_id": 0, "query": "select 1=1"}'})
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert data['status'] == 'success'
+
+    def test_save_postgresql_extension_nosession(self):
+        response = self.client_nosession.post('/save_postgresql_extension/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        assert 200 == response.status_code
+
+    def test_get_available_extensions_postgresql_session(self):
+        response = self.client_session.post('/get_available_extensions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert len(data['available_extensions']) > 0
+
+    def test_get_available_extensions_postgresql_nosession(self):
+        response = self.client_nosession.post('/get_available_extensions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        assert 200 == response.status_code
+
+    def test_get_object_description_postgresql_session(self):
+        # just get something with a valid oid to run tests on
+        response = self.client_session.post('/get_tables_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        data = json.loads(response.content.decode())
+        table_data = data[0]
+        request_params = '{"database_index": 0, "tab_id": 0, "object_type": "table", "position": 0, "oid":' + table_data['oid'] + '}'
+        response = self.client_session.post('/get_object_description_postgresql/', {'data': request_params})
+        assert 200 == response.status_code
+        data = json.loads(response.content.decode())
+        assert "COMMENT" in data['data']
+
+    def test_get_object_description_postgresql_nosession(self):
+        response = self.client_nosession.post('/get_object_description_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        assert 200 == response.status_code
