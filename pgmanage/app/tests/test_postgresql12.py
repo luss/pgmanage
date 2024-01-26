@@ -9,13 +9,8 @@ import app.include.OmniDatabase as OmniDatabase
 
 
 from .utils_testing import (
-    build_client_ajax_request,
     execute_client_login,
-    get_client_ajax_response_content,
     get_client_omnidb_session,
-    get_omnidb_database_connection,
-    get_session_alert_message,
-    USERS
 )
 
 class PostgreSQL(TestCase):

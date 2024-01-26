@@ -60,13 +60,13 @@ class LoginNoSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn('app/workspace.html', [template.name for template in response.templates])
-        self.assertEquals(len(response.redirect_chain), 3)
-        self.assertEquals(response.redirect_chain[-1][0], reverse('workspace'))
-        self.assertEquals(response.redirect_chain[0][1], 302)
+        self.assertEqual(len(response.redirect_chain), 3)
+        self.assertEqual(response.redirect_chain[-1][0], reverse('workspace'))
+        self.assertEqual(response.redirect_chain[0][1], 302)
         self.assertIn('pgmanage_short_version', response.context)
-        self.assertEquals(response.context['pgmanage_short_version'], settings.PGMANAGE_SHORT_VERSION)
+        self.assertEqual(response.context['pgmanage_short_version'], settings.PGMANAGE_SHORT_VERSION)
 
 
     def test_get_index_no_user_pwd(self):
@@ -82,9 +82,9 @@ class LoginNoSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.redirect_chain), 0)
-        self.assertEquals(response.content, b'INVALID APP TOKEN')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 0)
+        self.assertEqual(response.content, b'INVALID APP TOKEN')
 
 
     def test_get_index_user_no_pwd(self):
@@ -100,9 +100,9 @@ class LoginNoSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.redirect_chain), 0)
-        self.assertEquals(response.content, b'INVALID APP TOKEN')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 0)
+        self.assertEqual(response.content, b'INVALID APP TOKEN')
 
 
     def test_get_logout(self):
@@ -114,9 +114,9 @@ class LoginNoSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content.decode())
-        self.assertEquals(data['v_error'], True)
+        self.assertEqual(data['v_error'], True)
 
     def test_sign_in_no_user_password(self):
         """Test if sign in fails with invalid user and valid password.
@@ -132,9 +132,9 @@ class LoginNoSession(TestCase):
             )
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEquals(v_content['v_data'], -1)
+        self.assertEqual(v_content['v_data'], -1)
         self.assertFalse(v_content['v_error'])
         self.assertIsNone(get_client_omnidb_session(p_client=self.client))
 
@@ -153,9 +153,9 @@ class LoginNoSession(TestCase):
             )
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEquals(v_content['v_data'], -1)
+        self.assertEqual(v_content['v_data'], -1)
         self.assertFalse(v_content['v_error'])
         self.assertIsNone(get_client_omnidb_session(p_client=self.client))
 
@@ -174,7 +174,7 @@ class LoginNoSession(TestCase):
             )
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
         self.assertTrue(v_content['v_data'] >= 0)
         self.assertFalse(v_content['v_error'])
@@ -214,13 +214,13 @@ class LoginSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn('app/workspace.html', [template.name for template in response.templates])
-        self.assertEquals(len(response.redirect_chain), 3)
-        self.assertEquals(response.redirect_chain[2][0], reverse('workspace'))
-        self.assertEquals(response.redirect_chain[1][1], 302)
+        self.assertEqual(len(response.redirect_chain), 3)
+        self.assertEqual(response.redirect_chain[2][0], reverse('workspace'))
+        self.assertEqual(response.redirect_chain[1][1], 302)
         self.assertIn('pgmanage_short_version', response.context)
-        self.assertEquals(response.context['pgmanage_short_version'], settings.PGMANAGE_SHORT_VERSION)
+        self.assertEqual(response.context['pgmanage_short_version'], settings.PGMANAGE_SHORT_VERSION)
 
 
     def test_get_index_no_user_pwd(self):
@@ -236,9 +236,9 @@ class LoginSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.redirect_chain), 0)
-        self.assertEquals(response.content, b'INVALID APP TOKEN')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 0)
+        self.assertEqual(response.content, b'INVALID APP TOKEN')
 
 
     def test_get_index_user_no_pwd(self):
@@ -254,9 +254,9 @@ class LoginSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.redirect_chain), 0)
-        self.assertEquals(response.content, b'INVALID APP TOKEN')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 0)
+        self.assertEqual(response.content, b'INVALID APP TOKEN')
 
 
     def test_get_logout(self):
@@ -268,11 +268,11 @@ class LoginSession(TestCase):
             follow=True
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn('app/login.html', [template.name for template in response.templates])
-        self.assertEquals(len(response.redirect_chain), 2)
-        self.assertEquals(response.redirect_chain[-1][0], reverse('login'))
-        self.assertEquals(response.redirect_chain[0][1], 302)
+        self.assertEqual(len(response.redirect_chain), 2)
+        self.assertEqual(response.redirect_chain[-1][0], reverse('login'))
+        self.assertEqual(response.redirect_chain[0][1], 302)
         self.assertIsNone(get_session_alert_message(p_client=self.client))
         self.assertIsNone(get_client_omnidb_session(p_client=self.client))
 
@@ -291,9 +291,9 @@ class LoginSession(TestCase):
             )
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEquals(v_content['v_data'], -1)
+        self.assertEqual(v_content['v_data'], -1)
         self.assertFalse(v_content['v_error'])
         self.assertIsNone(get_client_omnidb_session(p_client=self.client))
 
@@ -312,9 +312,9 @@ class LoginSession(TestCase):
             )
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEquals(v_content['v_data'], -1)
+        self.assertEqual(v_content['v_data'], -1)
         self.assertFalse(v_content['v_error'])
 
 
@@ -332,7 +332,7 @@ class LoginSession(TestCase):
             )
         )
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         ajax_response = get_client_ajax_response_content(p_response=response)
         self.assertTrue(ajax_response['v_data'] >= 0)
         self.assertFalse(ajax_response['v_error'])
@@ -362,11 +362,11 @@ class LoginSession(TestCase):
             )
         )
 
-        self.assertEquals(len(user_table.Rows), 1)
+        self.assertEqual(len(user_table.Rows), 1)
         user_row = user_table.Rows[0]
-        self.assertEquals(app_session.v_user_id, user_row['id'])
-        self.assertEquals(app_session.v_user_name, user_row['username'])
-        self.assertEquals(app_session.v_super_user, bool(user_row['is_superuser']))
+        self.assertEqual(app_session.v_user_id, user_row['id'])
+        self.assertEqual(app_session.v_user_name, user_row['username'])
+        self.assertEqual(app_session.v_super_user, bool(user_row['is_superuser']))
         self.assertIsInstance(app_session.v_database_index, int)
         self.assertTrue(isinstance(app_session.v_databases, OrderedDict) or isinstance(app_session.v_databases, dict))
-        self.assertEquals(app_session.v_user_key, self.client.session.session_key)
+        self.assertEqual(app_session.v_user_key, self.client.session.session_key)
