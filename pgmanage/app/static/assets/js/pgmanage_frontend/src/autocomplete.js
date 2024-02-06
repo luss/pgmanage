@@ -701,7 +701,13 @@ function build_autocomplete_elements(p_data, p_value) {
       if (v_local_group.type=='keyword') {
         div.className = 'omnidb__autocomplete__data-word';
         div.innerHTML = v_local_group.elements[j].value.replace(p_value,'<b>' + p_value + '</b>');
-        var v_element = {'value': v_local_group.elements[j].value, 'select_value': v_local_group.elements[j].select_value,'complement': v_local_group.elements[j].complement, 'container': div, 'visible': true, 'group_reference': v_global_group };
+        var v_element = {
+          'value': v_local_group.elements[j].value,
+          'select_value': v_local_group.elements[j].select_value,
+          'complement': v_local_group.elements[j].complement,
+          'container': div,
+          'visible': true,
+          'group_reference': v_global_group };
         v_global_group.container.appendChild(div);
 
         div.onclick = (function(v_value) {
@@ -711,11 +717,18 @@ function build_autocomplete_elements(p_data, p_value) {
             close_autocomplete(v_value);
           }
         }(v_element.select_value));
-      }
-      else {
+      } else {
         v_list.push([v_local_group.elements[j].value,v_local_group.elements[j].complement]);
         v_list_render.push([v_local_group.elements[j].value.replace(p_value,'<b>' + p_value + '</b>'),v_local_group.elements[j].complement]);
-        var v_element = {'value': v_local_group.elements[j].value, 'select_value': v_local_group.elements[j].select_value,'complement': v_local_group.elements[j].complement, 'visible': true, 'index': j, 'visible_index': j, 'grid_reference': v_global_group.grid, 'group_reference': v_global_group };
+        var v_element = {
+          'value': v_local_group.elements[j].value,
+          'select_value': v_local_group.elements[j].select_value,
+          'complement': v_local_group.elements[j].complement,
+          'visible': true,
+          'index': j,
+          'visible_index': j,
+          'grid_reference': v_global_group.grid,
+          'group_reference': v_global_group };
       }
 
       if (v_first_element == null)
@@ -865,6 +878,7 @@ function renew_autocomplete(p_new_value) {
 }
 
 function autocomplete_get_results(p_sql,p_value,p_pos) {
+
   v_autocomplete_object.div.style.width = '500px';
 
   var v_data = [
@@ -911,6 +925,8 @@ function autocomplete_get_results(p_sql,p_value,p_pos) {
           var v_new_width_result = v_autocomplete_object.test_length.clientWidth;
           v_autocomplete_object.test_length.innerHTML = p_return.v_data.max_complement_word;
           var v_new_width_complement = v_autocomplete_object.test_length.clientWidth;
+
+
           if (v_autocomplete_object.mode==0)
             v_autocomplete_object.scroll.style['max-height'] = window.innerHeight - $(v_autocomplete_object.div).offset().top - 50 + 'px';
           else
@@ -1359,5 +1375,6 @@ export {
   autocomplete_keydown,
   autocomplete_update_editor_cursor,
   autocomplete_start,
-  close_autocomplete
+  close_autocomplete,
+  v_keywords
 };
