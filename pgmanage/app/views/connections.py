@@ -363,6 +363,10 @@ def save_connection(request, session):
             if conn_object['password'] is not None:
                 if conn_object['password'].strip() != '':
                     conn.password = encrypt(conn_object['password'], key)
+            # clear password if password_set false AND the password is empty
+            if conn_object['password_set'] is False and conn_object['password'] == '':
+                conn.password = ''
+
             conn.alias = conn_object['alias']
             conn.ssh_server = conn_object['tunnel']['server']
             conn.ssh_port = conn_object['tunnel']['port']
@@ -370,8 +374,15 @@ def save_connection(request, session):
             if conn_object['tunnel']['password'] is not None:
                 if conn_object['tunnel']['password'].strip() != '':
                     conn.ssh_password = encrypt(conn_object['tunnel']['password'], key)
+
+            if conn_object['tunnel']['password_set'] is False and conn_object['tunnel']['password'] == '':
+                conn.ssh_password = ''
+
             if conn_object['tunnel']['key'].strip() != '':
                 conn.ssh_key = encrypt(conn_object['tunnel']['key'], key)
+
+            if conn_object['tunnel']['key_set'] is False and conn_object['tunnel']['key'].strip() == '':
+                conn.ssh_key = ''
 
             if conn.technology.name in ['mariadb', 'mysql']:
                 conn.connection_params = {}
