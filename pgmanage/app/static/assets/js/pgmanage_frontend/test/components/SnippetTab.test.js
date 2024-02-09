@@ -40,6 +40,7 @@ describe("SnippetTab", () => {
         tabId: tabId,
       },
       attachTo: document.body,
+      shallow: true
     });
 
     fileMock = new File(["content"], "example.txt", {
