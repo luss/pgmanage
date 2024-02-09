@@ -14,8 +14,20 @@
         @include themify() {
             color: themed($color);
         }
+        &.disabled {
+            cursor: pointer;
+            @include themify() {
+                color: themed($disabledColor);
+            }
 
-        &:hover, &.open {
+            i {
+                @include themify() {
+                    color: themed($disabledColor);
+                }
+            }
+        }
+
+        &:hover:not(.disabled), &.open {
             background-color: rgba($primaryBlue, 0.15);
         }
 
@@ -28,12 +40,12 @@
         i {
             width: 20px;
             height: 16px;
-            
+
             &.node {
                 @include themify() {
                     background-color: themed($primaryBlueWhiteSwitching);
                 }
             }
-        }    
+        }
     }
 }
