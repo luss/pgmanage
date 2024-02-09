@@ -168,10 +168,6 @@ function changeTheme() {
 			ace.edit(el).setTheme(`ace/theme/${settingsStore.editorTheme}`);
 	});
 
-	Chart.helpers.each(Chart.instances, function(instance){
-		adjustChartTheme(instance.chart);
-	})
-
 	//Adjusting terminal themes
 	for (var i=0; i < v_connTabControl.tabList.length; i++) {
 		var v_tab = v_connTabControl.tabList[i];
@@ -182,25 +178,6 @@ function changeTheme() {
 		}
 	}
 
-	//Adjusting graph themes
-	for (var i=0; i < v_connTabControl.tabList.length; i++) {
-		var v_tab = v_connTabControl.tabList[i];
-		if (v_tab.tag!=null) {
-			if (v_tab.tag.mode=='connection') {
-				for (var j=0; j < v_tab.tag.tabControl.tabList.length; j++) {
-					var v_inner_tab = v_tab.tag.tabControl.tabList[j];
-					if (v_inner_tab.tag!=null) {
-						if (v_inner_tab.tag.mode=='monitor_dashboard') {
-							for (var k=0; k < v_inner_tab.tag.units.length; k++) {
-								if (v_inner_tab.tag.units[k].type=='graph')
-									adjustGraphTheme(v_inner_tab.tag.units[k].object);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 }
 
 function changeFontSize(p_option) {
