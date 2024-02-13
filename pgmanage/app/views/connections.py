@@ -41,6 +41,8 @@ def get_connections(request, session):
                 'port': '',
                 'service': '',
                 'user': '',
+                'password': '',
+                'password_set': False,
                 'tunnel': {
                     'enabled': conn.use_tunnel,
                     'server': conn.ssh_server,

@@ -122,8 +122,8 @@
                 <input v-model="connectionLocal.password"
                   :placeholder="this.connectionLocal.password_set ? '••••••••' : ''" type="password" class="form-control" id="connectionPassword"
                   :disabled="dbFormDisabled">
-                <button v-if="this.connectionLocal.password_set || this.connectionLocal.password.length > 0"
-                  @click="this.connectionLocal.password_set = false;this.connectionLocal.password = ''"
+                <button v-if="this.connectionLocal.password_set || this.connectionLocal.password?.length > 0"
+                  @click="this.connectionLocal.password_set = false; this.connectionLocal.password = ''"
                   class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></button>
               </div>
             </div>
@@ -192,7 +192,7 @@
 
             <div class="form-row">
               <div class="form-group col-6">
-                <label for="sshPassphrase" class="font-weight-bold mb-2">SSH Passphrase</label>
+                <label for="sshPassphrase" class="font-weight-bold mb-2">{{sshPassLabel}}</label>
                 <div class="position-relative">
                     <input v-model="connectionLocal.tunnel.password"
                       :placeholder="this.connectionLocal.tunnel.password_set ? '••••••••' : ''" type="password" class="form-control"
@@ -448,6 +448,9 @@ import ConfirmableButton from './ConfirmableButton.vue'
       },
       connectionGroups() {
         return connectionsStore.groups
+      },
+      sshPassLabel() {
+        return this.connectionLocal.tunnel.key_set ? 'SSH Key Passphrase' : 'SSH Password'
       }
     },
     methods: {
