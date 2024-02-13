@@ -88,9 +88,7 @@ class Session(object):
        del self.v_databases[p_conn_id]
 
     def DatabaseReachPasswordTimeout(self,p_database_index):
-
-        v_return = { 'timeout': False, 'message': ''}
-
+        v_return = { 'timeout': False, 'message': '', 'kind': 'database'}
         # This region of the code cannot be accessed by multiple threads, so locking is required
         try:
             lock_object = tunnel_locks[self.v_databases[p_database_index]['database'].v_conn_id]
@@ -155,7 +153,13 @@ class Session(object):
                         s.save()
 
                     except Exception as exc:
-                        return { 'timeout': True, 'message': str(exc)}
+                        # release the lock on failure, so the subsequent call can acquire it
+                        lock_object.release()
+                        msg = str(exc)
+                        if "checkints" in msg:
+                            msg = "Unable to decrypt SSH Key. Wrong passphrase?"
+                        return { 'timeout': True, 'message': msg,  'kind': 'tunnel'}
+
             if self.v_databases[p_database_index]['prompt_password']:
                 #Reached timeout, must request password
                 if not self.v_databases[p_database_index]['prompt_timeout'] or datetime.now() > self.v_databases[p_database_index]['prompt_timeout'] + timedelta(0,settings.PWD_TIMEOUT_TOTAL):
@@ -168,9 +172,9 @@ class Session(object):
                         s['pgmanage_session'].v_databases[p_database_index]['prompt_timeout'] = datetime.now()
                         s['pgmanage_session'].v_databases[p_database_index]['database'].v_connection.v_password = ''
                         s.save()
-                        v_return = { 'timeout': False, 'message': ''}
+                        v_return = { 'timeout': False, 'message': '', 'kind':'database'}
                     else:
-                        v_return = { 'timeout': True, 'message': v_test}
+                        v_return = { 'timeout': True, 'message': v_test, 'kind':'database'}
                 #Reached half way to timeout, update prompt_timeout
                 if datetime.now() > self.v_databases[p_database_index]['prompt_timeout'] + timedelta(0,settings.PWD_TIMEOUT_REFRESH):
                     s = SessionStore(session_key=self.v_user_key)
