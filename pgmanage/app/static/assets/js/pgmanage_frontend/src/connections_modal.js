@@ -1,7 +1,9 @@
 import { createApp } from 'vue'
 import { connectionsStore } from './stores/connections.js'
+import { tabsStore } from './stores/stores_initializer.js'
 import ConnectionsModal from './components/ConnectionsModal.vue'
 import moment from 'moment'
+import { emitter } from './emitter.js'
 
 const conn_app = createApp({
     components: {
@@ -27,6 +29,7 @@ function connectionsModalInit() {
         }
         else {
             v_connTabControl.tag.createConnTab(connection.id);
+            emitter.emit(`${tabsStore.id}_create_conn_tab`, (connection.id))
         }
     })
 }
