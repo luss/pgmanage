@@ -59,7 +59,7 @@ const useTabsStore = defineStore("tabs", {
       if (parentId) {
         let primaryTab = this.tabs.find((tab) => tab.id === parentId);
         //TODO: handle case if tab with specified Id not exist
-        primaryTab.secondaryTabs.push(tab);
+        primaryTab.metaData.secondaryTabs.push(tab);
       } else {
         this.tabs.push(tab);
       }

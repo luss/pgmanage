@@ -1,15 +1,14 @@
 <template>
   <div
-    class="omnidb__tab-menu--container omnidb__tab-menu--container--primary omnidb__tab-menu--container--menu-shown"
+    :class="`omnidb__tab-menu--container omnidb__tab-menu--container--${hierarchy} omnidb__tab-menu--container--menu-shown`"
   >
     <div
-      class="omnidb__tab-menu border-bottom omnidb__tab-menu--primary omnidb__theme-bg--menu-primary"
+      :class="`omnidb__tab-menu border-bottom omnidb__tab-menu--${hierarchy} omnidb__theme-bg--menu-${hierarchy}`"
     >
       <nav>
         <div class="nav nav-tabs">
           <a
             :id="tab.id"
-            :title="tab.tooltip"
             data-toggle="tab"
             :class="[
               'omnidb__tab-menu__link',
@@ -34,8 +33,7 @@
                 v-html="tab.icon"
               >
               </span>
-              <span class="omnidb__tab-menu__link-name">
-                {{ tab.name }}
+              <span class="omnidb__tab-menu__link-name" v-html="tab.name">
               </span>
             </span>
 
@@ -49,7 +47,9 @@
       </nav>
     </div>
 
-    <div class="tab-content omnidb__tab-content omnidb__tab-content--primary">
+    <div
+      :class="`tab-content omnidb__tab-content omnidb__tab-content--${hierarchy}`"
+    >
       <component
         v-for="tab in tabs"
         :key="tab.id"
@@ -64,7 +64,6 @@
 
 <script>
 import WelcomeScreen from "./WelcomeScreen.vue";
-import ConnectionTab from "./ConnectionTab.vue";
 import { showMenuNewTabOuter } from "../workspace.js";
 import { tabsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
@@ -78,7 +77,6 @@ import { queryRequestCodes } from "../constants";
 export default {
   components: {
     WelcomeScreen,
-    ConnectionTab,
   },
   props: {
     hierarchy: {
@@ -198,12 +196,12 @@ export default {
             imgName = `${v_conn.technology}2`;
           }
 
-          let v_icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
+          let icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
 
           const connTab = tabsStore.addTab({
             name: connName,
             component: "ConnectionTab",
-            icon: v_icon,
+            icon: icon,
             tooltip: tooltip_name,
             selectFunction: function () {
               document.title = "PgManage";
@@ -218,18 +216,18 @@ export default {
 
                 tabs.forEach((tab) => {
                   if (
-                    tab.tag.mode == "query" ||
-                    tab.tag.mode == "edit" ||
-                    tab.tag.mode == "debug" ||
-                    tab.tag.mode == "console"
+                    tab.metaData.mode == "query" ||
+                    tab.metaData.mode == "edit" ||
+                    tab.metaData.mode == "debug" ||
+                    tab.metaData.mode == "console"
                   ) {
                     var v_message_data = {
                       tab_id: tab.id,
                       tab_db_id: null,
                       conn_tab_id: primaryTab.id,
                     };
-                    if (tab.mode == "query")
-                      v_message_data.tab_db_id = tab.tag.tab_db_id;
+                    if (tab.metaData.mode == "query")
+                      v_message_data.tab_db_id = tab.metaData.tab_db_id;
                     v_tabs_to_remove.push(v_message_data);
                   }
 
@@ -251,10 +249,9 @@ export default {
             },
           });
 
-          connTab.tag = {
-            mode: "connection",
-            selectedDatabaseIndex: 0,
-          };
+          connTab.metaData.mode = "connection";
+          connTab.metaData.selectedDatabaseIndex = 0;
+
           tabsStore.selectTab(connTab);
         }
       }
@@ -264,6 +261,7 @@ export default {
     tabsStore.$onAction((action) => {
       if (action.name == "addTab") {
         action.after((result) => {
+          if (!result.tooltip) return;
           this.$nextTick(() => {
             $(`#${result.id}`).tooltip({
               placement: "right",
@@ -280,25 +278,25 @@ export default {
 
     if (this.hierarchy == "primary") {
       tabsStore.addTab({
-        icon: '<i class="fas fa-bolt"></i>',
         name: "Connections",
+        icon: '<i class="fas fa-bolt"></i>',
+        tooltip: "Connections",
         closable: false,
         selectable: false,
-        tooltip: "Connections",
         clickFunction: function (e) {
           showMenuNewTabOuter(e);
         },
       });
 
       const welcomeTab = tabsStore.addTab({
-        icon: '<i class="fas fa-hand-spock"></i>',
         name: "Welcome",
+        component: "WelcomeScreen",
+        icon: '<i class="fas fa-hand-spock"></i>',
+        tooltip: "Welcome to PgManage",
+        closable: false,
         selectFunction: function () {
           document.title = "Welcome to PgManage";
         },
-        closable: false,
-        tooltip: "Welcome to PgManage",
-        component: "WelcomeScreen",
       });
       tabsStore.selectTab(welcomeTab);
 

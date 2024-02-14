@@ -84,7 +84,12 @@
           >
             <i class="fas fa-arrows-alt-h"></i>
           </button>
-          <div :id="`${connTabId}_tabs`" class="w-100"></div>
+          <Tabs
+            :id="`${connTabId}`"
+            class="w-100"
+            hierarchy="secondary"
+            :conn-tab-id="connTabId"
+          />
         </div>
       </div>
     </div>
@@ -92,8 +97,13 @@
 </template>
 
 <script>
+import Tabs from "./Tabs.vue";
+
 export default {
   name: "ConnectionTab",
+  components: {
+    Tabs,
+  },
   props: {
     connTabId: String,
   },
