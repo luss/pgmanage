@@ -26,6 +26,7 @@ import "tabulator-tables/dist/css/tabulator.min.css"
 import App from './App.vue'
 import { createApp } from 'vue';
 import ConnectionTab from './components/ConnectionTab.vue'
+import SnippetPanel from './components/SnippetPanel.vue'
 
 window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
@@ -46,4 +47,4 @@ axios.interceptors.response.use(response => {
 moment.defaultFormat = date_format;
 
 
-const app = createApp(App).component('ConnectionTab', ConnectionTab).mount('#app')
+const app = createApp(App).component('ConnectionTab', ConnectionTab).component('SnippetPanel', SnippetPanel).mount('#app')

@@ -53,9 +53,8 @@
       <component
         v-for="tab in tabs"
         :key="tab.id"
-        :id="tab.id"
         :is="tab.component"
-        v-show="tab.id == selectedTab.id"
+        v-show="tab.id === selectedTab.id || tab.name === 'Snippets'"
         v-bind="getCurrentProps(tab)"
       ></component>
     </div>
@@ -113,6 +112,9 @@ export default {
       const componentsProps = {
         ConnectionTab: {
           "conn-tab-id": tab.id,
+        },
+        SnippetPanel: {
+          "tab-id": tab.id,
         },
       };
 
@@ -299,6 +301,18 @@ export default {
         },
       });
       tabsStore.selectTab(welcomeTab);
+
+      tabsStore.addTab({
+        name: "Snippets",
+        component: "SnippetPanel",
+        icon: '<i class="fas fa-file-code"></i>',
+        tooltip: "Snippets Panel",
+        closable: false,
+        selectable: false,
+        clickFunction: function () {
+          emitter.emit(`toggle_snippet_panel`);
+        },
+      });
 
       emitter.on(
         `${tabsStore.id}_create_conn_tab`,
