@@ -204,6 +204,9 @@ export default {
         }
       })
       .catch((error) => {
+        if(error.response && error.response?.data) {
+          showToast("error", error.response.data.data)
+        }
         console.log(error)
       })
     },

@@ -205,9 +205,13 @@ def renew_password(request, session):
     data = request.data
     database_index = data["p_database_index"]
     password = data["p_password"]
+    password_kind = data.get('password_kind', 'database')
 
     database_object = session.v_databases[database_index]
-    database_object["database"].v_connection.v_password = password
+    if password_kind == 'database':
+        database_object["database"].v_connection.v_password = password
+    else:
+        database_object['tunnel']['password'] = password
 
     test = database_object["database"].TestConnection()
 

@@ -48,7 +48,7 @@ function passwordModalsInit() {
   password_set.onclick = function() { saveMasterPass() }
 }
 
-function showPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_message, p_send_tab_id = true) {
+function showPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_message, p_kind = 'database') {
   v_modal_password_ok_clicked = false;
   v_modal_password_cancel_callback = p_cancel_callback_function;
   var v_content_div = document.getElementById('modal_password_content');
@@ -60,10 +60,9 @@ function showPasswordPrompt(p_database_index, p_callback_function, p_cancel_call
     v_content_div.innerHTML = p_message;
 
   $('#modal_password').modal();
-
   v_modal_password_ok_function = function() {
     v_modal_password_ok_clicked = true;
-    checkPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_send_tab_id);
+    checkPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_kind);
   }
 
   v_button_ok.onclick = v_modal_password_ok_function;
@@ -76,18 +75,15 @@ function showPasswordPrompt(p_database_index, p_callback_function, p_cancel_call
 
 }
 
-function checkPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_send_tab_id) {
-
+function checkPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_kind) {
   var v_password = document.getElementById('txt_password_prompt').value;
-  var v_tab_id = '';
-  if (p_send_tab_id)
-    v_tab_id = v_connTabControl.selectedTab.id;
-
   v_modal_password_ok_after_hide_function = function() {
     execAjax('/renew_password/',
 			JSON.stringify({"p_database_index": p_database_index,
-                      "p_tab_id": v_tab_id,
-                      "p_password": v_password}),
+                      "p_tab_id": v_connTabControl.selectedTab.id,
+                      "p_password": v_password,
+                      "password_kind": p_kind
+                    }),
 			function(p_return) {
 
         if (p_callback_function)
@@ -95,7 +91,7 @@ function checkPasswordPrompt(p_database_index, p_callback_function, p_cancel_cal
 
 			},
 			function(p_return) {
-        showPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_return.v_data, p_send_tab_id);
+        showPasswordPrompt(p_database_index, p_callback_function, p_cancel_callback_function, p_return.v_data, p_kind);
       },
 			'box'
     );
