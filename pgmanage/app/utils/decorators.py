@@ -71,7 +71,6 @@ def database_required_new(check_timeout=True, open_connection=True):
             client = client_manager.get_or_create_client(
                 client_id=request.session.session_key
             )
-
             if database_index is not None:
                 try:
                     if check_timeout:
@@ -83,6 +82,7 @@ def database_required_new(check_timeout=True, open_connection=True):
                             data = {
                                 "password_timeout": True,
                                 "data": timeout["message"],
+                                "kind": timeout.get("kind", "database")
                             }
                             return JsonResponse(data=data, status=400)
 

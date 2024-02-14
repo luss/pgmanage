@@ -193,7 +193,8 @@ export default {
             this.refreshNode();
           },
           null,
-          error_response.response.data.data
+          error_response.response.data.data,
+          error_response.response.data.kind,
         );
       } else {
         this.removeChildNodes(node);
@@ -221,7 +222,7 @@ export default {
                 node_type === "extension_list"
               ) {
                 this.refreshTree(childNode);
-                
+
                 setTimeout(() => {
                   getInnerNode(childNode, node_type);
                 }, 200);
