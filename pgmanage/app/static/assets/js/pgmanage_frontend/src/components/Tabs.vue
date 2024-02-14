@@ -21,7 +21,7 @@
             :href="`#div_${tab.id}`"
             :aria-controls="`div_${tab.id}`"
             :draggable="tab.isDraggable"
-            @dragend="dragEndFunction"
+            @dragend="tab.dragEndFunction($event, tab)"
             @click.prevent.stop="clickHandler($event, tab)"
             @dblclick="tab.dblClickFunction"
             v-for="tab in tabs"

@@ -55,6 +55,7 @@ const useTabsStore = defineStore("tabs", {
           secondaryTabs: [],
           selectedTab: "",
         },
+        dragEndFunction: this.dragEndFunction,
       };
       if (parentId) {
         let primaryTab = this.tabs.find((tab) => tab.id === parentId);
@@ -113,6 +114,52 @@ const useTabsStore = defineStore("tabs", {
     getSelectedSecondaryTab(parentId) {
       const primaryTabIdx = this.tabs.findIndex((tab) => tab.id === parentId);
       return this.tabs[primaryTabIdx]?.metaData?.selectedTab;
+    },
+    dragEndFunction(e, tab) {
+      // Get the dragged element and drop position
+      let el = e.target;
+      let drop_pos_x = e.clientX;
+      let drop_pos_y = e.clientY;
+      let allNodes = Array.from(el.parentNode.children);
+      let oldIndex = allNodes.indexOf(el);
+
+      // Filter out non-draggable siblings
+      let siblings = allNodes.filter((node) => node !== el && !!node.draggable);
+
+      // Find the new index based on drop position
+      let newIndex = siblings.findIndex((sibling) => {
+        let rect = sibling.getBoundingClientRect();
+        return (
+          drop_pos_x >= rect.left &&
+          drop_pos_x <= rect.right &&
+          drop_pos_y >= rect.top &&
+          drop_pos_y <= rect.bottom
+        );
+      });
+
+      // Handle case where newIndex is -1 (drop position not found among siblings)
+      if (newIndex === -1) {
+        newIndex = siblings.length;
+      } else if (newIndex === oldIndex) {
+        newIndex++;
+      }
+
+      // Reorder the tabs based on the new index
+      if (oldIndex !== -1 && oldIndex !== newIndex) {
+        if (!tab.parentId) {
+          let removedEl = this.tabs.splice(oldIndex, 1)[0];
+          this.tabs.splice(newIndex, 0, removedEl);
+        } else {
+          let primaryTab = this.tabs.find(
+            (primaryTab) => primaryTab.id === tab.parentId
+          );
+          let removedEl = primaryTab.metaData.secondaryTabs.splice(
+            oldIndex,
+            1
+          )[0];
+          primaryTab.metaData.secondaryTabs.splice(newIndex, 0, removedEl);
+        }
+      }
     },
   },
 });
