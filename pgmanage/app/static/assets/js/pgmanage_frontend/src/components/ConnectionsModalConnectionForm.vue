@@ -122,9 +122,9 @@
                 <input v-model="connectionLocal.password"
                   :placeholder="this.connectionLocal.password_set ? '••••••••' : ''" type="password" class="form-control" id="connectionPassword"
                   :disabled="dbFormDisabled">
-                <button v-if="this.connectionLocal.password_set || this.connectionLocal.password?.length > 0"
-                  @click="this.connectionLocal.password_set = false; this.connectionLocal.password = ''"
-                  class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></button>
+                <a v-if="this.connectionLocal.password_set || this.connectionLocal.password?.length > 0"
+                  @click.prevent="this.connectionLocal.password_set = false; this.connectionLocal.password = ''"
+                  class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></a>
               </div>
             </div>
           </div>
@@ -197,20 +197,20 @@
                     <input v-model="connectionLocal.tunnel.password"
                       :placeholder="this.connectionLocal.tunnel.password_set ? '••••••••' : ''" type="password" class="form-control"
                       id="sshPassphrase">
-                    <button v-if="this.connectionLocal.tunnel.password_set || this.connectionLocal.tunnel.password.length > 0"
+                    <a v-if="this.connectionLocal.tunnel.password_set || this.connectionLocal.tunnel.password.length > 0"
                     @click="this.connectionLocal.tunnel.password_set = false; this.connectionLocal.tunnel.password = ''"
-                  class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></button>
+                  class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></a>
                 </div>
               </div>
 
               <div class="form-group col-6">
                 <p class="font-weight-bold mb-2">SSH Key</p>
                 <label class="btn btn-secondary" id="sshFileLabel">
-                {{connectionLocal.tunnel.key || connectionLocal.tunnel.key_set ? 'Key File Loaded' : 'Select Key' }} <input type="file" @change="updateConnectionKey" hidden>
+                {{connectionLocal.tunnel.key || connectionLocal.tunnel.key_set ? 'Key File Loaded' : 'Select Key' }} <input type="file" @change="updateConnectionKey" ref="keyFile" hidden>
                 </label>
                 <button
                   v-if="this.connectionLocal.tunnel.key_set || this.connectionLocal.tunnel.key != ''"
-                  @click="this.connectionLocal.tunnel.key_set = false; this.connectionLocal.tunnel.key = ''"
+                  @click="this.connectionLocal.tunnel.key_set = false; this.connectionLocal.tunnel.key = ''; this.$refs.keyFile.value = ''"
                   class="btn btn-outline-danger ml-2 mb-2">Clear
                 </button>
               </div>
