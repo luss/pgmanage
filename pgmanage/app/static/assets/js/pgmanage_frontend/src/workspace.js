@@ -29,7 +29,6 @@ import { settingsModalInit } from './settings_modal.js'
 import { initCreateTabFunctions } from './create_tab_functions'
 import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
 import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
-import { getAllSnippets } from './tree_context_functions/tree_snippets'
 import { getTreePostgresql, postgresqlTerminateBackend } from './tree_context_functions/tree_postgresql'
 import { getTreeMysql, mysqlTerminateBackend } from './tree_context_functions/tree_mysql'
 import { getTreeMariadb, mariadbTerminateBackend } from './tree_context_functions/tree_mariadb'
@@ -100,12 +99,6 @@ $(function () {
 
   // Creating the welcome tab.
   welcomeScreenInit()
-
-  // Retrieving global snippets
-  getAllSnippets();
-  
-  // Creating the snippets panel.
-  v_connTabControl.tag.createSnippetPanel();
 
   // Creating omnis.
   v_omnis.root = document.getElementById('omnidb__main');

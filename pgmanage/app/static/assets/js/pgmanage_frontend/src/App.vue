@@ -3,10 +3,11 @@
 </template>
 
 <script>
-import Tabs from './components/Tabs.vue'
+import Tabs from "./components/Tabs.vue";
 export default {
-    components: {
-        Tabs,
-    }
-}
+  name: "PgManage",
+  components: {
+    Tabs,
+  },
+};
 </script>

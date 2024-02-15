@@ -3,7 +3,7 @@
     <div ref="editor" class="snippet-editor"></div>
 
     <div ref="bottomToolbar" class="row px-2">
-      <div class="tab_actions tab-actions col-12">
+      <div class="tab-actions col-12">
         <button
           data-testid="snippet-tab-indent-button"
           class="btn btn-secondary"
@@ -38,10 +38,7 @@
 import { format } from "sql-formatter";
 import { emitter } from "../emitter";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import {
-  buildSnippetContextMenuObjects,
-  saveSnippetTextConfirm,
-} from "../tree_context_functions/tree_snippets";
+import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 import {
   snippetsStore,
   settingsStore,
@@ -51,7 +48,7 @@ import FileManager from "./FileManager.vue";
 import { setupAceDragDrop } from "../file_drop";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
-import { createMessageModal } from "../notification_control";
+import { createMessageModal, showToast } from "../notification_control";
 
 export default {
   name: "SnippetTab",
@@ -181,7 +178,11 @@ export default {
       };
 
       if (this.snippet.id !== null) {
-        saveSnippetTextConfirm(this.snippet, this.editor.getValue(), callback);
+        emitter.emit("save_snippet_text_confirm", {
+          saveObject: this.snippet,
+          text: this.editor.getValue(),
+          callback: callback,
+        });
       } else {
         ContextMenu.showContextMenu({
           theme: "pgmanage",

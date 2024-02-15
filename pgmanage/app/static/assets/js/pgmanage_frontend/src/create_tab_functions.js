@@ -27,7 +27,6 @@ SOFTWARE.
 */
 import { createSnippetTabFunction } from './tab_functions/inner_snippet_tab'
 import { v_createConnTabFunction } from './tab_functions/outer_connection_tab'
-import { v_createSnippetPanelFunction } from './panel_functions/outer_snippet_panel'
 import { v_createMonitoringTabFunction } from './tab_functions/inner_monitoring_tab'
 import { createOuterTerminalTabFunction } from './tab_functions/outer_terminal_tab'
 import { v_createGraphTabFunction } from './tab_functions/inner_graph_tab'
@@ -407,9 +406,6 @@ function initCreateTabFunctions() {
   v_connTabControl.tag.createConnTab = v_createConnTabFunction;
   //v_connTabControl.tag.createChatTab = v_createChatTabFunction;
   //v_connTabControl.tag.createServerMonitoringTab = v_createServerMonitoringTabFunction;
-
-  // Functions to create snippet panel globally
-  v_connTabControl.tag.createSnippetPanel = v_createSnippetPanelFunction;
 
   // Functions to create tabs inside snippet panel
   v_connTabControl.tag.createSnippetTextTab = createSnippetTabFunction

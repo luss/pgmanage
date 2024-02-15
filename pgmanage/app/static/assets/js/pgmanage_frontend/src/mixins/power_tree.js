@@ -67,8 +67,7 @@ export default {
       this.refreshTreeRecursive(node_type);
     });
 
-    if (this.getRootNode().title === "Snippets") {
-    } else {
+    if (this.getRootNode().title !== "Snippets") {
       v_connTabControl.selectedTab.tag.tree = this;
     }
   },

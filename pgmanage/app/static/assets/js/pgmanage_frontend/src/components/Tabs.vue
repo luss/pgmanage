@@ -122,6 +122,7 @@ export default {
         let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
         return primaryTab?.name === "Snippets";
       }
+      return false;
     },
   },
   methods: {

@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { toggleSnippetPanel } from "./panel_functions/outer_snippet_panel";
+import { emitter } from "./emitter";
 import { listUsers, newUser } from "./users";
 
 function startTutorial(p_tutorial_name) {
@@ -378,7 +378,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         // p_callback_after_update_start: function() {setTimeout(function(){var v_target = document.getElementById(v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editorDivId);},50);},
-        p_callback_start: function() {toggleSnippetPanel();},
+        p_callback_start: function() { emitter.emit("toggle_snippet_panel");},
         p_message: `
         <p>Inside this tab you can create and edit a snippet.</p>
         <p>Go ahead and try to create some simple snippet, i.e:</p>
@@ -386,7 +386,7 @@ function startTutorial(p_tutorial_name) {
         <p>Then experiment clicking on the <strong>indent button</strong> below the editor, and then <strong>next</strong>.</p>
         `,
         p_next_button: true,
-        p_target: function() {var v_target = document.getElementById('a_' + v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_id); return v_target},
+        p_target: function() {var v_target = document.querySelector('.omnidb__snippets__div-right a[draggable="false"]'); return v_target},
         p_title: 'Snippets editor',
         p_update_delay: 600
       },
@@ -396,7 +396,7 @@ function startTutorial(p_tutorial_name) {
         <p>Now go ahead and click <strong>save</strong></p>
         `,
         p_next_button: true,
-        p_target: function() {var v_target = document.getElementById('a_' + v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_id); return v_target},
+        p_target: function() {var v_target =  document.querySelector('.omnidb__snippets__div-right a[draggable="false"]'); return v_target},
         p_title: 'Indenting'
       },
       {
@@ -405,7 +405,7 @@ function startTutorial(p_tutorial_name) {
         <p>The tree on the left allows you to easily access it by double-clicking on the snippet.</p>
         `,
         p_next_button: false,
-        p_target: function() {var v_target = document.getElementById(v_connTabControl.snippet_tag.divTree.getAttribute('id')); return v_target},
+        p_target: function() {var v_target = document.querySelector(".snippets-tree"); return v_target},
         p_title: 'Saved Snippets',
         p_update_delay: 600
       }

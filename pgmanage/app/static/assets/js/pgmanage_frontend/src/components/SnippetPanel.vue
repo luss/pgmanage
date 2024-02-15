@@ -11,9 +11,7 @@
       type="button"
       class="px-4 btn btn-secondary omnidb__panel__toggler"
       @click="showPanel"
-      style="left: 80%"
     >
-      <!-- style above is only for developing purposes, delete after implementing snippet panel-->
       <i class="fas fa-arrows-alt-v"></i>
     </button>
 
@@ -25,7 +23,10 @@
               <div class="row h-100">
                 <div class="omnidb__snippets__content-left border-right">
                   <div class="snippets-tree">
-                    <TreeSnippets />
+                    <TreeSnippets
+                      :tab-id="tabId"
+                      @tree-updated="getAllSnippets"
+                    />
                   </div>
                 </div>
               </div>
@@ -56,6 +57,9 @@ import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
 import Tabs from "./Tabs.vue";
 import TreeSnippets from "./TreeSnippets.vue";
+import axios from "axios";
+import { snippetsStore } from "../stores/stores_initializer";
+import { showToast } from "../notification_control";
 
 export default {
   components: {
@@ -72,16 +76,73 @@ export default {
   props: {
     tabId: String,
   },
+  mounted() {
+    this.getAllSnippets();
+    this.setupEvents();
+  },
+  unmounted() {
+    this.clearEvents();
+  },
   methods: {
     showPanel() {
       $(".omnidb__panel-view--full").removeClass("omnidb__panel-view--full");
       this.isVisible = !this.isVisible;
     },
-  },
-  mounted() {
-    emitter.on(`toggle_snippet_panel`, () => {
-      this.showPanel();
-    });
+    getAllSnippets() {
+      axios
+        .get("/get_all_snippets/")
+        .then((resp) => {
+          snippetsStore.$patch({
+            files: resp.data.files,
+            folders: resp.data.folders,
+          });
+        })
+        .catch((error) => {
+          showToast("error", error);
+        });
+    },
+    setupEvents() {
+      emitter.on("toggle_snippet_panel", () => {
+        this.showPanel();
+      });
+      emitter.on("get_all_snippets", () => {
+        this.getAllSnippets();
+      });
+      emitter.on(
+        "save_snippet_text_confirm",
+        ({ saveObject, text, callback }) => {
+          this.saveSnippetTextConfirm(saveObject, text, callback);
+        }
+      );
+    },
+    clearEvents() {
+      emitter.all.delete("toggle_snippet_panel");
+      emitter.all.delete("get_all_snippets");
+      emitter.all.delete("save_snippet_text_confirm");
+    },
+    saveSnippetTextConfirm(save_object, text, callback) {
+      axios
+        .post("/save_snippet_text/", {
+          id: save_object.id,
+          parent_id: save_object.parent,
+          name: save_object.name,
+          text: text,
+        })
+        .then((resp) => {
+          emitter.emit("refresh_snippet_tree", resp.data.parent);
+
+          if (callback != null) {
+            callback(resp.data);
+          }
+
+          showToast("success", "Snippet saved.");
+
+          this.getAllSnippets();
+        })
+        .catch((error) => {
+          showToast("error", error);
+        });
+    },
   },
 };
 </script>

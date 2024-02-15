@@ -1,70 +1,6 @@
-import { createApp } from "vue";
-import TreeSnippets from "../components/TreeSnippets.vue";
 import axios from "axios";
 import { showConfirm, showToast } from "../notification_control";
-import { snippetsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
-
-function getAllSnippets() {
-  axios
-    .get("/get_all_snippets/")
-    .then((resp) => {
-      snippetsStore.$patch({
-        files: resp.data.files,
-        folders: resp.data.folders,
-      });
-    })
-    .catch((error) => {
-      showToast("error", error);
-    });
-}
-
-/// <summary>
-/// Retrieving tree.
-/// </summary>
-function getTreeSnippets(div) {
-  const div_tree = document.getElementById(div);
-  div_tree.innerHTML =
-    '<tree-snippets :snippet-tag="snippetTag"></tree-snippets>';
-  const app = createApp({
-    components: {
-      "tree-snippets": TreeSnippets,
-    },
-    data() {
-      return {
-        snippetTag: v_connTabControl.snippet_tag,
-      };
-    },
-  });
-  app.mount(`#${div}`);
-}
-
-function saveSnippetTextConfirm(save_object, text, callback) {
-  axios
-    .post("/save_snippet_text/", {
-      id: save_object.id,
-      parent_id: save_object.parent,
-      name: save_object.name,
-      text: text,
-    })
-    .then((resp) => {
-      emitter.emit(
-        `${v_connTabControl.snippet_tag.tab_id}_refresh_snippet_tree`,
-        resp.data.parent
-      );
-
-      if (callback != null) {
-        callback(resp.data);
-      }
-
-      showToast("success", "Snippet saved.");
-
-      getAllSnippets();
-    })
-    .catch((error) => {
-      showToast("error", error);
-    });
-}
 
 function executeSnippet(id) {
   axios
@@ -90,15 +26,15 @@ function buildSnippetContextMenuObjects(mode, object, snippetText, callback) {
     showConfirm(
       `<b>WARNING</b>, are you sure you want to overwrite file ${file.name}?`,
       () => {
-        saveSnippetTextConfirm(
-          {
+        emitter.emit("save_snippet_text_confirm", {
+          saveObject: {
             id: file.id,
             name: null,
             parent: folder.id,
           },
-          snippetText,
-          callback
-        );
+          text: snippetText,
+          callback: callback,
+        });
       }
     );
   };
@@ -117,15 +53,15 @@ function buildSnippetContextMenuObjects(mode, object, snippetText, callback) {
               showToast("error", "Name cannot be empty.");
               return;
             }
-            saveSnippetTextConfirm(
-              {
+            emitter.emit("save_snippet_text_confirm", {
+              saveObject: {
                 id: null,
                 name: snippetName,
                 parent: object.id,
               },
-              snippetText,
-              callback
-            );
+              text: snippetText,
+              callback: callback,
+            });
           },
           null,
           function () {
@@ -164,10 +100,4 @@ function buildSnippetContextMenuObjects(mode, object, snippetText, callback) {
   return elements;
 }
 
-export {
-  buildSnippetContextMenuObjects,
-  getTreeSnippets,
-  getAllSnippets,
-  saveSnippetTextConfirm,
-  executeSnippet,
-};
+export { buildSnippetContextMenuObjects, executeSnippet };

@@ -28,7 +28,6 @@
 <script>
 import TreeMixin from "../mixins/power_tree.js";
 import { PowerTree } from "@onekiloparsec/vue-power-tree";
-import { getAllSnippets } from "../tree_context_functions/tree_snippets";
 import {
   createMessageModal,
   showConfirm,
@@ -46,6 +45,7 @@ export default {
   props: {
     tabId: String,
   },
+  emits: ["treeUpdated"],
   data() {
     return {
       nodes: [
@@ -141,7 +141,7 @@ export default {
     },
   },
   mounted() {
-    emitter.on(`${this.tabId}_refresh_snippet_tree`, (parent_id = null) => {
+    emitter.on(`refresh_snippet_tree`, (parent_id = null) => {
       this.refreshTreeRecursive(parent_id);
     });
   },
@@ -221,7 +221,7 @@ export default {
             .then((resp) => {
               this.refreshTree(node);
 
-              getAllSnippets();
+              this.$emit("treeUpdated");
             })
             .catch((error) => {
               this.nodeOpenError(error, node);
@@ -254,7 +254,7 @@ export default {
             .then((resp) => {
               this.refreshTree(this.getParentNode(node));
 
-              getAllSnippets();
+              this.$emit("treeUpdated");
             })
             .catch((error) => {
               this.nodeOpenError(error, node);
@@ -279,7 +279,7 @@ export default {
             .then((resp) => {
               this.refreshTree(this.getParentNode(node));
 
-              getAllSnippets();
+              this.$emit("treeUpdated");
             })
             .catch((error) => {
               this.nodeOpenError(error, node);
