@@ -10,8 +10,8 @@ const useTabsStore = defineStore("tabs", {
     selectedPrimaryTab: "",
   }),
   getters: {
-    formattedPrimaryTabs() {
-      return this.tabs.map((tab) => tab.tab);
+    selectablePrimaryTabs() {
+      return this.tabs.filter((tab) => tab.selectable);
     },
   },
   actions: {
@@ -85,31 +85,43 @@ const useTabsStore = defineStore("tabs", {
       }
     },
     removeTab(tabToRemove) {
-      if (tabToRemove.parentId) {
-        let primaryTab = this.tabs.find(
-          (primaryTab) => primaryTab.id === tabToRemove.parentId
-        );
-        let tabIndex = primaryTab.metaData.secondaryTabs.indexOf(tabToRemove);
-
-        if (primaryTab.metaData.selectedTab === tabToRemove) {
-          if (tabIndex > 0) {
-            primaryTab.metaData.selectedTab =
-              primaryTab.metaData.secondaryTabs[tabIndex - 1]; // fix this
-          }
-        }
-
-        primaryTab.metaData.secondaryTabs.splice(tabIndex, 1);
+      const isPrimaryTab = !tabToRemove.parentId;
+      if (isPrimaryTab) {
+        this.removePrimaryTab(tabToRemove);
       } else {
-        let tabIndex = this.tabs.indexOf(tabToRemove);
-
-        if (this.selectedPrimaryTab === tabToRemove) {
-          if (tabIndex > 0) {
-            this.selectedPrimaryTab = this.tabs[tabIndex - 1]; // fix this
-          }
-        }
-
-        this.tabs.splice(tabIndex, 1);
+        this.removeSecondaryTab(tabToRemove);
       }
+    },
+    removePrimaryTab(tabToRemove) {
+      const tabIndex = this.tabs.indexOf(tabToRemove);
+      if (this.selectedPrimaryTab === tabToRemove) {
+        const selectableTabs = this.selectablePrimaryTabs;
+        const nextTabIndex = selectableTabs.indexOf(tabToRemove) + 1;
+        const newSelectedTab =
+          nextTabIndex < selectableTabs.length
+            ? selectableTabs[nextTabIndex]
+            : selectableTabs[nextTabIndex - 2];
+
+        this.selectedPrimaryTab = newSelectedTab;
+      }
+      this.tabs.splice(tabIndex, 1);
+    },
+    removeSecondaryTab(tabToRemove) {
+      const primaryTab = this.tabs.find(
+        (tab) => tab.id === tabToRemove.parentId
+      );
+
+      const secondaryTabs = primaryTab.metaData.secondaryTabs;
+      const tabIndex = secondaryTabs.indexOf(tabToRemove);
+      if (primaryTab.metaData.selectedTab === tabToRemove) {
+        const nextTabIndex = tabIndex + 1;
+
+        const newSelectedTab = secondaryTabs[nextTabIndex].selectable
+          ? secondaryTabs[nextTabIndex]
+          : secondaryTabs[nextTabIndex - 1];
+        primaryTab.metaData.selectedTab = newSelectedTab;
+      }
+      secondaryTabs.splice(tabIndex, 1);
     },
     getSecondaryTabs(parentId) {
       const primaryTabIdx = this.tabs.findIndex((tab) => tab.id === parentId);

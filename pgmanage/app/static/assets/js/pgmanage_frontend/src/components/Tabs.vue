@@ -35,7 +35,7 @@
               </span>
               <span class="omnidb__tab-menu__link-name">
                 <span>{{ tab.name }}</span>
-                <span v-if="isSecondaryTab" style="visibility: hidden">
+                <span v-if="isSecondaryTab && tab.name !== '+'" style="visibility: hidden">
                   <i class="tab-icon node-spin"></i>
                 </span>
                 <i

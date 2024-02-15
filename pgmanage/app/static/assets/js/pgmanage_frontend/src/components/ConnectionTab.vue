@@ -88,7 +88,7 @@
             :id="`${connTabId}`"
             class="w-100"
             hierarchy="secondary"
-            :conn-tab-id="connTabId"
+            :tab-id="connTabId"
           />
         </div>
       </div>
