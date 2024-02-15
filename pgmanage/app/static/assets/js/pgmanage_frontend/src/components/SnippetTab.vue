@@ -1,35 +1,37 @@
 <template>
-  <div ref="editor" class="snippet-editor"></div>
+  <div>
+    <div ref="editor" class="snippet-editor"></div>
 
-  <div ref="bottomToolbar" class="row px-2">
-    <div class="tab_actions tab-actions col-12">
-      <button
-        data-testid="snippet-tab-indent-button"
-        class="btn btn-secondary"
-        title="Indent SQL"
-        @click="indentSQL"
-      >
-        <i class="fas fa-indent mr-2"></i>Indent
-      </button>
-      <button
-        data-testid="snippet-tab-save-button"
-        class="btn btn-primary"
-        title="Save"
-        @click="saveSnippetText"
-      >
-        <i class="fas fa-save mr-2"></i>Save
-      </button>
-      <button
-        data-testid="snippet-tab-save-file-button"
-        class="btn btn-primary"
-        title="Open file"
-        @click="openFileManagerModal"
-      >
-        <i class="fas fa-folder-open mr-2"></i>Open file
-      </button>
+    <div ref="bottomToolbar" class="row px-2">
+      <div class="tab_actions tab-actions col-12">
+        <button
+          data-testid="snippet-tab-indent-button"
+          class="btn btn-secondary"
+          title="Indent SQL"
+          @click="indentSQL"
+        >
+          <i class="fas fa-indent mr-2"></i>Indent
+        </button>
+        <button
+          data-testid="snippet-tab-save-button"
+          class="btn btn-primary"
+          title="Save"
+          @click="saveSnippetText"
+        >
+          <i class="fas fa-save mr-2"></i>Save
+        </button>
+        <button
+          data-testid="snippet-tab-save-file-button"
+          class="btn btn-primary"
+          title="Open file"
+          @click="openFileManagerModal"
+        >
+          <i class="fas fa-folder-open mr-2"></i>Open file
+        </button>
+      </div>
     </div>
+    <FileManager ref="fileManager" />
   </div>
-  <FileManager ref="fileManager" />
 </template>
 
 <script>
@@ -40,13 +42,16 @@ import {
   buildSnippetContextMenuObjects,
   saveSnippetTextConfirm,
 } from "../tree_context_functions/tree_snippets";
-import { snippetsStore, settingsStore } from "../stores/stores_initializer";
+import {
+  snippetsStore,
+  settingsStore,
+  tabsStore,
+} from "../stores/stores_initializer";
 import FileManager from "./FileManager.vue";
 import { setupAceDragDrop } from "../file_drop";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
 import { createMessageModal } from "../notification_control";
-
 
 export default {
   name: "SnippetTab",
@@ -90,6 +95,9 @@ export default {
   },
   unmounted() {
     this.clearEvents();
+  },
+  updated() {
+    this.handleResize();
   },
   methods: {
     setupEditor() {
@@ -163,13 +171,13 @@ export default {
       }
     },
     saveSnippetText(event) {
-      // TODO: this old callback is needed here to track whether the tab is opened or not from outside
-      // Change this when snippets tab management is implemented
       let callback = function (return_object) {
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject =
+        let snippetPanel = tabsStore.tabs.find(
+          (tab) => tab.name === "Snippets"
+        );
+        snippetPanel.metaData.selectedTab.metaData.snippetObject =
           return_object;
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_title_span.innerHTML =
-          return_object.name;
+        snippetPanel.metaData.selectedTab.name = return_object.name;
       };
 
       if (this.snippet.id !== null) {
@@ -200,7 +208,7 @@ export default {
       this.heightSubtract = top + 30 * (settingsStore.fontSize / 10);
     },
     openFileManagerModal() {
-      const editorContent = this.editor.getValue()
+      const editorContent = this.editor.getValue();
       if (!!editorContent) {
         createMessageModal(
           "Are you sure you wish to discard the current changes?",

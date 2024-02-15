@@ -35,7 +35,7 @@ import {
   showToast,
 } from "../notification_control";
 import { emitter } from "../emitter";
-import { snippetsStore } from "../stores/stores_initializer";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "TreeSnippets",
@@ -44,10 +44,7 @@ export default {
   },
   mixins: [TreeMixin],
   props: {
-    snippetTag: {
-      type: Object,
-      required: true,
-    },
+    tabId: String,
   },
   data() {
     return {
@@ -144,12 +141,9 @@ export default {
     },
   },
   mounted() {
-    emitter.on(
-      `${this.snippetTag.tab_id}_refresh_snippet_tree`,
-      (parent_id = null) => {
-        this.refreshTreeRecursive(parent_id);
-      }
-    );
+    emitter.on(`${this.tabId}_refresh_snippet_tree`, (parent_id = null) => {
+      this.refreshTreeRecursive(parent_id);
+    });
   },
   methods: {
     doubleClickNode(node, e) {
@@ -295,14 +289,18 @@ export default {
     },
     startEditSnippetText(node) {
       // Checking if there is a tab for this snippet.
-      let existing_tab = snippetsStore.getExistingTab(node.data.id);
+
+      let snippetPanel = tabsStore.tabs.find((tab) => tab.name === "Snippets");
+      let existing_tab = snippetPanel.metaData.secondaryTabs.find(
+        (snippet_tab) => {
+          return snippet_tab.metaData?.snippetObject?.id === node.data.id;
+        }
+      );
 
       if (existing_tab) {
-        // TODO: emit event on tabControl to select snippet tab
-        this.snippetTag.tabControl.selectTab(existing_tab);
+        tabsStore.selectTab(existing_tab);
       } else {
-        // TODO: emit event on tabControl to create new snippet Tab
-        v_connTabControl.tag.createSnippetTextTab(node.data);
+        emitter.emit("create_snippet_tab", node.data);
       }
 
       this.api
@@ -311,7 +309,7 @@ export default {
         })
         .then((resp) => {
           emitter.emit(
-            `${this.snippetTag.tabControl.selectedTab.id}_copy_to_editor`,
+            `${snippetPanel.metaData.selectedTab.id}_copy_to_editor`,
             resp.data.data
           );
         })

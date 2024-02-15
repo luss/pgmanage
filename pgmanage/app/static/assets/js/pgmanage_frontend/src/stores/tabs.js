@@ -60,7 +60,11 @@ const useTabsStore = defineStore("tabs", {
       if (parentId) {
         let primaryTab = this.tabs.find((tab) => tab.id === parentId);
         //TODO: handle case if tab with specified Id not exist
-        primaryTab.metaData.secondaryTabs.push(tab);
+        if (name === "+") {
+          primaryTab.metaData.secondaryTabs.push(tab);
+        } else {
+          primaryTab.metaData.secondaryTabs.splice(-1, 0, tab);
+        }
       } else {
         this.tabs.push(tab);
       }
@@ -160,6 +164,9 @@ const useTabsStore = defineStore("tabs", {
           primaryTab.metaData.secondaryTabs.splice(newIndex, 0, removedEl);
         }
       }
+    },
+    getPrimaryTabById(tabId) {
+      return this.tabs.find((tab) => tab.id === tabId);
     },
   },
 });

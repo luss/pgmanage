@@ -33,7 +33,15 @@
                 v-html="tab.icon"
               >
               </span>
-              <span class="omnidb__tab-menu__link-name" v-html="tab.name">
+              <span class="omnidb__tab-menu__link-name">
+                <span>{{ tab.name }}</span>
+                <span v-if="isSecondaryTab" style="visibility: hidden">
+                  <i class="tab-icon node-spin"></i>
+                </span>
+                <i
+                  v-if="isSecondaryTab"
+                  class="fas fa-check-circle tab-icon icon-check d-none"
+                ></i>
               </span>
             </span>
 
@@ -84,7 +92,7 @@ export default {
         return ["primary", "secondary"].includes(value);
       },
     },
-    connTabId: {
+    tabId: {
       type: String,
     },
   },
@@ -96,14 +104,23 @@ export default {
       if (this.hierarchy === "primary") {
         return tabsStore.tabs;
       } else {
-        return tabsStore.getSecondaryTabs(this.connTabId);
+        return tabsStore.getSecondaryTabs(this.tabId);
       }
     },
     selectedTab() {
       if (this.hierarchy === "primary") {
         return tabsStore.selectedPrimaryTab;
       } else {
-        return tabsStore.getSelectedSecondaryTab(this.connTabId);
+        return tabsStore.getSelectedSecondaryTab(this.tabId);
+      }
+    },
+    isSecondaryTab() {
+      return this.hierarchy === "secondary";
+    },
+    isSnippetsPanel() {
+      if (!!this.tabId) {
+        let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
+        return primaryTab?.name === "Snippets";
       }
     },
   },
@@ -115,6 +132,10 @@ export default {
         },
         SnippetPanel: {
           "tab-id": tab.id,
+        },
+        SnippetTab: {
+          "tab-id": tab.id,
+          snippet: tab.metaData.snippetObject,
         },
       };
 
@@ -133,10 +154,7 @@ export default {
         $('[data-toggle="tab"]').tooltip("hide");
       }
     },
-    dragEndFunction(event) {
-      console.log("Not implemented");
-    },
-    createConnectionTab(
+    createConnectionPanel(
       index,
       create_query_tab = true,
       name = false,
@@ -258,6 +276,45 @@ export default {
         }
       }
     },
+    createSnippetTab(snippet) {
+      let snippetName = "New Snippet";
+
+      let snippetDetails = {
+        id: null,
+        name: null,
+        parent: null,
+        type: "snippet",
+      };
+
+      if (snippet) {
+        snippetName = snippet.name;
+        snippetDetails = {
+          id: snippet.id,
+          name: snippetName,
+          parent: snippet.id_parent,
+          type: "snippet",
+        };
+      }
+
+      let tab = tabsStore.addTab({
+        name: snippetName,
+        parentId: this.tabId,
+        component: "SnippetTab",
+        selectFunction: function () {
+          emitter.emit(`${this.id}_editor_focus`);
+          emitter.emit(`${this.id}_resize`);
+        },
+        closeFunction: function (e, tab) {
+          beforeCloseTab(e, function () {
+            tabsStore.removeTab(tab);
+          });
+        },
+      });
+
+      tab.metaData.snippetObject = snippetDetails;
+
+      tabsStore.selectTab(tab);
+    },
   },
   mounted() {
     tabsStore.$onAction((action) => {
@@ -310,7 +367,7 @@ export default {
         closable: false,
         selectable: false,
         clickFunction: function () {
-          emitter.emit(`toggle_snippet_panel`);
+          emitter.emit("toggle_snippet_panel");
         },
       });
 
@@ -322,9 +379,33 @@ export default {
           name = false,
           tooltip_name = false
         ) => {
-          this.createConnectionTab(index, create_query_tab, name, tooltip_name);
+          this.createConnectionPanel(
+            index,
+            create_query_tab,
+            name,
+            tooltip_name
+          );
         }
       );
+    } else {
+      tabsStore.addTab({
+        name: "+",
+        parentId: this.tabId,
+        closable: false,
+        isDraggable: false,
+        selectable: false,
+        clickFunction: () => {
+          //TODO: depending on tab mode should different click function implementation
+          this.createSnippetTab();
+        },
+      });
+
+      if (this.isSnippetsPanel) {
+        emitter.on("create_snippet_tab", (snippet) => {
+          this.createSnippetTab(snippet);
+        });
+        this.createSnippetTab();
+      }
     }
   },
 };
