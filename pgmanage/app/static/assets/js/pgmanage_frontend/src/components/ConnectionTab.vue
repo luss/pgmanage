@@ -1,118 +1,117 @@
 <template>
   <div class="container-fluid position-relative">
     <div class="row">
-      <div
-        :id="`${connTabId}_div_left`"
-        class="omnidb__workspace__div-left col-2"
-      >
-        <div class="row">
-          <div class="omnidb__workspace__content-left border-right">
-            <div class="omnidb__workspace__connection-details">
-              <i class="fas fa-server mr-1"></i>selected DB:
-              <b>{{ databaseName }}</b>
-              <div
-                class="omnidb__switch omnidb__switch--sm float-right"
-                data-toggle="tooltip"
-                data-placement="bottom"
-                data-html="true"
-                title=""
-                data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>"
-              >
-                <input
-                  type="checkbox"
-                  :id="`${connTabId}_autocomplete`"
-                  class="omnidb__switch--input"
-                  v-model="autocompleteStatus"
-                  @change="emitConnectionSave"
-                />
-                <label
-                  :for="`${connTabId}_autocomplete`"
-                  class="omnidb__switch--label"
-                  @change="toggleConnectionAutocomplete"
-                >
-                  <span>
-                    <i class="fas fa-spell-check"></i>
-                  </span>
-                </label>
-              </div>
-            </div>
-
-            <div :id="`${connTabId}_tree`" class="database-tree">
-              <component
-                :is="treeComponent"
-                :tab-id="connTabId"
-                :database-index="databaseIndex"
-              ></component>
-            </div>
-            <div
-              :id="`${connTabId}_left_resize_line_horizontal`"
-              class="omnidb__resize-line__container--horizontal"
-            >
-              <div class="resize_line_horizontal"></div>
-              <div style="height: 5px"></div>
-            </div>
-            <div
-              :id="`tree_tabs_parent_${connTabId}`"
-              class="omnidb__tree-tabs--not-in-view omnidb__tree-tabs"
-              style="position: relative; flex-shrink: 0"
-            >
-              <div
-                :id="`${connTabId}_loading`"
-                class="div_loading"
-                style="z-index: 1000"
-              >
-                <div class="div_loading_cover"></div>
-                <div class="div_loading_content">
+      <splitpanes class="default-theme">
+        <pane size="20">
+          <div
+            :id="`${connTabId}_div_left`"
+            class="omnidb__workspace__div-left col"
+          >
+            <div class="row">
+              <div class="omnidb__workspace__content-left border-right">
+                <div class="omnidb__workspace__connection-details">
+                  <i class="fas fa-server mr-1"></i>selected DB:
+                  <b>{{ databaseName }}</b>
                   <div
-                    class="spinner-border text-primary"
-                    style="width: 4rem; height: 4rem"
-                    role="status"
+                    class="omnidb__switch omnidb__switch--sm float-right"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    data-html="true"
+                    title=""
+                    data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>"
                   >
-                    <span class="sr-only">Loading...</span>
+                    <input
+                      type="checkbox"
+                      :id="`${connTabId}_autocomplete`"
+                      class="omnidb__switch--input"
+                      v-model="autocompleteStatus"
+                      @change="emitConnectionSave"
+                    />
+                    <label
+                      :for="`${connTabId}_autocomplete`"
+                      class="omnidb__switch--label"
+                      @change="toggleConnectionAutocomplete"
+                    >
+                      <span>
+                        <i class="fas fa-spell-check"></i>
+                      </span>
+                    </label>
                   </div>
                 </div>
+                <splitpanes horizontal>
+                  <pane>
+                    <div :id="`${connTabId}_tree`" class="database-tree">
+                      <component
+                        :is="treeComponent"
+                        :tab-id="connTabId"
+                        :database-index="databaseIndex"
+                      ></component>
+                    </div>
+                  </pane>
+
+                  <pane size="2">
+                    <div
+                      :id="`tree_tabs_parent_${connTabId}`"
+                      class="omnidb__tree-tabs--not-in-view omnidb__tree-tabs"
+                      style="position: relative; flex-shrink: 0"
+                    >
+                      <div
+                        :id="`${connTabId}_loading`"
+                        class="div_loading"
+                        style="z-index: 1000"
+                      >
+                        <div class="div_loading_cover"></div>
+                        <div class="div_loading_content">
+                          <div
+                            class="spinner-border text-primary"
+                            style="width: 4rem; height: 4rem"
+                            role="status"
+                          >
+                            <span class="sr-only">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler mr-2"
+                      >
+                        <i class="fas fa-arrows-alt-v"></i>
+                      </button>
+                      <div
+                        :id="`tree_tabs_${connTabId}`"
+                        class="omnidb__tree-tabs__container"
+                        style="position: relative"
+                      ></div>
+                    </div>
+                  </pane>
+                </splitpanes>
               </div>
-              <button
-                type="button"
-                class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler mr-2"
-              >
-                <i class="fas fa-arrows-alt-v"></i>
-              </button>
-              <div
-                :id="`tree_tabs_${connTabId}`"
-                class="omnidb__tree-tabs__container"
-                style="position: relative"
-              ></div>
             </div>
           </div>
-        </div>
-        <div
-          :id="`${connTabId}_left_resize_line_vertical`"
-          class="omnidb__resize-line__container--vertical"
-        >
-          <div class="resize_line_vertical"></div>
-        </div>
-      </div>
-      <div
-        :id="`${connTabId}_div_right`"
-        class="omnidb__workspace__div-right col-10 position-relative"
-      >
-        <div class="row">
-          <button
-            :id="`${connTabId}_tree_toggler`"
-            type="button"
-            class="py-4 px-0 btn btn-secondary omnidb__tree__toggler"
+        </pane>
+        <pane>
+          <div
+            :id="`${connTabId}_div_right`"
+            class="omnidb__workspace__div-right col position-relative"
           >
-            <i class="fas fa-arrows-alt-h"></i>
-          </button>
-          <Tabs
-            :id="`${connTabId}`"
-            class="w-100"
-            hierarchy="secondary"
-            :tab-id="connTabId"
-          />
-        </div>
-      </div>
+            <div class="row">
+              <button
+                :id="`${connTabId}_tree_toggler`"
+                type="button"
+                class="py-4 px-0 btn btn-secondary omnidb__tree__toggler"
+              >
+                <i class="fas fa-arrows-alt-h"></i>
+              </button>
+              <Tabs
+                :id="`${connTabId}`"
+                class="w-100"
+                hierarchy="secondary"
+                :tab-id="connTabId"
+              />
+            </div>
+          </div>
+        </pane>
+      </splitpanes>
     </div>
   </div>
 </template>
@@ -125,6 +124,7 @@ import axios from "axios";
 import { defineAsyncComponent } from "vue";
 import { emitter } from "../emitter";
 import { truncateText } from "../utils";
+import { Splitpanes, Pane } from "splitpanes";
 
 export default {
   name: "ConnectionTab",
@@ -135,6 +135,8 @@ export default {
     TreeMariaDB: defineAsyncComponent(() => import("./TreeMariaDB.vue")),
     TreeOracle: defineAsyncComponent(() => import("./TreeOracle.vue")),
     TreeMysql: defineAsyncComponent(() => import("./TreeMysql.vue")),
+    Splitpanes,
+    Pane,
   },
   props: {
     connTabId: String,
