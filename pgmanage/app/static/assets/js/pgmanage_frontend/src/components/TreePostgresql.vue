@@ -43,6 +43,7 @@ import { createMessageModal } from "../notification_control";
 import { getProperties, clearProperties } from "../properties";
 import { showConfirm, showToast } from "../notification_control";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "TreePostgresql",
@@ -3233,6 +3234,7 @@ export default {
               database_nodes.forEach((el) => {
                 if (node.data.database === el.title) {
                   this.selectedDatabase = node.data.database;
+                  tabsStore.selectedPrimaryTab.metaData.selectedDatabase = node.data.database; //TODO: remove old code
                   tab_tag.selectedDatabase = node.data.database;
                   tab_tag.selectedDatabaseNode = el;
 

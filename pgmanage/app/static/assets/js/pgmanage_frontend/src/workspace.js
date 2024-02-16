@@ -208,6 +208,17 @@ function changeDatabase(p_value) {
 /// <param name="p_cancel_function">Ok function.</param>
 /// <param name="p_ok_function">Cancel function.</param>
 function checkBeforeChangeDatabase(p_cancel_function, p_ok_function) {
+
+  for (const tab of tabsStore.selectedPrimaryTab.metaData.secondaryTabs) {
+    if(["edit", "alter", "debug", "monitoring_dashboard", "data_mining"].includes(tab.metaData.mode)) {
+      showAlert('Before changing connection please close any tab that belongs to the following types: <br/><br/><b>Edit Data<br/><br/>Alter Table<br/><br/>Function Debugging<br/><br/>Monitoring Dashboard<br/><br/>Advanced Object Search');
+      if (p_cancel_function!=null) {
+        p_cancel_function();
+      }
+      return false;
+    }
+  } // TODO: remove old code
+
 	for (var i=0; i < v_connTabControl.selectedTab.tag.tabControl.tabList.length; i++) {
 
 		var v_tab = v_connTabControl.selectedTab.tag.tabControl.tabList[i];
@@ -888,9 +899,9 @@ function showMenuNewTabOuter(e) {
           onClick = () => {
             emitter.emit(`${tabsStore.id}_create_conn_tab`, {
               index: conn.id,
-              create_query_tab: true,
+              createInitialTabs: true,
               name: name,
-              tooltip_name: tooltip_name})
+              tooltipName: tooltip_name})
             v_connTabControl.tag.createConnTab(
               conn.id,
               true,

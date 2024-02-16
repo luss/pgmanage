@@ -160,9 +160,9 @@ export default {
     },
     createConnectionPanel(
       index,
-      create_query_tab = true,
+      createInitialTabs = true,
       name = false,
-      tooltip_name = false
+      tooltipName = false
     ) {
       if (connectionsStore.connections.length == 0) {
         showToast("error", "Create connections first.");
@@ -185,23 +185,23 @@ export default {
           connName = v_conn.alias;
         }
 
-        if (!tooltip_name) {
-          tooltip_name = "";
+        if (!tooltipName) {
+          tooltipName = "";
 
           if (v_conn.conn_string && v_conn.conn_string !== "") {
             if (v_conn.alias) {
-              tooltip_name += `<h5 class="my-1">${v_conn.alias}</h5>`;
+              tooltipName += `<h5 class="my-1">${v_conn.alias}</h5>`;
             }
-            tooltip_name += `<div class="mb-1">${v_conn.conn_string}</div>`;
+            tooltipName += `<div class="mb-1">${v_conn.conn_string}</div>`;
           } else {
             if (v_conn.alias) {
-              tooltip_name += `<h5 class="my-1">${v_conn.alias}</h5>`;
+              tooltipName += `<h5 class="my-1">${v_conn.alias}</h5>`;
             }
             if (v_conn.details1) {
-              tooltip_name += `<div class="mb-1">${v_conn.details1}</div>`;
+              tooltipName += `<div class="mb-1">${v_conn.details1}</div>`;
             }
             if (v_conn.details2) {
-              tooltip_name += `<div class="mb-1">${v_conn.details2}</div>`;
+              tooltipName += `<div class="mb-1">${v_conn.details2}</div>`;
             }
           }
         }
@@ -227,7 +227,7 @@ export default {
           name: connName,
           component: "ConnectionTab",
           icon: icon,
-          tooltip: tooltip_name,
+          tooltip: tooltipName,
           selectFunction: function () {
             document.title = "PgManage";
             // TODO: add missing code
@@ -275,7 +275,10 @@ export default {
         });
 
         connTab.metaData.mode = "connection";
-        connTab.metaData.selectedDatabaseIndex = 0;
+        connTab.metaData.selectedDatabaseIndex = v_conn.id;
+        connTab.metaData.createInitialTabs = createInitialTabs;
+        connTab.metaData.change_active_database_call_list = []
+        connTab.metaData.change_active_database_call_running = false
 
         tabsStore.selectTab(connTab);
       }
@@ -379,15 +382,15 @@ export default {
         `${tabsStore.id}_create_conn_tab`,
         ({
           index,
-          create_query_tab = true,
+          createInitialTabs = true,
           name = false,
-          tooltip_name = false,
+          tooltipName = false,
         }) => {
           this.createConnectionPanel(
             index,
-            create_query_tab,
+            createInitialTabs,
             name,
-            tooltip_name
+            tooltipName
           );
         }
       );
