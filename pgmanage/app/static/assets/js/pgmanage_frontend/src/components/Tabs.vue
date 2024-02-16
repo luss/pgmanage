@@ -35,7 +35,10 @@
               </span>
               <span class="omnidb__tab-menu__link-name">
                 <span>{{ tab.name }}</span>
-                <span v-if="isSecondaryTab && tab.name !== '+'" style="visibility: hidden">
+                <span
+                  v-if="isSecondaryTab && tab.name !== '+'"
+                  style="visibility: hidden"
+                >
                   <i class="tab-icon node-spin"></i>
                 </span>
                 <i
@@ -201,80 +204,80 @@ export default {
               tooltip_name += `<div class="mb-1">${v_conn.details2}</div>`;
             }
           }
-
-          const imgPath =
-            import.meta.env.MODE === "development"
-              ? `${import.meta.env.BASE_URL}src/assets/images/`
-              : `${import.meta.env.BASE_URL}assets/`;
-
-          let imgName;
-          if (
-            import.meta.env.MODE === "development" ||
-            v_conn.technology === "sqlite"
-          ) {
-            imgName = v_conn.technology;
-          } else {
-            imgName = `${v_conn.technology}2`;
-          }
-
-          let icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
-
-          const connTab = tabsStore.addTab({
-            name: connName,
-            component: "ConnectionTab",
-            icon: icon,
-            tooltip: tooltip_name,
-            selectFunction: function () {
-              document.title = "PgManage";
-              // TODO: add missing code
-            },
-            closeFunction: function (e, primaryTab) {
-              $('[data-toggle="tab"]').tooltip("hide");
-              beforeCloseTab(e, function () {
-                var v_tabs_to_remove = [];
-
-                let tabs = tabsStore.getSecondaryTabs(primaryTab.id);
-
-                tabs.forEach((tab) => {
-                  if (
-                    tab.metaData.mode == "query" ||
-                    tab.metaData.mode == "edit" ||
-                    tab.metaData.mode == "debug" ||
-                    tab.metaData.mode == "console"
-                  ) {
-                    var v_message_data = {
-                      tab_id: tab.id,
-                      tab_db_id: null,
-                      conn_tab_id: primaryTab.id,
-                    };
-                    if (tab.metaData.mode == "query")
-                      v_message_data.tab_db_id = tab.metaData.tab_db_id;
-                    v_tabs_to_remove.push(v_message_data);
-                  }
-
-                  if (tab.closeFunction) tab.closeFunction(e, tab);
-                });
-
-                var v_message_data = {
-                  conn_tab_id: primaryTab.id,
-                  tab_db_id: null,
-                  tab_id: null,
-                };
-                v_tabs_to_remove.push(v_message_data);
-
-                if (v_tabs_to_remove.length > 0) {
-                  createRequest(queryRequestCodes.CloseTab, v_tabs_to_remove);
-                }
-                tabsStore.removeTab(primaryTab);
-              });
-            },
-          });
-
-          connTab.metaData.mode = "connection";
-          connTab.metaData.selectedDatabaseIndex = 0;
-
-          tabsStore.selectTab(connTab);
         }
+
+        const imgPath =
+          import.meta.env.MODE === "development"
+            ? `${import.meta.env.BASE_URL}src/assets/images/`
+            : `${import.meta.env.BASE_URL}assets/`;
+
+        let imgName;
+        if (
+          import.meta.env.MODE === "development" ||
+          v_conn.technology === "sqlite"
+        ) {
+          imgName = v_conn.technology;
+        } else {
+          imgName = `${v_conn.technology}2`;
+        }
+
+        let icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
+
+        const connTab = tabsStore.addTab({
+          name: connName,
+          component: "ConnectionTab",
+          icon: icon,
+          tooltip: tooltip_name,
+          selectFunction: function () {
+            document.title = "PgManage";
+            // TODO: add missing code
+          },
+          closeFunction: function (e, primaryTab) {
+            $('[data-toggle="tab"]').tooltip("hide");
+            beforeCloseTab(e, function () {
+              var v_tabs_to_remove = [];
+
+              let tabs = tabsStore.getSecondaryTabs(primaryTab.id);
+
+              tabs.forEach((tab) => {
+                if (
+                  tab.metaData.mode == "query" ||
+                  tab.metaData.mode == "edit" ||
+                  tab.metaData.mode == "debug" ||
+                  tab.metaData.mode == "console"
+                ) {
+                  var v_message_data = {
+                    tab_id: tab.id,
+                    tab_db_id: null,
+                    conn_tab_id: primaryTab.id,
+                  };
+                  if (tab.metaData.mode == "query")
+                    v_message_data.tab_db_id = tab.metaData.tab_db_id;
+                  v_tabs_to_remove.push(v_message_data);
+                }
+
+                if (tab.closeFunction) tab.closeFunction(e, tab);
+              });
+
+              var v_message_data = {
+                conn_tab_id: primaryTab.id,
+                tab_db_id: null,
+                tab_id: null,
+              };
+              v_tabs_to_remove.push(v_message_data);
+
+              if (v_tabs_to_remove.length > 0) {
+                createRequest(queryRequestCodes.CloseTab, v_tabs_to_remove);
+              }
+              tabsStore.removeTab(primaryTab);
+            });
+          },
+        });
+
+        connTab.metaData.mode = "connection";
+        connTab.metaData.selectedDatabaseIndex = 0;
+
+        tabsStore.selectTab(connTab);
       }
     },
     createSnippetTab(snippet) {
@@ -374,12 +377,12 @@ export default {
 
       emitter.on(
         `${tabsStore.id}_create_conn_tab`,
-        (
+        ({
           index,
           create_query_tab = true,
           name = false,
-          tooltip_name = false
-        ) => {
+          tooltip_name = false,
+        }) => {
           this.createConnectionPanel(
             index,
             create_query_tab,

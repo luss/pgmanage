@@ -48,6 +48,7 @@ import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
 import { startTutorial } from './tutorial'
 import { welcomeScreenInit } from './tab_functions/welcome_screen'
+import { tabsStore } from './stores/stores_initializer.js'
 
 let v_start_height;
 /// <summary>
@@ -885,6 +886,11 @@ function showMenuNewTabOuter(e) {
           };
         } else {
           onClick = () => {
+            emitter.emit(`${tabsStore.id}_create_conn_tab`, {
+              index: conn.id,
+              create_query_tab: true,
+              name: name,
+              tooltip_name: tooltip_name})
             v_connTabControl.tag.createConnTab(
               conn.id,
               true,

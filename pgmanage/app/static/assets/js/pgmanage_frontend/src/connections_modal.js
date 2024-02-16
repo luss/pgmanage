@@ -29,7 +29,7 @@ function connectionsModalInit() {
         }
         else {
             v_connTabControl.tag.createConnTab(connection.id);
-            emitter.emit(`${tabsStore.id}_create_conn_tab`, (connection.id))
+            emitter.emit(`${tabsStore.id}_create_conn_tab`, ({index: connection.id}))
         }
     })
 }
