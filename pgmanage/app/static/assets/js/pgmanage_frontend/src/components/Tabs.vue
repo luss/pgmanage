@@ -138,6 +138,10 @@ export default {
   },
   methods: {
     getCurrentProps(tab) {
+      let primaryTab;
+      if (tab.parentId) {
+        primaryTab = tabsStore.getPrimaryTabById(tab.parentId);
+      }
       const componentsProps = {
         ConnectionTab: {
           "conn-tab-id": tab.id,
@@ -150,12 +154,11 @@ export default {
           snippet: tab.metaData.snippetObject,
         },
         ConsoleTab: {
-          connId: this.tabId,
+          connId: tab.parentId,
           tabId: tab.id,
-          consoleHelp: tabsStore.selectedPrimaryTab.metaData.consoleHelp,
-          databaseIndex:
-            tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-          dialect: tabsStore.selectedPrimaryTab.metaData.selectedDBMS,
+          consoleHelp: primaryTab?.metaData?.consoleHelp,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          dialect: primaryTab?.metaData?.selectedDBMS,
         },
       };
 
@@ -245,9 +248,9 @@ export default {
           icon: icon,
           tooltip: tooltipName,
           mode: "connection",
-          selectFunction: function () {
+          selectFunction: () => {
             document.title = "PgManage";
-            // TODO: add missing code
+            this.checkTabStatus();
           },
           closeFunction: function (e, primaryTab) {
             $('[data-toggle="tab"]').tooltip("hide");
@@ -358,6 +361,22 @@ export default {
       });
 
       tabsStore.selectTab(tab);
+    },
+    checkTabStatus() {
+      const tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
+      switch (tab?.metaData?.mode) {
+        case "query":
+          emitter.emit(`${tab.id}_check_query_status`);
+          break;
+        case "console":
+          emitter.emit(`${tab.id}_check_console_status`);
+          break;
+        case "edit":
+          console.log("Not implemented"); // TODO: implement check tab status functionality for edit tab
+          break;
+        default:
+          break;
+      }
     },
   },
   mounted() {
