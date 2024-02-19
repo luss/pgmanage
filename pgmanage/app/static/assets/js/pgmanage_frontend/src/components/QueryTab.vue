@@ -160,6 +160,7 @@ export default {
     databaseName: String,
     dialect: String,
     initTabDatabaseId: Number,
+    initialQuery: String,
   },
   data() {
     return {
@@ -214,6 +215,10 @@ export default {
   },
   mounted() {
     this.setupEvents();
+
+    if (!!this.initialQuery) {
+      emitter.emit(`${this.tabId}_copy_to_editor`, this.initialQuery);
+    }
   },
   unmounted() {
     this.clearEvents();

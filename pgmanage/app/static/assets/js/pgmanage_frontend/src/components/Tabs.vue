@@ -250,7 +250,12 @@ export default {
       });
 
       emitter.on(`${this.tabId}_create_query_tab`, (data) => {
-        this.createQueryTab(data?.name, data?.tabDbId, data?.tabDbName);
+        this.createQueryTab(
+          data?.name,
+          data?.tabDbId,
+          data?.tabDbName,
+          data?.initialQuery
+        );
       });
     }
   },
@@ -290,6 +295,7 @@ export default {
           databaseName:
             tab.metaData.databaseName ?? primaryTab?.metaData?.selectedDatabase,
           initTabDatabaseId: tab.metaData.initTabDatabaseId,
+          initialQuery: tab.metaData.initialQuery,
         },
         MonitoringDashboard: {
           connId: tab.parentId,
@@ -517,7 +523,12 @@ export default {
 
       tabsStore.selectTab(tab);
     },
-    createQueryTab(name = "Query", tabDbId = null, tabDbName = null) {
+    createQueryTab(
+      name = "Query",
+      tabDbId = null,
+      tabDbName = null,
+      initialQuery = null
+    ) {
       const tab = tabsStore.addTab({
         parentId: this.tabId,
         name: name,
@@ -526,15 +537,16 @@ export default {
         selectFunction: function () {
           emitter.emit(`${this.id}_check_query_status`);
         },
-        closeFunction: function (e, tab) {
-          beforeCloseTab(e, function () {
-            tabsStore.removeTab(tab);
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
           });
         },
         // dblClickFunction: renameTab //TODO: implement rename functionality
       });
       tab.metaData.databaseName = tabDbName;
       tab.metaData.initTabDatabaseId = tabDbId;
+      tab.metaData.initialQuery = initialQuery;
       tabsStore.selectTab(tab);
     },
     checkTabStatus() {
@@ -629,6 +641,26 @@ export default {
         minWidth: 230,
         items: optionList,
       });
+    },
+    removeTab(tab) {
+      if (
+        ["query", "edit", "console", "outer_terminal"].includes(
+          tab.metaData.mode
+        )
+      ) {
+        let messageData = {
+          tab_id: tab.id,
+          tab_db_id: null,
+          conn_tab_id: tabsStore.selectedPrimaryTab.id,
+        };
+        if (tab.metaData.mode === "query") {
+          messageData.tab_db_id = tab.metaData.initTabDatabaseId;
+        }
+
+        createRequest(queryRequestCodes.CloseTab, [messageData]);
+      }
+
+      tabsStore.removeTab(tab);
     },
   },
 };

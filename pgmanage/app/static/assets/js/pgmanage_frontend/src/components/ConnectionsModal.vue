@@ -98,6 +98,7 @@ import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import { emitter } from '../emitter'
+import { tabsStore } from '../stores/stores_initializer'
 
 export default {
   name: 'ConnectionsModal',
@@ -302,20 +303,42 @@ export default {
                     tooltip_name +=
                       `<div class="mb-1">${conn.details2}</div>`;
                   }
-
+                  emitter.emit(`${tabsStore.id}_create_conn_tab`, (
+                    {
+                      index: tab.index, 
+                      createInitialTabs: false,
+                      name: conn.alias,
+                      tooltipName: tooltip_name
+                    }))
+                  // TODO: remove old code
                   window.v_connTabControl.tag.createConnTab(
                     tab.index,
                     false,
                     conn.alias,
                     tooltip_name
                   );
+                  this.$nextTick(() => {
+                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_console_tab`)
+                  })
                   window.v_connTabControl.tag.createConsoleTab();
 
                 }
 
               }
               currentParent = tab.index
-              window.v_connTabControl.tag.createQueryTab(tab.title, tab.tab_db_id, tab.database_name);
+              this.$nextTick(() => {
+                emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: tab.title,
+                    tabDbId: tab.tab_db_id,
+                    tabDbName: tab.database_name,
+                    initialQuery: tab.snippet,
+                  }
+                );
+              });
+
+              window.v_connTabControl.tag.createQueryTab(tab.title, tab.tab_db_id, tab.database_name); // TODO: remove old code
               let selectedTab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
               emitter.emit(`${selectedTab.id}_copy_to_editor`, tab.snippet)
             })
