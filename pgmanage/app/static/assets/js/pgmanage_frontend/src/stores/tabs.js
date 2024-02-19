@@ -121,11 +121,12 @@ const useTabsStore = defineStore("tabs", {
       const tabIndex = secondaryTabs.indexOf(tabToRemove);
       if (primaryTab.metaData.selectedTab === tabToRemove) {
         const nextTabIndex = tabIndex + 1;
-
-        const newSelectedTab = secondaryTabs[nextTabIndex].selectable
-          ? secondaryTabs[nextTabIndex]
-          : secondaryTabs[nextTabIndex - 1];
-        primaryTab.metaData.selectedTab = newSelectedTab;
+        if (secondaryTabs.length > 2) {
+          const newSelectedTab = secondaryTabs[nextTabIndex].selectable
+            ? secondaryTabs[nextTabIndex]
+            : secondaryTabs[nextTabIndex - 2];
+          primaryTab.metaData.selectedTab = newSelectedTab;
+        }
       }
       secondaryTabs.splice(tabIndex, 1);
     },

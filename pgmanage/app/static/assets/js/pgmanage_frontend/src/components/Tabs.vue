@@ -6,7 +6,17 @@
       :class="`omnidb__tab-menu border-bottom omnidb__tab-menu--${hierarchy} omnidb__theme-bg--menu-${hierarchy}`"
     >
       <nav>
-        <div class="nav nav-tabs">
+        <div
+          :class="[
+            'nav',
+            'nav-tabs',
+            {
+              'text-nowrap': isSecondaryTab,
+              'flex-nowrap': isSecondaryTab,
+              'scrollable-menu': isSecondaryTab,
+            },
+          ]"
+        >
           <a
             :id="tab.id"
             data-toggle="tab"
@@ -623,3 +633,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.scrollable-menu {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+</style>
