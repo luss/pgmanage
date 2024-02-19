@@ -182,6 +182,7 @@ export default {
     this.$nextTick(() => {
       if (this.connectionTab.metaData.createInitialTabs) {
         emitter.emit(`${this.connTabId}_create_console_tab`);
+        emitter.emit(`${this.connTabId}_create_query_tab`);
       }
     });
   },

@@ -96,7 +96,10 @@ export default {
   components: {
     WelcomeScreen,
     ConsoleTab: defineAsyncComponent(() => import("./ConsoleTab.vue")),
-    MonitoringDashboard: defineAsyncComponent(() => import("./MonitoringDashboard.vue"))
+    QueryTab: defineAsyncComponent(() => import("./QueryTab.vue")),
+    MonitoringDashboard: defineAsyncComponent(() =>
+      import("./MonitoringDashboard.vue")
+    ),
   },
   props: {
     hierarchy: {
@@ -138,6 +141,113 @@ export default {
       return false;
     },
   },
+  mounted() {
+    tabsStore.$onAction((action) => {
+      if (action.name == "addTab") {
+        action.after((result) => {
+          if (!result.tooltip) return;
+          this.$nextTick(() => {
+            $(`#${result.id}`).tooltip({
+              placement: "right",
+              boundary: "window",
+              sanitize: false,
+              title: result.tooltip,
+              html: true,
+              delay: { show: 500, hide: 100 },
+            });
+          });
+        });
+      }
+    });
+
+    if (this.hierarchy == "primary") {
+      tabsStore.addTab({
+        name: "Connections",
+        icon: '<i class="fas fa-bolt"></i>',
+        tooltip: "Connections",
+        closable: false,
+        selectable: false,
+        clickFunction: function (e) {
+          showMenuNewTabOuter(e);
+        },
+      });
+
+      const welcomeTab = tabsStore.addTab({
+        name: "Welcome",
+        component: "WelcomeScreen",
+        icon: '<i class="fas fa-hand-spock"></i>',
+        tooltip: "Welcome to PgManage",
+        closable: false,
+        selectFunction: function () {
+          document.title = "Welcome to PgManage";
+        },
+      });
+      tabsStore.selectTab(welcomeTab);
+
+      tabsStore.addTab({
+        name: "Snippets",
+        component: "SnippetPanel",
+        icon: '<i class="fas fa-file-code"></i>',
+        tooltip: "Snippets Panel",
+        closable: false,
+        selectable: false,
+        clickFunction: function () {
+          emitter.emit("toggle_snippet_panel");
+        },
+      });
+
+      emitter.on(
+        `${tabsStore.id}_create_conn_tab`,
+        ({
+          index,
+          createInitialTabs = true,
+          name = false,
+          tooltipName = false,
+        }) => {
+          this.createConnectionPanel(
+            index,
+            createInitialTabs,
+            name,
+            tooltipName
+          );
+        }
+      );
+    } else {
+      tabsStore.addTab({
+        name: "+",
+        parentId: this.tabId,
+        closable: false,
+        isDraggable: false,
+        selectable: false,
+        clickFunction: (event) => {
+          if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
+            this.createSnippetTab();
+          } else {
+            this.showMenuNewTab(event);
+          }
+        },
+      });
+
+      if (this.isSnippetsPanel) {
+        emitter.on("create_snippet_tab", (snippet) => {
+          this.createSnippetTab(snippet);
+        });
+        this.createSnippetTab();
+      }
+
+      emitter.on(`${this.tabId}_create_console_tab`, () => {
+        this.createConsoleTab();
+      });
+
+      emitter.on(`${this.tabId}_create_query_tab`, (data) => {
+        this.createQueryTab(data?.name, data?.tabDbId, data?.tabDbName);
+      });
+    }
+  },
+  unmounted() {
+    emitter.all.delete(`${this.tabId}_create_console_tab`);
+    emitter.all.delete(`${this.tabId}_create_query_tab`);
+  },
   methods: {
     getCurrentProps(tab) {
       let primaryTab;
@@ -162,11 +272,20 @@ export default {
           databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
           dialect: primaryTab?.metaData?.selectedDBMS,
         },
+        QueryTab: {
+          connId: tab.parentId,
+          tabId: tab.id,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          dialect: primaryTab?.metaData?.selectedDBMS,
+          databaseName:
+            tab.metaData.databaseName ?? primaryTab?.metaData?.selectedDatabase,
+          initTabDatabaseId: tab.metaData.initTabDatabaseId,
+        },
         MonitoringDashboard: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex
-        }
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+        },
       };
 
       return componentsProps[tab.component];
@@ -375,18 +494,38 @@ export default {
         name: "Monitoring",
         component: "MonitoringDashboard",
         mode: "monitoring_dashboard",
-        selectFunction: function() {
+        selectFunction: function () {
           emitter.emit(`${this.id}_redraw_widget_grid`);
         },
-        closeFunction: function(e, tab) {
+        closeFunction: function (e, tab) {
           beforeCloseTab(e, function () {
             tabsStore.removeTab(tab);
           });
         },
         // p_dblClickFunction: renameTab, //TODO: implement rename functionality
-      })
+      });
 
-      tabsStore.selectTab(tab)
+      tabsStore.selectTab(tab);
+    },
+    createQueryTab(name = "Query", tabDbId = null, tabDbName = null) {
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: name,
+        component: "QueryTab",
+        mode: "query",
+        selectFunction: function () {
+          emitter.emit(`${this.id}_check_query_status`);
+        },
+        closeFunction: function (e, tab) {
+          beforeCloseTab(e, function () {
+            tabsStore.removeTab(tab);
+          });
+        },
+        // dblClickFunction: renameTab //TODO: implement rename functionality
+      });
+      tab.metaData.databaseName = tabDbName;
+      tab.metaData.initTabDatabaseId = tabDbId;
+      tabsStore.selectTab(tab);
     },
     checkTabStatus() {
       const tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
@@ -410,8 +549,7 @@ export default {
           label: "Query Tab",
           icon: "fas cm-all fa-search",
           onClick: () => {
-            console.log("Not implemented");
-            // this.createQueryTab();
+            this.createQueryTab();
           },
         },
         {
@@ -482,105 +620,6 @@ export default {
         items: optionList,
       });
     },
-  },
-  mounted() {
-    tabsStore.$onAction((action) => {
-      if (action.name == "addTab") {
-        action.after((result) => {
-          if (!result.tooltip) return;
-          this.$nextTick(() => {
-            $(`#${result.id}`).tooltip({
-              placement: "right",
-              boundary: "window",
-              sanitize: false,
-              title: result.tooltip,
-              html: true,
-              delay: { show: 500, hide: 100 },
-            });
-          });
-        });
-      }
-    });
-
-    if (this.hierarchy == "primary") {
-      tabsStore.addTab({
-        name: "Connections",
-        icon: '<i class="fas fa-bolt"></i>',
-        tooltip: "Connections",
-        closable: false,
-        selectable: false,
-        clickFunction: function (e) {
-          showMenuNewTabOuter(e);
-        },
-      });
-
-      const welcomeTab = tabsStore.addTab({
-        name: "Welcome",
-        component: "WelcomeScreen",
-        icon: '<i class="fas fa-hand-spock"></i>',
-        tooltip: "Welcome to PgManage",
-        closable: false,
-        selectFunction: function () {
-          document.title = "Welcome to PgManage";
-        },
-      });
-      tabsStore.selectTab(welcomeTab);
-
-      tabsStore.addTab({
-        name: "Snippets",
-        component: "SnippetPanel",
-        icon: '<i class="fas fa-file-code"></i>',
-        tooltip: "Snippets Panel",
-        closable: false,
-        selectable: false,
-        clickFunction: function () {
-          emitter.emit("toggle_snippet_panel");
-        },
-      });
-
-      emitter.on(
-        `${tabsStore.id}_create_conn_tab`,
-        ({
-          index,
-          createInitialTabs = true,
-          name = false,
-          tooltipName = false,
-        }) => {
-          this.createConnectionPanel(
-            index,
-            createInitialTabs,
-            name,
-            tooltipName
-          );
-        }
-      );
-    } else {
-      tabsStore.addTab({
-        name: "+",
-        parentId: this.tabId,
-        closable: false,
-        isDraggable: false,
-        selectable: false,
-        clickFunction: (event) => {
-          if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
-            this.createSnippetTab();
-          } else {
-            this.showMenuNewTab(event);
-          }
-        },
-      });
-
-      if (this.isSnippetsPanel) {
-        emitter.on("create_snippet_tab", (snippet) => {
-          this.createSnippetTab(snippet);
-        });
-        this.createSnippetTab();
-      }
-
-      emitter.on(`${this.tabId}_create_console_tab`, () => {
-        this.createConsoleTab();
-      });
-    }
   },
 };
 </script>

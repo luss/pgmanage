@@ -1,4 +1,5 @@
 <template>
+  <div>
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
       <QueryEditor ref="editor" class="h-100 mr-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
@@ -119,7 +120,7 @@
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
   <FileManager ref="fileManager"/>
-
+</div>
 </template>
 
 <script>
@@ -137,7 +138,7 @@ import QueryResultTabs from "./QueryResultTabs.vue";
 import { connectionsStore } from '../stores/connections.js'
 import FileManager from "./FileManager.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
-
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "QueryTab",
@@ -230,7 +231,7 @@ export default {
       save_query = this.editorContent,
       clear_data = false
     ) {
-      let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
+      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
       this.queryDuration = "";
       this.cancelled = false;
       this.showFetchButtons = false;
@@ -257,8 +258,7 @@ export default {
             cmd_type: cmd_type,
             all_data: all_data,
             log_query: log_query,
-            // change the we are getting tab title
-            tab_title: tab_tag.tab_title_span.innerHTML,
+            tab_title: tab.name,
           };
 
           this.readOnlyEditor = true;
@@ -266,7 +266,7 @@ export default {
           this.queryStartTime = moment().format();
 
           let context = {
-            tab_tag: tab_tag,
+            tab: tab,
             database_index: this.databaseIndex,
             start_datetime: this.queryStartTime,
             acked: false,
@@ -280,8 +280,6 @@ export default {
             },
           };
 
-          context.tab_tag.context = context;
-
           createRequest(queryRequestCodes.Query, message_data, context);
 
           this.queryState = requestState.Executing;
@@ -290,9 +288,8 @@ export default {
             this.longQuery = true;
           }, 1000);
 
-          //FIXME: change into event emitting later
-          tab_tag.tab_loading_span.style.visibility = "visible";
-          tab_tag.tab_check_span.style.display = "none";
+          tab.metaData.isLoading = true;
+          tab.metaData.isReady = false;
 
           this.tabStatus = tabStatusMap.RUNNING;
         }
@@ -314,9 +311,8 @@ export default {
         data.v_data.data = this.tempData;
 
         if (
-          this.tabId === context.tab_tag.tabControl.selectedTab.id &&
-          this.connId ===
-          context.tab_tag.connTab.tag.connTabControl.selectedTab.id
+          this.connId === tabsStore.selectedPrimaryTab.id &&
+          this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
           this.context = "";
           this.data = "";
@@ -328,17 +324,15 @@ export default {
           this.tabStatus = data.v_data.con_status;
           this.queryDuration = data.v_data.duration;
 
-          // FIXME: change into event emitting later
-          context.tab_tag.tab_loading_span.style.visibility = "hidden";
-          context.tab_tag.tab_check_span.style.display = "none";
+          context.tab.metaData.isReady = false;
+          context.tab.metaData.isLoading = false;
         } else {
           this.queryState = requestState.Ready;
           this.data = data;
           this.context = context;
 
-          //FIXME: change into event emitting later
-          context.tab_tag.tab_loading_span.style.visibility = "hidden";
-          context.tab_tag.tab_check_span.style.display = "";
+          context.tab.metaData.isReady = true
+          context.tab.metaData.isLoading = false
         }
       }
     },
@@ -435,6 +429,9 @@ export default {
       emitter.on(`${this.tabId}_check_query_status`, () => {
         this.$refs.editor.focus();
         if (this.queryState === requestState.Ready) {
+          this.context.tab.metaData.isReady = false;
+          this.context.tab.metaData.isLoading = false;
+          
           this.$refs.queryResults.renderResult(this.data, this.context);
         }
       });
