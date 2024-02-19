@@ -5,7 +5,7 @@ const useTabsStore = defineStore("tabs", {
   state: () => ({
     id: new ShortUniqueId({
       dictionary: "alpha_lower",
-      length: 8
+      length: 8,
     }).randomUUID(),
     tabs: [],
     selectedPrimaryTab: "",
@@ -31,10 +31,11 @@ const useTabsStore = defineStore("tabs", {
       dblClickFunction = null,
       rightClickFunction = false,
       selectFunction = null,
+      mode = null,
     }) {
       let tabId = new ShortUniqueId({
         dictionary: "alpha_lower",
-        length: 8
+        length: 8,
       }).randomUUID();
 
       let tab = {
@@ -56,6 +57,9 @@ const useTabsStore = defineStore("tabs", {
         metaData: {
           secondaryTabs: [],
           selectedTab: "",
+          isLoading: false,
+          isReady: false,
+          mode: mode,
         },
         dragEndFunction: this.dragEndFunction,
       };

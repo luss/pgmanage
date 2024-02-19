@@ -37,13 +37,19 @@
                 <span>{{ tab.name }}</span>
                 <span
                   v-if="isSecondaryTab && tab.name !== '+'"
-                  style="visibility: hidden"
+                  :class="{ invisible: !tab.metaData.isLoading }"
                 >
                   <i class="tab-icon node-spin"></i>
                 </span>
                 <i
                   v-if="isSecondaryTab"
-                  class="fas fa-check-circle tab-icon icon-check d-none"
+                  :class="[
+                    'fas',
+                    'fa-check-circle',
+                    'tab-icon',
+                    'icon-check',
+                    { 'd-none': !tab.metaData.isReady },
+                  ]"
                 ></i>
               </span>
             </span>
@@ -238,6 +244,7 @@ export default {
           component: "ConnectionTab",
           icon: icon,
           tooltip: tooltipName,
+          mode: "connection",
           selectFunction: function () {
             document.title = "PgManage";
             // TODO: add missing code
@@ -284,7 +291,6 @@ export default {
           },
         });
 
-        connTab.metaData.mode = "connection";
         connTab.metaData.selectedDatabaseIndex = v_conn.id;
         connTab.metaData.createInitialTabs = createInitialTabs;
         connTab.metaData.change_active_database_call_list = [];
@@ -317,6 +323,7 @@ export default {
         name: snippetName,
         parentId: this.tabId,
         component: "SnippetTab",
+        mode: "snippet",
         selectFunction: function () {
           emitter.emit(`${this.id}_editor_focus`);
           emitter.emit(`${this.id}_resize`);
@@ -338,6 +345,7 @@ export default {
         name: "Console",
         component: "ConsoleTab",
         icon: "<i class='fas fa-terminal icon-tab-title'></i>",
+        mode: "console",
         selectFunction: function () {
           emitter.emit(`${this.id}_resize`);
           emitter.emit(`${this.id}_check_console_status`);
