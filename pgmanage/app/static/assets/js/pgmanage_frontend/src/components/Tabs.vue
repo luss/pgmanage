@@ -96,6 +96,7 @@ export default {
   components: {
     WelcomeScreen,
     ConsoleTab: defineAsyncComponent(() => import("./ConsoleTab.vue")),
+    MonitoringDashboard: defineAsyncComponent(() => import("./MonitoringDashboard.vue"))
   },
   props: {
     hierarchy: {
@@ -161,6 +162,11 @@ export default {
           databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
           dialect: primaryTab?.metaData?.selectedDBMS,
         },
+        MonitoringDashboard: {
+          connId: tab.parentId,
+          tabId: tab.id,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex
+        }
       };
 
       return componentsProps[tab.component];
@@ -363,6 +369,25 @@ export default {
 
       tabsStore.selectTab(tab);
     },
+    createMonitoringDashboardTab() {
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: "Monitoring",
+        component: "MonitoringDashboard",
+        mode: "monitoring_dashboard",
+        selectFunction: function() {
+          emitter.emit(`${this.id}_redraw_widget_grid`);
+        },
+        closeFunction: function(e, tab) {
+          beforeCloseTab(e, function () {
+            tabsStore.removeTab(tab);
+          });
+        },
+        // p_dblClickFunction: renameTab, //TODO: implement rename functionality
+      })
+
+      tabsStore.selectTab(tab)
+    },
     checkTabStatus() {
       const tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
       switch (tab?.metaData?.mode) {
@@ -406,9 +431,8 @@ export default {
         optionList.push({
           label: "Monitoring Dashboard",
           icon: "fas cm-all fa-chart-line",
-          onClick: function () {
-            console.log("Not implemented");
-            // this.createMonitoringDashboardTab();
+          onClick: () => {
+            this.createMonitoringDashboardTab();
           },
         });
       }
