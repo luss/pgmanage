@@ -33,6 +33,7 @@ import { execAjax } from "../ajax_control";
 import { showToast} from "../notification_control";
 import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
+import { tabsStore } from "../stores/stores_initializer";
 
 /// <summary>
 /// Retrieving tree.
@@ -75,10 +76,16 @@ function TemplateSelectSqlite(p_table, p_kind) {
         }),
         function(p_return) {
             let tab_name = p_table;
-            v_connTabControl.tag.createQueryTab(tab_name);
-
-            let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-            emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
+            emitter.emit(
+              `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+              {
+                name: tab_name,
+                initialQuery:  p_return.v_data.v_template,
+              }
+            );
+            setTimeout(() => {
+              emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
+          }, 200)
         },
         function(p_return) {
             showToast("error", p_return.v_data)

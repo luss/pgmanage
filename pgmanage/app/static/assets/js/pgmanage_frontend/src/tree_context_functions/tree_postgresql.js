@@ -41,11 +41,16 @@ import { execAjax } from "../ajax_control";
 import axios from "axios";
 import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
+import { tabsStore } from "../stores/stores_initializer";
 
 function tabSQLTemplate(tab_name, template, showTip=true) {
-    v_connTabControl.tag.createQueryTab(tab_name);
-    let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-    emitter.emit(`${tab.id}_copy_to_editor`, template)
+    emitter.emit(
+        `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+        {
+          name: tab_name,
+          initialQuery:  template,
+        }
+      );
 
     // if(p_showTip) {
     //   var v_instance = new Tooltip($(v_connTabControl.selectedTab.tag.tabControl.selectedLi),{
@@ -1162,10 +1167,17 @@ function TemplateSelectPostgresql(schema, table, kind) {
         }),
         function(p_return) {
             let tab_name = `${v_connTabControl.selectedTab.tag.selectedDatabase}@${schema}.${table}`
-            v_connTabControl.tag.createQueryTab(tab_name);
 
-            let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-            emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
+            emitter.emit(
+                `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                {
+                  name: tab_name,
+                  initialQuery:  p_return.v_data.v_template,
+                }
+              );
+            setTimeout(() => {
+                emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
+            }, 200)
         },
         function(p_return) {
             showToast("error", p_return.v_data)

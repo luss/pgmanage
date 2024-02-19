@@ -843,9 +843,6 @@ export default {
             label: "Edit Rule",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(
-                this.selectedNode.data.raw_value
-              );
               this.getRuleDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -992,7 +989,6 @@ export default {
             label: "Edit Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getTriggerFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1534,8 +1530,6 @@ export default {
             label: "Edit View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              //FIXME:  do not use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getViewDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1645,9 +1639,6 @@ export default {
             label: "Edit Mat. View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(
-                this.selectedNode.data.raw_value
-              ); // CHECK HERE
               this.getMaterializedViewDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1755,7 +1746,6 @@ export default {
             label: "Edit Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1832,7 +1822,6 @@ export default {
             label: "Edit Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getTriggerFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1902,7 +1891,6 @@ export default {
             label: "Edit Event Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getEventTriggerFunctionDefinitionPostgresql(
                 this.selectedNode
               );
@@ -1986,7 +1974,6 @@ export default {
             label: "Edit Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getProcedureDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -2552,7 +2539,6 @@ export default {
             label: "Edit Event Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getEventTriggerFunctionDefinitionPostgresql(
                 this.selectedNode
               );
@@ -3369,10 +3355,13 @@ export default {
           position: position,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          v_connTabControl.tag.createQueryTab(`${node.title} Comment`);
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: `${node.title} Comment`,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4317,9 +4306,13 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.data.raw_value,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4896,8 +4889,13 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5002,9 +5000,13 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.data.raw_value,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5104,9 +5106,13 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5151,9 +5157,13 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5198,9 +5208,13 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5290,9 +5304,13 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

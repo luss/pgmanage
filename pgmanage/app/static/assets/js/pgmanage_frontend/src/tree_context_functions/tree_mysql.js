@@ -36,6 +36,7 @@ import axios from "axios";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
+import { tabsStore } from "../stores/stores_initializer";
 
 /// <summary>
 /// Retrieving tree.
@@ -818,9 +819,17 @@ function TemplateSelectMysql(p_schema, p_table) {
       p_schema: p_schema,
     }),
     function (p_return) {
-      v_connTabControl.tag.createQueryTab(p_schema + "." + p_table);
-      let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-      emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
+      let tab_name = `${p_schema}.${p_table}`
+      emitter.emit(
+        `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+        {
+          name: tab_name,
+          initialQuery:  p_return.v_data.v_template,
+        }
+      );
+      setTimeout(() => {
+          emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
+      }, 200)
     },
     function (p_return) {
       showToast("error", p_return.v_data)

@@ -1016,7 +1016,7 @@ function showMenuNewTabOuter(e) {
   }
 }
 
-function showMenuNewTab(e) {
+function showMenuNewTab(e) { //TODO: remove old code
 	var v_option_list = [
     {
 			label: 'Query Tab',

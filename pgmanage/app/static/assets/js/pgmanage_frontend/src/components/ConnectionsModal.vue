@@ -310,18 +310,9 @@ export default {
                       name: conn.alias,
                       tooltipName: tooltip_name
                     }))
-                  // TODO: remove old code
-                  window.v_connTabControl.tag.createConnTab(
-                    tab.index,
-                    false,
-                    conn.alias,
-                    tooltip_name
-                  );
                   this.$nextTick(() => {
                     emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_console_tab`)
                   })
-                  window.v_connTabControl.tag.createConsoleTab();
-
                 }
 
               }
@@ -337,10 +328,6 @@ export default {
                   }
                 );
               });
-
-              window.v_connTabControl.tag.createQueryTab(tab.title, tab.tab_db_id, tab.database_name); // TODO: remove old code
-              let selectedTab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-              emitter.emit(`${selectedTab.id}_copy_to_editor`, tab.snippet)
             })
             endLoading();
           }
