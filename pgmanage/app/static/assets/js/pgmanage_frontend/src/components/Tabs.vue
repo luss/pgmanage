@@ -83,10 +83,12 @@ import moment from "moment";
 import { beforeCloseTab } from "../create_tab_functions";
 import { createRequest } from "../long_polling";
 import { queryRequestCodes } from "../constants";
+import { defineAsyncComponent } from "vue";
 
 export default {
   components: {
     WelcomeScreen,
+    ConsoleTab: defineAsyncComponent(() => import("./ConsoleTab.vue")),
   },
   props: {
     hierarchy: {
@@ -140,6 +142,14 @@ export default {
         SnippetTab: {
           "tab-id": tab.id,
           snippet: tab.metaData.snippetObject,
+        },
+        ConsoleTab: {
+          connId: this.tabId,
+          tabId: tab.id,
+          consoleHelp: tabsStore.selectedPrimaryTab.metaData.consoleHelp,
+          databaseIndex:
+            tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+          dialect: tabsStore.selectedPrimaryTab.metaData.selectedDBMS,
         },
       };
 
@@ -277,8 +287,8 @@ export default {
         connTab.metaData.mode = "connection";
         connTab.metaData.selectedDatabaseIndex = v_conn.id;
         connTab.metaData.createInitialTabs = createInitialTabs;
-        connTab.metaData.change_active_database_call_list = []
-        connTab.metaData.change_active_database_call_running = false
+        connTab.metaData.change_active_database_call_list = [];
+        connTab.metaData.change_active_database_call_running = false;
 
         tabsStore.selectTab(connTab);
       }
@@ -319,6 +329,25 @@ export default {
       });
 
       tab.metaData.snippetObject = snippetDetails;
+
+      tabsStore.selectTab(tab);
+    },
+    createConsoleTab() {
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: "Console",
+        component: "ConsoleTab",
+        icon: "<i class='fas fa-terminal icon-tab-title'></i>",
+        selectFunction: function () {
+          emitter.emit(`${this.id}_resize`);
+          emitter.emit(`${this.id}_check_console_status`);
+        },
+        closeFunction: function (e, tab) {
+          beforeCloseTab(e, function () {
+            tabsStore.removeTab(tab);
+          });
+        },
+      });
 
       tabsStore.selectTab(tab);
     },
@@ -413,6 +442,10 @@ export default {
         });
         this.createSnippetTab();
       }
+
+      emitter.on(`${this.tabId}_create_console_tab`, () => {
+        this.createConsoleTab();
+      });
     }
   },
 };

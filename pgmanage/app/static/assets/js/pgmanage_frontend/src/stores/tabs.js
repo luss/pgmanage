@@ -4,7 +4,8 @@ import ShortUniqueId from "short-unique-id";
 const useTabsStore = defineStore("tabs", {
   state: () => ({
     id: new ShortUniqueId({
-      dictionary: "alphanum_lower",
+      dictionary: "alpha_lower",
+      length: 8
     }).randomUUID(),
     tabs: [],
     selectedPrimaryTab: "",
@@ -32,7 +33,8 @@ const useTabsStore = defineStore("tabs", {
       selectFunction = null,
     }) {
       let tabId = new ShortUniqueId({
-        dictionary: "alphanum_lower",
+        dictionary: "alpha_lower",
+        length: 8
       }).randomUUID();
 
       let tab = {

@@ -1,4 +1,5 @@
 <template>
+  <div>
   <splitpanes class="default-theme console-body" horizontal @resized="onResize">
     <pane size="80">
       <div ref="console" :id="`txt_console_${tabId}`" class="omnidb__txt-console mr-2 h-100"></div>
@@ -82,6 +83,7 @@
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Console" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
   <FileManager ref="fileManager"/>
+</div>
 </template>
 
 <script>

@@ -95,13 +95,6 @@
             class="omnidb__workspace__div-right col position-relative"
           >
             <div class="row">
-              <button
-                :id="`${connTabId}_tree_toggler`"
-                type="button"
-                class="py-4 px-0 btn btn-secondary omnidb__tree__toggler"
-              >
-                <i class="fas fa-arrows-alt-h"></i>
-              </button>
               <Tabs
                 :id="`${connTabId}`"
                 class="w-100"
@@ -186,6 +179,11 @@ export default {
   mounted() {
     this.changeDatabase(this.connectionTab.metaData.selectedDatabaseIndex);
     $('[data-toggle="tooltip"]').tooltip({ animation: true }); // Loads or Updates all tooltips
+    this.$nextTick(() => {
+      if (this.connectionTab.metaData.createInitialTabs) {
+        emitter.emit(`${this.connTabId}_create_console_tab`);
+      }
+    });
   },
   methods: {
     changeDatabase(value) {
