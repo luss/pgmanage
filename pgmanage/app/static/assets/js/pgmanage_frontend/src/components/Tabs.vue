@@ -90,6 +90,7 @@ import { beforeCloseTab } from "../create_tab_functions";
 import { createRequest } from "../long_polling";
 import { queryRequestCodes } from "../constants";
 import { defineAsyncComponent } from "vue";
+import ContextMenu from "@imengyu/vue3-context-menu";
 
 export default {
   components: {
@@ -378,6 +379,85 @@ export default {
           break;
       }
     },
+    showMenuNewTab(e) {
+      let optionList = [
+        {
+          label: "Query Tab",
+          icon: "fas cm-all fa-search",
+          onClick: () => {
+            console.log("Not implemented");
+            // this.createQueryTab();
+          },
+        },
+        {
+          label: "Console Tab",
+          icon: "fas cm-all fa-terminal",
+          onClick: () => {
+            this.createConsoleTab();
+          },
+        },
+      ];
+
+      if (
+        ["postgresql", "mysql", "mariadb"].includes(
+          tabsStore.selectedPrimaryTab.metaData.selectedDBMS
+        )
+      ) {
+        optionList.push({
+          label: "Monitoring Dashboard",
+          icon: "fas cm-all fa-chart-line",
+          onClick: function () {
+            console.log("Not implemented");
+            // this.createMonitoringDashboardTab();
+          },
+        });
+      }
+
+      if (tabsStore.selectedPrimaryTab.metaData.selectedDBMS === "postgresql") {
+        optionList.push({
+          label: "Backends",
+          icon: "fas cm-all fa-tasks",
+          onClick: () => {
+            console.log("Not implemented");
+            // this.createMonitoringTab(
+            // 		'Backends',
+            // 		'select * from pg_stat_activity', [{
+            // 				icon: 'fas fa-times action-grid action-close',
+            // 				title: 'Terminate',
+            // 				action: 'postgresqlTerminateBackend'
+            // 		}]);
+          },
+        });
+      } else if (
+        ["mysql", "mariadb"].includes(
+          tabsStore.selectedPrimaryTab.metaData.selectedDBMS
+        )
+      ) {
+        optionList.push({
+          label: "Process List",
+          icon: "fas cm-all fa-tasks",
+          onClick: () => {
+            console.log("Not implemented");
+            // this.createMonitoringTab(
+            // 		'Process List',
+            // 		'select * from information_schema.processlist', [{
+            // 				icon: 'fas fa-times action-grid action-close',
+            // 				title: 'Terminate',
+            // 				action: 'mysqlTerminateBackend'
+            // 		}]);
+          },
+        });
+      }
+
+      ContextMenu.showContextMenu({
+        theme: "pgmanage",
+        x: e.x,
+        y: e.y,
+        zIndex: 1000,
+        minWidth: 230,
+        items: optionList,
+      });
+    },
   },
   mounted() {
     tabsStore.$onAction((action) => {
@@ -457,9 +537,12 @@ export default {
         closable: false,
         isDraggable: false,
         selectable: false,
-        clickFunction: () => {
-          //TODO: depending on tab mode should different click function implementation
-          this.createSnippetTab();
+        clickFunction: (event) => {
+          if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
+            this.createSnippetTab();
+          } else {
+            this.showMenuNewTab(event);
+          }
         },
       });
 
