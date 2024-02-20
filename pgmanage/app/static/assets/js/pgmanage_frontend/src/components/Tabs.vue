@@ -113,6 +113,7 @@ export default {
     ConfigTab: defineAsyncComponent(() => import("./ConfigTab.vue")),
     BackupTab: defineAsyncComponent(() => import("./BackupTab.vue")),
     RestoreTab: defineAsyncComponent(() => import("./RestoreTab.vue")),
+    ERDTab: defineAsyncComponent(() => import("./ERDTab.vue")),
   },
   props: {
     hierarchy: {
@@ -272,6 +273,10 @@ export default {
           this.createUtilityTab(node, utility, backupType);
         }
       );
+
+      emitter.on(`${this.tabId}_create_erd_tab`, (schema) => {
+        this.createERDTab(schema);
+      });
     }
   },
   unmounted() {
@@ -330,6 +335,12 @@ export default {
           databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
           restoreType: tab.metaData.backupType,
           treeNode: tab.metaData.treeNode,
+        },
+        ERDTab: {
+          tabId: tab.parentId,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseName: primaryTab?.metaData?.selectedDatabase,
+          schema: tab.metaData?.schema,
         },
       };
 
@@ -614,6 +625,28 @@ export default {
 
       tab.metaData.treeNode = node;
       tab.metaData.backupType = backupType;
+
+      tabsStore.selectTab(tab);
+    },
+    createERDTab(schema = "") {
+      let tabName = schema ? `ERD: ${schema}` : "ERD";
+
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: tabName,
+        component: "ERDTab",
+        icon: '<i class="fab fa-hubspot icon-tab-title"></i>',
+        selectFunction: function () {
+          document.title = "PgManage";
+        },
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
+          });
+        },
+      });
+
+      tab.metaData.schema = schema;
 
       tabsStore.selectTab(tab);
     },

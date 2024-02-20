@@ -73,7 +73,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab(this.templates.username);
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`, this.templates.username)
             },
           },
         ],

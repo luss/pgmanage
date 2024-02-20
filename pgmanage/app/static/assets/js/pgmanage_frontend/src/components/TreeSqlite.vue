@@ -32,6 +32,7 @@ import { getProperties, clearProperties } from "../properties";
 import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "TreeSqlite",
@@ -75,7 +76,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab();
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`)
             },
           },
           {

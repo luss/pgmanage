@@ -17,9 +17,9 @@ export default {
   name: "ERDTab",
   props: {
     schema: String,
-    tab_id: String,
-    database_index: Number,
-    database_name: String,
+    tabId: String,
+    databaseIndex: Number,
+    databaseName: String,
   },
   setup(props) {
     if (typeof cytoscape("core", "nodeHtmlLabel") === "undefined")
@@ -41,8 +41,8 @@ export default {
   methods: {
     loadSchemaGraph() {
       axios.post('/draw_graph/', {
-        database_index: this.database_index,
-        tab_id: this.tab_id,
+        database_index: this.databaseIndex,
+        tab_id: this.tabId,
         schema: this.schema,
       })
       .then((response) => {
