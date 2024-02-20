@@ -35,7 +35,6 @@ import {
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
 import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
 import { getProperties, clearProperties } from "../properties";
@@ -304,10 +303,10 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.data.raw_value,
-                    this.selectedNode.data.schema_raw
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
+                    table: this.selectedNode.data.raw_value,
+                    schema: this.selectedNode.data.schema_raw
+                  })
                 },
               },
               {
@@ -1295,10 +1294,10 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.data.raw_value,
-                    this.selectedNode.data.schema_raw
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
+                    table: this.selectedNode.data.raw_value,
+                    schema: this.selectedNode.data.schema_raw
+                  })
                 },
               },
               {

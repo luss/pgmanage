@@ -28,7 +28,6 @@ import {
   TemplateUpdateMysql,
 } from "../tree_context_functions/tree_mysql";
 import { getProperties, clearProperties } from "../properties";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { emitter } from "../emitter";
 import { tabsStore } from "../stores/stores_initializer";
 
@@ -150,10 +149,10 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.title,
-                    this.getParentNodeDeep(this.selectedNode, 2).title
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
+                    table: this.selectedNode.title,
+                    schema: this.getParentNodeDeep(this.selectedNode, 2).title
+                  })
                 },
               },
               {

@@ -114,6 +114,7 @@ export default {
     BackupTab: defineAsyncComponent(() => import("./BackupTab.vue")),
     RestoreTab: defineAsyncComponent(() => import("./RestoreTab.vue")),
     ERDTab: defineAsyncComponent(() => import("./ERDTab.vue")),
+    DataEditorTab: defineAsyncComponent(() => import("./DataEditorTab.vue")),
   },
   props: {
     hierarchy: {
@@ -277,11 +278,21 @@ export default {
       emitter.on(`${this.tabId}_create_erd_tab`, (schema) => {
         this.createERDTab(schema);
       });
+
+      emitter.on(
+        `${this.tabId}_create_data_editor_tab`,
+        ({ table, schema = "" }) => {
+          this.createDataEditorTab(table, schema);
+        }
+      );
     }
   },
   unmounted() {
     emitter.all.delete(`${this.tabId}_create_console_tab`);
     emitter.all.delete(`${this.tabId}_create_query_tab`);
+    emitter.all.delete(`${this.tabId}_create_utility_tab`);
+    emitter.all.delete(`${this.tabId}_create_erd_tab`);
+    emitter.all.delete(`${this.tabId}_create_data_editor_tab`);
   },
   methods: {
     getCurrentProps(tab) {
@@ -341,6 +352,16 @@ export default {
           databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
           databaseName: primaryTab?.metaData?.selectedDatabase,
           schema: tab.metaData?.schema,
+        },
+        DataEditorTab: {
+          connId: tab.parentId,
+          tabId: tab.id,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseName: primaryTab?.metaData?.selectedDatabase,
+          table: tab.metaData.table,
+          schema: tab.metaData.schema,
+          dialect: tab.metaData.dialect,
+          query_filter: tab.metaData.dialect,
         },
       };
 
@@ -647,6 +668,36 @@ export default {
       });
 
       tab.metaData.schema = schema;
+
+      tabsStore.selectTab(tab);
+    },
+    createDataEditorTab(table, schema = "") {
+      let tabName = schema
+        ? `Edit data: ${schema}.${table}`
+        : `Edit data: ${table}`;
+
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: tabName,
+        component: "DataEditorTab",
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
+          });
+        },
+      });
+
+      const DIALECT_MAP = {
+        oracle: "oracledb",
+        mariadb: "mysql",
+      };
+      let dialect = tabsStore.selectedPrimaryTab.metaData.selectedDBMS;
+      let mappedDialect = DIALECT_MAP[dialect] || dialect;
+
+      tab.metaData.dialect = mappedDialect;
+      tab.metaData.table = table;
+      tab.metaData.schema = schema;
+      tab.metaData.query_filter = ""; //to be used in the future for passing extra filters when tab is opened
 
       tabsStore.selectTab(tab);
     },
