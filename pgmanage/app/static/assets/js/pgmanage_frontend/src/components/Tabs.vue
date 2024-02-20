@@ -46,7 +46,7 @@
               <span class="omnidb__tab-menu__link-name">
                 <span>{{ tab.name }}</span>
                 <span
-                  v-if="isSecondaryTab && tab.name !== '+'"
+                  v-if="isSecondaryTab && tab.metaData.mode !== 'add'"
                   :class="{ invisible: !tab.metaData.isLoading }"
                 >
                   <i class="tab-icon node-spin"></i>
@@ -110,6 +110,7 @@ export default {
     MonitoringDashboard: defineAsyncComponent(() =>
       import("./MonitoringDashboard.vue")
     ),
+    ConfigTab: defineAsyncComponent(() => import("./ConfigTab.vue")),
   },
   props: {
     hierarchy: {
@@ -229,6 +230,7 @@ export default {
         closable: false,
         isDraggable: false,
         selectable: false,
+        mode: "add",
         clickFunction: (event) => {
           if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
             this.createSnippetTab();
@@ -256,6 +258,10 @@ export default {
           data?.tabDbName,
           data?.initialQuery
         );
+      });
+
+      emitter.on(`${this.tabId}_create_conf_tab`, () => {
+        this.createConfigurationTab();
       });
     }
   },
@@ -414,7 +420,7 @@ export default {
                     conn_tab_id: primaryTab.id,
                   };
                   if (tab.metaData.mode == "query")
-                    v_message_data.tab_db_id = tab.metaData.tab_db_id;
+                    v_message_data.tab_db_id = tab.metaData.initTabDatabaseId;
                   v_tabs_to_remove.push(v_message_data);
                 }
 
@@ -547,6 +553,20 @@ export default {
       tab.metaData.databaseName = tabDbName;
       tab.metaData.initTabDatabaseId = tabDbId;
       tab.metaData.initialQuery = initialQuery;
+      tabsStore.selectTab(tab);
+    },
+    createConfigurationTab() {
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: "Configuration",
+        component: "ConfigTab",
+        mode: "configuration",
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
+          });
+        },
+      });
       tabsStore.selectTab(tab);
     },
     checkTabStatus() {

@@ -34,7 +34,6 @@ import {
   TemplateInsertPostgresql,
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
-import { createConfTab } from "../tab_functions/conf_tab";
 import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
@@ -3379,7 +3378,7 @@ export default {
               label: "Server Configuration",
               icon: "fas cm-all fa-cog",
               onClick: () => {
-                createConfTab();
+                emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_conf_tab`)
               },
             },
             {

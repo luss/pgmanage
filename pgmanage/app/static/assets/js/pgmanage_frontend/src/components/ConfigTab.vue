@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="form-row">
     <div class="form-group col-2">
       <form class="form" role="search" @submit.prevent>
@@ -147,6 +148,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
