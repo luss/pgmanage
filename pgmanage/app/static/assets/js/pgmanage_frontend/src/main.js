@@ -28,6 +28,7 @@ import { createApp } from 'vue';
 import ConnectionTab from './components/ConnectionTab.vue'
 import SnippetPanel from './components/SnippetPanel.vue'
 import SnippetTab from './components/SnippetTab.vue'
+import ToastPlugin from 'vue-toast-notification';
 
 window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
@@ -52,4 +53,8 @@ const app = createApp(App)
   .component("ConnectionTab", ConnectionTab)
   .component("SnippetPanel", SnippetPanel)
   .component("SnippetTab", SnippetTab)
-  .mount("#app");
+
+app.use(ToastPlugin, {
+  duration: 0
+})
+app.mount("#app");

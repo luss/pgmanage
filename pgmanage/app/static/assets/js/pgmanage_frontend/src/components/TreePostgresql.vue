@@ -36,7 +36,6 @@ import {
 } from "../tree_context_functions/tree_postgresql";
 import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { createDataEditorTab } from "../tab_functions/data_editor_tab";
-import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
 import { getProperties, clearProperties } from "../properties";
@@ -141,14 +140,20 @@ export default {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Backup");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Backup"
+              })
             },
           },
           {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Restore"
+              })
             },
           },
         ],
@@ -187,14 +192,20 @@ export default {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Backup");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Backup"
+              })
             },
           },
           {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Restore"
+              })
             },
           },
           {
@@ -410,14 +421,20 @@ export default {
                 label: "Backup",
                 icon: "fa-solid fa-download cm-all",
                 onClick: () => {
-                  createUtilityTab(this.selectedNode, "Backup");
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Backup"
+              })
                 },
               },
               {
                 label: "Restore",
                 icon: "fa-solid fa-upload cm-all",
                 onClick: () => {
-                  createUtilityTab(this.selectedNode, "Restore");
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Restore"
+              })
                 },
               },
             ],
@@ -978,7 +995,10 @@ export default {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Restore"
+              })
             },
           },
         ],
@@ -1765,7 +1785,10 @@ export default {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Restore"
+              })
             },
           },
           {
@@ -3385,14 +3408,22 @@ export default {
               label: "Backup Server",
               icon: "fa-solid fa-download cm-all",
               onClick: () => {
-                createUtilityTab(this.selectedNode, "Backup", "server");
+                emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Backup",
+                backupType: "server"
+              })
               },
             },
             {
               label: "Restore Server",
               icon: "fa-solid fa-upload cm-all",
               onClick: () => {
-                createUtilityTab(this.selectedNode, "Restore", "server");
+                emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
+                node: this.selectedNode,
+                utility: "Restore",
+                backupType: "server"
+              })
               },
             },
             {

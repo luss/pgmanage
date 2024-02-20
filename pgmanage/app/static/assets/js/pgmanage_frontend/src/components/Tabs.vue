@@ -111,6 +111,8 @@ export default {
       import("./MonitoringDashboard.vue")
     ),
     ConfigTab: defineAsyncComponent(() => import("./ConfigTab.vue")),
+    BackupTab: defineAsyncComponent(() => import("./BackupTab.vue")),
+    RestoreTab: defineAsyncComponent(() => import("./RestoreTab.vue")),
   },
   props: {
     hierarchy: {
@@ -263,6 +265,13 @@ export default {
       emitter.on(`${this.tabId}_create_conf_tab`, () => {
         this.createConfigurationTab();
       });
+
+      emitter.on(
+        `${this.tabId}_create_utility_tab`,
+        ({ node, utility, backupType = "objects" }) => {
+          this.createUtilityTab(node, utility, backupType);
+        }
+      );
     }
   },
   unmounted() {
@@ -307,6 +316,20 @@ export default {
           connId: tab.parentId,
           tabId: tab.id,
           databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+        },
+        BackupTab: {
+          connId: tab.parentId,
+          tabId: tab.id,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          backupType: tab.metaData.backupType,
+          treeNode: tab.metaData.treeNode,
+        },
+        RestoreTab: {
+          connId: tab.parentId,
+          tabId: tab.id,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          restoreType: tab.metaData.backupType,
+          treeNode: tab.metaData.treeNode,
         },
       };
 
@@ -567,6 +590,31 @@ export default {
           });
         },
       });
+      tabsStore.selectTab(tab);
+    },
+    createUtilityTab(node, utility, backupType = "objects") {
+      let utilityTitle =
+        backupType === "objects"
+          ? `(${node.data.type}:${node.title})`
+          : backupType;
+      let tabName = `${utility} ${utilityTitle}`;
+      let mode = utility.toLowerCase();
+
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: tabName,
+        mode: mode,
+        component: `${utility}Tab`,
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
+          });
+        },
+      });
+
+      tab.metaData.treeNode = node;
+      tab.metaData.backupType = backupType;
+
       tabsStore.selectTab(tab);
     },
     checkTabStatus() {
