@@ -34,7 +34,6 @@ import {
   TemplateInsertPostgresql,
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
-import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
 import { getProperties, clearProperties } from "../properties";
@@ -245,7 +244,11 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createSchemaEditorTab(this.selectedNode, "create", "postgres");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
+                node: this.selectedNode,
+                mode: "create",
+                dialect: "postgres"
+              })
             },
           },
           {
@@ -391,7 +394,11 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  createSchemaEditorTab(this.selectedNode, "alter", "postgres");
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
+                    node: this.selectedNode,
+                    mode: "alter",
+                    dialect: "postgres"
+                  })
                 },
               },
               {
@@ -3057,7 +3064,7 @@ export default {
         });
       }, 200);
     });
-    emitter.on(`schemaChanged_${this.id}`, ({ schema_name, database_name }) => {
+    emitter.on(`schemaChanged_${this.tabId}`, ({ schema_name, database_name }) => {
       const tree = this.$refs.tree;
       let db_node = tree.getNextNode([0], (node) => {
         return (

@@ -166,7 +166,7 @@ function polling_response(message) {
 }
 
 function QueryPasswordRequired(p_context, p_message) {
-	if (p_context.tab_tag.mode=='query') {
+	if (p_context.tab_tag.mode=='query') { // TODO: need fix here New tab management
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {

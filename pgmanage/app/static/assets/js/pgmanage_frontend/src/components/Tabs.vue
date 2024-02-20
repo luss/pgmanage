@@ -115,6 +115,9 @@ export default {
     RestoreTab: defineAsyncComponent(() => import("./RestoreTab.vue")),
     ERDTab: defineAsyncComponent(() => import("./ERDTab.vue")),
     DataEditorTab: defineAsyncComponent(() => import("./DataEditorTab.vue")),
+    SchemaEditorTab: defineAsyncComponent(() =>
+      import("./SchemaEditorTab.vue")
+    ),
   },
   props: {
     hierarchy: {
@@ -285,6 +288,13 @@ export default {
           this.createDataEditorTab(table, schema);
         }
       );
+
+      emitter.on(
+        `${this.tabId}_create_schema_editor_tab`,
+        ({ node, mode, dialect }) => {
+          this.createSchemaEditorTab(node, mode, dialect);
+        }
+      );
     }
   },
   unmounted() {
@@ -362,6 +372,17 @@ export default {
           schema: tab.metaData.schema,
           dialect: tab.metaData.dialect,
           query_filter: tab.metaData.dialect,
+        },
+        SchemaEditorTab: {
+          connId: tab.parentId,
+          tabId: tab.id,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseName: primaryTab?.metaData?.selectedDatabase,
+          mode: tab.metaData.editMode,
+          schema: tab.metaData.schema,
+          table: tab.metaData.table,
+          treeNode: tab.metaData.treeNode,
+          dialect: tab.metaData.dialect,
         },
       };
 
@@ -698,6 +719,29 @@ export default {
       tab.metaData.table = table;
       tab.metaData.schema = schema;
       tab.metaData.query_filter = ""; //to be used in the future for passing extra filters when tab is opened
+
+      tabsStore.selectTab(tab);
+    },
+    createSchemaEditorTab(node, mode, dialect) {
+      let tableName = node.title.replace(/^"(.*)"$/, "$1");
+      let tabTitle = mode === "alter" ? `Alter: ${tableName}` : "New Table";
+
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: tabTitle,
+        component: "SchemaEditorTab",
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
+          });
+        },
+      });
+
+      tab.metaData.dialect = dialect || "postgres";
+      tab.metaData.editMode = mode;
+      tab.metaData.schema = node.data.schema;
+      tab.metaData.table = mode === "alter" ? tableName : null;
+      tab.metaData.treeNode = node;
 
       tabsStore.selectTab(tab);
     },

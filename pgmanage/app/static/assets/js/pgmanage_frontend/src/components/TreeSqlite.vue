@@ -29,7 +29,6 @@ import {
 
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 import { getProperties, clearProperties } from "../properties";
-import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { emitter } from "../emitter";
 import { tabsStore } from "../stores/stores_initializer";
 
@@ -82,7 +81,12 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createSchemaEditorTab(this.selectedNode, "create", "sqlite3");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
+                node: this.selectedNode,
+                mode: "create",
+                dialect: "sqlite3"
+              })
+              
             },
           },
         ],
@@ -146,7 +150,11 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  createSchemaEditorTab(this.selectedNode, "alter", "sqlite3");
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
+                    node: this.selectedNode,
+                    mode: "alter",
+                    dialect: "sqlite3"
+                  })
                 },
               },
               {

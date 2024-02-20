@@ -1,5 +1,5 @@
 <template>
-  <div class="schema-editor-scrollable px-2">
+  <div class="schema-editor-scrollable px-2 pt-3">
     <div class="form-row">
       <div class="form-group col-2">
           <label class="font-weight-bold mb-2" for="tableNameInput">Table Name</label>
@@ -69,11 +69,11 @@ export default {
     dialect: String,
     schema: String,
     table: String,
-    tab_id: String,
-    database_index: Number,
-    database_name: String,
-    tree_node: Object,
-    tree: Object
+    connId: String,
+    tabId: String,
+    databaseIndex: Number,
+    databaseName: String,
+    treeNode: Object,
   },
   components: {
     ColumnList
@@ -141,8 +141,8 @@ export default {
       if (!schemasUrl) return;
 
       axios.post(schemasUrl, {
-        database_index: this.database_index,
-        tab_id: this.tab_id
+        database_index: this.databaseIndex,
+        tab_id: this.connId
       })
       .then((response) => {
         this.schemas = response.data.map((schema) => {return schema.name})
@@ -156,8 +156,8 @@ export default {
       if (!typesUrl) return;
 
       axios.post(typesUrl, {
-        database_index: this.database_index,
-        tab_id: this.tab_id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
         schema: this.schema
       })
       .then((response) => {
@@ -169,8 +169,8 @@ export default {
     },
     loadTableDefinition() {
         axios.post(this.dialectData.api_endpoints.table_definition_url, {
-          database_index: this.database_index,
-          tab_id: this.tab_id,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
           table: this.localTable.tableName || this.table,
           schema: this.schema
         })
@@ -321,22 +321,21 @@ export default {
 				sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
 				sql_save : false,
 				cmd_type: null,
-				v_db_index: this.database_index,
-				v_conn_tab_id: v_connTabControl.selectedTab.id,
-				v_tab_id: this.tab_id,
-				tab_db_id: this.database_index,
+				v_db_index: this.databaseIndex,
+				v_conn_tab_id: this.connId,
+				v_tab_id: this.tabId,
+				tab_db_id: this.databaseIndex,
 				mode: 0,
 				all_data: false,
 				log_query: false,
 				tab_title: 'schema editor',
 				autocommit: true,
-				database_name: this.database_name
+				database_name: this.databaseName
 			}
 
       let context = {
-				tab_tag: v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag,
 				cmd_type: null,
-				database_index: this.database_index,
+				database_index: this.databaseIndex,
 				mode: 0,
 				callback: this.handleResponse.bind(this),
 				acked: false,
@@ -355,7 +354,7 @@ export default {
         let msg = response.v_data.v_status === "CREATE TABLE" ? `Table "${this.localTable.tableName}" created` : `Table "${this.localTable.tableName}" updated`
         showToast("success", msg)
 
-        emitter.emit(`schemaChanged_${this.tree.id}`, { database_name: this.database_name, schema_name: this.localTable.schema })
+        emitter.emit(`schemaChanged_${this.connId}`, { database_name: this.databaseName, schema_name: this.localTable.schema })
         // ALTER: load table changes into UI
         if(this.mode === 'alter') {
           this.loadTableDefinition()
