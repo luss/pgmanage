@@ -34,6 +34,7 @@
             @dragend="tab.dragEndFunction($event, tab)"
             @click.prevent.stop="clickHandler($event, tab)"
             @dblclick="tab.dblClickFunction"
+            @contextmenu="contextMenuHandler($event, tab)"
             v-for="tab in tabs"
           >
             <span class="omnidb__tab-menu__link-content">
@@ -99,7 +100,7 @@ import moment from "moment";
 import { beforeCloseTab } from "../create_tab_functions";
 import { createRequest } from "../long_polling";
 import { queryRequestCodes } from "../constants";
-import { defineAsyncComponent } from "vue";
+import { defineAsyncComponent, h } from "vue";
 import ContextMenu from "@imengyu/vue3-context-menu";
 
 export default {
@@ -118,6 +119,7 @@ export default {
     SchemaEditorTab: defineAsyncComponent(() =>
       import("./SchemaEditorTab.vue")
     ),
+    TerminalTab: defineAsyncComponent(() => import("./TerminalTab.vue")),
   },
   props: {
     hierarchy: {
@@ -230,6 +232,13 @@ export default {
           );
         }
       );
+
+      emitter.on(
+        `${tabsStore.id}_create_terminal_tab`,
+        ({ index, alias, details }) => {
+          this.createTerminalTab(index, alias, details);
+        }
+      );
     } else {
       tabsStore.addTab({
         name: "+",
@@ -303,6 +312,7 @@ export default {
     emitter.all.delete(`${this.tabId}_create_utility_tab`);
     emitter.all.delete(`${this.tabId}_create_erd_tab`);
     emitter.all.delete(`${this.tabId}_create_data_editor_tab`);
+    emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
   },
   methods: {
     getCurrentProps(tab) {
@@ -384,6 +394,10 @@ export default {
           treeNode: tab.metaData.treeNode,
           dialect: tab.metaData.dialect,
         },
+        TerminalTab: {
+          tabId: tab.id,
+          databaseIndex: tab?.metaData?.selectedDatabaseIndex,
+        },
       };
 
       return componentsProps[tab.component];
@@ -399,6 +413,17 @@ export default {
 
       if (tab.tooltip) {
         $('[data-toggle="tab"]').tooltip("hide");
+      }
+    },
+    contextMenuHandler(event, tab) {
+      if (tab.rightClickFunction) {
+        event.stopPropagation();
+        event.preventDefault();
+        tab.rightClickFunction(event, tab);
+      }
+      if (tab.tooltip) {
+        $('[data-toggle="tab"]').tooltip("hide");
+        7;
       }
     },
     createConnectionPanel(
@@ -745,6 +770,34 @@ export default {
 
       tabsStore.selectTab(tab);
     },
+    createTerminalTab(index, alias, details) {
+      let tooltipName = "";
+
+      if (alias) {
+        tooltipName += `<h5 class="my-1">${alias}</h5>`;
+      }
+      if (details) {
+        tooltipName += `<div class="mb-1">${details}</div>`;
+      }
+
+      const tab = tabsStore.addTab({
+        name: alias,
+        component: "TerminalTab",
+        icon: '<i class="fas fa-terminal"></i>',
+        tooltip: tooltipName,
+        closable: false,
+        mode: "outer_terminal",
+        selectFunction: function () {
+          emitter.emit(`${this.id}_resize`);
+        },
+        rightClickFunction: (e, tab) => {
+          this.terminalContextMenu(e, tab);
+        },
+      });
+      tab.metaData.selectedDatabaseIndex = index;
+
+      tabsStore.selectTab(tab);
+    },
     checkTabStatus() {
       const tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
       switch (tab?.metaData?.mode) {
@@ -838,6 +891,55 @@ export default {
         items: optionList,
       });
     },
+    terminalContextMenu(e, tab) {
+      let optionList = [
+        {
+          label: "Adjust Terminal Dimensions",
+          icon: "fas cm-all fa-window-maximize",
+          onClick: function () {
+            emitter.emit(`${tab.id}_adjust_terminal_dimensions`);
+          },
+        },
+        {
+          label: h("p", {
+            class: "mb-0 text-danger",
+            innerHTML: "Close Terminal",
+          }),
+          onClick: () => {
+            ContextMenu.closeContextMenu();
+            ContextMenu.showContextMenu({
+              theme: "pgmanage",
+              x: e.x,
+              y: e.y,
+              zIndex: 1000,
+              minWidth: 230,
+              items: [
+                {
+                  label: "Confirm",
+                  icon: "fas cm-all fa-check",
+                  onClick: () => {
+                    this.removeTab(tab);
+                  },
+                },
+                {
+                  label: "Cancel",
+                  icon: "fas cm-all fa-times",
+                },
+              ],
+            });
+          },
+        },
+      ];
+
+      ContextMenu.showContextMenu({
+        theme: "pgmanage",
+        x: e.x,
+        y: e.y,
+        zIndex: 1000,
+        minWidth: 230,
+        items: optionList,
+      });
+    },
     removeTab(tab) {
       if (
         ["query", "edit", "console", "outer_terminal"].includes(
@@ -851,6 +953,10 @@ export default {
         };
         if (tab.metaData.mode === "query") {
           messageData.tab_db_id = tab.metaData.initTabDatabaseId;
+        }
+
+        if (tab.metaData.mode === "outer_terminal") {
+          messageData.tab_id = null;
         }
 
         createRequest(queryRequestCodes.CloseTab, [messageData]);

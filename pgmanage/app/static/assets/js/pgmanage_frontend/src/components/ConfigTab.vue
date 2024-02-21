@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="p-2">
   <div class="form-row">
     <div class="form-group col-2">
       <form class="form" role="search" @submit.prevent>

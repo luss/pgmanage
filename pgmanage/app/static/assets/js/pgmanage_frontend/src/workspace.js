@@ -889,11 +889,7 @@ function showMenuNewTabOuter(e) {
         let onClick;
         if (conn.technology == "terminal") {
           onClick = () => {
-            v_connTabControl.tag.createOuterTerminalTab(
-              conn.id,
-              conn.alias,
-              conn.details1
-            );
+            emitter.emit(`${tabsStore.id}_create_terminal_tab`, {index: conn.id, alias: conn.alias, details: conn.details1})
           };
         } else {
           onClick = () => {
@@ -975,7 +971,7 @@ function showMenuNewTabOuter(e) {
             label: term_name,
             icon: "fas cm-all fa-terminal",
             onClick: () => {
-              v_connTabControl.tag.createOuterTerminalTab(id, alias, details1);
+              emitter.emit(`${tabsStore.id}_create_terminal_tab`, {index: id, alias: alias, details: details1})
             },
           };
         }

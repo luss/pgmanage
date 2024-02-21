@@ -25,7 +25,8 @@ function connectionsModalInit() {
         }
         $('#connections-modal').modal('hide')
         if (connection.technology === 'terminal') {
-            v_connTabControl.tag.createOuterTerminalTab(connection.id, connection.alias, connection.tunnel.user + '@' + connection.tunnel.server + ':' + connection.tunnel.port);
+            let details = `${connection.tunnel.user}@${connection.tunnel.server}:${connection.tunnel.port}`
+            emitter.emit(`${tabsStore.id}_create_terminal_tab`, {index: connection.id, alias: connection.alias, details: details})
         }
         else {
             v_connTabControl.tag.createConnTab(connection.id);

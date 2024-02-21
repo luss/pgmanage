@@ -117,7 +117,7 @@ function polling_response(message) {
     }
     case parseInt(queryResponseCodes.TerminalResult): {
       if (context) {
-        terminalReturn(message, context);
+          context.callback(message, context)
       }
       break;
     }
