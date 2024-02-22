@@ -280,6 +280,12 @@ export default {
         .catch((error) => {
           this.errorMessage = error;
         });
+
+      this.table.on("cellDblClick", function(e, cell){
+        this.cellContent = cell.getValue();
+        if(this.cellContent)
+          this.cellModalVisible = true;
+      }.bind(this));
     },
     fetchData(data) {
       let initialData = this.table.getData();
