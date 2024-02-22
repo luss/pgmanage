@@ -102,7 +102,6 @@ export default {
       this.editor.commands.bindKey("Ctrl-,", null);
       this.editor.commands.bindKey("Up", null);
       this.editor.commands.bindKey("Down", null);
-      this.editor.commands.bindKey("Tab", null);
 
       this.editor.focus();
       this.editor.resize();
