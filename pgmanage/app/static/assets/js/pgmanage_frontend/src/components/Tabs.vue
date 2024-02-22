@@ -273,6 +273,10 @@ export default {
       emitter.on(`${this.tabId}_create_monitoring_tab`, ({ name, query }) => {
         this.createMonitoringTab(name, query);
       });
+
+      emitter.on(`${this.tabId}_create_monitoring_dashboard_tab`, () => {
+        this.createMonitoringDashboardTab();
+      });
     },
     cleanSecondaryTabsEvents() {
       emitter.all.delete(`${this.tabId}_create_console_tab`);
@@ -282,6 +286,7 @@ export default {
       emitter.all.delete(`${this.tabId}_create_data_editor_tab`);
       emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
       emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
+      emitter.all.delete(`${this.tabId}_create_monitoring_dashboard_tab`);
     },
     getCurrentProps(tab) {
       let primaryTab;

@@ -1,4 +1,4 @@
-import { monitoringAction, renameTab, removeTab, showMenuNewTab } from '../workspace'
+import { renameTab, removeTab, showMenuNewTab } from '../workspace'
 import { beforeCloseTab } from "../create_tab_functions"
 import { cellDataModal } from '../header_actions';
 import { showPasswordPrompt } from '../passwords';

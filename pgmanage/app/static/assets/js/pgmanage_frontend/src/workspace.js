@@ -217,22 +217,8 @@ function checkBeforeChangeDatabase(p_cancel_function, p_ok_function) {
       }
       return false;
     }
-  } // TODO: remove old code
+  }
 
-	for (var i=0; i < v_connTabControl.selectedTab.tag.tabControl.tabList.length; i++) {
-
-		var v_tab = v_connTabControl.selectedTab.tag.tabControl.tabList[i];
-		if (v_tab.tag!=null) {
-      if (v_tab.tag.mode=='edit' || v_tab.tag.mode=='alter' || v_tab.tag.mode=='debug' || v_tab.tag.mode=='monitoring_dashboard' || v_tab.tag.mode=='data_mining') {
-        showAlert('Before changing connection please close any tab that belongs to the following types: <br/><br/><b>Edit Data<br/><br/>Alter Table<br/><br/>Function Debugging<br/><br/>Monitoring Dashboard<br/><br/>Advanced Object Search');
-        //v_connTabControl.selectedTab.tag.dd_object.set("selectedIndex",v_connTabControl.selectedTab.tag.dd_selected_index);
-        if (p_cancel_function!=null) {
-          p_cancel_function();
-        }
-        return false;
-      }
-    }
-	}
 	if (p_ok_function!=null) {
     p_ok_function();
   }

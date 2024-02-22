@@ -38,7 +38,6 @@ import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
 import { getProperties, clearProperties } from "../properties";
 import { showConfirm, showToast } from "../notification_control";
-import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 import { tabsStore } from "../stores/stores_initializer";
 
 export default {
@@ -3234,27 +3233,12 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
-              let tab_tag = v_connTabControl.selectedTab.tag;
-              addDbTreeHeader(
-                tab_tag.divDetails,
-                this.tabId,
-                node.data.database,
-                this.databaseIndex,
-              );
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
               database_nodes.forEach((el) => {
                 if (node.data.database === el.title) {
                   this.selectedDatabase = node.data.database;
-                  tabsStore.selectedPrimaryTab.metaData.selectedDatabase = node.data.database; //TODO: remove old code
-                  tab_tag.selectedDatabase = node.data.database;
-                  tab_tag.selectedDatabaseNode = el;
-
-                  if (tab_tag.selectedTitle != "")
-                    tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>${tab_tag.selectedTitle} - ${this.selectedDatabase}`;
-                  else
-                    tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>
-                      ${this.selectedDatabase}`;
+                  tabsStore.selectedPrimaryTab.metaData.selectedDatabase = node.data.database;
                 }
               });
               if (callback_continue) callback_continue();
@@ -3438,7 +3422,7 @@ export default {
                   label: "Dashboard",
                   icon: "fas cm-all fa-chart-line",
                   onClick: () => {
-                    v_connTabControl.tag.createMonitoringDashboardTab();
+                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_dashboard_tab`)
                   },
                 },
                 {
