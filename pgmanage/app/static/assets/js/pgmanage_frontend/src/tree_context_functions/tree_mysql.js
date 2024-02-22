@@ -28,11 +28,7 @@ SOFTWARE.
 import { createApp } from "vue";
 import TreeMysql from "../components/TreeMysql.vue";
 import { tabSQLTemplate } from "./tree_postgresql";
-import { createMessageModal } from "../notification_control";
-import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
-import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
-import axios from "axios";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
@@ -902,44 +898,8 @@ function TemplateUpdateMysql(p_schema, p_table) {
     return tmp.join('.')
 }*/
 
-function mysqlTerminateBackendConfirm(pid) {
-  axios
-    .post("/kill_backend_mysql/", {
-      database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-      tab_id: v_connTabControl.selectedTab.id,
-      pid: pid,
-    })
-    .then((resp) => {
-      refreshMonitoring();
-    })
-    .catch((error) => {
-      if (error.response.data?.password_timeout) {
-        showPasswordPrompt(
-          v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          function () {
-            mysqlTerminateBackendConfirm(pid);
-          },
-          null,
-          error.response.data.data
-        );
-      } else {
-        showToast("error", error.response.data.data)
-      }
-    });
-}
-
-function mysqlTerminateBackend(row) {
-  createMessageModal(
-    `Are you sure you want to terminate process ${row.ID}?`,
-    function () {
-      mysqlTerminateBackendConfirm(row.ID);
-    }
-  );
-}
-
 export {
   getTreeMysql,
-  mysqlTerminateBackend,
   TemplateSelectMysql,
   TemplateInsertMysql,
   TemplateUpdateMysql,

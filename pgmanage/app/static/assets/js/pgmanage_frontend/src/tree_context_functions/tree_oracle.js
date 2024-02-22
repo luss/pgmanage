@@ -29,11 +29,7 @@ SOFTWARE.
 import { createApp } from "vue";
 import TreeOracle from '../components/TreeOracle.vue'
 import { tabSQLTemplate } from './tree_postgresql'
-import { createMessageModal } from '../notification_control'
-import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
-import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
-import axios from "axios";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
@@ -1303,46 +1299,10 @@ function TemplateUpdateOracle(p_schema, p_table) {
     return tmp.join('.')
 }*/
 
-function oracleTerminateBackendConfirm(pid) {
-    axios.post(
-        "/kill_backend_oracle/", {
-            database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            tab_id: v_connTabControl.selectedTab.id,
-            pid: pid,
-        }
-    )
-    .then((resp) => {
-        refreshMonitoring();
-    })
-    .catch((error) => {
-        if (error.response.data?.password_timeout) {
-            showPasswordPrompt(
-              v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-              function () {
-                oracleTerminateBackendConfirm(pid);
-              },
-              null,
-              error.response.data.data
-            );
-          } else {
-            showToast("error", error.response.data.data)
-          }
-    })
-}
-
-function oracleTerminateBackend(row) {
-    let pid = `${row.SID},${row['SERIAL#']}`;
-    createMessageModal(`Are you sure you want to terminate session ${pid}?`,
-        function() {
-            oracleTerminateBackendConfirm(pid);
-        });
-
-}
 
 export {
   getTreeOracle,
   TemplateUpdateOracle,
   TemplateInsertOracle,
   TemplateSelectOracle,
-  oracleTerminateBackend
 };

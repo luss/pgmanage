@@ -120,6 +120,7 @@ export default {
       import("./SchemaEditorTab.vue")
     ),
     TerminalTab: defineAsyncComponent(() => import("./TerminalTab.vue")),
+    MonitoringTab: defineAsyncComponent(() => import("./MonitoringTab.vue")),
   },
   props: {
     hierarchy: {
@@ -184,6 +185,7 @@ export default {
       this.createConnectionsTab();
       this.createWelcomeTab();
       this.createSnippetPanel();
+      this.setupPrimaryTabsEvents();
     } else {
       this.createAddTab();
       this.setupSecondaryTabsEvents();
@@ -267,6 +269,10 @@ export default {
           this.createSchemaEditorTab(node, mode, dialect);
         }
       );
+
+      emitter.on(`${this.tabId}_create_monitoring_tab`, ({ name, query }) => {
+        this.createMonitoringTab(name, query);
+      });
     },
     cleanSecondaryTabsEvents() {
       emitter.all.delete(`${this.tabId}_create_console_tab`);
@@ -275,6 +281,7 @@ export default {
       emitter.all.delete(`${this.tabId}_create_erd_tab`);
       emitter.all.delete(`${this.tabId}_create_data_editor_tab`);
       emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
+      emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
     },
     getCurrentProps(tab) {
       let primaryTab;
@@ -358,6 +365,12 @@ export default {
         TerminalTab: {
           tabId: tab.id,
           databaseIndex: tab?.metaData?.selectedDatabaseIndex,
+        },
+        MonitoringTab: {
+          connId: tab.parentId,
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          dialect: primaryTab?.metaData?.selectedDBMS,
+          query: tab.metaData.query,
         },
       };
 
@@ -815,6 +828,28 @@ export default {
 
       tabsStore.selectTab(tab);
     },
+    createMonitoringTab(name = "Backends", query) {
+      const tab = tabsStore.addTab({
+        parentId: this.tabId,
+        name: name,
+        component: "MonitoringTab",
+        icon: `<i class="fas fa-desktop icon-tab-title"></i>`,
+        mode: "monitor_grid",
+        selectFunction: () => {
+          document.title = "PgManage";
+        },
+        closeFunction: (e, tab) => {
+          beforeCloseTab(e, () => {
+            this.removeTab(tab);
+          });
+        },
+        // dblClickFunction: renameTab // implement
+      });
+
+      tab.metaData.query = query;
+
+      tabsStore.selectTab(tab);
+    },
     checkTabStatus() {
       const tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
       switch (tab?.metaData?.mode) {
@@ -868,14 +903,10 @@ export default {
           label: "Backends",
           icon: "fas cm-all fa-tasks",
           onClick: () => {
-            console.log("Not implemented");
-            // this.createMonitoringTab(
-            // 		'Backends',
-            // 		'select * from pg_stat_activity', [{
-            // 				icon: 'fas fa-times action-grid action-close',
-            // 				title: 'Terminate',
-            // 				action: 'postgresqlTerminateBackend'
-            // 		}]);
+            this.createMonitoringTab(
+              "Backends",
+              "select * from pg_stat_activity"
+            );
           },
         });
       } else if (
@@ -887,14 +918,10 @@ export default {
           label: "Process List",
           icon: "fas cm-all fa-tasks",
           onClick: () => {
-            console.log("Not implemented");
-            // this.createMonitoringTab(
-            // 		'Process List',
-            // 		'select * from information_schema.processlist', [{
-            // 				icon: 'fas fa-times action-grid action-close',
-            // 				title: 'Terminate',
-            // 				action: 'mysqlTerminateBackend'
-            // 		}]);
+            this.createMonitoringTab(
+              "Process List",
+              "select * from information_schema.processlist"
+            );
           },
         });
       }

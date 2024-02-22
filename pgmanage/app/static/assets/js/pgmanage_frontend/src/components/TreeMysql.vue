@@ -712,17 +712,10 @@ export default {
                 label: "Process List",
                 icon: "fas cm-all fa-chart-line",
                 onClick: () => {
-                  window.v_connTabControl.tag.createMonitoringTab(
-                    "Process List",
-                    "select * from information_schema.processlist",
-                    [
-                      {
-                        icon: "fas cm-all fa-times",
-                        title: "Terminate",
-                        action: "mysqlTerminateBackend",
-                      },
-                    ]
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
+                      name: "Process List",
+                      query: "select * from information_schema.processlist"
+                    })
                 },
               },
             ],

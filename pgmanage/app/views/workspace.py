@@ -464,21 +464,19 @@ def get_completions_table(request, v_database):
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def refresh_monitoring(request, v_database):
-    response_data = create_response_template()
-
-    sql = request.data["p_query"]
+@database_required_new(check_timeout=True, open_connection=True)
+def refresh_monitoring(request, database):
+    sql = request.data.get("query")
 
     try:
-        data = v_database.Query(sql, True, True)
+        data = database.Query(sql, True, True)
 
-        response_data["v_data"] = {
+        response_data = {
             "col_names": data.Columns,
             "data": json.loads(data.Jsonify()),
         }
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(response_data)
 

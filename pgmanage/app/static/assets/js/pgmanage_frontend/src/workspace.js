@@ -29,10 +29,10 @@ import { settingsModalInit } from './settings_modal.js'
 import { initCreateTabFunctions } from './create_tab_functions'
 import { getTreeSqlite } from './tree_context_functions/tree_sqlite'
 import { refreshOuterConnectionHeights } from './tab_functions/outer_connection_tab'
-import { getTreePostgresql, postgresqlTerminateBackend } from './tree_context_functions/tree_postgresql'
-import { getTreeMysql, mysqlTerminateBackend } from './tree_context_functions/tree_mysql'
-import { getTreeMariadb, mariadbTerminateBackend } from './tree_context_functions/tree_mariadb'
-import { getTreeOracle, oracleTerminateBackend } from './tree_context_functions/tree_oracle'
+import { getTreePostgresql } from './tree_context_functions/tree_postgresql'
+import { getTreeMysql } from './tree_context_functions/tree_mysql'
+import { getTreeMariadb } from './tree_context_functions/tree_mariadb'
+import { getTreeOracle } from './tree_context_functions/tree_oracle'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
@@ -1202,22 +1202,6 @@ function updateExplainComponent() {
 }
 
 
-function monitoringAction(row_data, p_function) {
-  const handlerFnMap = {
-    postgresqlTerminateBackend: postgresqlTerminateBackend,
-    mysqlTerminateBackend: mysqlTerminateBackend,
-    oracleTerminateBackend: oracleTerminateBackend,
-    mariadbTerminateBackend: mariadbTerminateBackend,
-  };
-
-  let handlerFn = handlerFnMap[p_function];
-
-  if (handlerFn && typeof handlerFn === "function") {
-    handlerFn(row_data);
-  }
-}
-
-
 function toggleConnectionAutocomplete(toggler_id, conn_id) {
   let checked = document.getElementById(toggler_id).checked;
 
@@ -1241,7 +1225,6 @@ export {
   checkTabStatus,
   checkBeforeChangeDatabase,
   renameTabConfirm,
-  monitoringAction,
   toggleExpandToPanelView,
   resizeConnectionHorizontal,
   resizeTreeVertical,

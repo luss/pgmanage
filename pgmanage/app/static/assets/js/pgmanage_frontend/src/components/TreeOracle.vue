@@ -770,17 +770,10 @@ export default {
                   label: "Sessions",
                   icon: "fas cm-all fa-chart-line",
                   onClick: () => {
-                    window.v_connTabControl.tag.createMonitoringTab(
-                      "Sessions",
-                      "select * from v$session",
-                      [
-                        {
-                          icon: "fas cm-all fa-times",
-                          title: "Terminate",
-                          action: "oracleTerminateBackend",
-                        },
-                      ]
-                    );
+                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
+                      name: "Sessions",
+                      query: "select * from v$session"
+                    })
                   },
                 },
               ],

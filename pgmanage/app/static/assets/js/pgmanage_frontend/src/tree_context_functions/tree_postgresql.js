@@ -28,17 +28,14 @@ SOFTWARE.
 
 import { createApp } from "vue";
 import TreePostgresql from "../components/TreePostgresql.vue";
-import { createMessageModal, showAlert, showConfirm, showToast } from "../notification_control";
+import { showAlert, showConfirm, showToast } from "../notification_control";
 import {
   refreshHeights,
   removeTab,
 } from "../workspace";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
 import { createTabControl } from "../tabs";
-import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
-import axios from "axios";
 import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 import { tabsStore } from "../stores/stores_initializer";
@@ -1297,44 +1294,8 @@ function getMajorVersionPostgresql(p_version) {
     return tmp.join('.')
 }
 
-function postgresqlTerminateBackendConfirm(pid) {
-  axios
-    .post("/kill_backend_postgresql/", {
-      database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-      tab_id: v_connTabControl.selectedTab.id,
-      pid: pid,
-    })
-    .then((resp) => {
-      refreshMonitoring();
-    })
-    .catch((error) => {
-      if (error.response.data?.password_timeout) {
-        showPasswordPrompt(
-          v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          function () {
-            postgresqlTerminateBackendConfirm(pid);
-          },
-          null,
-          error.response.data.data
-        );
-      } else {
-        showToast("error", error.response.data.data)
-      }
-    });
-}
-
-function postgresqlTerminateBackend(row) {
-  createMessageModal(
-    `Are you sure you want to terminate backend ${row.pid}?`,
-    function () {
-      postgresqlTerminateBackendConfirm(row.pid);
-    }
-  );
-}
-
 export {
   getTreePostgresql,
-  postgresqlTerminateBackend, 
   tabSQLTemplate,
   TemplateSelectPostgresql,
   TemplateUpdatePostgresql,

@@ -3445,17 +3445,10 @@ export default {
                   label: "Backends",
                   icon: "fas cm-all fa-tasks",
                   onClick: () => {
-                    v_connTabControl.tag.createMonitoringTab(
-                      "Backends",
-                      "SELECT * FROM pg_stat_activity",
-                      [
-                        {
-                          icon: "fas cm-all fa-times",
-                          title: "Terminate",
-                          action: "postgresqlTerminateBackend",
-                        },
-                      ]
-                    );
+                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
+                      name: "Backends",
+                      query: "SELECT * FROM pg_stat_activity"
+                    })
                   },
                 },
               ],
