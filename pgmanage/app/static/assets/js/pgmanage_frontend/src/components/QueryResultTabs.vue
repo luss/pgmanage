@@ -267,7 +267,7 @@ export default {
       columns.unshift({
         formatter: "rownum",
         hozAlign: "center",
-        width: 40,
+        minWidth: 55,
         frozen: true,
       });
       this.table.setColumns(columns);
