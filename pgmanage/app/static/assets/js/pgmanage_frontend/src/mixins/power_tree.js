@@ -6,6 +6,7 @@ import { showAlert, showToast } from "../notification_control";
 import { tabsStore } from "../stores/stores_initializer";
 
 export default {
+  emits: ["treeTabsUpdate", "clearTabs"],
   data() {
     return {
       selectedDatabase:
@@ -77,9 +78,7 @@ export default {
   },
   methods: {
     onClickHandler(node, e) {
-      // fix this not to use window
-      if (window.v_connTabControl.selectedTab.tag.treeTabsVisible)
-        this.getProperties(node);
+      this.getProperties(node);
     },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);

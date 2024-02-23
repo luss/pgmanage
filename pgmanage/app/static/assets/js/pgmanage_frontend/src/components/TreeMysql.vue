@@ -27,7 +27,6 @@ import {
   TemplateInsertMysql,
   TemplateUpdateMysql,
 } from "../tree_context_functions/tree_mysql";
-import { getProperties, clearProperties } from "../properties";
 import { emitter } from "../emitter";
 import { tabsStore } from "../stores/stores_initializer";
 
@@ -669,14 +668,17 @@ export default {
     getProperties(node) {
       const handledTypes = ["table", "view", "function", "procedure"];
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_mysql/", {
-          schema: this.getParentNodeDeep(node, 2).title,
-          table: null,
-          object: node.title,
-          type: node.data.type,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            schema: this.getParentNodeDeep(node, 2).title,
+            table: null,
+            object: node.title,
+            type: node.data.type,
+          },
+          view: "/get_properties_postgresql/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsMysql(node) {

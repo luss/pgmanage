@@ -36,7 +36,6 @@ import {
 } from "../tree_context_functions/tree_postgresql";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
-import { getProperties, clearProperties } from "../properties";
 import { showConfirm, showToast } from "../notification_control";
 import { tabsStore } from "../stores/stores_initializer";
 
@@ -3325,14 +3324,15 @@ export default {
       }
 
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_postgresql/", {
-          schema: schema,
+        this.$emit("treeTabsUpdate", {data:
+          {schema: schema,
           table: table,
           object: object,
-          type: node.data.type,
+          type: node.data.type,},
+          view: "/get_properties_postgresql/"
         });
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getObjectDescriptionPostgresql(node) {

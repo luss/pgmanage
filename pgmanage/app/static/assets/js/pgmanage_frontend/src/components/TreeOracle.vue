@@ -27,7 +27,6 @@ import {
   TemplateSelectOracle,
 } from "../tree_context_functions/tree_oracle";
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { getProperties, clearProperties } from "../properties";
 import { emitter } from "../emitter";
 import { tabsStore } from "../stores/stores_initializer";
 export default {
@@ -738,14 +737,17 @@ export default {
       ];
 
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_oracle/", {
-          table: table,
-          object: node.title,
-          type: node.data.type,
-          schema: null,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            table: table,
+            object: node.title,
+            type: node.data.type,
+            schema: null,
+          },
+          view: "/get_properties_oracle/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsOracle(node) {

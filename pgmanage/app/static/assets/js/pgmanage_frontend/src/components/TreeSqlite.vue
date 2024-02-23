@@ -28,7 +28,6 @@ import {
 } from "../tree_context_functions/tree_sqlite";
 
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { getProperties, clearProperties } from "../properties";
 import { emitter } from "../emitter";
 import { tabsStore } from "../stores/stores_initializer";
 
@@ -379,13 +378,16 @@ export default {
         "unique",
       ];
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_sqlite/", {
-          table: table,
-          object: node.title,
-          type: node.data.type,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            table: table,
+            object: node.title,
+            type: node.data.type,
+          },
+          view: "/get_properties_sqlite/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsSqlite(node) {

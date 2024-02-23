@@ -2,7 +2,7 @@
   <div class="container-fluid position-relative">
     <div class="row">
       <splitpanes class="default-theme">
-        <pane size="20">
+        <pane size="18">
           <div
             :id="`${connTabId}_div_left`"
             class="omnidb__workspace__div-left col"
@@ -38,51 +38,37 @@
                     </label>
                   </div>
                 </div>
-                <splitpanes horizontal>
-                  <pane>
+                <splitpanes
+                  class="left-div-panes default-theme"
+                  horizontal
+                  @resize="treeTabsPaneSize = $event[1].size"
+                >
+                  <pane :size="100 - treeTabsPaneSize">
                     <div :id="`${connTabId}_tree`" class="database-tree">
                       <component
                         :is="treeComponent"
                         :tab-id="connTabId"
                         :database-index="databaseIndex"
+                        @tree-tabs-update="getProperties"
+                        @clear-tabs="clearTreeTabsData = true"
                       ></component>
                     </div>
                   </pane>
 
-                  <pane size="2">
-                    <div
-                      :id="`tree_tabs_parent_${connTabId}`"
-                      class="omnidb__tree-tabs--not-in-view omnidb__tree-tabs"
-                      style="position: relative; flex-shrink: 0"
-                    >
-                      <div
-                        :id="`${connTabId}_loading`"
-                        class="div_loading"
-                        style="z-index: 1000"
-                      >
-                        <div class="div_loading_cover"></div>
-                        <div class="div_loading_content">
-                          <div
-                            class="spinner-border text-primary"
-                            style="width: 4rem; height: 4rem"
-                            role="status"
-                          >
-                            <span class="sr-only">Loading...</span>
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler mr-2"
-                      >
-                        <i class="fas fa-arrows-alt-v"></i>
-                      </button>
-                      <div
-                        :id="`tree_tabs_${connTabId}`"
-                        class="omnidb__tree-tabs__container"
-                        style="position: relative"
-                      ></div>
-                    </div>
+                  <pane
+                    min-size="3"
+                    :size="treeTabsPaneSize"
+                    style="min-height: 2.2rem"
+                  >
+                    <TreePropertiesDDL
+                      :conn-id="connTabId"
+                      :ddl-data="ddlData"
+                      :properties-data="propertiesData"
+                      :show-loading="showTreeTabsLoading"
+                      :clear-data="clearTreeTabsData"
+                      @toggle-tree-tabs="toggleTreeTabPane"
+                      @data-cleared="clearTreeTabsData = false"
+                    />
                   </pane>
                 </splitpanes>
               </div>
@@ -118,6 +104,9 @@ import { defineAsyncComponent } from "vue";
 import { emitter } from "../emitter";
 import { truncateText } from "../utils";
 import { Splitpanes, Pane } from "splitpanes";
+import TreePropertiesDDL from "./TreePropertiesDDL.vue";
+import { showPasswordPrompt } from "../passwords";
+import { showToast } from "../notification_control";
 
 export default {
   name: "ConnectionTab",
@@ -130,12 +119,19 @@ export default {
     TreeMysql: defineAsyncComponent(() => import("./TreeMysql.vue")),
     Splitpanes,
     Pane,
+    TreePropertiesDDL,
   },
   props: {
     connTabId: String,
   },
   data() {
-    return {};
+    return {
+      ddlData: "",
+      propertiesData: [],
+      treeTabsPaneSize: 3,
+      showTreeTabsLoading: false,
+      clearTreeTabsData: false,
+    };
   },
   computed: {
     connectionTab() {
@@ -174,6 +170,9 @@ export default {
         oracle: "TreeOracle",
       };
       return treeTechnologiesMap[this.databaseTechnology];
+    },
+    isTreeTabsVisible() {
+      return this.treeTabsPaneSize !== 3;
     },
   },
   mounted() {
@@ -249,14 +248,54 @@ export default {
       let connection = connectionsStore.getConnection(this.databaseIndex);
       emitter.emit("connection-save", connection);
     },
+    getProperties({ view, data }) {
+      if (!this.isTreeTabsVisible) return;
+      this.showTreeTabsLoading = true;
+      axios
+        .post(view, {
+          database_index: this.databaseIndex,
+          tab_id: this.connTabId,
+          data: data,
+        })
+        .then((resp) => {
+          this.propertiesData = resp.data.properties;
+          this.ddlData = resp.data.ddl;
+          this.showTreeTabsLoading = false;
+        })
+        .catch((error) => {
+          if (error.response.data.password_timeout) {
+            showPasswordPrompt(
+              v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+              () => {
+                this.getProperties(view, data);
+              },
+              null,
+              error.response.data.data
+            );
+          } else {
+            showToast("error", error.response.data.data);
+          }
+          this.showTreeTabsLoading = false;
+        });
+    },
+    toggleTreeTabPane() {
+      if (this.treeTabsPaneSize === 3) {
+        this.treeTabsPaneSize = 40;
+      } else {
+        this.treeTabsPaneSize = 3;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
+.left-div-panes {
+  height: calc(100vh - 30px);
+}
 .database-tree {
   overflow: auto;
-  flex-grow: 1;
   transition: scroll 0.3s;
+  height: 100%;
 }
 </style>
