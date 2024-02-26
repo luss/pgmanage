@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import {
   buildSnippetContextMenuObjects,
   executeSnippet,
@@ -7,6 +7,7 @@ import axios from "axios";
 import { flushPromises } from "@vue/test-utils";
 import * as notificatonModule from "../../src/notification_control";
 import { emitter } from "../../src/emitter";
+import { useTabsStore } from "../../src/stores/tabs";
 
 vi.mock("axios");
 
@@ -89,19 +90,26 @@ describe("buildSnippetContextMenuObjects", () => {
 });
 
 describe("executeSnippet", () => {
+  let tabsStore;
+
+  beforeAll(() => {
+    tabsStore = useTabsStore();
+    let parentTab = tabsStore.addTab({ name: "test primary tab" });
+    tabsStore.selectTab(parentTab);
+
+    let secondaryTab = tabsStore.addTab({
+      parentId: parentTab.id,
+      name: "test secondary tab",
+    });
+    tabsStore.selectTab(secondaryTab);
+  });
+
   test("should emit event to snippet editor", async () => {
     const responseData = {
       data: "Snippet Text",
     };
 
-    const v_connTabControl = {
-      selectedTab: { tag: { tabControl: { selectedTab: { id: "tab_id" } } } },
-    };
-
     const emitterEmitSpy = vi.spyOn(emitter, "emit");
-
-    // Mock the global variable for testing
-    vi.stubGlobal("v_connTabControl", v_connTabControl);
 
     axios.post.mockResolvedValue({ data: responseData });
 
@@ -111,7 +119,7 @@ describe("executeSnippet", () => {
 
     expect(emitterEmitSpy).toHaveBeenCalledOnce();
     expect(emitterEmitSpy).toBeCalledWith(
-      `${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_insert_to_editor`,
+      `${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_insert_to_editor`,
       responseData.data
     );
   });

@@ -1014,80 +1014,6 @@ function tabAdvancedObjectSearch(node) {
 
 }
 
-/// <summary>
-/// Retrieving tree.
-/// </summary>
-function getTreePostgresql(div) {
-
-    var context_menu = {
-        'cm_database': {
-            elements: [
-            /*, {
-                text: 'Advanced Object Search',
-                icon: 'fas cm-all fa-search',
-                action: function(node) {
-                  checkCurrentDatabase(node, true, function() {
-                      tabAdvancedObjectSearch(node);
-                  }, function() {
-                      node.collapseNode();
-                  })
-                }
-            }*/
-          ]
-        },
-        'cm_function': {
-            elements: [
-            // {
-            //     text: 'Debug Function',
-            //     icon: 'fas cm-all fa-bug',
-            //     action: function(node) {
-            //         v_connTabControl.tag.createDebuggerTab(
-            //             node.text);
-            //         setupDebug(node, 'f');
-            //     }
-            // }
-                ]
-        },
-
-        'cm_procedure': {
-            elements: [
-            //  {
-            //     text: 'Debug Procedure',
-            //     icon: 'fas cm-all fa-bug',
-            //     action: function(node) {
-            //         v_connTabControl.tag.createDebuggerTab(
-            //             node.text);
-            //         setupDebug(node, 'p');
-            //     }
-            // }
-            ]
-        },
-    };
-
-    const div_tree = document.getElementById(div);
-    div_tree.innerHTML =
-      '<tree-postgresql :database-index="databaseIndex" :tab-id="tabId"></tree-postgresql>';
-    const app = createApp({
-      components: {
-        "tree-postgresql": TreePostgresql
-      },
-      data() {
-        return {
-          databaseIndex:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tabId: window.v_connTabControl.selectedTab.id,
-        };
-      },
-    });
-    app.mount(`#${div}`);
-
-    // save tree referece in the tab, it will be later used to destroy tree instance on tab close
-    v_connTabControl.selectedTab.tree = app
-
-    let tab_tag = v_connTabControl.selectedTab.tag
-
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase, tab_tag.selectedDatabaseIndex)
-}
 
 /// <summary>
 /// Retrieving function definition.
@@ -1153,17 +1079,16 @@ function getDebugProcedureDefinitionPostgresql(node) {
 /// Retrieving SELECT SQL template.
 /// </summary>
 function TemplateSelectPostgresql(schema, table, kind) {
-
     execAjax('/template_select_postgresql/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_table": table,
             "p_schema": schema,
             "p_kind": kind
         }),
         function(p_return) {
-            let tab_name = `${v_connTabControl.selectedTab.tag.selectedDatabase}@${schema}.${table}`
+            let tab_name = `${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}@${schema}.${table}`
 
             emitter.emit(
                 `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
@@ -1191,8 +1116,8 @@ function TemplateInsertPostgresql(p_schema, p_table) {
 
     execAjax('/template_insert_postgresql/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_table": p_table,
             "p_schema": p_schema
         }),
@@ -1216,8 +1141,8 @@ function TemplateUpdatePostgresql(p_schema, p_table) {
 
     execAjax('/template_update_postgresql/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_table": p_table,
             "p_schema": p_schema
         }),
@@ -1241,8 +1166,8 @@ function TemplateSelectFunctionPostgresql(p_schema, p_function, p_functionid) {
 
     execAjax('/template_select_function_postgresql/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_function": p_function,
             "p_functionid": p_functionid,
             "p_schema": p_schema
@@ -1267,8 +1192,8 @@ function TemplateCallProcedurePostgresql(p_schema, p_procedure, p_procedureid) {
 
     execAjax('/template_call_procedure_postgresql/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_procedure": p_procedure,
             "p_procedureid": p_procedureid,
             "p_schema": p_schema
@@ -1295,7 +1220,6 @@ function getMajorVersionPostgresql(p_version) {
 }
 
 export {
-  getTreePostgresql,
   tabSQLTemplate,
   TemplateSelectPostgresql,
   TemplateUpdatePostgresql,

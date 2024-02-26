@@ -35,32 +35,6 @@ import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 import { tabsStore } from "../stores/stores_initializer";
 
-/// <summary>
-/// Retrieving tree.
-/// </summary>
-function getTreeSqlite(div) {
-    const div_tree = document.getElementById(div);
-    div_tree.innerHTML ='<tree-sqlite :database-index="databaseIndex" :tab-id="tabId"></tree-sqlite>'
-    const app = createApp({
-      components: {
-        "tree-sqlite": TreeSqlite
-      },
-        data() {
-            return {
-              databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-              tabId: window.v_connTabControl.selectedTab.id,
-            };
-          },
-    })
-    app.mount(`#${div}`)
-
-    // save tree referece in the tab, it will be later used to destroy tree instance on tab close
-    v_connTabControl.selectedTab.tree = app
-
-    let tab_tag = v_connTabControl.selectedTab.tag
-    let databaseName = truncateText(tab_tag.selectedDatabase, 10)
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, databaseName, tab_tag.selectedDatabaseIndex)
-}
 
 /// <summary>
 /// Retrieving SELECT SQL template.
@@ -69,8 +43,8 @@ function TemplateSelectSqlite(p_table, p_kind) {
     execAjax(
         '/template_select_sqlite/',
         JSON.stringify({
-            'p_database_index': v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            'p_tab_id': v_connTabControl.selectedTab.id,
+            'p_database_index': tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            'p_tab_id': tabsStore.selectedPrimaryTab.id,
             'p_table': p_table,
             'p_kind': p_kind
         }),
@@ -103,8 +77,8 @@ function TemplateInsertSqlite(p_table) {
     execAjax(
         '/template_insert_sqlite/',
         JSON.stringify({
-            'p_database_index': v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            'p_tab_id': v_connTabControl.selectedTab.id,
+            'p_database_index': tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            'p_tab_id': tabsStore.selectedPrimaryTab.id,
             'p_table': p_table
         }),
         function(p_return) {
@@ -129,8 +103,8 @@ function TemplateUpdateSqlite(p_table) {
     execAjax(
         '/template_update_sqlite/',
         JSON.stringify({
-            'p_database_index': v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            'p_tab_id': v_connTabControl.selectedTab.id,
+            'p_database_index': tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            'p_tab_id': tabsStore.selectedPrimaryTab.id,
             'p_table': p_table
         }),
         function(p_return) {
@@ -148,34 +122,7 @@ function TemplateUpdateSqlite(p_table) {
     );
 }
 
-function truncateText(text, maxLength) {
-    if (text.length <= maxLength) {
-      return text;
-    } else if (text.indexOf('/') !== -1) {
-      const ellipsis = '...';
-      const parts = text.split('/');
-      const firstPart = parts[0];
-      const lastPart = parts[parts.length - 1];
-      const middleParts = parts.slice(1, parts.length - 1);
-      let truncatedText = firstPart + '/';
-      for (let i = 0; i < middleParts.length; i++) {
-        if (truncatedText.length + middleParts[i].length + ellipsis.length > maxLength) {
-          truncatedText += ellipsis;
-          break;
-        }
-        truncatedText += middleParts[i] + '/';
-      }
-      truncatedText += '/' + lastPart;
-      return truncatedText;
-    } else {
-      const ellipsis = '...';
-      const truncatedText = text.slice(0, maxLength - ellipsis.length) + ellipsis;
-      return truncatedText;
-    }
-  }
-
 export {
-  getTreeSqlite,
   TemplateSelectSqlite,
   TemplateInsertSqlite,
   TemplateUpdateSqlite,

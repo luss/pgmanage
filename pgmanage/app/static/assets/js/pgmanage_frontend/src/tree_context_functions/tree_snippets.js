@@ -1,6 +1,7 @@
 import axios from "axios";
 import { showConfirm, showToast } from "../notification_control";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 
 function executeSnippet(id) {
   axios
@@ -9,7 +10,7 @@ function executeSnippet(id) {
     })
     .then((resp) => {
       emitter.emit(
-        `${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_insert_to_editor`,
+        `${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_insert_to_editor`,
         resp.data.data
       );
     })

@@ -34,324 +34,6 @@ import { emitter } from "../emitter";
 import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 import { tabsStore } from "../stores/stores_initializer";
 
-/// <summary>
-/// Retrieving tree.
-/// </summary>
-function getTreeMysql(div) {
-  var context_menu = {
-    cm_databases: {
-      elements: [
-        /*, {
-                text: 'Doc: Databases',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Databases',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/managing-databases.html');
-                }
-            }*/
-      ],
-    },
-    cm_roles: {
-      elements: [
-        /*, {
-                text: 'Doc: Roles',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Roles',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/user-manag.html');
-                }
-            }*/
-      ],
-    },
-    cm_tables: {
-      elements: [
-        /*, {
-                text: 'Doc: Basics',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Table Basics',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/ddl-basics.html');
-                }
-            }, {
-                text: 'Doc: Constraints',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Table Constraints',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/ddl-constraints.html');
-                }
-            }, {
-                text: 'Doc: Modifying',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Modifying Tables',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/ddl-alter.html');
-                }
-            }*/
-      ],
-    },
-    cm_indexes: {
-      elements: [
-        /*, {
-                text: 'Doc: Indexes',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Indexes',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/indexes.html');
-                }
-            }*/
-      ],
-    },
-    cm_views: {
-      elements: [
-        /*, {
-                text: 'Doc: Views',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Views',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/sql-createview.html');
-                }
-            }*/
-      ],
-    },
-    /*'cm_triggers': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeMysql(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                },
-            }, {
-                text: 'Create Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Trigger', node.tree.tag
-                        .create_trigger.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' + node.parent
-                            .text));
-                }
-            }, {
-                text: 'Doc: Triggers',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Triggers',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/trigger-definition.html');
-                }
-            }]
-        },
-        'cm_view_triggers': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeMysql(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                },
-            }, {
-                text: 'Create Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Trigger', node.tree.tag
-                        .create_view_trigger.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' + node.parent
-                            .text));
-                }
-            }, {
-                text: 'Doc: Triggers',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Triggers',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/trigger-definition.html');
-                }
-            }]
-        },
-        'cm_trigger': {
-            elements: [{
-                text: 'Alter Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Alter Trigger', node.tree.tag
-                        .alter_trigger.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }, {
-                text: 'Enable Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Enable Trigger', node.tree.tag
-                        .enable_trigger.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }, {
-                text: 'Disable Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Disable Trigger', node.tree
-                        .tag.disable_trigger.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }, {
-                text: 'Drop Trigger',
-                icon: 'fas cm-all fa-times',
-                action: function(node) {
-                    tabSQLTemplate('Drop Trigger', node.tree.tag
-                        .drop_trigger.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }]
-        },
-        'cm_partitions': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeMysql(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            }, {
-                text: 'Create Partition',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Partition', node.tree
-                        .tag.create_partition.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' + node.parent
-                            .text));
-                }
-            }, {
-                text: 'Doc: Partitions',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Partitions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/ddl-partitioning.html');
-                }
-            }]
-        },
-        'cm_partition': {
-            elements: [{
-                text: 'No Inherit Partition',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('No Inherit Partition', node
-                        .tree.tag.noinherit_partition.replace(
-                            '#table_name#', node.tree.tag.v_database + '.' +
-                            node.parent.parent.text).replace(
-                            '#partition_name#', node.text));
-                }
-            }, {
-                text: 'Drop Partition',
-                icon: 'fas cm-all fa-times',
-                action: function(node) {
-                    tabSQLTemplate('Drop Partition', node.tree.tag
-                        .drop_partition.replace(
-                            '#partition_name#', node.text));
-                }
-            }]
-        },*/
-    cm_functions: {
-      elements: [
-        /*, {
-                text: 'Doc: Functions',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Functions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/sql-createfunction.html');
-                }
-            }*/
-      ],
-    },
-    cm_procedures: {
-      elements: [
-        /*, {
-                text: 'Doc: Procedures',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Functions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionMysql(node.tree.tag.version) +
-                        '/static/sql-createfunction.html');
-                }
-            }*/
-      ],
-    },
-  };
-
-  const div_tree = document.getElementById(div);
-  div_tree.innerHTML =
-    '<tree-mysql :database-index="databaseIndex" :tab-id="tabId"></tree-mysql>';
-  const app = createApp({
-    components: {
-      "tree-mysql": TreeMysql,
-    },
-    data() {
-      return {
-        databaseIndex:
-          window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tabId: window.v_connTabControl.selectedTab.id,
-      };
-    },
-  });
-  app.mount(`#${div}`);
-
-  // save tree referece in the tab, it will be later used to destroy tree instance on tab close
-  v_connTabControl.selectedTab.tree = app;
-
-  let tab_tag = v_connTabControl.selectedTab.tag
-  addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase, tab_tag.selectedDatabaseIndex)
-}
 
 /// <summary>
 /// Retrieving tree details.
@@ -809,8 +491,8 @@ function TemplateSelectMysql(p_schema, p_table) {
   execAjax(
     "/template_select_mysql/",
     JSON.stringify({
-      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-      p_tab_id: v_connTabControl.selectedTab.id,
+      p_database_index: tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+      p_tab_id: tabsStore.selectedPrimaryTab.id,
       p_table: p_table,
       p_schema: p_schema,
     }),
@@ -843,8 +525,8 @@ function TemplateInsertMysql(p_schema, p_table) {
   execAjax(
     "/template_insert_mysql/",
     JSON.stringify({
-      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-      p_tab_id: v_connTabControl.selectedTab.id,
+      p_database_index: tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+      p_tab_id: tabsStore.selectedPrimaryTab.id,
       p_table: p_table,
       p_schema: p_schema,
     }),
@@ -870,8 +552,8 @@ function TemplateUpdateMysql(p_schema, p_table) {
   execAjax(
     "/template_update_mysql/",
     JSON.stringify({
-      p_database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-      p_tab_id: v_connTabControl.selectedTab.id,
+      p_database_index: tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+      p_tab_id: tabsStore.selectedPrimaryTab.id,
       p_table: p_table,
       p_schema: p_schema,
     }),
@@ -899,7 +581,6 @@ function TemplateUpdateMysql(p_schema, p_table) {
 }*/
 
 export {
-  getTreeMysql,
   TemplateSelectMysql,
   TemplateInsertMysql,
   TemplateUpdateMysql,
