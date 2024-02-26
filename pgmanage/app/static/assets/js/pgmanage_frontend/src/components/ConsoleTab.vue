@@ -259,6 +259,8 @@ export default {
               },
             };
 
+            context.tab.metaData.context = context
+
             createRequest(queryRequestCodes.Console, message_data, context);
 
             this.consoleState = requestState.Executing;

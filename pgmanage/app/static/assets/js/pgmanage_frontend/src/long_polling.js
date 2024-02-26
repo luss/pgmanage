@@ -218,6 +218,7 @@ function createRequest(message_code, message_data, context) {
       }
       createContext(ctx)
       context_code = ctx.code
+      context.code = context_code
 		}
     // if context code is passed do not create a new context
 		else {
