@@ -264,7 +264,7 @@ export default {
         .catch((error) => {
           if (error.response.data.password_timeout) {
             showPasswordPrompt(
-              v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+              this.databaseIndex,
               () => {
                 this.getProperties(view, data);
               },

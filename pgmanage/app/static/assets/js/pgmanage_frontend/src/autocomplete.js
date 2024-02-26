@@ -29,6 +29,7 @@ import { Range } from "ace-builds";
 import { execAjax } from "./ajax_control";
 import { emitter } from "./emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
+import { tabsStore } from "./stores/stores_initializer";
 
 var v_autocomplete_object;
 
@@ -893,8 +894,8 @@ function autocomplete_get_results(p_sql,p_value,p_pos) {
 
   execAjax('/get_autocomplete_results/',
       JSON.stringify({
-          "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          "p_tab_id": v_connTabControl.selectedTab.id,
+          "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+          "p_tab_id": tabsStore.selectedPrimaryTab.id,
           "p_sql": p_sql,
           "p_value": p_value,
           "p_pos": p_pos
@@ -955,7 +956,7 @@ function autocomplete_get_results(p_sql,p_value,p_pos) {
       function(p_return) {
         if (p_return.v_data.password_timeout) {
           showPasswordPrompt(
-            v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+            tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
             function() {
               autocomplete_get_results(p_sql,p_value,p_pos);
             },
@@ -1075,8 +1076,8 @@ function autocomplete_update_editor_cursor(p_editor, p_event) {
   }
   // Enter
   if (p_event.keyCode === 13) {
-    if (v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode=='console') {
-      emitter.emit(`${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_console`)
+    if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData?.mode=='console') {
+      emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_console`)
     }
   }
 }

@@ -26,9 +26,8 @@ function createExtensionModal(node, mode) {
       return {
         mode: mode,
         treeNode: node,
-        tabId: window.v_connTabControl.selectedTab.id,
-        databaseIndex:
-          window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tabId: tabsStore.selectedPrimaryTab.id,
+        databaseIndex: tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex
       };
     },
     mounted() {

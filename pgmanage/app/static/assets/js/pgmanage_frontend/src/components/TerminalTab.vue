@@ -37,6 +37,12 @@ export default {
   mounted() {
     this.setupTerminal();
     this.setupEvents();
+
+    settingsStore.$subscribe((mutation, state) => {
+        this.term.options.theme = state.terminalTheme;
+        this.term.options.fontSize = state.fontSize;
+        this.fitAddon.fit();
+      });
   },
   unmounted() {
     this.clearEvents();

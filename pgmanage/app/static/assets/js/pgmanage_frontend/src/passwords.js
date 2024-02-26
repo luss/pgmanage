@@ -8,6 +8,7 @@ var v_modal_password_input = null;
 import { conn_app } from './connections_modal.js'
 import { execAjax } from './ajax_control.js';
 import { showToast } from './notification_control.js';
+import { tabsStore } from './stores/stores_initializer.js';
 
 function passwordModalsInit() {
 
@@ -80,7 +81,7 @@ function checkPasswordPrompt(p_database_index, p_callback_function, p_cancel_cal
   v_modal_password_ok_after_hide_function = function() {
     execAjax('/renew_password/',
 			JSON.stringify({"p_database_index": p_database_index,
-                      "p_tab_id": v_connTabControl.selectedTab.id,
+                      "p_tab_id": tabsStore.selectedPrimaryTab.id,
                       "p_password": v_password,
                       "password_kind": p_kind
                     }),
