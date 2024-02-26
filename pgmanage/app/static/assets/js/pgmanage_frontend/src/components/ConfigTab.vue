@@ -169,6 +169,10 @@ export default {
       v$: useVuelidate()
     }
   },
+  props: {
+    connId: String,
+    databaseIndex: Number
+  },
   data() {
     return {
       data: "",
@@ -179,14 +183,12 @@ export default {
       configHistory: "",
       selectedConf: "",
       commitComment: "",
-      tabId: window.v_connTabControl.selectedTab.id,
-      databaseId: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
       appliedSettings: {
         data: "",
         restartChanges: "",
         restartPending: "",
       },
-      modalId: `config_modal_${this.tabId}_${Date.now()}`,
+      modalId: `config_modal_${this.connId}_${Date.now()}`,
       modalRevertConfig: false,
       configDiffData: '',
       intervalId: ''
@@ -242,8 +244,8 @@ export default {
     getConfiguration() {
       axios
         .post("/configuration/", {
-          database_index: this.databaseId,
-          tab_id: this.tabId,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
         })
         .then((response) => {
           this.data = response.data.settings;
@@ -256,8 +258,8 @@ export default {
     getCategories() {
       axios
         .post("/configuration/categories/", {
-          database_index: this.databaseId,
-          tab_id: this.tabId,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
         })
         .then((response) => {
           this.categories = response.data.categories;
@@ -278,8 +280,8 @@ export default {
     saveConfiguration(event, newConfig = true) {
       axios
         .post("/save_configuration/", {
-          database_index: this.databaseId,
-          tab_id: this.tabId,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
           settings: this.updateSettings,
           commit_comment: this.commitComment,
           new_config: newConfig,
@@ -300,8 +302,8 @@ export default {
     getConfigHistory() {
       axios
         .post("/get_configuration_history/", {
-          database_index: this.databaseId,
-          tab_id: this.tabId,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
         })
         .then((response) => {
           this.configHistory = response.data.config_history.map((el) => {
@@ -338,8 +340,8 @@ export default {
     getConfigStatus() {
       axios
         .post("/configuration/status/", {
-          database_index: this.databaseId,
-          tab_id: this.tabId,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
         })
         .then((response) => {
           this.appliedSettings.restartPending = response.data.restart_pending;
@@ -376,8 +378,8 @@ export default {
     getConfigurationDiffs() {
       axios
         .post("/configuration/", {
-          database_index: this.databaseId,
-          tab_id: this.tabId,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
           grouped: false,
           exclude_read_only: true
         })

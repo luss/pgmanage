@@ -9,9 +9,7 @@ export default {
   emits: ["treeTabsUpdate", "clearTabs"],
   data() {
     return {
-      selectedDatabase:
-        window.v_connTabControl?.selectedTab?.tag?.selectedDatabase ?? //left for compatibility reasons, use tabsStore instead
-        tabsStore.selectedPrimaryTab.metaData.selectedDatabase,
+      selectedDatabase: tabsStore.selectedPrimaryTab.metaData.selectedDatabase,
     };
   },
   computed: {
@@ -56,11 +54,11 @@ export default {
       }
     );
 
-    emitter.on(`refreshNode_${this.id}`, (e) => {
+    emitter.on(`refreshNode_${this.tabId}`, (e) => {
       this.refreshTree(e.node);
     });
 
-    emitter.on(`removeNode_${this.id}`, (e) => {
+    emitter.on(`removeNode_${this.tabId}`, (e) => {
       this.removeNode(e.node);
     });
 
@@ -68,13 +66,11 @@ export default {
       this.refreshTreeRecursive(node_type);
     });
 
-    if (this.getRootNode().title !== "Snippets") {
-      v_connTabControl.selectedTab.tag.tree = this;
-    }
   },
   unmounted() {
     emitter.all.delete(`refreshNode_${this.id}`);
     emitter.all.delete(`removeNode_${this.id}`);
+    emitter.all.delete(`refreshTreeRecursive_${this.tabId}`)
   },
   methods: {
     onClickHandler(node, e) {

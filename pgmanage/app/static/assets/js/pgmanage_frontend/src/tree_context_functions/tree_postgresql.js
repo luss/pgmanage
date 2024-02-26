@@ -31,13 +31,10 @@ import TreePostgresql from "../components/TreePostgresql.vue";
 import { showAlert, showConfirm, showToast } from "../notification_control";
 import {
   refreshHeights,
-  removeTab,
 } from "../workspace";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { createTabControl } from "../tabs";
 import { execAjax } from "../ajax_control";
 import { emitter } from "../emitter";
-import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 import { tabsStore } from "../stores/stores_initializer";
 
 function tabSQLTemplate(tab_name, template, showTip=true) {

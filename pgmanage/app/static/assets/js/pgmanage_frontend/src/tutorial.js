@@ -28,6 +28,7 @@ SOFTWARE.
 
 import { emitter } from "./emitter";
 import { listUsers, newUser } from "./users";
+import { tabsStore } from "./stores/stores_initializer";
 
 function startTutorial(p_tutorial_name) {
   if (v_omnis.omnis_ui_assistant) {
@@ -51,10 +52,8 @@ function startTutorial(p_tutorial_name) {
   // Setting the tutorial to the default example tutorial `main`.
   var v_tutorial_name = (p_tutorial_name) ? p_tutorial_name : 'main';
   var v_button_inner_query_attr = ' disabled title="Open a new connection first." ';
-  if (v_connTabControl.selectedTab.tag.tabControl) {
-    if (v_connTabControl.selectedTab.tag.tabControl.tabList.length > 0) {
+  if (!!tabsStore.selectedPrimaryTab?.metaData?.secondaryTabs?.length) {
       v_button_inner_query_attr = '';
-    }
   }
   var v_button_inner_query =
   '<li class="mb-2">' +

@@ -29,7 +29,6 @@ function connectionsModalInit() {
             emitter.emit(`${tabsStore.id}_create_terminal_tab`, {index: connection.id, alias: connection.alias, details: details})
         }
         else {
-            v_connTabControl.tag.createConnTab(connection.id);
             emitter.emit(`${tabsStore.id}_create_conn_tab`, ({index: connection.id}))
         }
     })

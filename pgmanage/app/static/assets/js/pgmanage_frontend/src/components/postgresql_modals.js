@@ -3,6 +3,7 @@ import UtilityJobsJobDetail from "./UtilityJobsJobDetail.vue";
 import cronLight from "@vue-js-cron/light";
 import ExtensionModal from "../components/ExtensionModal.vue";
 import PgCronModal from "../components/PgCronModal.vue";
+import { tabsStore } from "../stores/stores_initializer";
 
 const jobDetailModal = createApp({
   components: {
@@ -26,7 +27,8 @@ function createExtensionModal(node, mode) {
         mode: mode,
         treeNode: node,
         tabId: window.v_connTabControl.selectedTab.id,
-        databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        databaseIndex:
+          window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
       };
     },
     mounted() {
@@ -49,7 +51,7 @@ function createPgCronModal(node, mode) {
   cronLight.install.installed = false;
   const wrap_div = document.getElementById("pgcron-modal-wrap");
 
-  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode></pgcron-modal>`;
+  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" conn-id="connId"></pgcron-modal>`;
 
   const app = createApp({
     components: {
@@ -59,6 +61,9 @@ function createPgCronModal(node, mode) {
       return {
         mode: mode,
         treeNode: node,
+        databaseIndex:
+          tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+        connId: tabsStore.selectedPrimaryTab.id,
       };
     },
     mounted() {

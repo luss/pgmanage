@@ -1,7 +1,6 @@
 import axios from 'axios'
 import ShortUniqueId from 'short-unique-id';
 
-import { terminalReturn } from "./terminal";
 import { queryResponseCodes } from "./constants";
 import { debugResponse } from "./debug";
 import { showPasswordPrompt } from "./passwords";

@@ -179,7 +179,6 @@
 
 <script>
 import { refreshHeights } from '../workspace'
-import { terminalRun } from '../terminal'
 import { default_shortcuts } from '../shortcuts'
 import { changeTheme } from '../header_actions'
 import axios from 'axios'
@@ -320,8 +319,6 @@ export default {
           else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'edit')
             console.log('Not implemented') //TODO: implement shortcut functionality for new edit data
         }
-        else if (window.v_connTabControl.selectedTab.tag.mode == 'outer_terminal')
-          terminalRun();
       },
       shortcut_run_selection: function () {
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
@@ -366,7 +363,7 @@ export default {
       shortcut_new_inner_tab: function () {
 
         if (window.v_connTabControl.selectedTab.tag.mode == 'connection' || window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          window.v_connTabControl.tag.createQueryTab();
+          // window.v_connTabControl.tag.createQueryTab();
         }
         else if (window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
           // check this

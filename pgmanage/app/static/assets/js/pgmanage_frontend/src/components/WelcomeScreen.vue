@@ -1,5 +1,5 @@
 <template>
-<div class="welcome">
+<div class="welcome pt-3">
     <div class='welcome__container'>
       <div class="welcome__header mt-1 mb-4">
         <p class='mb-0'>Welcome to</p>

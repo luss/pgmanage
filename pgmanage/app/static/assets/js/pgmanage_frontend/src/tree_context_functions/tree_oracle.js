@@ -32,7 +32,6 @@ import { tabSQLTemplate } from './tree_postgresql'
 import { execAjax } from "../ajax_control";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
-import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
 import { tabsStore } from "../stores/stores_initializer";
 
 

@@ -97,7 +97,6 @@ import { emitter } from "../emitter";
 import { connectionsStore } from "../stores/connections";
 import { showToast } from "../notification_control";
 import moment from "moment";
-import { beforeCloseTab } from "../create_tab_functions";
 import { createRequest } from "../long_polling";
 import { queryRequestCodes } from "../constants";
 import { defineAsyncComponent, h } from "vue";
@@ -377,6 +376,10 @@ export default {
           dialect: primaryTab?.metaData?.selectedDBMS,
           query: tab.metaData.query,
         },
+        ConfigTab: {
+          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          connId: tab.parentId,
+        },
       };
 
       return componentsProps[tab.component];
@@ -536,9 +539,9 @@ export default {
             document.title = "PgManage";
             this.checkTabStatus();
           },
-          closeFunction: function (e, primaryTab) {
+          closeFunction: (e, primaryTab) => {
             $('[data-toggle="tab"]').tooltip("hide");
-            beforeCloseTab(e, function () {
+            this.beforeCloseTab(e, function () {
               var v_tabs_to_remove = [];
 
               let tabs = tabsStore.getSecondaryTabs(primaryTab.id);
@@ -615,8 +618,8 @@ export default {
           emitter.emit(`${this.id}_editor_focus`);
           emitter.emit(`${this.id}_resize`);
         },
-        closeFunction: function (e, tab) {
-          beforeCloseTab(e, function () {
+        closeFunction: (e, tab) => {
+          this.beforeCloseTab(e, function () {
             tabsStore.removeTab(tab);
           });
         },
@@ -637,8 +640,8 @@ export default {
           emitter.emit(`${this.id}_resize`);
           emitter.emit(`${this.id}_check_console_status`);
         },
-        closeFunction: function (e, tab) {
-          beforeCloseTab(e, function () {
+        closeFunction: (e, tab) => {
+          this.beforeCloseTab(e, function () {
             tabsStore.removeTab(tab);
           });
         },
@@ -650,14 +653,15 @@ export default {
       const tab = tabsStore.addTab({
         parentId: this.tabId,
         name: "Monitoring",
+        icon: '<i class="fas fa-chart-bar icon-tab-title"></i>',
         component: "MonitoringDashboard",
         mode: "monitoring_dashboard",
         selectFunction: function () {
           emitter.emit(`${this.id}_redraw_widget_grid`);
         },
-        closeFunction: function (e, tab) {
-          beforeCloseTab(e, function () {
-            tabsStore.removeTab(tab);
+        closeFunction: (e, tab) => {
+          this.beforeCloseTab(e, () => {
+            this.removeTab(tab);
           });
         },
         // p_dblClickFunction: renameTab, //TODO: implement rename functionality
@@ -680,7 +684,7 @@ export default {
           emitter.emit(`${this.id}_check_query_status`);
         },
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -698,7 +702,7 @@ export default {
         component: "ConfigTab",
         mode: "configuration",
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -719,7 +723,7 @@ export default {
         mode: mode,
         component: `${utility}Tab`,
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -742,7 +746,7 @@ export default {
           document.title = "PgManage";
         },
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -758,11 +762,13 @@ export default {
         : `Edit data: ${table}`;
 
       const tab = tabsStore.addTab({
+        icon: '<i class="fas fa-table icon-tab-title"></i>',
         parentId: this.tabId,
         name: tabName,
         component: "DataEditorTab",
+        mode: "edit",
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -790,8 +796,9 @@ export default {
         parentId: this.tabId,
         name: tabTitle,
         component: "SchemaEditorTab",
+        mode: "alter",
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -844,7 +851,7 @@ export default {
           document.title = "PgManage";
         },
         closeFunction: (e, tab) => {
-          beforeCloseTab(e, () => {
+          this.beforeCloseTab(e, () => {
             this.removeTab(tab);
           });
         },
@@ -1012,6 +1019,38 @@ export default {
       }
 
       tabsStore.removeTab(tab);
+    },
+    beforeCloseTab(e, confirmFunction) {
+      if (e) {
+        if (e.clientX == 0 && e.clientY == 0) {
+          showConfirm("Are you sure you want to remove this tab?", function () {
+            confirmFunction();
+          });
+        } else {
+          ContextMenu.showContextMenu({
+            theme: "pgmanage",
+            x: e.x,
+            y: e.y,
+            zIndex: 1000,
+            minWidth: 230,
+            items: [
+              {
+                label: "Confirm",
+                icon: "fas cm-all fa-check",
+                onClick: function () {
+                  confirmFunction();
+                },
+              },
+              {
+                label: "Cancel",
+                icon: "fas cm-all fa-times",
+              },
+            ],
+          });
+        }
+      } else {
+        confirmFunction();
+      }
     },
   },
 };

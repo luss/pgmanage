@@ -30,7 +30,6 @@
                     <label
                       :for="`${connTabId}_autocomplete`"
                       class="omnidb__switch--label"
-                      @change="toggleConnectionAutocomplete"
                     >
                       <span>
                         <i class="fas fa-spell-check"></i>
