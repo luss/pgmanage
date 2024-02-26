@@ -189,6 +189,7 @@ export default {
       longQuery: false,
       commandsModalVisible: false,
       lastQuery: null,
+      queryInterval: null,
     };
   },
   computed: {
@@ -296,6 +297,11 @@ export default {
             this.longQuery = true;
           }, 1000);
 
+          this.queryInterval = setInterval((function(){
+            let diff = moment().diff(this.queryStartTime)
+            this.queryDuration = moment.utc(diff).format('HH:mm:ss')
+          }).bind(this), 1000)
+
           //FIXME: change into event emitting later
           tab_tag.tab_loading_span.style.visibility = "visible";
           tab_tag.tab_check_span.style.display = "none";
@@ -305,6 +311,8 @@ export default {
       }
     },
     querySQLReturn(data, context) {
+      clearInterval(this.queryInterval)
+      this.queryInterval = null;
       if (!data.v_error) {
         this.tempData = this.tempData.concat(data.v_data.data)
       }
