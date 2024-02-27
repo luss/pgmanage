@@ -33,7 +33,7 @@
             :draggable="tab.isDraggable"
             @dragend="tab.dragEndFunction($event, tab)"
             @click.prevent.stop="clickHandler($event, tab)"
-            @dblclick="tab.dblClickFunction"
+            @dblclick="tab.dblClickFunction(tab)"
             @contextmenu="contextMenuHandler($event, tab)"
             v-for="tab in tabs"
           >
@@ -91,7 +91,7 @@
 
 <script>
 import WelcomeScreen from "./WelcomeScreen.vue";
-import { showMenuNewTabOuter } from "../workspace.js";
+import { showMenuNewTabOuter, renameTab } from "../workspace.js";
 import { tabsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
 import { connectionsStore } from "../stores/connections";
@@ -664,7 +664,7 @@ export default {
             this.removeTab(tab);
           });
         },
-        // p_dblClickFunction: renameTab, //TODO: implement rename functionality
+        dblClickFunction: renameTab,
       });
 
       tabsStore.selectTab(tab);
@@ -688,7 +688,7 @@ export default {
             this.removeTab(tab);
           });
         },
-        // dblClickFunction: renameTab //TODO: implement rename functionality
+        dblClickFunction: renameTab,
       });
       tab.metaData.databaseName = tabDbName;
       tab.metaData.initTabDatabaseId = tabDbId;
@@ -855,7 +855,7 @@ export default {
             this.removeTab(tab);
           });
         },
-        // dblClickFunction: renameTab // implement
+        dblClickFunction: renameTab,
       });
 
       tab.metaData.query = query;

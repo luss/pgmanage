@@ -83,8 +83,6 @@
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { settingsStore } from "../stores/stores_initializer";
 
-//TODO: handle case when ace editor tab active and data is loaded, but on tabulator tab click it is empty
-
 export default {
   props: {
     connId: String,
@@ -128,6 +126,15 @@ export default {
   mounted() {
     this.setupEditor();
     this.setupTable();
+
+    settingsStore.$subscribe((mutation, state) => {
+      this.editor.setTheme(`ace/theme/${state.editorTheme}`);
+      this.editor.setFontSize(state.fontSize);
+    });
+
+    $(`#${this.connId}_tree_properties_nav`).on("shown.bs.tab", () => {
+      this.table.redraw(true);
+    });
   },
   methods: {
     setupTable() {
