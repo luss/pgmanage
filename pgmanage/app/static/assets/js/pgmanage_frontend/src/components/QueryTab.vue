@@ -20,10 +20,6 @@
             ]
           </button>
 
-          <button :id="`bt_open_file_${tabId}`" class="btn btn-sm btn-secondary" title="Open File" @click="openFileManagerModal">
-            <i class="fas fa-folder-open fa-light"></i>
-          </button>
-
           <button :id="`bt_indent_${tabId}`" class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
             <i class="fas fa-indent fa-light"></i>
           </button>
@@ -33,6 +29,13 @@
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
 
+          <button :id="`bt_open_file_${tabId}`" class="btn btn-sm btn-secondary ml-2" title="Load from File" @click="openFileManagerModal">
+            <i class="fas fa-folder-open fa-light"></i>
+          </button>
+
+          <button :disabled="fileSaveDisabled" :id="`bt_save_file_${tabId}`" class="btn btn-sm btn-secondary mr-2 " title="Save to File" @click="saveFile">
+            <i class="fas fa-download fa-light"></i>
+          </button>
 
           <template v-if="postgresqlDialect">
             <!-- EXPLAIN ANALYZE BUTTONS-->
@@ -188,6 +191,7 @@ export default {
       longQuery: false,
       commandsModalVisible: false,
       lastQuery: null,
+      queryInterval: null,
     };
   },
   computed: {
@@ -211,6 +215,9 @@ export default {
     },
     autocomplete() {
       return connectionsStore.getConnection(this.databaseIndex).autocomplete
+    },
+    fileSaveDisabled() {
+      return !this.editorContent;
     }
   },
   mounted() {
@@ -293,6 +300,12 @@ export default {
             this.longQuery = true;
           }, 1000);
 
+
+          this.queryInterval = setInterval((function(){
+            let diff = moment().diff(this.queryStartTime)
+            this.queryDuration = moment.utc(diff).format('HH:mm:ss')
+          }).bind(this), 1000)
+
           tab.metaData.isLoading = true;
           tab.metaData.isReady = false;
 
@@ -301,6 +314,8 @@ export default {
       }
     },
     querySQLReturn(data, context) {
+      clearInterval(this.queryInterval)
+      this.queryInterval = null;
       if (!data.v_error) {
         this.tempData = this.tempData.concat(data.v_data.data)
       }
@@ -480,6 +495,41 @@ export default {
         );
       } else {
         this.$refs.fileManager.show(true, this.handleFileInputChange);
+      }
+    },
+    async saveFile() {
+      const today = new Date()
+      const nameSuffix = `${today.getHours()}${today.getMinutes()}`
+      const file = new File([this.editorContent], `pgmanage-query-${nameSuffix}.sql`, {
+        type: "application/sql",
+      })
+
+      if(window.showSaveFilePicker) {
+        try {
+          const handle = await showSaveFilePicker(
+            { suggestedName: file.name,
+              types: [{
+                description: 'SQL Script',
+                accept: {
+                  'application/sql': ['.sql'],
+                }
+              }],
+            }
+          )
+
+          const writable = await handle.createWritable()
+          await writable.write(file)
+          writable.close()
+        } catch(e) {
+          console.log(e)
+        }
+
+      } else {
+        const downloadLink = document.createElement("a")
+        downloadLink.href = URL.createObjectURL(file)
+        downloadLink.download = file.name
+        downloadLink.click();
+        setTimeout(() => URL.revokeObjectURL(downloadLink.href), 60000 )
       }
     },
   },

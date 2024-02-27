@@ -21,14 +21,25 @@
           <i class="fas fa-save mr-2"></i>Save
         </button>
         <button
-          data-testid="snippet-tab-save-file-button"
+          data-testid="snippet-tab-open-file-button"
           class="btn btn-primary"
           title="Open file"
           @click="openFileManagerModal"
         >
           <i class="fas fa-folder-open mr-2"></i>Open file
         </button>
-      </div>
+  
+      <button
+        :disabled="fileSaveDisabled"
+        data-testid="snippet-tab-save-file-button"
+        class="btn btn-primary"
+        title="Save to File"
+        @click="saveFile"
+      >
+        <i class="fas fa-download mr-2"></i>Save to File
+      </button>
+
+    </div>
     </div>
     <FileManager ref="fileManager" />
   </div>
@@ -78,6 +89,7 @@ export default {
         language: "sql",
       },
       heightSubtract: 100 + settingsStore.fontSize,
+      fileSaveDisabled: false
     };
   },
   computed: {
@@ -116,8 +128,12 @@ export default {
       this.editor.commands.bindKey("Ctrl-Up", null);
       this.editor.commands.bindKey("Ctrl-Down", null);
 
-      this.editor.focus();
+      this.editor.on("change", () => {
+        this.fileSaveDisabled = !this.editor.getValue()
+      });
+      this.fileSaveDisabled = !!!this.editor.getValue()
 
+      this.editor.focus();
       setupAceDragDrop(this.editor);
     },
     setupEvents() {
@@ -224,6 +240,43 @@ export default {
         );
       } else {
         this.$refs.fileManager.show(true, this.handleFileInputChange);
+      }
+    },
+    async saveFile() {
+      const today = new Date
+      const nameSuffix = this.$props.snippet?.name ? this.$props.snippet?.name : `${today.getHours()}${today.getMinutes()}`
+
+      const file = new File([this.editor.getValue()], `pgmanage-snippet-${nameSuffix}.sql`, {
+        type: "application/sql",
+      })
+
+      if(window.showSaveFilePicker) {
+        try {
+          const handle = await showSaveFilePicker(
+            { suggestedName: file.name,
+              types: [{
+                description: 'SQL Script',
+                accept: {
+                  'application/sql': ['.sql'],
+                }
+              }],
+            }
+          )
+
+          const writable = await handle.createWritable()
+          await writable.write(file)
+          writable.close()
+        } catch(e) {
+          console.log(e)
+        }
+
+      }
+      else {
+        const downloadLink = document.createElement("a")
+        downloadLink.href = URL.createObjectURL(file)
+        downloadLink.download= file.name
+        downloadLink.click();
+        setTimeout(() => URL.revokeObjectURL( downloadLink.href ), 60000 )
       }
     },
   },
