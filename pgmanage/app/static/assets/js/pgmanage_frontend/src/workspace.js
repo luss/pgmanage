@@ -83,11 +83,11 @@ function checkBeforeChangeDatabase(p_cancel_function, p_ok_function) {
 /// <summary>
 /// Rename tab.
 /// </summary>
-function renameTab(p_tab) {
+function renameTab(tab) {
 
-	showConfirm('<input id="tab_name"/ class="form-control" value="' + p_tab.tag.tab_title_span.innerHTML + '" style="width: 100%;">',
+	showConfirm('<input id="tab_name"/ class="form-control" value="' + tab.name + '" style="width: 100%;">',
     function() {
-			renameTabConfirm(p_tab,document.getElementById('tab_name').value);
+      tab.name = document.getElementById('tab_name').value
     },
     null,
     function() {
@@ -106,16 +106,6 @@ function renameTab(p_tab) {
       document.getElementById('modal_message_cancel').click();
     }
 	}
-
-}
-
-
-/// <summary>
-/// Renames tab.
-/// </summary>
-function renameTabConfirm(p_tab, p_name) {
-
-	p_tab.tag.tab_title_span.innerHTML = p_name;
 
 }
 
@@ -373,6 +363,5 @@ export {
   refreshHeights,
   renameTab,
   checkBeforeChangeDatabase,
-  renameTabConfirm,
   showMenuNewTabOuter
 };
