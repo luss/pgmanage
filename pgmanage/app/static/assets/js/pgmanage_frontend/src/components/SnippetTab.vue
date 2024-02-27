@@ -141,6 +141,10 @@ export default {
             this.editor.setFontSize(settingsStore.fontSize);
             this.handleResize();
           });
+        } else if (action.name === "setEditorTheme") {
+          action.after(() => {
+            this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
+          });
         }
       });
     },

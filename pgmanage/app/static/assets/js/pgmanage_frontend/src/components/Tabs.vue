@@ -82,6 +82,7 @@
         v-for="tab in tabs"
         :key="tab.id"
         :is="tab.component"
+        :id="`${tab.id}_content`"
         v-show="tab.id === selectedTab.id || tab.name === 'Snippets'"
         v-bind="getCurrentProps(tab)"
       ></component>

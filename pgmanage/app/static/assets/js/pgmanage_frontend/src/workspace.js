@@ -14,8 +14,6 @@ import { emitter } from './emitter'
 import { startTutorial } from './tutorial'
 import { tabsStore } from './stores/stores_initializer.js'
 
-
-let v_start_height;
 /// <summary>
 /// Startup function.
 /// </summary>
