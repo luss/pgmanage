@@ -127,62 +127,12 @@ $(window).resize(function() {
 /// </summary>
 function refreshHeights(p_all) {
   setTimeout(function(){
-
-    if (v_connections_data && v_connections_data.v_active) {
-      v_connections_data.ht.render();
-    }
-
-    if (v_connTabControl.selectedTab.tag.mode=='monitor_all') {
-      v_connTabControl.selectedTab.tag.tabControlDiv.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.tabControlDiv).offset().top - (1.5)*v_font_size + 'px';
-    }
-
-    else if (v_connTabControl.selectedTab.tag.mode=='outer_terminal') {
-      v_connTabControl.selectedTab.tag.div_console.style.height = window.innerHeight - $(v_connTabControl.selectedTab.tag.div_console).offset().top - (0.2)*v_font_size + 'px';
-      v_connTabControl.selectedTab.tag.fitAddon.fit();
-    }
-
     //If inner tab exists
-    if (v_connTabControl.selectedTab.tag.tabControl != null && v_connTabControl.selectedTab.tag.tabControl.selectedTab) {
-      var v_tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
+    if (!!tabsStore.selectedPrimaryTab.metaData.secondaryTabs.length && tabsStore.selectedPrimaryTab.metaData.selectedTab) {
+      let tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
 
-      if (v_tab_tag.mode=='debug' || v_tab_tag.mode=='edit' || v_tab_tag.mode=='graph' || v_tab_tag.mode=='monitor_grid' || v_tab_tag.mode=='monitor_unit' || v_tab_tag.mode=='website' || v_tab_tag.mode=='website_outer') {
-          v_tab_tag.resize();
-      }
-      else if (v_tab_tag.mode === 'console') {
-        emitter.emit(`${v_tab_tag.tab_id}_resize`)
-      }
-      // else if (v_tab_tag.mode=='query_history') {
-      //   v_tab_tag.div_result.style.height = window.innerHeight - $(v_tab_tag.div_result).offset().top - (1.75)*v_font_size + 'px';
-      //   if (v_tab_tag.ht!=null)
-      //   v_tab_tag.ht.render();
-      // }
-      else if (v_tab_tag.mode=='alter') {
-        if (v_tab_tag.alterTableObject.window=='columns') {
-          var v_height = window.innerHeight - $(v_tab_tag.htDivColumns).offset().top - 45;
-          v_tab_tag.htDivColumns.style.height = v_height + 'px';
-          if (v_tab_tag.alterTableObject.htColumns!=null) {
-            v_tab_tag.alterTableObject.htColumns.render();
-          }
-        }
-        else if (v_tab_tag.alterTableObject.window=='constraints') {
-          var v_height = window.innerHeight - $(v_tab_tag.htDivConstraints).offset().top - 45;
-          v_tab_tag.htDivConstraints.style.height = v_height + 'px';
-          if (v_tab_tag.alterTableObject.htConstraints!=null) {
-            v_tab_tag.alterTableObject.htConstraints.render();
-          }
-        }
-        else {
-          var v_height = window.innerHeight - $(v_tab_tag.htDivIndexes).offset().top - 45;
-          v_tab_tag.htDivIndexes.style.height = v_height + 'px';
-          if (v_tab_tag.alterTableObject.htIndexes!=null) {
-            v_tab_tag.alterTableObject.htIndexes.render();
-          }
-        }
-      }
-      else if(v_tab_tag.mode == 'data_mining') {
-        if(v_tab_tag.currQueryTab == 'data') {
-          v_tab_tag.div_result.style.height = window.innerHeight - $(v_tab_tag.div_result).offset().top - (1.25)*v_font_size + 'px';
-        }
+      if (tab.metaData.mode === 'console') {
+        emitter.emit(`${tab.id}_resize`)
       }
     }
 
