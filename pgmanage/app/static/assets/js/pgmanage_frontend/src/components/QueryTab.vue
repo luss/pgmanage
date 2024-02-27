@@ -292,6 +292,8 @@ export default {
             },
           };
 
+          context.tab.metaData.context = context;
+
           createRequest(queryRequestCodes.Query, message_data, context);
 
           this.queryState = requestState.Executing;

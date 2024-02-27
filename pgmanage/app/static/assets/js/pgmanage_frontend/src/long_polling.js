@@ -165,26 +165,26 @@ function polling_response(message) {
 }
 
 function QueryPasswordRequired(p_context, p_message) {
-	if (p_context.tab_tag.mode=='query') { // TODO: need fix here New tab management
+	if (p_context.tab.metaData.mode=='query') {
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {
         p_context.passwordSuccessCallback(p_context)
 			},
 			function() {
-        p_context.passwordFailCalback(p_context)
+        p_context.passwordFailCalback()
 			},
 			p_message
 		);
 	}
-	else if (p_context.tab_tag.mode=='console') {
+	else if (p_context.tab.metaData.mode=='console') {
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {
         p_context.passwordSuccessCallback(p_context)
 			},
 			function() {
-        p_context.passwordFailCalback(p_context.tab_tag)
+        p_context.passwordFailCalback()
 			},
 			p_message
 		);

@@ -30,6 +30,7 @@ import { execAjax } from "./ajax_control";
 import { emitter } from "./emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { tabsStore } from "./stores/stores_initializer";
+import { showPasswordPrompt } from './passwords'
 
 var v_autocomplete_object;
 
