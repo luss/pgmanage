@@ -128,6 +128,7 @@ export default {
       ddlData: "",
       propertiesData: [],
       treeTabsPaneSize: 2,
+      lastTreeTabsPaneSize: null,
       showTreeTabsLoading: false,
       clearTreeTabsData: false,
     };
@@ -171,7 +172,7 @@ export default {
       return treeTechnologiesMap[this.databaseTechnology];
     },
     isTreeTabsVisible() {
-      return this.treeTabsPaneSize !== 3;
+      return this.treeTabsPaneSize !== 2;
     },
   },
   mounted() {
@@ -279,8 +280,9 @@ export default {
     },
     toggleTreeTabPane() {
       if (this.treeTabsPaneSize === 2) {
-        this.treeTabsPaneSize = 40;
+        this.treeTabsPaneSize = this.lastTreeTabsPaneSize || 40;
       } else {
+        this.lastTreeTabsPaneSize = this.treeTabsPaneSize;
         this.treeTabsPaneSize = 2;
       }
     },
