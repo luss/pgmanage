@@ -122,10 +122,6 @@ export default {
       return this.currentView === 'grid'
     },
   },
-  mounted() {
-    if (!window.gv_desktopMode)
-      this.getDirContent()
-  },
   methods: {
     refreshManager(event, created_file_name = null) {
       if (!!created_file_name) {
@@ -182,6 +178,7 @@ export default {
       if (desktop_mode) {
         this.showNative(onChange, dialog_type)
       } else {
+        this.getDirContent()
         $(this.$refs.fileManagerModal).modal('show')
       }
     },

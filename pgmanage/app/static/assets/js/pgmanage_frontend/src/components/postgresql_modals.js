@@ -1,8 +1,6 @@
-import { createApp } from "vue";
+import { createApp, defineAsyncComponent } from "vue";
 import UtilityJobsJobDetail from "./UtilityJobsJobDetail.vue";
 import cronLight from "@vue-js-cron/light";
-import ExtensionModal from "../components/ExtensionModal.vue";
-import PgCronModal from "../components/PgCronModal.vue";
 import { tabsStore } from "../stores/stores_initializer";
 
 const jobDetailModal = createApp({
@@ -20,7 +18,7 @@ function createExtensionModal(node, mode) {
 
   const app = createApp({
     components: {
-      "extension-modal": ExtensionModal,
+      "extension-modal": defineAsyncComponent(() => import("@/components/ExtensionModal.vue")),
     },
     data() {
       return {
@@ -54,7 +52,7 @@ function createPgCronModal(node, mode) {
 
   const app = createApp({
     components: {
-      "pgcron-modal": PgCronModal,
+      "pgcron-modal": defineAsyncComponent(() => import("@/components/PgCronModal.vue")),
     },
     data() {
       return {
