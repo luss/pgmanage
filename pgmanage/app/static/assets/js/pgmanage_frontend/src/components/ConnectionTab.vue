@@ -55,9 +55,9 @@
                   </pane>
 
                   <pane
-                    min-size="3"
+                    min-size="2"
                     :size="treeTabsPaneSize"
-                    style="min-height: 2.2rem"
+                    style="min-height: 2rem"
                   >
                     <TreePropertiesDDL
                       :conn-id="connTabId"
@@ -127,7 +127,7 @@ export default {
     return {
       ddlData: "",
       propertiesData: [],
-      treeTabsPaneSize: 3,
+      treeTabsPaneSize: 2,
       showTreeTabsLoading: false,
       clearTreeTabsData: false,
     };
@@ -278,10 +278,10 @@ export default {
         });
     },
     toggleTreeTabPane() {
-      if (this.treeTabsPaneSize === 3) {
+      if (this.treeTabsPaneSize === 2) {
         this.treeTabsPaneSize = 40;
       } else {
-        this.treeTabsPaneSize = 3;
+        this.treeTabsPaneSize = 2;
       }
     },
   },
@@ -296,5 +296,9 @@ export default {
   overflow: auto;
   transition: scroll 0.3s;
   height: 100%;
+}
+
+.splitpanes .splitpanes__pane {
+  transition: none;
 }
 </style>

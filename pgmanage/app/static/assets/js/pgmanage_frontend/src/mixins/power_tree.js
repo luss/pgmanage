@@ -74,7 +74,9 @@ export default {
   },
   methods: {
     onClickHandler(node, e) {
-      this.getProperties(node);
+      if (this.getRootNode().title !== "Snippets") {
+        this.getProperties(node);
+      }
     },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);

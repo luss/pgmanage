@@ -54,7 +54,7 @@
 
       <div
         class="tab-content omnidb__tab-content h-100 pb-2"
-        style="min-width: 200px"
+        style="min-width: 100px"
       >
         <div
           class="tab-pane active"
@@ -63,7 +63,7 @@
           :aria-labelledby="`${connId}_tree_properties_nav`"
           style="height: 90%"
         >
-          <div ref="tabulator" class="tabulator-custom simple p-2"></div>
+          <div ref="tabulator" class="tabulator-custom simple pt-2"></div>
         </div>
 
         <div

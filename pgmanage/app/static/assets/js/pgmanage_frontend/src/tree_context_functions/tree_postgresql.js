@@ -27,7 +27,6 @@ SOFTWARE.
 */
 
 import { createApp } from "vue";
-import TreePostgresql from "../components/TreePostgresql.vue";
 import { showAlert, showConfirm, showToast } from "../notification_control";
 import {
   refreshHeights,

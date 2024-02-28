@@ -160,4 +160,8 @@ export default {
 .omnidb__panel--slide-in {
   transform: translateY(-98vh);
 }
+
+.splitpanes .splitpanes__pane {
+  transition: none;
+}
 </style>

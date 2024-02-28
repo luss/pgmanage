@@ -5,8 +5,9 @@
     <div
       :class="`omnidb__tab-menu border-bottom omnidb__tab-menu--${hierarchy} omnidb__theme-bg--menu-${hierarchy}`"
     >
-      <nav>
+      <nav :class="navClass">
         <div
+          ref="navTabs"
           :class="[
             'nav',
             'nav-tabs',
@@ -16,6 +17,7 @@
               'scrollable-menu': isSecondaryTab,
             },
           ]"
+          @wheel="handleNavWheel"
         >
           <a
             :id="tab.id"
@@ -28,12 +30,12 @@
             ]"
             role="tab"
             aria-selected="false"
-            :href="`#div_${tab.id}`"
-            :aria-controls="`div_${tab.id}`"
+            :aria-controls="`${tab.id}_content`"
+            :href="`#${tab.id}_content`"
             :draggable="tab.isDraggable"
             @dragend="tab.dragEndFunction($event, tab)"
             @click.prevent.stop="clickHandler($event, tab)"
-            @dblclick="tab.dblClickFunction(tab)"
+            @dblclick="tab.dblClickFunction && tab.dblClickFunction(tab)"
             @contextmenu="contextMenuHandler($event, tab)"
             v-for="tab in tabs"
           >
@@ -72,6 +74,22 @@
             ></i>
           </a>
         </div>
+        <div v-if="isSecondaryTab" class="navigation-actions">
+          <button
+            class="btn btn-secondary btn-sm mr-1"
+            :disabled="!canScrollLeft"
+            @click="handleLeftScrollClick"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            :disabled="!canScrollRight"
+            @click="handleRightScrollClick"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
       </nav>
     </div>
 
@@ -85,6 +103,7 @@
         :id="`${tab.id}_content`"
         v-show="tab.id === selectedTab.id || tab.name === 'Snippets'"
         v-bind="getCurrentProps(tab)"
+        role="tabpanel"
       ></component>
     </div>
   </div>
@@ -134,7 +153,10 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      canScrollLeft: false,
+      canScrollRight: false,
+    };
   },
   computed: {
     tabs() {
@@ -161,6 +183,20 @@ export default {
       }
       return false;
     },
+    navClass() {
+      return {
+        "align-items-center": this.isSecondaryTab,
+        "d-flex": this.isSecondaryTab,
+        "justify-content-between": this.isSecondaryTab,
+      };
+    },
+  },
+  updated() {
+    if (this.isSecondaryTab) {
+      this.$nextTick(() => {
+        this.updateScrollOptions();
+      });
+    }
   },
   mounted() {
     tabsStore.$onAction((action) => {
@@ -449,7 +485,7 @@ export default {
       });
     },
     createAddTab() {
-      tabsStore.addTab({
+      const addTab = tabsStore.addTab({
         name: "+",
         parentId: this.tabId,
         closable: false,
@@ -463,6 +499,25 @@ export default {
             this.showMenuNewTab(event);
           }
         },
+      });
+
+      tabsStore.$onAction((action) => {
+        if (action.name === "addTab") {
+          action.after(() => {
+            if (
+              (tabsStore.selectedPrimaryTab.id === this.tabId &&
+                this.tabs.includes(this.selectedTab)) ||
+              this.isSnippetsPanel
+            ) {
+              this.$nextTick(() => {
+                let navTabPlusEl = document.getElementById(addTab.id);
+                if (!!navTabPlusEl) {
+                  navTabPlusEl.scrollIntoView();
+                }
+              });
+            }
+          });
+        }
       });
     },
     createConnectionPanel(
@@ -1053,13 +1108,50 @@ export default {
         confirmFunction();
       }
     },
+    handleNavWheel(event) {
+      event.deltaY > 0
+        ? (this.$refs.navTabs.scrollLeft += 100)
+        : (this.$refs.navTabs.scrollLeft -= 100);
+      this.updateScrollOptions();
+    },
+    handleLeftScrollClick(event) {
+      this.$refs.navTabs.scrollLeft -= 100;
+      this.updateScrollOptions();
+    },
+    handleRightScrollClick(event) {
+      this.$refs.navTabs.scrollLeft += 100;
+      this.updateScrollOptions();
+    },
+    updateScrollOptions() {
+      if (this.$refs.navTabs.scrollWidth > this.$refs.navTabs.clientWidth) {
+        this.canScrollLeft = this.$refs.navTabs.scrollLeft === 0 ? false : true;
+        if (
+          this.$refs.navTabs.scrollLeft + this.$refs.navTabs.clientWidth <
+          this.$refs.navTabs.scrollWidth
+        ) {
+          this.canScrollRight = true;
+        } else {
+          this.canScrollRight = false;
+        }
+      } else {
+        this.canScrollRight = false;
+        this.canScrollLeft = false;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
 .scrollable-menu {
+  overflow: scroll;
   overflow-y: hidden;
-  overflow-x: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  width: 90%;
+}
+.scrollable-menu::-webkit-scrollbar {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  display: none;
 }
 </style>
