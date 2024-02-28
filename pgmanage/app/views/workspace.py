@@ -73,6 +73,7 @@ def index(request):
         "binary_path": user_details.get_binary_path(),
         "pigz_path": user_details.get_pigz_path(),
         "date_format": user_details.date_format,
+        "restore_tabs": user_details.restore_tabs,
     }
 
     # wiping saved tabs databases list
@@ -99,6 +100,7 @@ def save_config_user(request, session):
     binary_path = data["binary_path"]
     date_format = data["date_format"]
     pigz_path = data["pigz_path"]
+    restore_tabs = data["restore_tabs"]
 
     session.v_theme_id = theme
     session.v_font_size = font_size
@@ -113,6 +115,7 @@ def save_config_user(request, session):
     user_details.binary_path = binary_path
     user_details.date_format = date_format
     user_details.pigz_path = pigz_path
+    user_details.restore_tabs = restore_tabs
     user_details.save()
 
     request.session["pgmanage_session"] = session

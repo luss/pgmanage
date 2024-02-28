@@ -98,6 +98,7 @@ import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import { emitter } from '../emitter'
+import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: 'ConnectionsModal',
@@ -328,7 +329,9 @@ export default {
     }
   },
   mounted() {
-    this.loadData(true)
+    if(settingsStore.restoreTabs) {
+      this.loadData(true)
+    }
     $('#connections-modal').on("shown.bs.modal", () => {
       this.loadData(false)})
 
