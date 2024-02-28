@@ -285,7 +285,8 @@ export default {
             // Create existing tabs
             let currentParent = null;
 
-            response.data.existing_tabs.forEach((tab) => {
+            response.data.existing_tabs.forEach((tab, index) => {
+              setTimeout(() => {
               let tooltip_name = "";
               if (currentParent !== tab.index) {
                 startLoading();
@@ -329,8 +330,9 @@ export default {
                   }
                 );
               });
+              endLoading();
+            }, 200 * index);
             })
-            endLoading();
           }
         })
         .catch((response) => {
