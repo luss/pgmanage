@@ -329,9 +329,8 @@ export default {
     }
   },
   mounted() {
-    if(settingsStore.restoreTabs) {
-      this.loadData(true)
-    }
+    this.loadData(settingsStore.restoreTabs)
+
     $('#connections-modal').on("shown.bs.modal", () => {
       this.loadData(false)})
 
