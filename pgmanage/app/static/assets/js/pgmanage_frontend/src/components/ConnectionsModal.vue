@@ -99,6 +99,7 @@ import axios from 'axios'
 import { showToast } from '../notification_control'
 import { emitter } from '../emitter'
 import { tabsStore } from '../stores/stores_initializer'
+import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: 'ConnectionsModal',
@@ -338,7 +339,8 @@ export default {
     }
   },
   mounted() {
-    this.loadData(true)
+    this.loadData(settingsStore.restoreTabs)
+
     $('#connections-modal').on("shown.bs.modal", () => {
       this.loadData(false)})
 

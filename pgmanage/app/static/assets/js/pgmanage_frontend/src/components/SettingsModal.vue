@@ -89,6 +89,19 @@
 
               <div class="form-row">
                 <div class="form-group col-6">
+                  <div class="custom-control custom-switch">
+                    <input v-model="restoreTabs" id="restore_tabs" type="checkbox" class="custom-control-input" >
+                    <label for="restore_tabs" class="custom-control-label font-weight-bold mb-2">Restore Tabs on Start</label>
+                  </div>
+                </div>
+
+                <div class="form-group col-6">
+                </div>
+
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-6">
                   <label for="date_format" class="font-weight-bold mb-2">Date format</label>
                   <select id="date_format" class="form-control" v-model="selectedDateFormat">
                     <option v-for="dateFormat in dateFormats" :key="dateFormat" :value="dateFormat">{{ dateFormat }}
@@ -219,6 +232,7 @@ export default {
       shortcutList: [],
       selectedCSVEncoding: window.v_csv_encoding,
       selectedDateFormat: window.date_format,
+      restoreTabs: window.restore_tabs,
       csvDelimiter: window.v_csv_delimiter,
       binaryPath: window.binary_path,
       pigzPath: window.pigz_path,
@@ -602,6 +616,7 @@ export default {
             "binary_path": this.binaryPath,
             "date_format": this.selectedDateFormat,
             "pigz_path": this.pigzPath,
+            "restore_tabs": this.restoreTabs,
           })
             .then((resp) => {
               $('#modal_settings').modal('hide');
