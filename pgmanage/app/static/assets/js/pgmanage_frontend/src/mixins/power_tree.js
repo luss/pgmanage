@@ -3,7 +3,7 @@ import ContextMenu from '@imengyu/vue3-context-menu'
 import { showPasswordPrompt } from '../passwords';
 import axios from 'axios';
 import { showAlert, showToast } from '../notification_control';
-
+import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   data() {
@@ -83,11 +83,13 @@ export default {
       this.$refs.tree.select(node.path);
       if (node.isExpanded) return;
       this.refreshTree(node);
-      this.getNodeEl(node.path).scrollIntoView({
-        block: "start",
-        inline: "nearest",
-        behavior: "smooth",
-      });
+      if(settingsStore.scrollTree) {
+        this.getNodeEl(node.path).scrollIntoView({
+          block: "start",
+          inline: "nearest",
+          behavior: "smooth",
+        })
+      }
     },
     doubleClickNode(node, e) {
       if (node.isLeaf) return;

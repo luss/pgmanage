@@ -8,6 +8,7 @@ const useSettingsStore = defineStore("settings", {
     terminalTheme: "",
     desktopMode: window.gv_desktopMode,
     restoreTabs: window.restore_tabs,
+    scrollTree: window.scroll_tree,
   }),
   actions: {
     setFontSize(fontSize) {

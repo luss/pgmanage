@@ -96,8 +96,11 @@
                 </div>
 
                 <div class="form-group col-6">
+                  <div class="custom-control custom-switch">
+                    <input v-model="scrollTree" id="scroll_tree" type="checkbox" class="custom-control-input" >
+                    <label for="scroll_tree" title="Scroll datatase tree node into view when opened" class="custom-control-label font-weight-bold mb-2">Database Tree Autoscroll</label>
+                  </div>
                 </div>
-
               </div>
 
               <div class="form-row">
@@ -235,6 +238,7 @@ export default {
       selectedCSVEncoding: window.v_csv_encoding,
       selectedDateFormat: window.date_format,
       restoreTabs: window.restore_tabs,
+      scrollTree: window.scroll_tree,
       csvDelimiter: window.v_csv_delimiter,
       binaryPath: window.binary_path,
       pigzPath: window.pigz_path,
@@ -639,6 +643,7 @@ export default {
             "date_format": this.selectedDateFormat,
             "pigz_path": this.pigzPath,
             "restore_tabs": this.restoreTabs,
+            "scroll_tree": this.scrollTree,
           })
             .then((resp) => {
               $('#modal_settings').modal('hide');
