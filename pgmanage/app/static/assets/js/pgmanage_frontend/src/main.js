@@ -25,9 +25,6 @@ import moment from 'moment';
 import "tabulator-tables/dist/css/tabulator.min.css"
 import App from './App.vue'
 import { createApp } from 'vue';
-import ConnectionTab from './components/ConnectionTab.vue'
-import SnippetPanel from './components/SnippetPanel.vue'
-import SnippetTab from './components/SnippetTab.vue'
 import ToastPlugin from 'vue-toast-notification';
 
 window.jQuery = window.$ = $;
@@ -50,9 +47,6 @@ moment.defaultFormat = date_format;
 
 
 const app = createApp(App)
-  .component("ConnectionTab", ConnectionTab)
-  .component("SnippetPanel", SnippetPanel)
-  .component("SnippetTab", SnippetTab)
 
 app.use(ToastPlugin, {
   duration: 0

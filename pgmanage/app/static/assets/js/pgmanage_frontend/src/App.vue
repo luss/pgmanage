@@ -1,13 +1,13 @@
 <template>
-  <Tabs hierarchy="primary" />
+  <SideBarTabs />
 </template>
 
 <script>
-import Tabs from "./components/Tabs.vue";
+import SideBarTabs from "./components/SideBarTabs.vue";
 export default {
   name: "PgManage",
   components: {
-    Tabs,
+    SideBarTabs,
   },
 };
 </script>

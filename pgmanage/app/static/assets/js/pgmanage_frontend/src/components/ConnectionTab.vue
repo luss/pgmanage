@@ -80,10 +80,9 @@
             class="omnidb__workspace__div-right col position-relative"
           >
             <div class="row">
-              <Tabs
+              <DatabaseTabs
                 :id="`${connTabId}`"
                 class="w-100"
-                hierarchy="secondary"
                 :tab-id="connTabId"
               />
             </div>
@@ -95,7 +94,7 @@
 </template>
 
 <script>
-import Tabs from "./Tabs.vue";
+import DatabaseTabs from "./DatabaseTabs.vue";
 import { connectionsStore } from "../stores/connections";
 import { tabsStore } from "../stores/stores_initializer";
 import axios from "axios";
@@ -110,7 +109,7 @@ import { showToast } from "../notification_control";
 export default {
   name: "ConnectionTab",
   components: {
-    Tabs,
+    DatabaseTabs,
     TreePostgresql: defineAsyncComponent(() => import("./TreePostgresql.vue")),
     TreeSqlite: defineAsyncComponent(() => import("./TreeSqlite.vue")),
     TreeMariaDB: defineAsyncComponent(() => import("./TreeMariaDB.vue")),

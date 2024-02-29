@@ -37,10 +37,9 @@
               class="omnidb__snippets__div-right pt-0 col h-100 position-relative"
             >
               <div class="row">
-                <Tabs
+                <DatabaseTabs
                   :id="`${tabId}`"
                   class="w-100"
-                  hierarchy="secondary"
                   :tab-id="tabId"
                 />
               </div>
@@ -55,7 +54,7 @@
 <script>
 import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
-import Tabs from "./Tabs.vue";
+import DatabaseTabs from "./DatabaseTabs.vue";
 import TreeSnippets from "./TreeSnippets.vue";
 import axios from "axios";
 import { snippetsStore } from "../stores/stores_initializer";
@@ -63,7 +62,7 @@ import { showToast } from "../notification_control";
 
 export default {
   components: {
-    Tabs,
+    DatabaseTabs,
     Splitpanes,
     Pane,
     TreeSnippets,

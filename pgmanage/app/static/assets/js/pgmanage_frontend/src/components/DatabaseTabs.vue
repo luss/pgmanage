@@ -1,22 +1,14 @@
 <template>
   <div
-    :class="`omnidb__tab-menu--container omnidb__tab-menu--container--${hierarchy} omnidb__tab-menu--container--menu-shown`"
+    class="omnidb__tab-menu--container omnidb__tab-menu--container--secondary omnidb__tab-menu--container--menu-shown"
   >
     <div
-      :class="`omnidb__tab-menu border-bottom omnidb__tab-menu--${hierarchy} omnidb__theme-bg--menu-${hierarchy}`"
+      class="omnidb__tab-menu border-bottom omnidb__tab-menu--secondary omnidb__theme-bg--menu-secondary"
     >
-      <nav :class="navClass">
+      <nav class="d-flex align-items-center justify-content-between">
         <div
           ref="navTabs"
-          :class="[
-            'nav',
-            'nav-tabs',
-            {
-              'text-nowrap': isSecondaryTab,
-              'flex-nowrap': isSecondaryTab,
-              'scrollable-menu': isSecondaryTab,
-            },
-          ]"
+          class="nav nav-tabs text-nowrap flex-nowrap scrollable-menu"
           @wheel="handleNavWheel"
         >
           <a
@@ -49,13 +41,12 @@
               <span class="omnidb__tab-menu__link-name">
                 <span>{{ tab.name }}</span>
                 <span
-                  v-if="isSecondaryTab && tab.metaData.mode !== 'add'"
+                  v-if="tab.metaData.mode !== 'add'"
                   :class="{ invisible: !tab.metaData.isLoading }"
                 >
                   <i class="tab-icon node-spin"></i>
                 </span>
                 <i
-                  v-if="isSecondaryTab"
                   :class="[
                     'fas',
                     'fa-check-circle',
@@ -74,7 +65,8 @@
             ></i>
           </a>
         </div>
-        <div v-if="isSecondaryTab" class="navigation-actions">
+
+        <div class="navigation-actions">
           <button
             class="btn btn-secondary btn-sm mr-1"
             :disabled="!canScrollLeft"
@@ -94,14 +86,14 @@
     </div>
 
     <div
-      :class="`tab-content omnidb__tab-content omnidb__tab-content--${hierarchy}`"
+      class="`tab-content omnidb__tab-content omnidb__tab-content--secondary"
     >
       <component
         v-for="tab in tabs"
         :key="tab.id"
         :is="tab.component"
         :id="`${tab.id}_content`"
-        v-show="tab.id === selectedTab.id || tab.name === 'Snippets'"
+        v-show="tab.id === selectedTab.id"
         v-bind="getCurrentProps(tab)"
         role="tabpanel"
       ></component>
@@ -110,21 +102,18 @@
 </template>
 
 <script>
-import WelcomeScreen from "./WelcomeScreen.vue";
-import { showMenuNewTabOuter, renameTab } from "../workspace.js";
+import { defineAsyncComponent } from "vue";
 import { tabsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
-import { connectionsStore } from "../stores/connections";
-import { showToast } from "../notification_control";
-import moment from "moment";
-import { createRequest } from "../long_polling";
-import { queryRequestCodes } from "../constants";
-import { defineAsyncComponent, h } from "vue";
+import { renameTab } from "../workspace.js";
 import ContextMenu from "@imengyu/vue3-context-menu";
+import SnippetTab from "./SnippetTab.vue";
+import TabsUtils from "../mixins/tabs_utils_mixin";
 
 export default {
+  name: "DatabaseTabs",
+  mixins: [TabsUtils],
   components: {
-    WelcomeScreen,
     ConsoleTab: defineAsyncComponent(() => import("./ConsoleTab.vue")),
     QueryTab: defineAsyncComponent(() => import("./QueryTab.vue")),
     MonitoringDashboard: defineAsyncComponent(() =>
@@ -138,18 +127,13 @@ export default {
     SchemaEditorTab: defineAsyncComponent(() =>
       import("./SchemaEditorTab.vue")
     ),
-    TerminalTab: defineAsyncComponent(() => import("./TerminalTab.vue")),
     MonitoringTab: defineAsyncComponent(() => import("./MonitoringTab.vue")),
+    SnippetTab,
   },
   props: {
-    hierarchy: {
-      type: String,
-      validator(value) {
-        return ["primary", "secondary"].includes(value);
-      },
-    },
     tabId: {
       type: String,
+      required: true,
     },
   },
   data() {
@@ -160,182 +144,33 @@ export default {
   },
   computed: {
     tabs() {
-      if (this.hierarchy === "primary") {
-        return tabsStore.tabs;
-      } else {
-        return tabsStore.getSecondaryTabs(this.tabId);
-      }
+      return tabsStore.getSecondaryTabs(this.tabId);
     },
     selectedTab() {
-      if (this.hierarchy === "primary") {
-        return tabsStore.selectedPrimaryTab;
-      } else {
-        return tabsStore.getSelectedSecondaryTab(this.tabId);
-      }
-    },
-    isSecondaryTab() {
-      return this.hierarchy === "secondary";
+      return tabsStore.getSelectedSecondaryTab(this.tabId);
     },
     isSnippetsPanel() {
-      if (!!this.tabId) {
-        let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
-        return primaryTab?.name === "Snippets";
-      }
-      return false;
-    },
-    navClass() {
-      return {
-        "align-items-center": this.isSecondaryTab,
-        "d-flex": this.isSecondaryTab,
-        "justify-content-between": this.isSecondaryTab,
-      };
+      let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
+      return primaryTab?.name === "Snippets";
     },
   },
   updated() {
-    if (this.isSecondaryTab) {
-      this.$nextTick(() => {
-        this.updateScrollOptions();
-      });
-    }
+    this.$nextTick(() => {
+      this.updateScrollOptions();
+    });
   },
   mounted() {
-    tabsStore.$onAction((action) => {
-      if (action.name == "addTab") {
-        action.after((result) => {
-          if (!result.tooltip) return;
-          this.$nextTick(() => {
-            $(`#${result.id}`).tooltip({
-              placement: "right",
-              boundary: "window",
-              sanitize: false,
-              title: result.tooltip,
-              html: true,
-              delay: { show: 500, hide: 100 },
-            });
-          });
-        });
-      }
-    });
-
-    if (this.hierarchy == "primary") {
-      this.createConnectionsTab();
-      this.createWelcomeTab();
-      this.createSnippetPanel();
-      this.setupPrimaryTabsEvents();
-    } else {
-      this.createAddTab();
-      this.setupSecondaryTabsEvents();
-    }
+    this.createAddTab();
+    this.setupEvents();
   },
   unmounted() {
-    this.cleanSecondaryTabsEvents();
+    this.clearEvents();
   },
   methods: {
-    setupPrimaryTabsEvents() {
-      emitter.on(
-        `${tabsStore.id}_create_conn_tab`,
-        ({
-          index,
-          createInitialTabs = true,
-          name = false,
-          tooltipName = false,
-        }) => {
-          this.createConnectionPanel(
-            index,
-            createInitialTabs,
-            name,
-            tooltipName
-          );
-        }
-      );
-
-      emitter.on(
-        `${tabsStore.id}_create_terminal_tab`,
-        ({ index, alias, details }) => {
-          this.createTerminalTab(index, alias, details);
-        }
-      );
-    },
-    setupSecondaryTabsEvents() {
-      if (this.isSnippetsPanel) {
-        emitter.on("create_snippet_tab", (snippet) => {
-          this.createSnippetTab(snippet);
-        });
-        this.createSnippetTab();
-      }
-
-      emitter.on(`${this.tabId}_create_console_tab`, () => {
-        this.createConsoleTab();
-      });
-
-      emitter.on(`${this.tabId}_create_query_tab`, (data) => {
-        this.createQueryTab(
-          data?.name,
-          data?.tabDbId,
-          data?.tabDbName,
-          data?.initialQuery
-        );
-      });
-
-      emitter.on(`${this.tabId}_create_conf_tab`, () => {
-        this.createConfigurationTab();
-      });
-
-      emitter.on(
-        `${this.tabId}_create_utility_tab`,
-        ({ node, utility, backupType = "objects" }) => {
-          this.createUtilityTab(node, utility, backupType);
-        }
-      );
-
-      emitter.on(`${this.tabId}_create_erd_tab`, (schema) => {
-        this.createERDTab(schema);
-      });
-
-      emitter.on(
-        `${this.tabId}_create_data_editor_tab`,
-        ({ table, schema = "" }) => {
-          this.createDataEditorTab(table, schema);
-        }
-      );
-
-      emitter.on(
-        `${this.tabId}_create_schema_editor_tab`,
-        ({ node, mode, dialect }) => {
-          this.createSchemaEditorTab(node, mode, dialect);
-        }
-      );
-
-      emitter.on(`${this.tabId}_create_monitoring_tab`, ({ name, query }) => {
-        this.createMonitoringTab(name, query);
-      });
-
-      emitter.on(`${this.tabId}_create_monitoring_dashboard_tab`, () => {
-        this.createMonitoringDashboardTab();
-      });
-    },
-    cleanSecondaryTabsEvents() {
-      emitter.all.delete(`${this.tabId}_create_console_tab`);
-      emitter.all.delete(`${this.tabId}_create_query_tab`);
-      emitter.all.delete(`${this.tabId}_create_utility_tab`);
-      emitter.all.delete(`${this.tabId}_create_erd_tab`);
-      emitter.all.delete(`${this.tabId}_create_data_editor_tab`);
-      emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
-      emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
-      emitter.all.delete(`${this.tabId}_create_monitoring_dashboard_tab`);
-    },
     getCurrentProps(tab) {
-      let primaryTab;
-      if (tab.parentId) {
-        primaryTab = tabsStore.getPrimaryTabById(tab.parentId);
-      }
+      let primaryTab = tabsStore.getPrimaryTabById(tab.parentId);
+
       const componentsProps = {
-        ConnectionTab: {
-          "conn-tab-id": tab.id,
-        },
-        SnippetPanel: {
-          "tab-id": tab.id,
-        },
         SnippetTab: {
           "tab-id": tab.id,
           snippet: tab.metaData.snippetObject,
@@ -403,10 +238,6 @@ export default {
           treeNode: tab.metaData.treeNode,
           dialect: tab.metaData.dialect,
         },
-        TerminalTab: {
-          tabId: tab.id,
-          databaseIndex: tab?.metaData?.selectedDatabaseIndex,
-        },
         MonitoringTab: {
           connId: tab.parentId,
           databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
@@ -421,68 +252,73 @@ export default {
 
       return componentsProps[tab.component];
     },
-    clickHandler(event, tab) {
-      if (tab.selectable) {
-        tabsStore.selectTab(tab);
+    setupEvents() {
+      if (this.isSnippetsPanel) {
+        emitter.on("create_snippet_tab", (snippet) => {
+          this.createSnippetTab(snippet);
+        });
+        this.createSnippetTab();
       }
 
-      if (tab.clickFunction != null) {
-        tab.clickFunction(event);
-      }
-
-      if (tab.tooltip) {
-        $('[data-toggle="tab"]').tooltip("hide");
-      }
-    },
-    contextMenuHandler(event, tab) {
-      if (tab.rightClickFunction) {
-        event.stopPropagation();
-        event.preventDefault();
-        tab.rightClickFunction(event, tab);
-      }
-      if (tab.tooltip) {
-        $('[data-toggle="tab"]').tooltip("hide");
-        7;
-      }
-    },
-    createConnectionsTab() {
-      tabsStore.addTab({
-        name: "Connections",
-        icon: '<i class="fas fa-bolt"></i>',
-        tooltip: "Connections",
-        closable: false,
-        selectable: false,
-        clickFunction: function (e) {
-          showMenuNewTabOuter(e);
-        },
-      });
-    },
-    createWelcomeTab() {
-      const tab = tabsStore.addTab({
-        name: "Welcome",
-        component: "WelcomeScreen",
-        icon: '<i class="fas fa-hand-spock"></i>',
-        tooltip: "Welcome to PgManage",
-        closable: false,
-        selectFunction: function () {
-          document.title = "Welcome to PgManage";
-        },
+      emitter.on(`${this.tabId}_create_console_tab`, () => {
+        this.createConsoleTab();
       });
 
-      tabsStore.selectTab(tab);
-    },
-    createSnippetPanel() {
-      tabsStore.addTab({
-        name: "Snippets",
-        component: "SnippetPanel",
-        icon: '<i class="fas fa-file-code"></i>',
-        tooltip: "Snippets Panel",
-        closable: false,
-        selectable: false,
-        clickFunction: function () {
-          emitter.emit("toggle_snippet_panel");
-        },
+      emitter.on(`${this.tabId}_create_query_tab`, (data) => {
+        this.createQueryTab(
+          data?.name,
+          data?.tabDbId,
+          data?.tabDbName,
+          data?.initialQuery
+        );
       });
+
+      emitter.on(`${this.tabId}_create_conf_tab`, () => {
+        this.createConfigurationTab();
+      });
+
+      emitter.on(
+        `${this.tabId}_create_utility_tab`,
+        ({ node, utility, backupType = "objects" }) => {
+          this.createUtilityTab(node, utility, backupType);
+        }
+      );
+
+      emitter.on(`${this.tabId}_create_erd_tab`, (schema) => {
+        this.createERDTab(schema);
+      });
+
+      emitter.on(
+        `${this.tabId}_create_data_editor_tab`,
+        ({ table, schema = "" }) => {
+          this.createDataEditorTab(table, schema);
+        }
+      );
+
+      emitter.on(
+        `${this.tabId}_create_schema_editor_tab`,
+        ({ node, mode, dialect }) => {
+          this.createSchemaEditorTab(node, mode, dialect);
+        }
+      );
+
+      emitter.on(`${this.tabId}_create_monitoring_tab`, ({ name, query }) => {
+        this.createMonitoringTab(name, query);
+      });
+
+      emitter.on(`${this.tabId}_create_monitoring_dashboard_tab`, () => {
+        this.createMonitoringDashboardTab();
+      });
+    },
+    clearEvents() {
+      emitter.all.delete(`${this.tabId}_create_console_tab`);
+      emitter.all.delete(`${this.tabId}_create_query_tab`);
+      emitter.all.delete(`${this.tabId}_create_utility_tab`);
+      emitter.all.delete(`${this.tabId}_create_erd_tab`);
+      emitter.all.delete(`${this.tabId}_create_data_editor_tab`);
+      emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
+      emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
+      emitter.all.delete(`${this.tabId}_create_monitoring_dashboard_tab`);
     },
     createAddTab() {
       const addTab = tabsStore.addTab({
@@ -519,131 +355,6 @@ export default {
           });
         }
       });
-    },
-    createConnectionPanel(
-      index,
-      createInitialTabs = true,
-      name = false,
-      tooltipName = false
-    ) {
-      if (connectionsStore.connections.length == 0) {
-        showToast("error", "Create connections first.");
-      } else {
-        let v_conn = connectionsStore.connections[0];
-        for (let i = 0; i < connectionsStore.connections.length; i++) {
-          if (connectionsStore.connections[i].id === index) {
-            // patch the connection last used date when connecting
-            // to refresh last-used labels on the welcome screen
-            connectionsStore.connections[i].last_access_date = moment.now();
-            v_conn = connectionsStore.connections[i];
-          }
-        }
-
-        let connName = "";
-        if (name) {
-          connName = name;
-        }
-        if (connName === "" && v_conn.alias && v_conn.alias !== "") {
-          connName = v_conn.alias;
-        }
-
-        if (!tooltipName) {
-          tooltipName = "";
-
-          if (v_conn.conn_string && v_conn.conn_string !== "") {
-            if (v_conn.alias) {
-              tooltipName += `<h5 class="my-1">${v_conn.alias}</h5>`;
-            }
-            tooltipName += `<div class="mb-1">${v_conn.conn_string}</div>`;
-          } else {
-            if (v_conn.alias) {
-              tooltipName += `<h5 class="my-1">${v_conn.alias}</h5>`;
-            }
-            if (v_conn.details1) {
-              tooltipName += `<div class="mb-1">${v_conn.details1}</div>`;
-            }
-            if (v_conn.details2) {
-              tooltipName += `<div class="mb-1">${v_conn.details2}</div>`;
-            }
-          }
-        }
-
-        const imgPath =
-          import.meta.env.MODE === "development"
-            ? `${import.meta.env.BASE_URL}src/assets/images/`
-            : `${import.meta.env.BASE_URL}assets/`;
-
-        let imgName;
-        if (
-          import.meta.env.MODE === "development" ||
-          v_conn.technology === "sqlite"
-        ) {
-          imgName = v_conn.technology;
-        } else {
-          imgName = `${v_conn.technology}2`;
-        }
-
-        let icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
-
-        const connTab = tabsStore.addTab({
-          name: connName,
-          component: "ConnectionTab",
-          icon: icon,
-          tooltip: tooltipName,
-          mode: "connection",
-          selectFunction: () => {
-            document.title = "PgManage";
-            this.checkTabStatus();
-          },
-          closeFunction: (e, primaryTab) => {
-            $('[data-toggle="tab"]').tooltip("hide");
-            this.beforeCloseTab(e, function () {
-              var v_tabs_to_remove = [];
-
-              let tabs = tabsStore.getSecondaryTabs(primaryTab.id);
-
-              tabs.forEach((tab) => {
-                if (
-                  tab.metaData.mode == "query" ||
-                  tab.metaData.mode == "edit" ||
-                  tab.metaData.mode == "debug" ||
-                  tab.metaData.mode == "console"
-                ) {
-                  var v_message_data = {
-                    tab_id: tab.id,
-                    tab_db_id: null,
-                    conn_tab_id: primaryTab.id,
-                  };
-                  if (tab.metaData.mode == "query")
-                    v_message_data.tab_db_id = tab.metaData.initTabDatabaseId;
-                  v_tabs_to_remove.push(v_message_data);
-                }
-
-                if (tab.closeFunction) tab.closeFunction(e, tab);
-              });
-
-              var v_message_data = {
-                conn_tab_id: primaryTab.id,
-                tab_db_id: null,
-                tab_id: null,
-              };
-              v_tabs_to_remove.push(v_message_data);
-
-              if (v_tabs_to_remove.length > 0) {
-                createRequest(queryRequestCodes.CloseTab, v_tabs_to_remove);
-              }
-              tabsStore.removeTab(primaryTab);
-            });
-          },
-        });
-
-        connTab.metaData.selectedDatabaseIndex = v_conn.id;
-        connTab.metaData.createInitialTabs = createInitialTabs;
-        connTab.metaData.change_active_database_call_list = [];
-        connTab.metaData.change_active_database_call_running = false;
-
-        tabsStore.selectTab(connTab);
-      }
     },
     createSnippetTab(snippet) {
       let snippetName = "New Snippet";
@@ -868,34 +579,6 @@ export default {
 
       tabsStore.selectTab(tab);
     },
-    createTerminalTab(index, alias, details) {
-      let tooltipName = "";
-
-      if (alias) {
-        tooltipName += `<h5 class="my-1">${alias}</h5>`;
-      }
-      if (details) {
-        tooltipName += `<div class="mb-1">${details}</div>`;
-      }
-
-      const tab = tabsStore.addTab({
-        name: alias,
-        component: "TerminalTab",
-        icon: '<i class="fas fa-terminal"></i>',
-        tooltip: tooltipName,
-        closable: false,
-        mode: "outer_terminal",
-        selectFunction: function () {
-          emitter.emit(`${this.id}_resize`);
-        },
-        rightClickFunction: (e, tab) => {
-          this.terminalContextMenu(e, tab);
-        },
-      });
-      tab.metaData.selectedDatabaseIndex = index;
-
-      tabsStore.selectTab(tab);
-    },
     createMonitoringTab(name = "Backends", query) {
       const tab = tabsStore.addTab({
         parentId: this.tabId,
@@ -917,22 +600,6 @@ export default {
       tab.metaData.query = query;
 
       tabsStore.selectTab(tab);
-    },
-    checkTabStatus() {
-      const tab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
-      switch (tab?.metaData?.mode) {
-        case "query":
-          emitter.emit(`${tab.id}_check_query_status`);
-          break;
-        case "console":
-          emitter.emit(`${tab.id}_check_console_status`);
-          break;
-        case "edit":
-          console.log("Not implemented"); // TODO: implement check tab status functionality for edit tab
-          break;
-        default:
-          break;
-      }
     },
     showMenuNewTab(e) {
       let optionList = [
@@ -1002,111 +669,6 @@ export default {
         minWidth: 230,
         items: optionList,
       });
-    },
-    terminalContextMenu(e, tab) {
-      let optionList = [
-        {
-          label: "Adjust Terminal Dimensions",
-          icon: "fas cm-all fa-window-maximize",
-          onClick: function () {
-            emitter.emit(`${tab.id}_adjust_terminal_dimensions`);
-          },
-        },
-        {
-          label: h("p", {
-            class: "mb-0 text-danger",
-            innerHTML: "Close Terminal",
-          }),
-          onClick: () => {
-            ContextMenu.closeContextMenu();
-            ContextMenu.showContextMenu({
-              theme: "pgmanage",
-              x: e.x,
-              y: e.y,
-              zIndex: 1000,
-              minWidth: 230,
-              items: [
-                {
-                  label: "Confirm",
-                  icon: "fas cm-all fa-check",
-                  onClick: () => {
-                    this.removeTab(tab);
-                  },
-                },
-                {
-                  label: "Cancel",
-                  icon: "fas cm-all fa-times",
-                },
-              ],
-            });
-          },
-        },
-      ];
-
-      ContextMenu.showContextMenu({
-        theme: "pgmanage",
-        x: e.x,
-        y: e.y,
-        zIndex: 1000,
-        minWidth: 230,
-        items: optionList,
-      });
-    },
-    removeTab(tab) {
-      if (
-        ["query", "edit", "console", "outer_terminal"].includes(
-          tab.metaData.mode
-        )
-      ) {
-        let messageData = {
-          tab_id: tab.id,
-          tab_db_id: null,
-          conn_tab_id: tabsStore.selectedPrimaryTab.id,
-        };
-        if (tab.metaData.mode === "query") {
-          messageData.tab_db_id = tab.metaData.initTabDatabaseId;
-        }
-
-        if (tab.metaData.mode === "outer_terminal") {
-          messageData.tab_id = null;
-        }
-
-        createRequest(queryRequestCodes.CloseTab, [messageData]);
-      }
-
-      tabsStore.removeTab(tab);
-    },
-    beforeCloseTab(e, confirmFunction) {
-      if (e) {
-        if (e.clientX == 0 && e.clientY == 0) {
-          showConfirm("Are you sure you want to remove this tab?", function () {
-            confirmFunction();
-          });
-        } else {
-          ContextMenu.showContextMenu({
-            theme: "pgmanage",
-            x: e.x,
-            y: e.y,
-            zIndex: 1000,
-            minWidth: 230,
-            items: [
-              {
-                label: "Confirm",
-                icon: "fas cm-all fa-check",
-                onClick: function () {
-                  confirmFunction();
-                },
-              },
-              {
-                label: "Cancel",
-                icon: "fas cm-all fa-times",
-              },
-            ],
-          });
-        }
-      } else {
-        confirmFunction();
-      }
     },
     handleNavWheel(event) {
       event.deltaY > 0

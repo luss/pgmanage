@@ -312,14 +312,15 @@ export default {
                       name: conn.alias,
                       tooltipName: tooltip_name
                     }))
-                  this.$nextTick(() => {
+
+                  setTimeout(() => {
                     emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_console_tab`)
-                  })
+                  }, 100) 
                 }
 
               }
               currentParent = tab.index
-              this.$nextTick(() => {
+              setTimeout(() => {
                 emitter.emit(
                   `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
                   {
@@ -329,7 +330,7 @@ export default {
                     initialQuery: tab.snippet,
                   }
                 );
-              });
+              }, 100);
               endLoading();
             }, 200 * index);
             })
