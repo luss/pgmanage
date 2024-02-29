@@ -6,67 +6,72 @@
       class="omnidb__tab-menu border-bottom omnidb__tab-menu--secondary omnidb__theme-bg--menu-secondary"
     >
       <nav class="d-flex align-items-center justify-content-between">
-        <div
-          ref="navTabs"
-          class="nav nav-tabs text-nowrap flex-nowrap scrollable-menu"
-          @wheel="handleNavWheel"
-        >
-          <a
-            :id="tab.id"
-            data-toggle="tab"
-            :class="[
-              'omnidb__tab-menu__link',
-              'nav-item',
-              'nav-link',
-              { disabled: tab.disabled, active: tab.id == selectedTab.id },
-            ]"
-            role="tab"
-            aria-selected="false"
-            :aria-controls="`${tab.id}_content`"
-            :href="`#${tab.id}_content`"
-            :draggable="tab.isDraggable"
-            @dragend="tab.dragEndFunction($event, tab)"
-            @click.prevent.stop="clickHandler($event, tab)"
-            @dblclick="tab.dblClickFunction && tab.dblClickFunction(tab)"
-            @contextmenu="contextMenuHandler($event, tab)"
-            v-for="tab in tabs"
+        <div class="d-flex flex-nowrap scrollable-outer">
+          <div
+            ref="navTabs"
+            class="nav nav-tabs text-nowrap flex-nowrap scrollable-inner"
+            @wheel="handleNavWheel"
           >
-            <span class="omnidb__tab-menu__link-content">
-              <span
-                v-if="tab.icon"
-                class="omnidb__menu__btn omnidb__tab-menu__link-icon"
-                v-html="tab.icon"
-              >
-              </span>
-              <span class="omnidb__tab-menu__link-name">
-                <span>{{ tab.name }}</span>
+            <a
+              :id="tab.id"
+              data-toggle="tab"
+              :class="[
+                'omnidb__tab-menu__link',
+                'nav-item',
+                'nav-link',
+                { disabled: tab.disabled, active: tab.id == selectedTab.id },
+              ]"
+              role="tab"
+              aria-selected="false"
+              :aria-controls="`${tab.id}_content`"
+              :href="`#${tab.id}_content`"
+              :draggable="tab.isDraggable"
+              @dragend="tab.dragEndFunction($event, tab)"
+              @click.prevent.stop="clickHandler($event, tab)"
+              @dblclick="tab.dblClickFunction && tab.dblClickFunction(tab)"
+              @contextmenu="contextMenuHandler($event, tab)"
+              v-for="tab in tabs"
+            >
+              <span class="omnidb__tab-menu__link-content">
                 <span
-                  v-if="tab.metaData.mode !== 'add'"
-                  :class="{ invisible: !tab.metaData.isLoading }"
+                  v-if="tab.icon"
+                  class="omnidb__menu__btn omnidb__tab-menu__link-icon"
+                  v-html="tab.icon"
                 >
-                  <i class="tab-icon node-spin"></i>
                 </span>
-                <i
-                  :class="[
-                    'fas',
-                    'fa-check-circle',
-                    'tab-icon',
-                    'icon-check',
-                    { 'd-none': !tab.metaData.isReady },
-                  ]"
-                ></i>
+                <span class="omnidb__tab-menu__link-name">
+                  <span>{{ tab.name }}</span>
+                  <span
+                    v-if="tab.metaData.mode !== 'add'"
+                    :class="{ invisible: !tab.metaData.isLoading }"
+                  >
+                    <i class="tab-icon node-spin"></i>
+                  </span>
+                  <i
+                    :class="[
+                      'fas',
+                      'fa-check-circle',
+                      'tab-icon',
+                      'icon-check',
+                      { 'd-none': !tab.metaData.isReady },
+                    ]"
+                  ></i>
+                </span>
               </span>
-            </span>
 
-            <i
-              v-if="tab.closable"
-              class="fas fa-times tab-icon omnidb__tab-menu__link-close"
-              @click.stop.prevent="tab.closeFunction($event, tab)"
-            ></i>
-          </a>
+              <i
+                v-if="tab.closable"
+                class="fas fa-times tab-icon omnidb__tab-menu__link-close"
+                @click.stop.prevent="tab.closeFunction($event, tab)"
+              ></i>
+            </a>
+          </div>
+          <span style="width:50px; background: red;" class="omnidb__tab-menu__link-name flex-shrink-0"><span data-v-a405df38="">+</span><i data-v-a405df38="" class="fas fa-check-circle tab-icon icon-check d-none"></i></span>
+
         </div>
 
-        <div class="navigation-actions">
+
+        <div class="navigation-actions d-flex flex-nowrap">
           <button
             class="btn btn-secondary btn-sm mr-1"
             :disabled="!canScrollLeft"
@@ -705,15 +710,19 @@ export default {
 </script>
 
 <style scoped>
-.scrollable-menu {
+.scrollable-outer {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  max-width: calc(100% - 65px);
+}
+
+.scrollable-inner {
   overflow: scroll;
   overflow-y: hidden;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  width: 90%;
+  scrollbar-width: none;
 }
-.scrollable-menu::-webkit-scrollbar {
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  display: none;
+
+.scrollable-inner::-webkit-scrollbar {
+  display: none
 }
 </style>
