@@ -221,6 +221,7 @@ SOFTWARE.
 
       &:first-of-type.active {
         border-left: transparent;
+        border-radius: 0 4px 0 0;
       }
 
       &:not(.active):hover {
