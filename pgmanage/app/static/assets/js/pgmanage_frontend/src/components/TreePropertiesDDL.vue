@@ -16,6 +16,7 @@
     </Transition>
 
     <button
+      data-testid="tree-tabs-toggler"
       type="button"
       class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler mr-2"
       @click="$emit('toggleTreeTabs')"
