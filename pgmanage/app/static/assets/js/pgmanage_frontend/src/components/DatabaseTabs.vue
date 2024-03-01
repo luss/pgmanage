@@ -66,10 +66,14 @@
               ></i>
             </a>
           </div>
-          <span style="width:50px; background: red;" class="omnidb__tab-menu__link-name flex-shrink-0"><span data-v-a405df38="">+</span><i data-v-a405df38="" class="fas fa-check-circle tab-icon icon-check d-none"></i></span>
-
+          <button
+            style="width: 40px"
+            class="omnidb__tab-menu__link-name flex-shrink-0 btn btn-secondary"
+            @click="addTab"
+          >
+            <i class="fas fa-plus"></i>
+          </button>
         </div>
-
 
         <div class="navigation-actions d-flex flex-nowrap">
           <button
@@ -165,8 +169,26 @@ export default {
     });
   },
   mounted() {
-    this.createAddTab();
     this.setupEvents();
+
+    tabsStore.$onAction((action) => {
+      if (action.name === "addTab") {
+        action.after(() => {
+          if (
+            (tabsStore.selectedPrimaryTab.id === this.tabId &&
+              this.tabs.includes(this.selectedTab)) ||
+            this.isSnippetsPanel
+          ) {
+            this.$nextTick(() => {
+              let lastTab = document.getElementById(this.selectedTab.id);
+              if (!!lastTab) {
+                lastTab.scrollIntoView();
+              }
+            });
+          }
+        });
+      }
+    });
   },
   unmounted() {
     this.clearEvents();
@@ -325,41 +347,12 @@ export default {
       emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
       emitter.all.delete(`${this.tabId}_create_monitoring_dashboard_tab`);
     },
-    createAddTab() {
-      const addTab = tabsStore.addTab({
-        name: "+",
-        parentId: this.tabId,
-        closable: false,
-        isDraggable: false,
-        selectable: false,
-        mode: "add",
-        clickFunction: (event) => {
-          if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
-            this.createSnippetTab();
-          } else {
-            this.showMenuNewTab(event);
-          }
-        },
-      });
-
-      tabsStore.$onAction((action) => {
-        if (action.name === "addTab") {
-          action.after(() => {
-            if (
-              (tabsStore.selectedPrimaryTab.id === this.tabId &&
-                this.tabs.includes(this.selectedTab)) ||
-              this.isSnippetsPanel
-            ) {
-              this.$nextTick(() => {
-                let navTabPlusEl = document.getElementById(addTab.id);
-                if (!!navTabPlusEl) {
-                  navTabPlusEl.scrollIntoView();
-                }
-              });
-            }
-          });
-        }
-      });
+    addTab(event) {
+      if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
+        this.createSnippetTab();
+      } else {
+        this.showMenuNewTab(event);
+      }
     },
     createSnippetTab(snippet) {
       let snippetName = "New Snippet";
@@ -723,6 +716,6 @@ export default {
 }
 
 .scrollable-inner::-webkit-scrollbar {
-  display: none
+  display: none;
 }
 </style>

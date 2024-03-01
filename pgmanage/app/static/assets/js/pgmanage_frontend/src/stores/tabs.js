@@ -66,11 +66,7 @@ const useTabsStore = defineStore("tabs", {
       if (parentId) {
         let primaryTab = this.tabs.find((tab) => tab.id === parentId);
         //TODO: handle case if tab with specified Id not exist
-        if (name === "+") {
-          primaryTab.metaData.secondaryTabs.push(tab);
-        } else {
-          primaryTab.metaData.secondaryTabs.splice(-1, 0, tab);
-        }
+        primaryTab.metaData.secondaryTabs.push(tab);
       } else {
         this.tabs.push(tab);
       }
@@ -121,8 +117,8 @@ const useTabsStore = defineStore("tabs", {
       const tabIndex = secondaryTabs.indexOf(tabToRemove);
       if (primaryTab.metaData.selectedTab === tabToRemove) {
         const nextTabIndex = tabIndex + 1;
-        if (secondaryTabs.length > 2) {
-          const newSelectedTab = secondaryTabs[nextTabIndex].selectable
+        if (secondaryTabs.length > 1) {
+          const newSelectedTab = secondaryTabs[nextTabIndex]?.selectable
             ? secondaryTabs[nextTabIndex]
             : secondaryTabs[nextTabIndex - 2];
           primaryTab.metaData.selectedTab = newSelectedTab;

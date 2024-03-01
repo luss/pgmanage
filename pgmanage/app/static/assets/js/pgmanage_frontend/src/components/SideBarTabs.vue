@@ -185,9 +185,7 @@ export default {
       createInitialTabs = true,
       name = false,
       tooltipName = false
-    ) 
-    {
-      console.log(connectionsStore.connections)
+    ) {
       if (connectionsStore.connections.length == 0) {
         showToast("error", "Create connections first.");
       } else {

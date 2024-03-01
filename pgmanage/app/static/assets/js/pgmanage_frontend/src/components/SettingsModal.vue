@@ -405,7 +405,7 @@ export default {
           if (actualIndex === -1) return
 
           if (actualIndex === 0) {
-            tabsStore.selectTab(secondaryTabs[secondaryTabs.length - 2])
+            tabsStore.selectTab(secondaryTabs[secondaryTabs.length - 1])
           } else {
             tabsStore.selectTab(secondaryTabs[actualIndex - 1])
           }
@@ -421,7 +421,7 @@ export default {
 
           if (actualIndex === -1) return
 
-          if (actualIndex === secondaryTabs.length - 2) {
+          if (actualIndex === secondaryTabs.length - 1) {
             tabsStore.selectTab(secondaryTabs[0])
           } else {
             tabsStore.selectTab(secondaryTabs[actualIndex + 1])
