@@ -67,6 +67,7 @@
             </a>
           </div>
           <button
+            data-testid="add-tab-button"
             style="width: 40px"
             class="omnidb__tab-menu__link-name flex-shrink-0 btn btn-secondary"
             @click="addTab"
@@ -346,6 +347,7 @@ export default {
       emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
       emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
       emitter.all.delete(`${this.tabId}_create_monitoring_dashboard_tab`);
+      emitter.all.delete('create_snippet_tab')
     },
     addTab(event) {
       if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
