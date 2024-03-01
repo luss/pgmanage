@@ -138,10 +138,9 @@ import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
-import { connectionsStore } from '../stores/connections.js'
 import FileManager from "./FileManager.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
-import { tabsStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 
 export default {
   name: "QueryTab",

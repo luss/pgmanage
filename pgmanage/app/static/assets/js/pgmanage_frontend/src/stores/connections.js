@@ -1,9 +1,4 @@
-// const pinia = Pinia.createPinia();
-// Pinia.setActivePinia(pinia);
-import { createPinia, defineStore, setActivePinia } from 'pinia'
-
-const pinia = createPinia()
-setActivePinia(pinia)
+import { defineStore } from "pinia";
 
 const useConnectionsStore = defineStore({
   id: "connections",
@@ -17,11 +12,9 @@ const useConnectionsStore = defineStore({
   },
   actions: {
     getConnection(conn_id) {
-      return this.connections.find((conn) => conn.id === conn_id)
-    }
-  }
+      return this.connections.find((conn) => conn.id === conn_id);
+    },
+  },
 });
 
-const connectionsStore = useConnectionsStore();
-
-export { connectionsStore }
+export { useConnectionsStore };

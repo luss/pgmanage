@@ -91,7 +91,6 @@
 </template>
 
 <script>
-import {connectionsStore} from '../stores/connections.js'
 import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue'
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
@@ -99,7 +98,7 @@ import axios from 'axios'
 import { showToast } from '../notification_control'
 import { emitter } from '../emitter'
 import { tabsStore } from '../stores/stores_initializer'
-import { settingsStore } from "../stores/stores_initializer";
+import { settingsStore, connectionsStore } from "../stores/stores_initializer";
 
 export default {
   name: 'ConnectionsModal',

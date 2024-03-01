@@ -65,8 +65,7 @@
 
 <script>
 import { defineAsyncComponent, h } from "vue";
-import { tabsStore } from "../stores/stores_initializer";
-import { connectionsStore } from "../stores/connections";
+import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
 import { showMenuNewTabOuter } from "../workspace.js";
 import { createRequest } from "../long_polling";
@@ -186,7 +185,9 @@ export default {
       createInitialTabs = true,
       name = false,
       tooltipName = false
-    ) {
+    ) 
+    {
+      console.log(connectionsStore.connections)
       if (connectionsStore.connections.length == 0) {
         showToast("error", "Create connections first.");
       } else {

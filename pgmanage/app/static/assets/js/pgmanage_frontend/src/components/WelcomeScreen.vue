@@ -91,7 +91,7 @@
 import axios from 'axios'
 import moment from 'moment'
 import { emitter } from '../emitter'
-import { connectionsStore } from '../stores/connections.js'
+import { connectionsStore } from '../stores/stores_initializer'
 import { showConfigUser } from '../header_actions'
 import { startTutorial } from '../tutorial'
 import { endLoading } from "../ajax_control";

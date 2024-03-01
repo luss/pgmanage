@@ -1,6 +1,5 @@
 import { settingsModalInit } from './settings_modal.js'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
-import { connectionsStore } from './stores/connections.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { format } from 'sql-formatter'
 import ContextMenu from '@imengyu/vue3-context-menu'
@@ -12,7 +11,7 @@ import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
 import { startTutorial } from './tutorial'
-import { tabsStore } from './stores/stores_initializer.js'
+import { tabsStore, connectionsStore } from './stores/stores_initializer.js'
 
 /// <summary>
 /// Startup function.

@@ -95,8 +95,7 @@
 
 <script>
 import DatabaseTabs from "./DatabaseTabs.vue";
-import { connectionsStore } from "../stores/connections";
-import { tabsStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 import axios from "axios";
 import { defineAsyncComponent } from "vue";
 import { emitter } from "../emitter";

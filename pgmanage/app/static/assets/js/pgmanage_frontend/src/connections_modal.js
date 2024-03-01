@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
-import { connectionsStore } from './stores/connections.js'
-import { tabsStore } from './stores/stores_initializer.js'
+import { tabsStore, connectionsStore } from './stores/stores_initializer.js'
 import ConnectionsModal from './components/ConnectionsModal.vue'
 import moment from 'moment'
 import { emitter } from './emitter.js'
