@@ -20,6 +20,7 @@ class UserDetails(models.Model):
     date_format = models.CharField(max_length=200, null=True)
     pigz_path = models.CharField(max_length=256, null=True)
     restore_tabs = models.BooleanField(default=True)
+    scroll_tree = models.BooleanField(default=True)
 
     def get_pigz_path(self):
 

@@ -74,6 +74,7 @@ def index(request):
         "pigz_path": user_details.get_pigz_path(),
         "date_format": user_details.date_format,
         "restore_tabs": user_details.restore_tabs,
+        "scroll_tree": user_details.scroll_tree,
     }
 
     # wiping saved tabs databases list
@@ -101,6 +102,7 @@ def save_config_user(request, session):
     date_format = data["date_format"]
     pigz_path = data["pigz_path"]
     restore_tabs = data["restore_tabs"]
+    scroll_tree = data["scroll_tree"]
 
     session.v_theme_id = theme
     session.v_font_size = font_size
@@ -116,6 +118,7 @@ def save_config_user(request, session):
     user_details.date_format = date_format
     user_details.pigz_path = pigz_path
     user_details.restore_tabs = restore_tabs
+    user_details.scroll_tree = scroll_tree
     user_details.save()
 
     request.session["pgmanage_session"] = session
