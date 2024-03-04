@@ -163,6 +163,9 @@ export default {
       let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
       return primaryTab?.name === "Snippets";
     },
+    primaryTab() {
+      return tabsStore.getPrimaryTabById(this.tabId);
+    },
   },
   updated() {
     this.$nextTick(() => {
@@ -196,60 +199,57 @@ export default {
   },
   methods: {
     getCurrentProps(tab) {
-      let primaryTab = tabsStore.getPrimaryTabById(tab.parentId);
-
       const componentsProps = {
         SnippetTab: {
-          "tab-id": tab.id,
+          tabId: tab.id,
           snippet: tab.metaData.snippetObject,
         },
         ConsoleTab: {
           connId: tab.parentId,
           tabId: tab.id,
-          consoleHelp: primaryTab?.metaData?.consoleHelp,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
-          dialect: primaryTab?.metaData?.selectedDBMS,
+          consoleHelp: tab?.metaData?.consoleHelp,
+          databaseIndex: tab?.metaData?.databaseIndex,
+          dialect: tab?.metaData?.dialect,
         },
         QueryTab: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
-          dialect: primaryTab?.metaData?.selectedDBMS,
-          databaseName:
-            tab.metaData.databaseName ?? primaryTab?.metaData?.selectedDatabase,
+          databaseIndex: tab.metaData?.databaseIndex,
+          dialect: tab.metaData?.dialect,
+          databaseName: tab.metaData.databaseName,
           initTabDatabaseId: tab.metaData.initTabDatabaseId,
           initialQuery: tab.metaData.initialQuery,
         },
         MonitoringDashboard: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseIndex: tab?.metaData?.databaseIndex,
         },
         BackupTab: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseIndex: tab?.metaData?.databaseIndex,
           backupType: tab.metaData.backupType,
           treeNode: tab.metaData.treeNode,
         },
         RestoreTab: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseIndex: tab?.metaData?.databaseIndex,
           restoreType: tab.metaData.backupType,
           treeNode: tab.metaData.treeNode,
         },
         ERDTab: {
           tabId: tab.parentId,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
-          databaseName: primaryTab?.metaData?.selectedDatabase,
+          databaseIndex: tab?.metaData?.databaseIndex,
+          databaseName: tab?.metaData?.databaseName,
           schema: tab.metaData?.schema,
         },
         DataEditorTab: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
-          databaseName: primaryTab?.metaData?.selectedDatabase,
+          databaseIndex: tab?.metaData?.databaseIndex,
+          databaseName: tab?.metaData?.databaseName,
           table: tab.metaData.table,
           schema: tab.metaData.schema,
           dialect: tab.metaData.dialect,
@@ -258,8 +258,8 @@ export default {
         SchemaEditorTab: {
           connId: tab.parentId,
           tabId: tab.id,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
-          databaseName: primaryTab?.metaData?.selectedDatabase,
+          databaseIndex: tab?.metaData?.databaseIndex,
+          databaseName: tab?.metaData?.databaseName,
           mode: tab.metaData.editMode,
           schema: tab.metaData.schema,
           table: tab.metaData.table,
@@ -268,16 +268,15 @@ export default {
         },
         MonitoringTab: {
           connId: tab.parentId,
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
-          dialect: primaryTab?.metaData?.selectedDBMS,
+          databaseIndex: tab?.metaData?.databaseIndex,
+          dialect: tab?.metaData?.dialect,
           query: tab.metaData.query,
         },
         ConfigTab: {
-          databaseIndex: primaryTab?.metaData?.selectedDatabaseIndex,
+          databaseIndex: tab?.metaData?.databaseIndex,
           connId: tab.parentId,
         },
       };
-
       return componentsProps[tab.component];
     },
     setupEvents() {
@@ -347,7 +346,7 @@ export default {
       emitter.all.delete(`${this.tabId}_create_schema_editor_tab`);
       emitter.all.delete(`${this.tabId}_create_monitoring_tab`);
       emitter.all.delete(`${this.tabId}_create_monitoring_dashboard_tab`);
-      emitter.all.delete('create_snippet_tab')
+      emitter.all.delete("create_snippet_tab");
     },
     addTab(event) {
       if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
@@ -414,6 +413,11 @@ export default {
         },
       });
 
+      tab.metaData.consoleHelp = this.primaryTab?.metaData?.consoleHelp;
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
+      tab.metaData.dialect = this.primaryTab?.metaData?.selectedDBMS;
+
       tabsStore.selectTab(tab);
     },
     createMonitoringDashboardTab() {
@@ -433,7 +437,8 @@ export default {
         },
         dblClickFunction: renameTab,
       });
-
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
       tabsStore.selectTab(tab);
     },
     createQueryTab(
@@ -457,9 +462,15 @@ export default {
         },
         dblClickFunction: renameTab,
       });
-      tab.metaData.databaseName = tabDbName;
+
+      tab.metaData.databaseName =
+        tabDbName ?? this.primaryTab?.metaData?.selectedDatabase;
       tab.metaData.initTabDatabaseId = tabDbId;
       tab.metaData.initialQuery = initialQuery;
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
+      tab.metaData.dialect = this.primaryTab?.metaData?.selectedDBMS;
+
       tabsStore.selectTab(tab);
     },
     createConfigurationTab() {
@@ -474,6 +485,9 @@ export default {
           });
         },
       });
+
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
       tabsStore.selectTab(tab);
     },
     createUtilityTab(node, utility, backupType = "objects") {
@@ -498,6 +512,8 @@ export default {
 
       tab.metaData.treeNode = node;
       tab.metaData.backupType = backupType;
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
 
       tabsStore.selectTab(tab);
     },
@@ -520,6 +536,9 @@ export default {
       });
 
       tab.metaData.schema = schema;
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
+      tab.metaData.databaseName = this.primaryTab?.metaData?.selectedDatabase;
 
       tabsStore.selectTab(tab);
     },
@@ -552,6 +571,9 @@ export default {
       tab.metaData.table = table;
       tab.metaData.schema = schema;
       tab.metaData.query_filter = ""; //to be used in the future for passing extra filters when tab is opened
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
+      tab.metaData.databaseName = this.primaryTab?.metaData?.selectedDatabase;
 
       tabsStore.selectTab(tab);
     },
@@ -576,6 +598,9 @@ export default {
       tab.metaData.schema = node.data.schema;
       tab.metaData.table = mode === "alter" ? tableName : null;
       tab.metaData.treeNode = node;
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
+      tab.metaData.databaseName = this.primaryTab?.metaData?.selectedDatabase;
 
       tabsStore.selectTab(tab);
     },
@@ -598,6 +623,9 @@ export default {
       });
 
       tab.metaData.query = query;
+      tab.metaData.databaseIndex =
+        this.primaryTab?.metaData?.selectedDatabaseIndex;
+      tab.metaData.dialect = this.primaryTab?.metaData?.selectedDBMS;
 
       tabsStore.selectTab(tab);
     },
