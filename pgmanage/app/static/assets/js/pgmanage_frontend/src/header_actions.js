@@ -82,9 +82,6 @@ $(function() {
 	//var v_configTabControl = createTabControl('config_tabs',0,null);
 	//v_configTabControl.selectTabIndex(0);
 
-	//setting font size of body
-	document.getElementsByTagName('html')[0].style['font-size'] = v_font_size + 'px';
-
 });
 
 

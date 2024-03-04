@@ -475,6 +475,7 @@ export default {
     })
 
     this.applyThemes()
+    document.documentElement.style.fontSize = `${this.fontSize}px`
 
   },
   methods: {

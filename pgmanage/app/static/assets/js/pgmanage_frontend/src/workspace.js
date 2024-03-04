@@ -1,4 +1,3 @@
-import { settingsModalInit } from './settings_modal.js'
 import { connectionsModalInit, conn_app} from './connections_modal.js'
 import { passwordModalsInit, showNewMasterPassPrompt, showMasterPassPrompt } from './passwords.js'
 import { format } from 'sql-formatter'
@@ -17,7 +16,6 @@ import { tabsStore, connectionsStore } from './stores/stores_initializer.js'
 /// Startup function.
 /// </summary>
 $(function () {
-  settingsModalInit()
 
   // Creating omnis.
   v_omnis.root = document.getElementById('app');
