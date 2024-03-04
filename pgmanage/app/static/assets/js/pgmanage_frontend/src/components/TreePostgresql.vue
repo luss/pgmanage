@@ -3247,11 +3247,11 @@ export default {
             });
         }
       } else {
-        callback_continue();
+        if (callback_continue) callback_continue();
       }
     },
     getProperties(node) {
-      this.checkCurrentDatabase(node, false, () => {
+      this.checkCurrentDatabase(node, true, () => {
         this.getPropertiesConfirm(node);
       });
     },
