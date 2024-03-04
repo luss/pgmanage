@@ -38,6 +38,8 @@ import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
 import { showConfirm, showToast } from "../notification_control";
 import { tabsStore } from "../stores/stores_initializer";
+import ContextMenu from "@imengyu/vue3-context-menu";
+
 
 export default {
   name: "TreePostgresql",
@@ -98,6 +100,20 @@ export default {
           },
         ],
         cm_database: [
+          {
+            label: "Query Database",
+            icon: "fas cm-all fa-search",
+            onClick: () => {
+              let tab_name = `Query: ${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}`
+
+              emitter.emit(
+                `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                {
+                  name: tab_name,
+                }
+              );
+            }
+          },
           {
             label: "Alter Database",
             icon: "fas cm-all fa-edit",
@@ -3080,6 +3096,22 @@ export default {
     });
   },
   methods: {
+    onContextMenu(node, e) {
+      this.$refs.tree.select(node.path);
+      e.preventDefault();
+      if (!!node.data.contextMenu) {
+        this.checkCurrentDatabase(node, true, () => {
+          ContextMenu.showContextMenu({
+            theme: "pgmanage",
+            x: e.x,
+            y: e.y,
+            zIndex: 1000,
+            minWidth: 230,
+            items: this.contextMenu[node.data.contextMenu],
+          });
+        });
+      }
+    },
     refreshTreePostgresqlConfirm(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
       if (node.data.type == "server") {
