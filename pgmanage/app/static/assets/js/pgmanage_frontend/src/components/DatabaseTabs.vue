@@ -186,7 +186,12 @@ export default {
             this.$nextTick(() => {
               let lastTab = document.getElementById(this.selectedTab.id);
               if (!!lastTab) {
-                lastTab.scrollIntoView();
+                setTimeout(() => {
+                  lastTab.scrollIntoView({
+                    inline: "end",
+                    behavior: "smooth",
+                  });
+                }, 100);
               }
             });
           }
@@ -700,16 +705,28 @@ export default {
     },
     handleNavWheel(event) {
       event.deltaY > 0
-        ? (this.$refs.navTabs.scrollLeft += 100)
-        : (this.$refs.navTabs.scrollLeft -= 100);
+        ? this.$refs.navTabs.scrollTo({
+            left: this.$refs.navTabs.scrollLeft + 100,
+            behavior: "smooth",
+          })
+        : this.$refs.navTabs.scrollTo({
+            left: this.$refs.navTabs.scrollLeft - 100,
+            behavior: "smooth",
+          });
       this.updateScrollOptions();
     },
     handleLeftScrollClick(event) {
-      this.$refs.navTabs.scrollLeft -= 100;
+      this.$refs.navTabs.scrollTo({
+        left: this.$refs.navTabs.scrollLeft - 100,
+        behavior: "smooth",
+      });
       this.updateScrollOptions();
     },
     handleRightScrollClick(event) {
-      this.$refs.navTabs.scrollLeft += 100;
+      this.$refs.navTabs.scrollTo({
+        left: this.$refs.navTabs.scrollLeft + 100,
+        behavior: "smooth",
+      });
       this.updateScrollOptions();
     },
     updateScrollOptions() {
