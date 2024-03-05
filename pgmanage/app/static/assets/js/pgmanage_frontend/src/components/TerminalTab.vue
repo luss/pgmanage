@@ -18,6 +18,7 @@ import { createRequest } from "../long_polling";
 import { queryRequestCodes, requestState } from "../constants";
 import { tabsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
+import TabTitleUpdateMixin from "../mixins/sidebar_title_update_mixin";
 
 export default {
   name: "TerminalTab",
@@ -25,6 +26,7 @@ export default {
     tabId: String,
     databaseIndex: Number,
   },
+  mixins: [TabTitleUpdateMixin],
   data() {
     return {
       term: null,
@@ -39,10 +41,12 @@ export default {
     this.setupEvents();
 
     settingsStore.$subscribe((mutation, state) => {
-        this.term.options.theme = state.terminalTheme;
-        this.term.options.fontSize = state.fontSize;
-        this.fitAddon.fit();
-      });
+      this.term.options.theme = state.terminalTheme;
+      this.term.options.fontSize = state.fontSize;
+      this.fitAddon.fit();
+    });
+
+    this.subscribeToConnectionChanges(this.tabId, this.databaseIndex);
   },
   unmounted() {
     this.clearEvents();
