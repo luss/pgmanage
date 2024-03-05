@@ -104,6 +104,7 @@ import { Splitpanes, Pane } from "splitpanes";
 import TreePropertiesDDL from "./TreePropertiesDDL.vue";
 import { showPasswordPrompt } from "../passwords";
 import { showToast } from "../notification_control";
+import TabTitleUpdateMixin from "../mixins/sidebar_title_update_mixin";
 
 export default {
   name: "ConnectionTab",
@@ -118,6 +119,7 @@ export default {
     Pane,
     TreePropertiesDDL,
   },
+  mixins: [TabTitleUpdateMixin],
   props: {
     connTabId: String,
   },
@@ -174,6 +176,7 @@ export default {
     },
   },
   mounted() {
+    this.subscribeToConnectionChanges(this.connTabId, this.databaseIndex);
     this.changeDatabase(this.connectionTab.metaData.selectedDatabaseIndex);
     $('[data-toggle="tooltip"]').tooltip({ animation: true }); // Loads or Updates all tooltips
     this.$nextTick(() => {
