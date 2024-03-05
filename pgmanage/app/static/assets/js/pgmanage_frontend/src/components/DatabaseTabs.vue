@@ -69,27 +69,27 @@
           <button
             data-testid="add-tab-button"
             style="width: 40px"
-            class="omnidb__tab-menu__link-name flex-shrink-0 btn btn-secondary"
+            class="flex-shrink-0 btn btn-icon btn-icon-primary navigation-add"
             @click="addTab"
           >
-            <i class="fas fa-plus"></i>
+            <i class="fas fa-lg fa-plus"></i>
           </button>
         </div>
 
         <div class="navigation-actions d-flex flex-nowrap">
           <button
-            class="btn btn-secondary btn-sm mr-1"
+            class="btn btn-icon btn-icon-secondary mr-3"
             :disabled="!canScrollLeft"
             @click="handleLeftScrollClick"
           >
-            <i class="fas fa-chevron-left"></i>
+            <i class="fas fa-lg fa-chevron-left"></i>
           </button>
           <button
-            class="btn btn-secondary btn-sm"
+            class="btn btn-icon btn-icon-secondary mr-2"
             :disabled="!canScrollRight"
             @click="handleRightScrollClick"
           >
-            <i class="fas fa-chevron-right"></i>
+            <i class="fas fa-lg fa-chevron-right"></i>
           </button>
         </div>
       </nav>
@@ -736,7 +736,7 @@ export default {
 .scrollable-outer {
   overflow-x: scroll;
   overflow-y: hidden;
-  max-width: calc(100% - 65px);
+  max-width: calc(100% - 55px);
 }
 
 .scrollable-inner {
