@@ -34,10 +34,6 @@
     <connections-modal></connections-modal>
   </div>
 
-  <div id="settings-modal-wrap">
-    <settings-modal></settings-modal>
-  </div>
-
   <div id="utility-job-detail-wrap">
     <job-detail></job-detail>
   </div>
@@ -49,6 +45,9 @@
   </div>
 
   <div id="pgcron-modal-wrap">
+  </div>
+
+  <div id="app" class="omnidb__main omnidb__explain--default" style="min-height: 100vh;">
   </div>
 
 
@@ -97,10 +96,10 @@
     </nav>
   </div>
 
-    <div id="omnidb__main" class="omnidb__main" style="min-height: 100vh">
+    <!-- <div id="omnidb__main" class="omnidb__main" style="min-height: 100vh">
       <div id="omnidb_main_tablist">
       </div>
-    </div>
+    </div> -->
 
     <div id="div_loading" class="div_loading" style='z-index: 100005; display: block;'>
       <div class="div_loading_cover"></div>
@@ -482,23 +481,14 @@
     var v_short_version = '{{ pgmanage_short_version }}';
     var v_url_folder = '{{ url_folder }}'; //left for compatibility reasons, use app_base_path instead
     var app_base_path = '{{ url_folder }}'
-  	var v_connections_data;
   	var gv_desktopMode = ('{{ desktop_mode }}' === 'True');
-  	var v_tab_token = '{{ tab_token }}';
     var v_omnis = createOmnis();
     var v_explain_control = {context: 'default'};
 
-    var v_menu_item = '{{ menu_item }}'
-
     var ht;
     var network;
-    var v_connTabControl;
-    var v_editDataObject;
     var v_canEditContent;
     var v_editContentObject;
-    var v_database_list = null;
-    var v_completer_ready = true;
-    var v_tree_object;
     var v_super_user = {{ super_user|lower }};
     var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
     var binary_path = '{{ binary_path|addslashes }}';

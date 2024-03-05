@@ -1,5 +1,5 @@
 <template>
-<div class="welcome">
+<div class="welcome pt-3">
     <div class='welcome__container'>
       <div class="welcome__header mt-1 mb-4">
         <p class='mb-0'>Welcome to</p>
@@ -91,7 +91,7 @@
 import axios from 'axios'
 import moment from 'moment'
 import { emitter } from '../emitter'
-import { connectionsStore } from '../stores/connections.js'
+import { connectionsStore } from '../stores/stores_initializer'
 import { showConfigUser } from '../header_actions'
 import { startTutorial } from '../tutorial'
 import { endLoading } from "../ajax_control";

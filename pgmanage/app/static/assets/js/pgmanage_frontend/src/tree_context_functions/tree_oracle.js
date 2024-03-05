@@ -29,501 +29,10 @@ SOFTWARE.
 import { createApp } from "vue";
 import TreeOracle from '../components/TreeOracle.vue'
 import { tabSQLTemplate } from './tree_postgresql'
-import { createMessageModal } from '../notification_control'
-import { refreshMonitoring } from "../tab_functions/inner_monitoring_tab";
-import { showPasswordPrompt } from "../passwords";
 import { execAjax } from "../ajax_control";
-import axios from "axios";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
-import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
-
-/// <summary>
-/// Retrieving tree.
-/// </summary>
-function getTreeOracle(div) {
-
-    var context_menu = {
-        'cm_tablespaces': {
-            elements: [/*, {
-                text: 'Doc: Tablespaces',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Tablespaces',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/manage-ag-tablespaces.html'
-                    );
-                }
-            }*/]
-        },
-        'cm_roles': {
-            elements: [/*, {
-                text: 'Doc: Roles',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Roles',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/user-manag.html');
-                }
-            }*/]
-        },
-        'cm_tables': {
-            elements: [/*, {
-                text: 'Doc: Basics',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Table Basics',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/ddl-basics.html');
-                }
-            }, {
-                text: 'Doc: Constraints',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Table Constraints',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/ddl-constraints.html');
-                }
-            }, {
-                text: 'Doc: Modifying',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Modifying Tables',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/ddl-alter.html');
-                }
-            }*/]
-        },
-        'cm_indexes': {
-            elements: [/*, {
-                text: 'Doc: Indexes',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Indexes',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/indexes.html');
-                }
-            }*/]
-        },
-        'cm_sequences': {
-            elements: [/*, {
-                text: 'Doc: Sequences',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Sequences',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/sql-createsequence.html');
-                }
-            }*/]
-        },
-        'cm_views': {
-            elements: [/*, {
-                text: 'Doc: Views',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Views',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/sql-createview.html');
-                }
-            }*/]
-        },
-        /*'cm_triggers': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                },
-            }, {
-                text: 'Create Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Trigger', node.tree.tag
-                        .create_trigger.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' + node.parent
-                            .text));
-                }
-            }, {
-                text: 'Doc: Triggers',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Triggers',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/trigger-definition.html');
-                }
-            }]
-        },
-        'cm_view_triggers': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                },
-            }, {
-                text: 'Create Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Trigger', node.tree.tag
-                        .create_view_trigger.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' + node.parent
-                            .text));
-                }
-            }, {
-                text: 'Doc: Triggers',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Triggers',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/trigger-definition.html');
-                }
-            }]
-        },
-        'cm_trigger': {
-            elements: [{
-                text: 'Alter Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Alter Trigger', node.tree.tag
-                        .alter_trigger.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }, {
-                text: 'Enable Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Enable Trigger', node.tree.tag
-                        .enable_trigger.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }, {
-                text: 'Disable Trigger',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Disable Trigger', node.tree
-                        .tag.disable_trigger.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }, {
-                text: 'Drop Trigger',
-                icon: 'fas cm-all fa-times',
-                action: function(node) {
-                    tabSQLTemplate('Drop Trigger', node.tree.tag
-                        .drop_trigger.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' +
-                            node.parent.parent.text).replace(
-                            '#trigger_name#', node.text));
-                }
-            }]
-        },
-        'cm_partitions': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            }, {
-                text: 'Create Partition',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Partition', node.tree
-                        .tag.create_partition.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' + node.parent
-                            .text));
-                }
-            }, {
-                text: 'Doc: Partitions',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Partitions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/ddl-partitioning.html');
-                }
-            }]
-        },
-        'cm_partition': {
-            elements: [{
-                text: 'No Inherit Partition',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('No Inherit Partition', node
-                        .tree.tag.noinherit_partition.replace(
-                            '#table_name#', node.tree.tag.v_username + '.' +
-                            node.parent.parent.text).replace(
-                            '#partition_name#', node.text));
-                }
-            }, {
-                text: 'Drop Partition',
-                icon: 'fas cm-all fa-times',
-                action: function(node) {
-                    tabSQLTemplate('Drop Partition', node.tree.tag
-                        .drop_partition.replace(
-                            '#partition_name#', node.text));
-                }
-            }]
-        },*/
-        'cm_functions': {
-            elements: [/*, {
-                text: 'Doc: Functions',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Functions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/sql-createfunction.html');
-                }
-            }*/]
-        },
-        'cm_procedures': {
-            elements: [/*, {
-                text: 'Doc: Procedures',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Functions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/sql-createfunction.html');
-                }
-            }*/]
-        },
-        /*'cm_triggerfunctions': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            }, {
-                text: 'Create Trigger Function',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Trigger Function',
-                        node.tree.tag.create_triggerfunction
-                        .replace('#schema_name#', node.tree.tag.v_username));
-                }
-            }, {
-                text: 'Doc: Trigger Functions',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Trigger Functions',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/plpgsql-trigger.html');
-                }
-            }]
-        },
-        'cm_triggerfunction': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            }, {
-                text: 'Edit Trigger Function',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    v_connTabControl.tag.createQueryTab(
-                        node.text);
-                    getTriggerFunctionDefinitionOracle(node);
-                }
-            }, {
-                text: 'Drop Trigger Function',
-                icon: 'fas cm-all fa-times',
-                action: function(node) {
-                    tabSQLTemplate('Drop Trigger Function',
-                        node.tree.tag.drop_triggerfunction.replace(
-                            '#function_name#', node.tag.id)
-                    );
-                }
-            }]
-        },
-        'cm_mviews': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            }, {
-                text: 'Create Mat. View',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Create Materialized View',
-                        node.tree.tag
-                        .create_mview.replace(
-                            '#schema_name#', node.tree.tag.v_username
-                        ));
-                }
-            }, {
-                text: 'Doc: Mat. Views',
-                icon: 'fas cm-all fa-globe-americas',
-                action: function(node) {
-                    v_connTabControl.tag.createWebsiteTab(
-                        'Documentation: Materialized Views',
-                        'https://www.postgresql.org/docs/' +
-                        getMajorVersionOracle(node.tree.tag.version) +
-                        '/static/sql-creatematerializedview.html'
-                    );
-                }
-            }]
-        },
-        'cm_mview': {
-            elements: [{
-                text: 'Refresh',
-                icon: 'fas cm-all fa-sync-alt',
-                action: function(node) {
-                    if (node.childNodes == 0)
-                        refreshTreeOracle(node);
-                    else {
-                        node.collapseNode();
-                        node.expandNode();
-                    }
-                }
-            }, {
-                text: 'Query Data',
-                icon: 'fas cm-all fa-search',
-                action: function(node) {
-
-                    var v_table_name = '';
-                    v_table_name = node.tree.tag.v_username + '.' + node.text;
-
-                    v_connTabControl.tag.createQueryTab(
-                        node.text);
-
-                    v_connTabControl.selectedTab.tag.tabControl
-                        .selectedTab.tag.sel_filtered_data.value =
-                        1;
-
-                    v_connTabControl.selectedTab.tag.tabControl
-                        .selectedTab.tag.editor.setValue(
-                            '-- Querying Data\nselect t.*\nfrom ' +
-                            v_table_name + ' t');
-                    v_connTabControl.selectedTab.tag.tabControl
-                        .selectedTab.tag.editor.clearSelection();
-                    renameTabConfirm(v_connTabControl.selectedTab
-                        .tag.tabControl.selectedTab, node.text
-                    );
-
-                    //minimizeEditor();
-
-                    querySQL(0);
-                }
-            }, {
-                text: 'Edit Mat. View',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    v_connTabControl.tag.createQueryTab(
-                        node.text);
-                    getMaterializedViewDefinitionOracle(
-                        node);
-                }
-            }, {
-                text: 'Refresh Mat. View',
-                icon: 'fas cm-all fa-edit',
-                action: function(node) {
-                    tabSQLTemplate('Refresh Materialized View',
-                        node.tree.tag.refresh_mview
-                        .replace('#view_name#', node.tree.tag.v_username + '.' + node.text)
-                    );
-                }
-            }, {
-                text: 'Drop Mat. View',
-                icon: 'fas cm-all fa-times',
-                action: function(node) {
-                    tabSQLTemplate('Drop Materialized View',
-                        node.tree.tag.drop_mview
-                        .replace('#view_name#', node.tree.tag.v_username + '.' + node.text)
-                    );
-                }
-            }]
-        },*/
-    };
-    const div_tree = document.getElementById(div);
-    div_tree.innerHTML =
-      '<tree-oracle :database-index="databaseIndex" :tab-id="tabId"></tree-oracle>';
-    const app = createApp({
-      components: {
-        "tree-oracle": TreeOracle
-      },
-      data() {
-        return {
-          databaseIndex:
-            window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-          tabId: window.v_connTabControl.selectedTab.id,
-        };
-      },
-    });
-    app.mount(`#${div}`);
-
-    // save tree referece in the tab, it will be later used to destroy tree instance on tab close
-    v_connTabControl.selectedTab.tree = app
-
-    let tab_tag = v_connTabControl.selectedTab.tag
-    addDbTreeHeader(tab_tag.divDetails, tab_tag.tab_id, tab_tag.selectedDatabase, tab_tag.selectedDatabaseIndex)
-}
+import { tabsStore } from "../stores/stores_initializer";
 
 
 /// <summary>
@@ -1213,18 +722,24 @@ function TemplateSelectOracle(p_schema, p_table) {
 
     execAjax('/template_select_oracle/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-"p_tab_id": v_connTabControl.selectedTab.id,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_table": p_table,
             "p_schema": p_schema
         }),
         function(p_return) {
-            v_connTabControl.tag.createQueryTab(
-                p_schema + '.' + p_table);
+            let tab_name = `${p_schema}.${p_table}`
 
-            let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-            emitter.emit(`${tab.id}_run_query`, p_return.v_data.v_template)
+            emitter.emit(
+                `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                {
+                    name: tab_name,
+                    initialQuery:  p_return.v_data.v_template,
+                }
+                );
+            setTimeout(() => {
+                emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
+            }, 200)
         },
         function(p_return) {
             showToast("error", p_return.v_data)
@@ -1241,9 +756,8 @@ function TemplateInsertOracle(p_schema, p_table) {
 
     execAjax('/template_insert_oracle/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-"p_tab_id": v_connTabControl.selectedTab.id,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_table": p_table,
             "p_schema": p_schema
         }),
@@ -1267,9 +781,8 @@ function TemplateUpdateOracle(p_schema, p_table) {
 
     execAjax('/template_update_oracle/',
         JSON.stringify({
-            "p_database_index": v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-"p_tab_id": v_connTabControl.selectedTab.id,
-            "p_tab_id": v_connTabControl.selectedTab.id,
+            "p_database_index": tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+            "p_tab_id": tabsStore.selectedPrimaryTab.id,
             "p_table": p_table,
             "p_schema": p_schema
         }),
@@ -1295,46 +808,9 @@ function TemplateUpdateOracle(p_schema, p_table) {
     return tmp.join('.')
 }*/
 
-function oracleTerminateBackendConfirm(pid) {
-    axios.post(
-        "/kill_backend_oracle/", {
-            database_index: v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-            tab_id: v_connTabControl.selectedTab.id,
-            pid: pid,
-        }
-    )
-    .then((resp) => {
-        refreshMonitoring();
-    })
-    .catch((error) => {
-        if (error.response.data?.password_timeout) {
-            showPasswordPrompt(
-              v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-              function () {
-                oracleTerminateBackendConfirm(pid);
-              },
-              null,
-              error.response.data.data
-            );
-          } else {
-            showToast("error", error.response.data.data)
-          }
-    })
-}
-
-function oracleTerminateBackend(row) {
-    let pid = `${row.SID},${row['SERIAL#']}`;
-    createMessageModal(`Are you sure you want to terminate session ${pid}?`,
-        function() {
-            oracleTerminateBackendConfirm(pid);
-        });
-
-}
 
 export {
-  getTreeOracle,
   TemplateUpdateOracle,
   TemplateInsertOracle,
   TemplateSelectOracle,
-  oracleTerminateBackend
 };

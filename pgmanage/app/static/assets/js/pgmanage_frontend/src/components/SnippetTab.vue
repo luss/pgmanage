@@ -1,63 +1,64 @@
 <template>
-  <div ref="editor" class="snippet-editor"></div>
+  <div>
+    <div ref="editor" class="snippet-editor"></div>
 
-  <div ref="bottomToolbar" class="row px-2">
-    <div class="tab_actions tab-actions col-12">
-      <button
-        data-testid="snippet-tab-indent-button"
-        class="btn btn-secondary"
-        title="Indent SQL"
-        @click="indentSQL"
-      >
-        <i class="fas fa-indent mr-2"></i>Indent
-      </button>
-      <button
-        data-testid="snippet-tab-save-button"
-        class="btn btn-primary"
-        title="Save"
-        @click="saveSnippetText"
-      >
-        <i class="fas fa-save mr-2"></i>Save
-      </button>
-      <button
-        data-testid="snippet-tab-open-file-button"
-        class="btn btn-primary"
-        title="Open file"
-        @click="openFileManagerModal"
-      >
-        <i class="fas fa-folder-open mr-2"></i>Open file
-      </button>
+    <div ref="bottomToolbar" class="row px-2">
+      <div class="tab-actions col-12">
+        <button
+          data-testid="snippet-tab-indent-button"
+          class="btn btn-secondary"
+          title="Indent SQL"
+          @click="indentSQL"
+        >
+          <i class="fas fa-indent mr-2"></i>Indent
+        </button>
+        <button
+          data-testid="snippet-tab-save-button"
+          class="btn btn-primary"
+          title="Save"
+          @click="saveSnippetText"
+        >
+          <i class="fas fa-save mr-2"></i>Save
+        </button>
+        <button
+          data-testid="snippet-tab-open-file-button"
+          class="btn btn-primary"
+          title="Open file"
+          @click="openFileManagerModal"
+        >
+          <i class="fas fa-folder-open mr-2"></i>Open file
+        </button>
 
-      <button
-        :disabled="fileSaveDisabled"
-        data-testid="snippet-tab-save-file-button"
-        class="btn btn-primary"
-        title="Save to File"
-        @click="saveFile"
-      >
-        <i class="fas fa-download mr-2"></i>Save to File
-      </button>
-
+        <button
+          :disabled="fileSaveDisabled"
+          data-testid="snippet-tab-save-file-button"
+          class="btn btn-primary"
+          title="Save to File"
+          @click="saveFile"
+        >
+          <i class="fas fa-download mr-2"></i>Save to File
+        </button>
+      </div>
     </div>
+    <FileManager ref="fileManager" />
   </div>
-  <FileManager ref="fileManager" />
 </template>
 
 <script>
 import { format } from "sql-formatter";
 import { emitter } from "../emitter";
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 import {
-  buildSnippetContextMenuObjects,
-  saveSnippetTextConfirm,
-} from "../tree_context_functions/tree_snippets";
-import { snippetsStore, settingsStore } from "../stores/stores_initializer";
+  snippetsStore,
+  settingsStore,
+  tabsStore,
+} from "../stores/stores_initializer";
 import FileManager from "./FileManager.vue";
 import { setupAceDragDrop } from "../file_drop";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
-import { createMessageModal } from "../notification_control";
-
+import { createMessageModal, showToast } from "../notification_control";
 
 export default {
   name: "SnippetTab",
@@ -87,13 +88,18 @@ export default {
         language: "sql",
       },
       heightSubtract: 100 + settingsStore.fontSize,
-      fileSaveDisabled: false
+      fileSaveDisabled: true,
     };
   },
   computed: {
     editorSize() {
       return `calc(100vh - ${this.heightSubtract}px)`;
     },
+  },
+  beforeMount() {
+    if (!!this.snippet.id) {
+      this.fileSaveDisabled = false;
+    }
   },
   mounted() {
     this.setupEditor();
@@ -102,6 +108,9 @@ export default {
   },
   unmounted() {
     this.clearEvents();
+  },
+  updated() {
+    this.handleResize();
   },
   methods: {
     setupEditor() {
@@ -124,9 +133,8 @@ export default {
       this.editor.commands.bindKey("Ctrl-Down", null);
 
       this.editor.on("change", () => {
-        this.fileSaveDisabled = !this.editor.getValue()
+        this.fileSaveDisabled = !this.editor.getValue();
       });
-      this.fileSaveDisabled = !!!this.editor.getValue()
 
       this.editor.focus();
       setupAceDragDrop(this.editor);
@@ -151,6 +159,10 @@ export default {
           action.after(() => {
             this.editor.setFontSize(settingsStore.fontSize);
             this.handleResize();
+          });
+        } else if (action.name === "setEditorTheme") {
+          action.after(() => {
+            this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
           });
         }
       });
@@ -179,17 +191,21 @@ export default {
       }
     },
     saveSnippetText(event) {
-      // TODO: this old callback is needed here to track whether the tab is opened or not from outside
-      // Change this when snippets tab management is implemented
       let callback = function (return_object) {
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.snippetObject =
+        let snippetPanel = tabsStore.tabs.find(
+          (tab) => tab.name === "Snippets"
+        );
+        snippetPanel.metaData.selectedTab.metaData.snippetObject =
           return_object;
-        v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_title_span.innerHTML =
-          return_object.name;
+        snippetPanel.metaData.selectedTab.name = return_object.name;
       };
 
       if (this.snippet.id !== null) {
-        saveSnippetTextConfirm(this.snippet, this.editor.getValue(), callback);
+        emitter.emit("save_snippet_text_confirm", {
+          saveObject: this.snippet,
+          text: this.editor.getValue(),
+          callback: callback,
+        });
       } else {
         ContextMenu.showContextMenu({
           theme: "pgmanage",
@@ -216,7 +232,7 @@ export default {
       this.heightSubtract = top + 30 * (settingsStore.fontSize / 10);
     },
     openFileManagerModal() {
-      const editorContent = this.editor.getValue()
+      const editorContent = this.editor.getValue();
       if (!!editorContent) {
         createMessageModal(
           "Are you sure you wish to discard the current changes?",
@@ -230,40 +246,45 @@ export default {
       }
     },
     async saveFile() {
-      const today = new Date
-      const nameSuffix = this.$props.snippet?.name ? this.$props.snippet?.name : `${today.getHours()}${today.getMinutes()}`
+      const today = new Date();
+      const nameSuffix = this.$props.snippet?.name
+        ? this.$props.snippet?.name
+        : `${today.getHours()}${today.getMinutes()}`;
 
-      const file = new File([this.editor.getValue()], `pgmanage-snippet-${nameSuffix}.sql`, {
-        type: "application/sql",
-      })
-
-      if(window.showSaveFilePicker) {
-        try {
-          const handle = await showSaveFilePicker(
-            { suggestedName: file.name,
-              types: [{
-                description: 'SQL Script',
-                accept: {
-                  'application/sql': ['.sql'],
-                }
-              }],
-            }
-          )
-
-          const writable = await handle.createWritable()
-          await writable.write(file)
-          writable.close()
-        } catch(e) {
-          console.log(e)
+      const file = new File(
+        [this.editor.getValue()],
+        `pgmanage-snippet-${nameSuffix}.sql`,
+        {
+          type: "application/sql",
         }
+      );
 
-      }
-      else {
-        const downloadLink = document.createElement("a")
-        downloadLink.href = URL.createObjectURL(file)
-        downloadLink.download= file.name
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await showSaveFilePicker({
+            suggestedName: file.name,
+            types: [
+              {
+                description: "SQL Script",
+                accept: {
+                  "application/sql": [".sql"],
+                },
+              },
+            ],
+          });
+
+          const writable = await handle.createWritable();
+          await writable.write(file);
+          writable.close();
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        const downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(file);
+        downloadLink.download = file.name;
         downloadLink.click();
-        setTimeout(() => URL.revokeObjectURL( downloadLink.href ), 60000 )
+        setTimeout(() => URL.revokeObjectURL(downloadLink.href), 60000);
       }
     },
   },

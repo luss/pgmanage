@@ -26,8 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { toggleSnippetPanel } from "./panel_functions/outer_snippet_panel";
+import { emitter } from "./emitter";
 import { listUsers, newUser } from "./users";
+import { tabsStore } from "./stores/stores_initializer";
 
 function startTutorial(p_tutorial_name) {
   if (v_omnis.omnis_ui_assistant) {
@@ -51,10 +52,8 @@ function startTutorial(p_tutorial_name) {
   // Setting the tutorial to the default example tutorial `main`.
   var v_tutorial_name = (p_tutorial_name) ? p_tutorial_name : 'main';
   var v_button_inner_query_attr = ' disabled title="Open a new connection first." ';
-  if (v_connTabControl.selectedTab.tag.tabControl) {
-    if (v_connTabControl.selectedTab.tag.tabControl.tabList.length > 0) {
+  if (!!tabsStore.selectedPrimaryTab?.metaData?.secondaryTabs?.length) {
       v_button_inner_query_attr = '';
-    }
   }
   var v_button_inner_query =
   '<li class="mb-2">' +
@@ -378,7 +377,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         // p_callback_after_update_start: function() {setTimeout(function(){var v_target = document.getElementById(v_connTabControl.snippet_tag.tabControl.selectedTab.tag.editorDivId);},50);},
-        p_callback_start: function() {toggleSnippetPanel();},
+        p_callback_start: function() { emitter.emit("toggle_snippet_panel");},
         p_message: `
         <p>Inside this tab you can create and edit a snippet.</p>
         <p>Go ahead and try to create some simple snippet, i.e:</p>
@@ -386,7 +385,7 @@ function startTutorial(p_tutorial_name) {
         <p>Then experiment clicking on the <strong>indent button</strong> below the editor, and then <strong>next</strong>.</p>
         `,
         p_next_button: true,
-        p_target: function() {var v_target = document.getElementById('a_' + v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_id); return v_target},
+        p_target: function() {var v_target = document.querySelector('.omnidb__snippets__div-right a[draggable="false"]'); return v_target},
         p_title: 'Snippets editor',
         p_update_delay: 600
       },
@@ -396,7 +395,7 @@ function startTutorial(p_tutorial_name) {
         <p>Now go ahead and click <strong>save</strong></p>
         `,
         p_next_button: true,
-        p_target: function() {var v_target = document.getElementById('a_' + v_connTabControl.snippet_tag.tabControl.selectedTab.tag.tab_id); return v_target},
+        p_target: function() {var v_target =  document.querySelector('.omnidb__snippets__div-right a[draggable="false"]'); return v_target},
         p_title: 'Indenting'
       },
       {
@@ -405,7 +404,7 @@ function startTutorial(p_tutorial_name) {
         <p>The tree on the left allows you to easily access it by double-clicking on the snippet.</p>
         `,
         p_next_button: false,
-        p_target: function() {var v_target = document.getElementById(v_connTabControl.snippet_tag.divTree.getAttribute('id')); return v_target},
+        p_target: function() {var v_target = document.querySelector(".snippets-tree > .vue-power-tree-root"); return v_target},
         p_title: 'Saved Snippets',
         p_update_delay: 600
       }
@@ -427,8 +426,8 @@ function startTutorial(p_tutorial_name) {
         </ol>
         <p>Now you can close this walkthrough and open a new connection.</p>
         `,
-        p_position: function() {var v_target = v_connTabControl.tabList[v_connTabControl.tabList.length - 1].elementA; return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
-        p_target: function(){var v_target = v_connTabControl.tabList[v_connTabControl.tabList.length - 1].elementA; return v_target;},
+        p_position: function() {var v_target = document.getElementById(tabsStore.selectedPrimaryTab.id); return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
+        p_target: function(){var v_target = document.getElementById(tabsStore.selectedPrimaryTab.id); return v_target;},
         p_title: 'Selecting a Connection'
       }
     ],
@@ -437,7 +436,7 @@ function startTutorial(p_tutorial_name) {
         p_message: `
         <p>This identifies the database you are connected with:</p>
         `,
-        p_target: function(){var v_target = v_connTabControl.selectedTab.tag.divDetails; return v_target;},
+        p_target: function(){var v_target = document.querySelector('div[class*="connection-details"]'); return v_target;},
         p_title: 'Current Connection'
       },
       {
@@ -453,8 +452,8 @@ function startTutorial(p_tutorial_name) {
           </li>
         </ul>
         `,
-        p_position: function() {var v_target = v_connTabControl.selectedTab.tag.divTree; return { x:v_target.getBoundingClientRect().right, y:v_target.getBoundingClientRect().top }},
-        p_target: function(){var v_target = v_connTabControl.selectedTab.tag.divTree; return v_target;},
+        p_position: function() {var v_target = document.querySelector('div.database-tree'); return { x:v_target.getBoundingClientRect().right, y:v_target.getBoundingClientRect().top }},
+        p_target: function(){var v_target = document.querySelector('div.database-tree'); return v_target;},
         p_title: 'Database Tree'
       },
       {
@@ -464,7 +463,7 @@ function startTutorial(p_tutorial_name) {
         <p>To minimize queries, these only run when one of these tabs is visible.</p>
         <p><strong>Recommendation</strong>: Only open the property/ddl when you need to update this info.</p>
         `,
-        p_target: function(){var v_target = v_connTabControl.selectedTab.tag.divTreeTabs; return v_target;},
+        p_target: function(){var v_target = document.querySelector('div[class*="tree-tabs"]'); return v_target;},
         p_title: 'Properties / DDL'
       },
       {
@@ -485,7 +484,7 @@ function startTutorial(p_tutorial_name) {
         </li>
         </ol>
         `,
-        p_target: function(){var v_target = v_connTabControl.selectedTab.tag.tabControl.tabList[0].elementA; return v_target;},
+        p_target: function(){var v_target = document.querySelector(`a#${tabsStore.selectedPrimaryTab.metaData.secondaryTabs[0]?.id}`); return v_target;},
         p_title: 'Inner Tabs'
       },
       {
@@ -494,8 +493,8 @@ function startTutorial(p_tutorial_name) {
         <p>For example, you can <span class="bg-info rounded px-1 text-white">run</span> a query, <span class="bg-info rounded px-1 text-white">cancel</span> an ongoing query, <span class="bg-info rounded px-1 text-white">fetch more</span>, <span class="bg-info rounded px-1 text-white">explain</span>, <span class="bg-info rounded px-1 text-white">explain analyze</span>.</p>
         <p>If you navigate the Tree on the left to find a table and use the action Query Table from it's context menu, the editor will autofill and the run query will be issued.</p>
         `,
-        p_position: function() {var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.tab-actions')[0]; return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
-        p_target: function(){var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.tab-actions')[0]; return v_target;},
+        p_position: function() {var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
+        p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
         p_title: 'Actions Panel'
       },
       {
@@ -515,12 +514,12 @@ function startTutorial(p_tutorial_name) {
         </ol>
         `,
         p_position: function() {
-          let v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.result-div')[0];
+          let v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .result-div`);
           if (!v_target) {
-            v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.ace_editor')[0]
+            v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .ace-editor`);
           }
           return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y + 40}},
-        p_target: function(){var v_target = $(v_connTabControl.selectedTab.tag.tabControl.selectedTab.elementDiv).find('.tab-actions')[0]; return v_target;},
+        p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
         p_title: 'Query Result'
       }
     ]

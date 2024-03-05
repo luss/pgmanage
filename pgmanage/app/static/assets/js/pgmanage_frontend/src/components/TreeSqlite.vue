@@ -28,10 +28,8 @@ import {
 } from "../tree_context_functions/tree_sqlite";
 
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { getProperties, clearProperties } from "../properties";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
-import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "TreeSqlite",
@@ -75,14 +73,19 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab();
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`)
             },
           },
           {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createSchemaEditorTab(this.selectedNode, "create", "sqlite3");
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
+                node: this.selectedNode,
+                mode: "create",
+                dialect: "sqlite3"
+              })
+              
             },
           },
         ],
@@ -103,10 +106,10 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.title,
-                    null
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
+                    table: this.selectedNode.title,
+                    schema: null
+                  })
                 },
               },
               {
@@ -146,7 +149,11 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  createSchemaEditorTab(this.selectedNode, "alter", "sqlite3");
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
+                    node: this.selectedNode,
+                    mode: "alter",
+                    dialect: "sqlite3"
+                  })
                 },
               },
               {
@@ -371,13 +378,16 @@ export default {
         "unique",
       ];
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_sqlite/", {
-          table: table,
-          object: node.title,
-          type: node.data.type,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            table: table,
+            object: node.title,
+            type: node.data.type,
+          },
+          view: "/get_properties_sqlite/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsSqlite(node) {

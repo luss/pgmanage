@@ -28,7 +28,6 @@ SOFTWARE.
 import { createRequest } from "../long_polling";
 import { queryRequestCodes } from "../constants";
 import { checkDebugStatus } from "../debug";
-import { createTabControl } from "../tabs";
 
 let createDebuggerTabFunction = function(p_function) {
   // Removing last tab of the inner tab list.
@@ -427,5 +426,3 @@ let createDebuggerTabFunction = function(p_function) {
 
   v_editor.focus();
 }
-
-export { createDebuggerTabFunction }

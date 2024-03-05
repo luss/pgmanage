@@ -1,7 +1,6 @@
 import axios from 'axios'
 import ShortUniqueId from 'short-unique-id';
 
-import { terminalReturn } from "./terminal";
 import { queryResponseCodes } from "./constants";
 import { debugResponse } from "./debug";
 import { showPasswordPrompt } from "./passwords";
@@ -117,7 +116,7 @@ function polling_response(message) {
     }
     case parseInt(queryResponseCodes.TerminalResult): {
       if (context) {
-        terminalReturn(message, context);
+          context.callback(message, context)
       }
       break;
     }
@@ -166,26 +165,26 @@ function polling_response(message) {
 }
 
 function QueryPasswordRequired(p_context, p_message) {
-	if (p_context.tab_tag.mode=='query') {
+	if (p_context.tab.metaData.mode=='query') {
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {
         p_context.passwordSuccessCallback(p_context)
 			},
 			function() {
-        p_context.passwordFailCalback(p_context)
+        p_context.passwordFailCalback()
 			},
 			p_message
 		);
 	}
-	else if (p_context.tab_tag.mode=='console') {
+	else if (p_context.tab.metaData.mode=='console') {
 		showPasswordPrompt(
 			p_context.database_index,
 			function() {
         p_context.passwordSuccessCallback(p_context)
 			},
 			function() {
-        p_context.passwordFailCalback(p_context.tab_tag)
+        p_context.passwordFailCalback()
 			},
 			p_message
 		);
@@ -219,6 +218,7 @@ function createRequest(message_code, message_data, context) {
       }
       createContext(ctx)
       context_code = ctx.code
+      context.code = context_code
 		}
     // if context code is passed do not create a new context
 		else {

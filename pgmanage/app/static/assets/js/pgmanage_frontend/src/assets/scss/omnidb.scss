@@ -173,7 +173,7 @@ a:not([href]):not([tabindex]){
 
 /* TAB MENU -- SECONDARY */
 .omnidb__tab-menu--secondary {
-  padding-right: 80px;
+  padding-right: 40px;
 }
 
 .omnidb__tab-menu--secondary .omnidb__tab-menu__link-icon {
@@ -523,9 +523,9 @@ button.close {
 }
 
 .omnidb__tree-tabs {
-  overflow: hidden;
+  // overflow: hidden;
   transition: 0.35s;
-  height: 2.2rem;
+  // height: 2.2rem;
 }
 .omnidb__tree-tabs--not-in-view {
   height: 2.2rem;

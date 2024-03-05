@@ -91,14 +91,14 @@
 </template>
 
 <script>
-import {connectionsStore} from '../stores/connections.js'
 import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue'
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import { emitter } from '../emitter'
-import { settingsStore } from "../stores/stores_initializer";
+import { tabsStore } from '../stores/stores_initializer'
+import { settingsStore, connectionsStore } from "../stores/stores_initializer";
 
 export default {
   name: 'ConnectionsModal',
@@ -284,7 +284,8 @@ export default {
             // Create existing tabs
             let currentParent = null;
 
-            response.data.existing_tabs.forEach((tab) => {
+            response.data.existing_tabs.forEach((tab, index) => {
+              setTimeout(() => {
               let tooltip_name = "";
               if (currentParent !== tab.index) {
                 startLoading();
@@ -303,24 +304,35 @@ export default {
                     tooltip_name +=
                       `<div class="mb-1">${conn.details2}</div>`;
                   }
+                  emitter.emit(`${tabsStore.id}_create_conn_tab`, (
+                    {
+                      index: tab.index, 
+                      createInitialTabs: false,
+                      name: conn.alias,
+                      tooltipName: tooltip_name
+                    }))
 
-                  window.v_connTabControl.tag.createConnTab(
-                    tab.index,
-                    false,
-                    conn.alias,
-                    tooltip_name
-                  );
-                  window.v_connTabControl.tag.createConsoleTab();
-
+                  setTimeout(() => {
+                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_console_tab`)
+                  }, 100) 
                 }
 
               }
               currentParent = tab.index
-              window.v_connTabControl.tag.createQueryTab(tab.title, tab.tab_db_id, tab.database_name);
-              let selectedTab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-              emitter.emit(`${selectedTab.id}_copy_to_editor`, tab.snippet)
+              setTimeout(() => {
+                emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: tab.title,
+                    tabDbId: tab.tab_db_id,
+                    tabDbName: tab.database_name,
+                    initialQuery: tab.snippet,
+                  }
+                );
+              }, 100);
+              endLoading();
+            }, 200 * index);
             })
-            endLoading();
           }
         })
         .catch((response) => {

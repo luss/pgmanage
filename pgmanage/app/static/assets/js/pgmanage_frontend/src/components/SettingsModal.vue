@@ -195,14 +195,12 @@
 
 <script>
 import { refreshHeights } from '../workspace'
-import { terminalRun } from '../terminal'
 import { default_shortcuts } from '../shortcuts'
-import { changeTheme } from '../header_actions'
 import axios from 'axios'
 import { showAlert, showToast } from '../notification_control'
 import moment from 'moment'
 import { emitter } from '../emitter'
-import { settingsStore } from '../stores/stores_initializer'
+import { settingsStore, tabsStore } from '../stores/stores_initializer'
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, maxLength } from '@vuelidate/validators'
@@ -329,112 +327,112 @@ export default {
     this.shortcutObject.actions = {
       shortcut_run_query: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_query`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
           }
-          else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console')
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_console`, false)
-          else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'edit')
+          else if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'console')
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_console`, false)
+          else if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode == 'edit')
             console.log('Not implemented') //TODO: implement shortcut functionality for new edit data
         }
-        else if (window.v_connTabControl.selectedTab.tag.mode == 'outer_terminal')
-          terminalRun();
       },
       shortcut_run_selection: function () {
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_selection`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_selection`)
           }
         }
       },
       shortcut_explain: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_explain`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode == 'query') {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_explain`)
           }
         }
       },
       shortcut_explain_analyze: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_explain_analyze`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_explain_analyze`)
           }
         }
       },
       shortcut_cancel_query: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_cancel_query`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_cancel_query`)
           }
         }
       },
       shortcut_indent: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_indent_sql`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_indent_sql`)
           }
         }
 
       },
       shortcut_new_inner_tab: function () {
-
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection' || window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          window.v_connTabControl.tag.createQueryTab();
-        }
-        else if (window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          // check this
-          let tabControl = window.v_connTabControl.selectedTab.tag.tabControl;
-          tabControl.tabList[tabControl.tabList.length - 1].elementLi.click();
+        if (['snippets', 'connection'].includes(tabsStore.selectedPrimaryTab.metaData.mode)) {
+          emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_query_tab`)
         }
       },
       shortcut_remove_inner_tab: function () {
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          let tab = window.v_connTabControl.selectedTab.tag.tabControl.selectedTab;
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          let tab = tabsStore.selectedPrimaryTab.metaData.selectedTab
           if (tab) {
-            if (tab.closeFunction && tab.closeFunction != null) {
+            if (tab.closeFunction && tab.closeFunction !== null) {
               tab.closeFunction(null, tab);
             }
             else {
-              window.v_connTabControl.selectedTab.tag.tabControl.removeTab(tab);
+              tabsStore.removeTab(tab);
             }
           }
         }
       },
       shortcut_left_inner_tab: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection' || window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          let tabControl = window.v_connTabControl.selectedTab.tag.tabControl;
-          let actualIndex = tabControl.tabList.indexOf(tabControl.selectedTab);
+        if (['snippets', 'connection'].includes(tabsStore.selectedPrimaryTab.metaData.mode)) {
+          let secondaryTabs = tabsStore.selectedPrimaryTab.metaData.secondaryTabs;
+          let selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab
+          let actualIndex = secondaryTabs.indexOf(selectedTab);
 
-          if (actualIndex == 0) //avoid triggering click on '+' tab
-            tabControl.tabList[tabControl.tabList.length - 2].elementA.click();
-          else
-            tabControl.tabList[actualIndex - 1].elementA.click();
+          if (actualIndex === -1) return
+
+          if (actualIndex === 0) {
+            tabsStore.selectTab(secondaryTabs[secondaryTabs.length - 1])
+          } else {
+            tabsStore.selectTab(secondaryTabs[actualIndex - 1])
+          }
         }
 
       },
       shortcut_right_inner_tab: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          let tabControl = window.v_connTabControl.selectedTab.tag.tabControl;
-          let actualIndex = tabControl.tabList.indexOf(tabControl.selectedTab);
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          let secondaryTabs = tabsStore.selectedPrimaryTab.metaData.secondaryTabs;
+          let selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab
+          let actualIndex = secondaryTabs.indexOf(selectedTab);
 
-          if (actualIndex == tabControl.tabList.length - 2) //avoid triggering click on '+' tab
-            tabControl.tabList[0].elementA.click();
-          else
-            tabControl.tabList[actualIndex + 1].elementA.click();
+          if (actualIndex === -1) return
+
+          if (actualIndex === secondaryTabs.length - 1) {
+            tabsStore.selectTab(secondaryTabs[0])
+          } else {
+            tabsStore.selectTab(secondaryTabs[actualIndex + 1])
+          }
         }
 
       },
       shortcut_autocomplete: function (e) {
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
-              emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_show_autocomplete_results`, e)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+              emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_show_autocomplete_results`, e)
             }
         }
       }
@@ -477,6 +475,7 @@ export default {
     })
 
     this.applyThemes()
+    document.documentElement.style.fontSize = `${this.fontSize}px`
 
   },
   methods: {
@@ -569,30 +568,10 @@ export default {
         let editor = ace.edit(this);
         editor.setFontSize(`${this.fontSize}px`);
       });
-      let outer_tab_list = window.v_connTabControl.tabList;
-      for (let i = 0; i < outer_tab_list.length; i++) {
-        let outer_tab_tag = outer_tab_list[i].tag;
-        if (outer_tab_tag) {
-          let outer_tab_tag_inner_tab_control = outer_tab_tag.tabControl;
-          if (outer_tab_tag_inner_tab_control) {
-            let outer_tab_tag_inner_tab_list = outer_tab_tag_inner_tab_control.tabList;
-            for (let j = 0; j < outer_tab_tag_inner_tab_list.length; j++) {
-              let inner_tab_tag = outer_tab_tag_inner_tab_list[j].tag;
-              if (inner_tab_tag) {
-                if (inner_tab_tag.editor_console) {
-                  inner_tab_tag.editor_console.options.fontSize = Number(this.fontSize);
-                }
-              }
-            }
-          }
-        }
-      }
-
       refreshHeights();
     },
     changeTheme() {
       this.applyThemes();
-      changeTheme();
     },
     applyThemes() {
       if (this.theme === 'dark') {

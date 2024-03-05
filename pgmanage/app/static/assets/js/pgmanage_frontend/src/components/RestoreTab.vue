@@ -1,4 +1,5 @@
 <template>
+  <div class="backup-tab-scrollable p-2">
   <form>
     <div class="row">
       <div :class="(isNotServer) ? 'col-4':'col-12'" class="d-flex">
@@ -256,6 +257,7 @@
   </form>
   <UtilityJobs ref="jobs" />
   <FileManager ref="fileManager" @change-file="changeFilePath" />
+</div>
 </template>
 
 <script>
@@ -263,6 +265,7 @@ import UtilityJobs from './UtilityJobs.vue';
 import FileManager from './FileManager.vue';
 import axios from 'axios'
 import { showAlert, showToast } from '../notification_control';
+import { settingsStore } from '../stores/stores_initializer';
 
 export default {
   name: "RestoreTab",
@@ -271,6 +274,9 @@ export default {
     UtilityJobs
   },
   props: {
+    connId: String,
+    tabId: String,
+    databaseIndex: Number,
     treeNode: Object,
     restoreType: String
   },
@@ -311,8 +317,8 @@ export default {
         pigz_number_of_jobs: 'auto',
       },
       restoreOptions: {},
-      desktopMode: window.gv_desktopMode,
-      restoreTabId: window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id
+      desktopMode: settingsStore.desktopMode,
+      restoreTabId: this.tabId
     }
   },
   computed: {
@@ -363,8 +369,8 @@ export default {
   methods: {
     getRoleNames() {
       axios.post("/get_roles_postgresql/", {
-        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tab_id: window.v_connTabControl.selectedTab.id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
       })
         .then((resp) => {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
@@ -375,8 +381,8 @@ export default {
     },
     createRestore() {
       axios.post("/restore/", {
-        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tab_id: window.v_connTabControl.selectedTab.id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
         data: this.restoreOptions
       })
         .then((resp) => {
@@ -401,8 +407,8 @@ export default {
     },
     previewCommand() {
       axios.post("/restore/preview_command/", {
-        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tab_id: window.v_connTabControl.selectedTab.id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
         data: this.restoreOptions,
       })
         .then((resp) => {

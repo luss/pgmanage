@@ -1,4 +1,5 @@
 <template>
+  <div>
   <splitpanes class="default-theme console-body" horizontal @resized="onResize">
     <pane size="80">
       <div ref="console" :id="`txt_console_${tabId}`" class="omnidb__txt-console mr-2 h-100"></div>
@@ -82,6 +83,7 @@
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Console" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
   <FileManager ref="fileManager"/>
+</div>
 </template>
 
 <script>
@@ -93,8 +95,7 @@ import { showToast, createMessageModal } from "../notification_control";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { settingsStore } from "../stores/stores_initializer";
-import { connectionsStore } from "../stores/connections";
+import { settingsStore, tabsStore, connectionsStore } from "../stores/stores_initializer";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
@@ -212,7 +213,7 @@ export default {
     },
     consoleSQL(check_command = true, mode = 0) {
       const command = this.editorContent.trim();
-      let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
+      let tab = tabsStore.getSelectedSecondaryTab(this.connId)
       this.queryDuration = "";
       this.cancelled = false;
       this.longQuery = false;
@@ -242,7 +243,7 @@ export default {
             this.queryStartTime = moment().format();
 
             let context = {
-              tab_tag: tab_tag,
+              tab: tab,
               database_index: this.databaseIndex,
               start_datetime: this.queryStartTime,
               acked: false,
@@ -257,7 +258,7 @@ export default {
               },
             };
 
-            context.tab_tag.context = context;
+            context.tab.metaData.context = context
 
             createRequest(queryRequestCodes.Console, message_data, context);
 
@@ -266,10 +267,9 @@ export default {
             setTimeout(() => {
               this.longQuery = true;
             }, 1000);
-
-            //FIXME: change into event emitting later
-            tab_tag.tab_loading_span.style.visibility = "visible";
-            tab_tag.tab_check_span.style.display = "none";
+            
+            tab.metaData.isLoading = true
+            tab.metaData.isReady = false
 
             this.tabStatus = tabStatusMap.RUNNING;
           }
@@ -278,11 +278,9 @@ export default {
     },
     consoleReturn(data, context) {
       if (!this.idleState) {
-        //FIXME: get rid of it when we will have own vue tab wrapper
         if (
-          this.tabId === context.tab_tag.tabControl.selectedTab.id &&
-          this.connId ===
-          context.tab_tag.connTab.tag.connTabControl.selectedTab.id
+          this.connId === tabsStore.selectedPrimaryTab.id &&
+          this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
           this.consoleReturnRender(data, context);
         } else {
@@ -290,9 +288,8 @@ export default {
           this.data = data;
           this.context = context;
 
-          //FIXME: change into event emitting later
-          context.tab_tag.tab_loading_span.style.visibility = "hidden";
-          context.tab_tag.tab_check_span.style.display = "";
+          context.tab.metaData.isReady = true
+          context.tab.metaData.isLoading = false
         }
       }
     },
@@ -304,9 +301,8 @@ export default {
 
       this.terminal.write(data.v_data.v_data);
 
-      //FIXME: change into event emitting later
-      context.tab_tag.tab_loading_span.style.visibility = "hidden";
-      context.tab_tag.tab_check_span.style.display = "none";
+      context.tab.metaData.isLoading = false
+      context.tab.metaData.isReady = false
 
       this.fetchMoreData = data.v_data.v_show_fetch_button;
       this.queryDuration = data.v_data.v_duration;

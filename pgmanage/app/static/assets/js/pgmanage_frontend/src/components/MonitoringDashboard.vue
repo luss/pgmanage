@@ -31,19 +31,18 @@
         />
       </div>
     </div>
+    <Teleport to="body">
+      <MonitoringWidgetsModal
+        :widgets="widgets"
+        :conn-id="connId"
+        :tab-id="tabId"
+        :database-index="databaseIndex"
+        :widgets-modal-visible="monitoringModalVisible"
+        @modal-hide="monitoringModalVisible = false"
+        @toggle-widget="toggleWidget"
+      />
+    </Teleport>
   </div>
-
-  <Teleport to="body">
-    <MonitoringWidgetsModal
-      :widgets="widgets"
-      :conn-id="connId"
-      :tab-id="tabId"
-      :database-index="databaseIndex"
-      :widgets-modal-visible="monitoringModalVisible"
-      @modal-hide="monitoringModalVisible = false"
-      @toggle-widget="toggleWidget"
-    />
-  </Teleport>
 </template>
 
 <script>

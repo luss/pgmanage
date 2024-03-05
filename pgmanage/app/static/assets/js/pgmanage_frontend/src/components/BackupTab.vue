@@ -1,4 +1,5 @@
 <template>
+  <div class="backup-tab-scrollable p-2">
   <form>
       <div class="row">
         <div :class="'col-4'" class="d-flex">
@@ -310,12 +311,14 @@
   <UtilityJobs ref="jobs" />
 
   <FileManager ref="fileManager" @change-file="changeFilePath" />
+</div>
 </template>
 <script>
 import UtilityJobs from "./UtilityJobs.vue";
 import FileManager from "./FileManager.vue";
 import axios from 'axios'
 import { showAlert, showToast } from "../notification_control";
+import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: "BackupTab",
@@ -324,6 +327,9 @@ export default {
     FileManager
   },
   props: {
+    connId: String,
+    tabId: String,
+    databaseIndex: Number,
     backupType: String,
     treeNode: Object
   },
@@ -383,8 +389,8 @@ export default {
         pigz_compression_ratio: "6"
       },
       backupOptions: {},
-      desktopMode: window.gv_desktopMode,
-      backupTabId: window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id
+      desktopMode: settingsStore.desktopMode,
+      backupTabId: this.tabId
     }
   },
   computed: {
@@ -446,8 +452,8 @@ export default {
   methods: {
     getRoleNames() {
       axios.post("/get_roles_postgresql/", {
-        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tab_id: window.v_connTabControl.selectedTab.id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
       })
         .then((resp) => {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
@@ -458,8 +464,8 @@ export default {
     },
     saveBackup() {
       axios.post("/backup/", {
-        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tab_id: window.v_connTabControl.selectedTab.id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
         data: this.backupOptions,
         backup_type: this.type
       })
@@ -485,8 +491,8 @@ export default {
     },
     previewCommand() {
       axios.post("/backup/preview_command/", {
-        database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-        tab_id: window.v_connTabControl.selectedTab.id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
         data: this.backupOptions,
         backup_type: this.type
       })

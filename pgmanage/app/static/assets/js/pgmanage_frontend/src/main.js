@@ -23,6 +23,9 @@ import { getCookie } from './ajax_control.js';
 import { showAlert } from './notification_control.js';
 import moment from 'moment';
 import "tabulator-tables/dist/css/tabulator.min.css"
+import App from './App.vue'
+import { createApp } from 'vue';
+import ToastPlugin from 'vue-toast-notification';
 
 window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
@@ -41,3 +44,11 @@ axios.interceptors.response.use(response => {
 });
 
 moment.defaultFormat = date_format;
+
+
+const app = createApp(App)
+
+app.use(ToastPlugin, {
+  duration: 0
+})
+app.mount("#app");

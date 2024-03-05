@@ -1,5 +1,7 @@
 import { useSnippetsStore } from "./snippets";
 import { useSettingsStore } from "./settings";
+import { useTabsStore } from "./tabs";
+import { useConnectionsStore } from "./connections";
 import { createPinia, setActivePinia } from "pinia";
 
 const pinia = createPinia();
@@ -9,4 +11,8 @@ const snippetsStore = useSnippetsStore();
 
 const settingsStore = useSettingsStore();
 
-export { snippetsStore, settingsStore };
+const tabsStore = useTabsStore();
+
+const connectionsStore = useConnectionsStore();
+
+export { snippetsStore, settingsStore, tabsStore, connectionsStore };

@@ -82,124 +82,8 @@ $(function() {
 	//var v_configTabControl = createTabControl('config_tabs',0,null);
 	//v_configTabControl.selectTabIndex(0);
 
-	//setting font size of body
-	document.getElementsByTagName('html')[0].style['font-size'] = v_font_size + 'px';
-
 });
 
-function adjustChartTheme(p_chart) {
-	var v_chart_font_color = '#666666';
-	var v_chart_grid_color = "rgba(0, 0, 0, 0.1)";
-
-	if (settingsStore.theme=='light') {
-		v_chart_font_color = '#666666';
-		v_chart_grid_color = "rgba(0, 0, 0, 0.1)";
-	}
- 	else {
-		v_chart_font_color = '#DCDDDE';
-		v_chart_grid_color = "rgba(100, 100, 100, 0.3)";
-	}
-
-	try {
-		p_chart.legend.options.labels.fontColor = v_chart_font_color;
-		p_chart.options.title.fontColor = v_chart_font_color;
-		p_chart.scales["y-axis-0"].options.gridLines.color = v_chart_grid_color;
-		p_chart.scales["x-axis-0"].options.gridLines.color = v_chart_grid_color;
-		p_chart.scales["y-axis-0"].options.ticks.minor.fontColor = v_chart_font_color;
-		p_chart.scales["y-axis-0"].options.scaleLabel.fontColor = v_chart_font_color;
-		p_chart.scales["x-axis-0"].options.ticks.minor.fontColor = v_chart_font_color;
-		p_chart.scales["x-axis-0"].options.scaleLabel.fontColor = v_chart_font_color;
-	}
-	catch(err) {
-	}
-	p_chart.update();
-}
-
-function adjustGraphTheme(p_graph) {
-	var v_font_color = '#666666';
-
-	if (settingsStore.theme=='light') {
-		v_font_color = '#666666';
-	}
-	else {
-		v_font_color = '#DCDDDE';
-	}
-
-	try {
-		p_graph.style().selector('node').style('color', v_font_color);
-		p_graph.style().selector('edge').style('color', v_font_color);
-		p_graph.nodes().updateStyle();
-		p_graph.edges().updateStyle();
-	}
-	catch(err) {
-	}
-}
-
-function changeTheme() {
-	// Updating theme of all consoles.
-	try {
-		for (let i = 0; i < v_connTabControl.tabList.length; i++) {
-			var v_outer_tab = v_connTabControl.tabList[i];
-			if (v_outer_tab.tag) {
-				if (v_outer_tab.tag.tabControl) {
-					if (v_outer_tab.tag.tabControl.tabList) {
-						for (let j = 0; j < v_outer_tab.tag.tabControl.tabList.length; j++) {
-							var v_inner_tab_tag = v_outer_tab.tag.tabControl.tabList[j].tag;
-							if (v_inner_tab_tag?.editor) {
-								v_inner_tab_tag.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
-							}
-							else if (v_inner_tab_tag?.editor_console) {
-								v_inner_tab_tag.editor_console.options.theme = settingsStore.terminalTheme
-							}
-						}
-					}
-				}
-			}
-
-		}
-	}
-	catch (e) {
-		console.warn(e);
-	}
-
-	var els = document.getElementsByClassName("ace_editor");
-
-	Array.prototype.forEach.call(els, function(el) {
-			ace.edit(el).setTheme(`ace/theme/${settingsStore.editorTheme}`);
-	});
-
-	//Adjusting terminal themes
-	for (var i=0; i < v_connTabControl.tabList.length; i++) {
-		var v_tab = v_connTabControl.tabList[i];
-		if (v_tab.tag!=null) {
-			if (v_tab.tag.mode=='outer_terminal') {
-				v_tab.tag.editor_console.options.theme = settingsStore.terminalTheme
-			}
-		}
-	}
-
-}
-
-function changeFontSize(p_option) {
-	var els = document.getElementsByClassName("ace_editor");
-	v_font_size = p_option;
-
-	//Adjusting terminal themes
-	for (var i=0; i < v_connTabControl.tabList.length; i++) {
-		var v_tab = v_connTabControl.tabList[i];
-		if (v_tab.tag!=null) {
-			if (v_tab.tag.mode=='outer_terminal') {
-				v_tab.tag.editor_console.options.fontSize = p_option;
-				v_tab.tag.editor_console.fit();
-			}
-		}
-	}
-
-	Array.prototype.forEach.call(els, function(el) {
-	    // Do stuff here
-			ace.edit(el).setFontSize(Number(p_option));
-	});
-}
 
 /// <summary>
 /// Opens user config window.
@@ -390,9 +274,6 @@ function toggleUtilitiesMenu() {
 }
 
 export {
-  adjustChartTheme,
-  adjustGraphTheme,
-  changeTheme,
   cellDataModal,
   showConfigUser
 };

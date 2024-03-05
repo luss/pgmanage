@@ -27,9 +27,8 @@ import {
   TemplateSelectOracle,
 } from "../tree_context_functions/tree_oracle";
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { getProperties, clearProperties } from "../properties";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 export default {
   name: "TreeOracle",
   components: {
@@ -72,7 +71,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab(this.templates.username);
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`, this.templates.username)
             },
           },
         ],
@@ -112,10 +111,10 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.title,
-                    this.templates.username
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
+                    table: this.selectedNode.title,
+                    schema: this.templates.username
+                  })
                 },
               },
               {
@@ -458,20 +457,25 @@ export default {
             onClick: () => {
               // FIX this to use TemplateSelectMariadb
               let table_name = `${this.templates.username}.${this.selectedNode.title}`;
-
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
-
-              let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
+              
               let command = `-- Querying Data\nselect t.*\nfrom ${table_name} t`
-              emitter.emit(`${tab.id}_run_query`, command)
+
+              emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: command,
+                  }
+                );
+              setTimeout(() => {
+                emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`, command)
+              }, 200)
             },
           },
           {
             label: "Edit View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getViewDefinitionOracle(this.selectedNode);
             },
           },
@@ -511,8 +515,6 @@ export default {
             label: "Edit Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              //Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getFunctionDefinitionOracle(this.selectedNode);
             },
           },
@@ -552,8 +554,6 @@ export default {
             label: "Edit Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getProcedureDefinitionOracle(this.selectedNode);
             },
           },
@@ -737,14 +737,17 @@ export default {
       ];
 
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_oracle/", {
-          table: table,
-          object: node.title,
-          type: node.data.type,
-          schema: null,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            table: table,
+            object: node.title,
+            type: node.data.type,
+            schema: null,
+          },
+          view: "/get_properties_oracle/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsOracle(node) {
@@ -769,17 +772,10 @@ export default {
                   label: "Sessions",
                   icon: "fas cm-all fa-chart-line",
                   onClick: () => {
-                    window.v_connTabControl.tag.createMonitoringTab(
-                      "Sessions",
-                      "select * from v$session",
-                      [
-                        {
-                          icon: "fas cm-all fa-times",
-                          title: "Terminate",
-                          action: "oracleTerminateBackend",
-                        },
-                      ]
-                    );
+                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
+                      name: "Sessions",
+                      query: "select * from v$session"
+                    })
                   },
                 },
               ],
@@ -1242,9 +1238,13 @@ export default {
           schema: null,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          emitter.emit(
+              `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+              {
+                name: this.selectedNode.title,
+                initialQuery: resp.data.data,
+              }
+          );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1323,9 +1323,13 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1404,9 +1408,13 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

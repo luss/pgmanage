@@ -27,9 +27,9 @@ import {
   TemplateInsertMysql,
   TemplateUpdateMysql,
 } from "../tree_context_functions/tree_mysql";
-import { getProperties, clearProperties } from "../properties";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
+
 export default {
   name: "TreeMySQL",
   components: {
@@ -82,7 +82,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab(this.selectedNode.data.database);
+              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`, this.selectedNode.data.database)
             },
           },
           {
@@ -148,10 +148,10 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.title,
-                    this.getParentNodeDeep(this.selectedNode, 2).title
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
+                    table: this.selectedNode.title,
+                    schema: this.getParentNodeDeep(this.selectedNode, 2).title
+                  })
                 },
               },
               {
@@ -443,18 +443,25 @@ export default {
               let table_name = `${this.getParentNodeDeep(this.selectedNode, 2).title
                 }.${this.selectedNode.title}`;
 
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
-              let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
               let command = `-- Querying Data\nselect t.*\nfrom ${table_name} t`
-              emitter.emit(`${tab.id}_run_query`, command)
+              
+              emitter.emit(
+                `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                    {
+                      name: this.selectedNode.title,
+                      initialQuery: command,
+                    }
+                  );
+                
+              setTimeout(() => {
+                emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
+              }, 200)
             },
           },
           {
             label: "Edit View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getViewDefinitionMysql(this.selectedNode);
             },
           },
@@ -495,8 +502,6 @@ export default {
             label: "Edit Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              //Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getFunctionDefinitionMysql(this.selectedNode);
             },
           },
@@ -536,8 +541,6 @@ export default {
             label: "Edit Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getProcedureDefinitionMysql(this.selectedNode);
             },
           },
@@ -665,14 +668,17 @@ export default {
     getProperties(node) {
       const handledTypes = ["table", "view", "function", "procedure"];
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_mysql/", {
-          schema: this.getParentNodeDeep(node, 2).title,
-          table: null,
-          object: node.title,
-          type: node.data.type,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            schema: this.getParentNodeDeep(node, 2).title,
+            table: null,
+            object: node.title,
+            type: node.data.type,
+          },
+          view: "/get_properties_postgresql/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsMysql(node) {
@@ -708,17 +714,10 @@ export default {
                 label: "Process List",
                 icon: "fas cm-all fa-chart-line",
                 onClick: () => {
-                  window.v_connTabControl.tag.createMonitoringTab(
-                    "Process List",
-                    "select * from information_schema.processlist",
-                    [
-                      {
-                        icon: "fas cm-all fa-times",
-                        title: "Terminate",
-                        action: "mysqlTerminateBackend",
-                      },
-                    ]
-                  );
+                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
+                      name: "Process List",
+                      query: "select * from information_schema.processlist"
+                    })
                 },
               },
             ],
@@ -1162,9 +1161,13 @@ export default {
           schema: this.getParentNodeDeep(node, 2).title,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+                );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1245,9 +1248,13 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+          );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1328,9 +1335,13 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          emitter.emit(
+                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
+                  {
+                    name: this.selectedNode.title,
+                    initialQuery: resp.data.data,
+                  }
+            );
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

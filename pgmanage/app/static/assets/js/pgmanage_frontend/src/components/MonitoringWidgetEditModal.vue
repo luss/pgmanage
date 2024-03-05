@@ -390,6 +390,12 @@ export default {
     setupModal() {
       this.dataEditor = this.setupEditor(this.$refs.dataEditor);
       this.scriptEditor = this.setupEditor(this.$refs.scriptEditor);
+      settingsStore.$subscribe((mutation, state) => {
+        this.dataEditor.setTheme(`ace/theme/${state.editorTheme}`);
+        this.dataEditor.setFontSize(state.fontSize);
+        this.scriptEditor.setTheme(`ace/theme/${state.editorTheme}`);
+        this.scriptEditor.setFontSize(state.fontSize);
+      });
       this.getMonitoringWidgetList();
       if (this.widgetId) {
         this.getMonitoringWidgetDetails();

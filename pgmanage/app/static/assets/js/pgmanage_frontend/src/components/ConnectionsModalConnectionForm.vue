@@ -234,7 +234,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, between, maxLength, helpers } from '@vuelidate/validators'
 
-import {connectionsStore} from '../stores/connections.js'
+import { connectionsStore } from '../stores/stores_initializer'
 
 import ConfirmableButton from './ConfirmableButton.vue'
   export default {
