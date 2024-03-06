@@ -27,7 +27,7 @@
 
               <div class="form-group col-lg-3 col-xl-2 col-sm-4">
                 <label class="font-weight-bold mb-2">Filter by database:</label>
-                <select v-model="databaseFilter" @change="getCommandsHistory()" id="databaseFilter" class="form-control" placeholder="Filter database">
+                <select v-model="databaseFilter" @change="getCommandsHistory(true)" id="databaseFilter" class="form-control" placeholder="Filter database">
                     <option value="" selected>All Databases</option>
                     <option v-for="(name, index) in databaseNames"
                       :key=index
@@ -40,10 +40,10 @@
               <div class="form-group col-lg-6 col-md-12 col-xl-8 d-flex justify-content-end align-items-end">
                 <div>
                   <label class="font-weight-bold mb-2">Command contains:</label>
-                  <input v-model="commandContains" @change="getCommandsHistory()" type="text" class="form-control" />
+                  <input v-model="commandContains" @change="getCommandsHistory(true)" type="text" class="form-control" />
                 </div>
 
-                <button class="bt_execute btn btn-primary ml-1" title="Refresh" @click="getCommandsHistory()">
+                <button class="bt_execute btn btn-primary ml-1" title="Refresh" @click="getCommandsHistory(true)">
                   <i class="fas fa-sync-alt mr-1"></i>
                   Refresh
                 </button>
@@ -227,7 +227,7 @@ export default {
         this.resetToDefault();
         this.showCommandsModal();
         setTimeout(() => {
-          this.getCommandsHistory();
+          this.getCommandsHistory(true);
         }, 200);
       }
     },
@@ -315,7 +315,7 @@ export default {
           } else {
             this.startedTo = null;
           }
-          this.getCommandsHistory();
+          this.getCommandsHistory(true);
         }
       );
     },
@@ -342,7 +342,10 @@ export default {
         columns: this.defaultColumns,
       });
     },
-    getCommandsHistory() {
+    getCommandsHistory(resetCurrentPage=false) {
+      if(resetCurrentPage)
+        this.currentPage = 1
+
       axios
         .post("/get_commands_history/", {
           command_from: this.startedFrom,
@@ -380,8 +383,7 @@ export default {
           command_type: this.tabType,
         })
         .then((resp) => {
-          this.currentPage = 1;
-          this.getCommandsHistory();
+          this.getCommandsHistory(true);
         })
         .catch((error) => {
           showToast("error", error.response.data.data);
