@@ -198,7 +198,7 @@ class Session(object):
 
         try:
             current_user = UserDetails.objects.get(user__id=self.v_user_id)
-            key = key_manager.get(current_user)
+            key = key_manager.get(current_user.user)
             for conn in Connection.objects.filter(Q(user=User.objects.get(id=self.v_user_id)) | Q(public=True)):
                 tunnel_information = {
                     'enabled': conn.use_tunnel,
