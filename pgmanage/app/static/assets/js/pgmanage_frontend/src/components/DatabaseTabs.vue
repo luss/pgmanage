@@ -754,6 +754,7 @@ export default {
   overflow-x: scroll;
   overflow-y: hidden;
   max-width: calc(100% - 55px);
+  scrollbar-width: none;
 }
 
 .scrollable-inner {
