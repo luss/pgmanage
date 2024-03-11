@@ -93,11 +93,11 @@
               <b>Cancelled</b>
             </p>
             <p v-else-if="queryStartTime && queryDuration" class="h6 m-0  mr-2">
-              <b>Start time:</b> {{ queryStartTime }}<br/>
+              <b>Start time:</b> {{ queryStartTime.format() }}<br/>
               <b>Duration:</b> {{ queryDuration }}
             </p>
             <p v-else-if="queryStartTime" class=" m-0 h6">
-              <b>Start time:</b> {{ queryStartTime }}
+              <b>Start time:</b> {{ queryStartTime.format() }}
             </p>
           </div>
 
@@ -273,13 +273,11 @@ export default {
           };
 
           this.readOnlyEditor = true;
-
-          this.queryStartTime = moment().format();
+          this.queryStartTime = moment();
 
           let context = {
             tab: tab,
             database_index: this.databaseIndex,
-            start_datetime: this.queryStartTime,
             acked: false,
             clear_data: clear_data,
             cmd_type: cmd_type,
@@ -300,7 +298,6 @@ export default {
           setTimeout(() => {
             this.longQuery = true;
           }, 1000);
-
 
           this.queryInterval = setInterval((function(){
             let diff = moment().diff(this.queryStartTime)
@@ -452,7 +449,7 @@ export default {
         if (this.queryState === requestState.Ready) {
           this.context.tab.metaData.isReady = false;
           this.context.tab.metaData.isLoading = false;
-          
+
           this.$refs.queryResults.renderResult(this.data, this.context);
         }
       });
