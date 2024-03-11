@@ -10,7 +10,7 @@
         <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)">
           <i class="fas fa-play fa-light"></i>
         </button>
-        
+
         <button class="btn btn-sm btn-secondary" title="Open File" @click="openFileManagerModal">
             <i class="fas fa-folder-open fa-light"></i>
         </button>
@@ -63,16 +63,16 @@
           @cancelled="cancelConsoleTab()" />
 
         <div :id="`div_query_info_${tabId}`">
-          <span v-if="cancelled">
+          <p class="m-0 h6" v-if="cancelled">
             <b>Cancelled</b>
-          </span>
-          <span v-else-if="queryStartTime && queryDuration" class="mr-2">
-            <b>Start time:</b> {{ queryStartTime }} <b>Duration:</b>
-            {{ queryDuration }}
-          </span>
-          <span v-else-if="queryStartTime">
-            <b>Start time:</b> {{ queryStartTime }}
-          </span>
+          </p>
+          <p v-else-if="queryStartTime && queryDuration" class="m-0 h6 mr-2">
+            <b>Start time:</b> {{ queryStartTime.format() }}<br/>
+            <b>Duration:</b> {{ queryDuration }}
+          </p>
+          <p v-else-if="queryStartTime" class="m-0 h6 mr-2">
+            <b>Start time:</b> {{ queryStartTime.format() }}
+          </p>
         </div>
       </div>
       <!--FIXME: add proper editor height recalculation-->
@@ -240,12 +240,11 @@ export default {
 
             this.readOnlyEditor = true;
 
-            this.queryStartTime = moment().format();
+            this.queryStartTime = moment();
 
             let context = {
               tab: tab,
               database_index: this.databaseIndex,
-              start_datetime: this.queryStartTime,
               acked: false,
               last_command: this.lastCommand,
               check_command: check_command,
@@ -267,7 +266,12 @@ export default {
             setTimeout(() => {
               this.longQuery = true;
             }, 1000);
-            
+
+            this.queryInterval = setInterval((function(){
+              let diff = moment().diff(this.queryStartTime)
+              this.queryDuration = moment.utc(diff).format('HH:mm:ss')
+            }).bind(this), 1000)
+
             tab.metaData.isLoading = true
             tab.metaData.isReady = false
 
