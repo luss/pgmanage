@@ -379,7 +379,10 @@ export default {
       },
       shortcut_new_inner_tab: function () {
         if (['snippets', 'connection'].includes(tabsStore.selectedPrimaryTab.metaData.mode)) {
-          emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_query_tab`)
+          let name = tabsStore.selectedPrimaryTab.metaData.selectedDatabase.replace('\\', '/').split('/').pop()
+          emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_query_tab`, {
+            name: name,
+          })
         }
       },
       shortcut_remove_inner_tab: function () {
