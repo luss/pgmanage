@@ -81,7 +81,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`, this.selectedNode.data.database)
+              tabsStore.createERDTab(this.selectedNode.data.database)
             },
           },
           {
@@ -147,10 +147,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
-                    table: this.selectedNode.title,
-                    schema: null
-                  })
+                  tabsStore.createDataEditorTab(this.selectedNode.title, null)
                 },
               },
               {
@@ -489,13 +486,7 @@ export default {
                 }.${this.selectedNode.title}`;
 
               let command = `-- Querying Data\nselect t.*\nfrom ${table_name} t`
-              emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: command,
-                  }
-                );
+              tabsStore.createQueryTab(this.selectedNode.title, null, null, command)
               setTimeout(() => {
                 emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
               }, 200)
@@ -766,10 +757,7 @@ export default {
                 label: "Process List",
                 icon: "fas cm-all fa-chart-line",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
-                      name: "Process List",
-                      query: "select * from information_schema.processlist"
-                    })
+                  tabsStore.createMonitoringTab("Process List", "select * from information_schema.processlist")
                 },
               },
             ],
@@ -1241,13 +1229,7 @@ export default {
           schema: this.getParentNodeDeep(node, 2).title,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1328,13 +1310,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1415,13 +1391,7 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

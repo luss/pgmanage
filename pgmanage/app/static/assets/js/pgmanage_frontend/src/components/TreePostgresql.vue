@@ -105,13 +105,7 @@ export default {
             icon: "fas cm-all fa-search",
             onClick: () => {
               let tab_name = `Query: ${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}`
-
-              emitter.emit(
-                `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                {
-                  name: tab_name,
-                }
-              );
+              tabsStore.createQueryTab(tab_name)
             }
           },
           {
@@ -152,20 +146,14 @@ export default {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Backup"
-              })
+              tabsStore.createUtilityTab(this.selectedNode, 'Backup')
             },
           },
           {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Restore"
-              })
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
         ],
@@ -195,27 +183,21 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_erd_tab`, this.selectedNode.data.schema_raw)
+              tabsStore.createERDTab(this.selectedNode.data.schema_raw)
             },
           },
           {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Backup"
-              })
+              tabsStore.createUtilityTab(this.selectedNode, 'Backup')
             },
           },
           {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Restore"
-              })
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
           {
@@ -258,11 +240,7 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
-                node: this.selectedNode,
-                mode: "create",
-                dialect: "postgres"
-              })
+              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "postgres")
             },
           },
           {
@@ -320,10 +298,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
-                    table: this.selectedNode.data.raw_value,
-                    schema: this.selectedNode.data.schema_raw
-                  })
+                  tabsStore.createDataEditorTab(this.selectedNode.data.raw_value, this.selectedNode.data.schema_raw)
                 },
               },
               {
@@ -408,11 +383,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_schema_editor_tab`, {
-                    node: this.selectedNode,
-                    mode: "alter",
-                    dialect: "postgres"
-                  })
+                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "postgres")
                 },
               },
               {
@@ -439,20 +410,14 @@ export default {
                 label: "Backup",
                 icon: "fa-solid fa-download cm-all",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Backup"
-              })
+                  tabsStore.createUtilityTab(this.selectedNode, 'Backup')
                 },
               },
               {
                 label: "Restore",
                 icon: "fa-solid fa-upload cm-all",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Restore"
-              })
+                  tabsStore.createUtilityTab(this.selectedNode, 'Restore')
                 },
               },
             ],
@@ -1013,10 +978,7 @@ export default {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Restore"
-              })
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
         ],
@@ -1315,10 +1277,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_data_editor_tab`, {
-                    table: this.selectedNode.data.raw_value,
-                    schema: this.selectedNode.data.schema_raw
-                  })
+                  tabsStore.createDataEditorTab(this.selectedNode.data.raw_value, this.selectedNode.data.schema_raw)
                 },
               },
               {
@@ -1803,10 +1762,7 @@ export default {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Restore"
-              })
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
           {
@@ -3397,13 +3353,7 @@ export default {
           position: position,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: `${node.title} Comment`,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(`${node.title} Comment`, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -3421,29 +3371,21 @@ export default {
               label: "Server Configuration",
               icon: "fas cm-all fa-cog",
               onClick: () => {
-                emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_conf_tab`)
+                tabsStore.createConfigurationTab()
               },
             },
             {
               label: "Backup Server",
               icon: "fa-solid fa-download cm-all",
               onClick: () => {
-                emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Backup",
-                backupType: "server"
-              })
+                tabsStore.createUtilityTab(this.selectedNode, 'Backup', 'server')
               },
             },
             {
               label: "Restore Server",
               icon: "fa-solid fa-upload cm-all",
               onClick: () => {
-                emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_utility_tab`, {
-                node: this.selectedNode,
-                utility: "Restore",
-                backupType: "server"
-              })
+                tabsStore.createUtilityTab(this.selectedNode, 'Restore', 'server')
               },
             },
             {
@@ -3454,17 +3396,14 @@ export default {
                   label: "Dashboard",
                   icon: "fas cm-all fa-chart-line",
                   onClick: () => {
-                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_dashboard_tab`)
+                    tabsStore.createMonitoringDashboardTab()
                   },
                 },
                 {
                   label: "Backends",
                   icon: "fas cm-all fa-tasks",
                   onClick: () => {
-                    emitter.emit(`${tabsStore.selectedPrimaryTab.id}_create_monitoring_tab`, {
-                      name: "Backends",
-                      query: "SELECT * FROM pg_stat_activity"
-                    })
+                    tabsStore.createMonitoringTab("Backends", "SELECT * FROM pg_stat_activity")
                   },
                 },
               ],
@@ -4349,13 +4288,7 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.data.raw_value,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.data.raw_value, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4932,13 +4865,7 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5043,13 +4970,7 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.data.raw_value,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.data.raw_value, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5149,13 +5070,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5200,13 +5115,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5251,13 +5160,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5347,13 +5250,7 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          emitter.emit(
-                  `${tabsStore.selectedPrimaryTab.id}_create_query_tab`,
-                  {
-                    name: this.selectedNode.title,
-                    initialQuery: resp.data.data,
-                  }
-                );
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

@@ -176,13 +176,13 @@ export default {
     },
   },
   mounted() {
-    this.subscribeToConnectionChanges(this.connTabId, this.databaseIndex);
     this.changeDatabase(this.connectionTab.metaData.selectedDatabaseIndex);
+    this.subscribeToConnectionChanges(this.connTabId, this.databaseIndex);
     $('[data-toggle="tooltip"]').tooltip({ animation: true }); // Loads or Updates all tooltips
     this.$nextTick(() => {
       if (this.connectionTab.metaData.createInitialTabs) {
-        emitter.emit(`${this.connTabId}_create_console_tab`);
-        emitter.emit(`${this.connTabId}_create_query_tab`);
+        tabsStore.createConsoleTab();
+        tabsStore.createQueryTab();
       }
     });
   },
@@ -213,37 +213,11 @@ export default {
         connObject.last_used_database || connObject.service;
       tabData.metaData.selectedTitle = connObject.alias;
 
-      this.queueChangeActiveDatabaseThreadSafe({
+      connectionsStore.queueChangeActiveDatabaseThreadSafe({
         database_index: value,
         tab_id: this.connTabId,
         database: tabData.metaData.selectedDatabase,
       });
-    },
-    queueChangeActiveDatabaseThreadSafe(data) {
-      this.connectionTab.metaData.change_active_database_call_list.push(data);
-      if (!this.connectionTab.metaData.change_active_database_call_running) {
-        this.changeActiveDatabaseThreadSafe(
-          this.connectionTab.metaData.change_active_database_call_list.pop()
-        );
-      }
-    },
-    changeActiveDatabaseThreadSafe(data) {
-      this.connectionTab.metaData.change_active_database_call_running = true;
-      axios
-        .post("/change_active_database/", data)
-        .then((resp) => {
-          this.connectionTab.metaData.change_active_database_call_running = false;
-          if (
-            this.connectionTab.metaData.change_active_database_call_list
-              .length > 0
-          )
-            this.changeActiveDatabaseThreadSafe(
-              this.connectionTab.metaData.change_active_database_call_list.pop()
-            );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     },
     emitConnectionSave() {
       let connection = connectionsStore.getConnection(this.databaseIndex);
