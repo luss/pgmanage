@@ -20,7 +20,7 @@
               :aria-controls="`nav_messages_${tabId}`" aria-selected="true">
               <span class="omnidb__tab-menu__link-name">
                 Messages
-                <a v-if="noticesCount">{{ noticesCount }}</a>
+                <span v-if="noticesCount" class="badge badge-pill badge-primary">{{ noticesCount }}</span>
               </span>
             </a>
             <a ref="explainTab" class="nav-item nav-link omnidb__tab-menu__link" :id="`nav_explain_tab_${tabId}`"
