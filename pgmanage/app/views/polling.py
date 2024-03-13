@@ -77,6 +77,7 @@ class response(IntEnum):
   ConsoleResult       = 11
   TerminalResult      = 12
   Pong                = 13
+  OperationCancelled  = 14
 
 class debugState(IntEnum):
   Initial  = 0
@@ -188,6 +189,9 @@ def create_request(request, session):
                 else:
                     thread_data['thread'].stop()
                     thread_data['omnidatabase'].v_connection.Cancel(False)
+                    v_return['v_code'] = response.OperationCancelled
+                    v_return['v_context_code'] = v_context_code
+                    queue_response(client_object, v_return)
         except Exception:
             pass
 

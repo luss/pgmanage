@@ -103,6 +103,15 @@ function polling_response(message) {
       }
       break;
     }
+    case parseInt(queryResponseCodes.OperationCancelled): {
+      if (context) {
+        if(context.callback!=null) {
+          context.callback(message)
+        }
+        removeContext(context_code)
+      }
+      break;
+    }
     case parseInt(queryResponseCodes.ConsoleResult): {
       if (context) {
         if (message.v_data.v_last_block || message.v_error) {

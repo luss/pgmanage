@@ -17,20 +17,20 @@ export default {
   methods: {
     cancelSQL() {
       let tab = tabsStore.getSelectedSecondaryTab(this.connId);
-
       let message_data = { tab_id: this.tabId, conn_tab_id: this.connId };
-
-      createRequest(queryRequestCodes.CancelThread, message_data);
-
-      removeContext(tab.metaData.context.code);
-
-      SetAcked(tab.metaData.context);
-
+      let context = {
+        tab: tab,
+        database_index: this.databaseIndex,
+        callback: this.cancelSQLReturn.bind(this),
+      }
+      createRequest(queryRequestCodes.CancelThread, message_data, context);
+    },
+    cancelSQLReturn() {
+      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
       tab.metaData.isLoading = false;
       tab.metaData.isReady = false;
-
       this.$emit("cancelled");
-    },
+    }
   },
   mounted() {
     emitter.on(`${this.tabId}_cancel_query`, () => {
