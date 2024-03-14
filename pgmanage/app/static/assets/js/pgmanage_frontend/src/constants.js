@@ -57,6 +57,7 @@ const queryResponseCodes = {
   ConsoleResult: 11,
   TerminalResult: 12,
   Pong: 13,
+  OperationCancelled: 14,
 };
 
 const allowedFileTypes = ["application/sql", "text/csv", "text/plain", "Text"];
