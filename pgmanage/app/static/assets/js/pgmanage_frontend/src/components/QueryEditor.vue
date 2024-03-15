@@ -99,6 +99,7 @@ export default {
       this.editor.commands.bindKey("Ctrl-Delete", null);
       this.editor.commands.bindKey("Ctrl-Up", null);
       this.editor.commands.bindKey("Ctrl-Down", null);
+      this.editor.commands.bindKey("Ctrl-F", null);
       this.editor.commands.bindKey("Ctrl-,", null);
       this.editor.commands.bindKey("Up", null);
       this.editor.commands.bindKey("Down", null);
