@@ -105,7 +105,117 @@ background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgb
 }\
 .ace-omnidb .ace_folding-enabled > .ace_gutter-cell {\
     color: #206bc4;\
-}";
+}\
+.ace-omnidb .ace_search.right {\
+display: flex;\
+flex-direction: column;\
+align-items: stretch;\
+background-color: #E8EFF8;\
+border: 1px solid #CAD0D8 !important;\
+padding: 8px 24px 8px 8px;\
+right: 6px;\
+top: 3px;\
+font-family: 'Poppins', sans-serif;\
+font-size: 0.75rem;\
+border-radius: 6px;\
+border-right: initial;\
+}\
+.ace-omnidb .ace_search_form, .ace-omnidb .ace_replace_form {\
+display: flex;\
+margin-bottom: 16px;\
+margin-right: 0 !important;\
+position: relative;\
+overflow: visible;\
+width: 385px;\
+}\
+.ace-omnidb .ace_search_form.ace_nomatch, .ace_search_form.ace_nomatch > .ace_search_field {\
+outline: 0;\
+}\
+.ace_search_form.ace_nomatch:after {\
+content: 'No matches';\
+color: #D72239;\
+display: block;\
+position: absolute;\
+left: 0.75rem;\
+bottom: 0;\
+transform: translateY(100%);\
+font-size: 0.6rem;\
+font-weight: 500;\
+}\
+.ace-omnidb .ace_replace_form {\
+margin-right: 20px;\
+}\
+.ace-omnidb .ace_search_field {\
+background-color: #FFFFFF;\
+border: 1px solid #CAD0D8;\
+color: #16171E;\
+border-radius: 6px 0 0 6px;\
+border-right: 0;\
+width: 70%;\
+padding: 0.375rem 0.75rem;\
+height: calc(1.5em + 0.75rem + 2px);\
+box-sizing: border-box;\
+}\
+.ace-omnidb .ace_searchbtn {\
+display: flex;\
+align-items: center;\
+justify-content: center;\
+flex: 1 1 2.2rem;\
+padding: 0.375rem 0.75rem;\
+height: calc(1.5em + 0.75rem + 2px);\
+flex-shrink: 0;\
+box-sizing: border-box;\
+border-color: #CAD0D8;\
+color: #747D8D;\
+font-weight: 500;\
+}\
+.ace-omnidb .ace_searchbtn.prev, .ace-omnidb .ace_searchbtn.next {\
+padding: 0.375rem 0.75rem;\
+}\
+.ace-omnidb .ace_searchbtn.prev:after, .ace-omnidb .ace_searchbtn.next:after {\
+border-color: #747D8D;\
+}\
+.ace-omnidb .ace_searchbtn:last-child {\
+border-radius: 0 6px 6px 0;\
+}\
+.ace-omnidb .ace_searchbtn_close {\
+width: 16px;\
+height: 16px;\
+background-size: cover;\
+top: 5px;\
+right: 5px;\
+}\
+.ace-omnidb .ace_searchbtn_close:hover {\
+background-color: #1560AD;\
+}\
+.ace-omnidb .ace_search_options {\
+margin-bottom: 0;\
+}\
+.ace-omnidb .ace_search_options .ace_button {\
+color: #16171E;\
+padding: 0.2rem;\
+min-width: 1.25rem;\
+height: 1.3rem;\
+display: inline-block;\
+text-align: center;\
+border-radius: 6px;\
+background-color: #fff;\
+border: 0;\
+margin-left: 6px;\
+}\
+.ace-omnidb .ace_search_options .ace_button.checked {\
+background-color: #1560AD;\
+color: #F8FAFD;\
+}\
+.ace-omnidb .ace_search_options .ace_button[action='toggleReplace'] {\
+padding: 0.25rem !important;\
+margin-top: 0 !important;\
+}\
+.ace-omnidb .ace_search_options .ace_search_counter {\
+padding-top: 5px;\
+font-family: inherit;\
+}\
+";
 
 var dom = require("../lib/dom");
 dom.importCssString(exports.cssText, exports.cssClass);
