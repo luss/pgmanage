@@ -184,7 +184,6 @@
 </template>
 
 <script>
-import ace from "ace-builds";
 import { settingsStore } from "../stores/stores_initializer";
 import axios from "axios";
 import { showToast } from "../notification_control";
