@@ -444,11 +444,6 @@ SOFTWARE.
     }
   }
 
-  /* DISABLED */
-  // .form-control:disabled,
-  // .form-control[readonly] {
-  //   background-color: #32343A !important;
-  // }
   .custom-file > input[disabled]+label {
     background-color: #32343A !important;
     border-color: #4c5365;
@@ -625,26 +620,6 @@ SOFTWARE.
 
   }
 
-  /* Ace Search */
-  .ace_search {
-    background-color: #2F3136;
-    border-color: #383b42;
-
-    .ace_button {
-      color: #DCDDDE;
-    }
-    .ace_searchbtn {
-      background-color: #383b42;
-      border-color: #383b42;
-      color: #FFFFFF;
-    }
-    .ace_searchbtn:last-child {
-      border-right-color: #383b42;
-    }
-    .ace_searchbtn.prev:after, .ace_searchbtn.next:after {
-      color: #FFFFFF;
-    }
-  }
 
   /* Tree Component */
   .div_left ul.tree {
@@ -747,52 +722,7 @@ SOFTWARE.
     color: #F8FAFC !important;
     font-size: inherit;
   }
-  .handsontable th {
-    // color: #2bb2d8 !important;
-    // background-color: #29364E !important;
-  }
-  // .handsontable tr:nth-of-type(2n + 1) td {
-  //   border-right: 1px solid #243049 !important;
-  //   border-bottom: 1px solid #243049 !important;
-  //   background-color: #29364E;
-  // }
-  // .handsontable tr:nth-of-type(2n) td {
-  //   color: #c5c5c5;
-  //   border-right: 1px solid #243049 !important;
-  //   border-bottom: 1px solid #243049 !important;
-  //   background-color: #29364E;
-  // }
 
-  // .handsontable tr:first-child th, .handsontable tr:first-child td {
-  //   border-top: 1px solid #243049 !important;
-  // }
-
-  // .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame + th, .handsontable .htNoFrame + td {
-  //   border-left: 1px solid #243049 !important;
-  // }
-
-  // .handsontable th:last-child {
-  //   border-right: 1px solid #243049!important;
-  //   border-bottom: 1px solid #243049 !important;
-  // }
-
-  // .handsontable th, .handsontable td {
-  //   border-right: 1px solid #243049 !important;
-  //   border-bottom: 1px solid #243049 !important;
-  // }
-
-  // .handsontable tr {
-  //   background-color: #1D1F21 !important;
-  // }
-
-  // .handsontable.htRowHeaders thead tr th:nth-child(2) {
-  //   border-left: 1px solid #243049 !important;
-  // }
-
-  // .handsontable input, .handsontable textarea {
-  //   background-color: #1b1b1b !important;
-  //   color: #fff !important;
-  // }
   .handsontable .wtBorder.corner {
     border: 2px solid #5292f7 !important;
   }
