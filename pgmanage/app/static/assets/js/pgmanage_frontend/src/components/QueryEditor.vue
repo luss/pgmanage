@@ -164,6 +164,9 @@ export default {
       });
     },
     autocompleteKeyDown(event) {
+      // don't call autocomplete while typing in the searchbar
+      if(event.target.classList.contains('ace_search_field'))
+        return
       if (this.autocomplete) {
         autocomplete_keydown(this.editor, event);
       } else {
@@ -214,6 +217,10 @@ export default {
 
       emitter.on(`${this.tabId}_indent_sql`, () => {
         this.indentSQL();
+      });
+
+      emitter.on(`${this.tabId}_find_replace`, () => {
+        this.editor.execCommand("find")
       });
     },
     clearEvents() {

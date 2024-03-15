@@ -24,6 +24,10 @@
             <i class="fas fa-indent fa-light"></i>
           </button>
 
+          <button :id="`bt_indent_${tabId}`" class="btn btn-sm btn-secondary" title="Find/Replace" @click="showFindReplace()">
+            <i class="fas fa-magnifying-glass fa-light"></i>
+          </button>
+
           <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History"
             @click="showCommandsHistory()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
@@ -420,6 +424,9 @@ export default {
     },
     indentSQL() {
       emitter.emit(`${this.tabId}_indent_sql`);
+    },
+    showFindReplace() {
+      emitter.emit(`${this.tabId}_find_replace`);
     },
     updateEditorContent(newContent) {
       this.editorContent = newContent;
