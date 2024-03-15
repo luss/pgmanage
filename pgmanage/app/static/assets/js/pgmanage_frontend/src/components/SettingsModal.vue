@@ -264,7 +264,7 @@ export default {
         "utf-8-sig", "windows-1252"
       ],
       shortcutLabels: [
-        "Run Query", "Run Selection", "Cancel Query", "Indent", "New Inner Tab",
+        "Run Query", "Run Selection", "Cancel Query", "Indent", "Find/Replace", "New Inner Tab",
         "Remove Current Inner Tab", "Select Left Inner Tab", "Select Right Inner Tab",
         "Autocomplete", "Run Explain", "Run Explain Analyze",
       ],
@@ -373,6 +373,14 @@ export default {
         if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
           if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
             emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_indent_sql`)
+          }
+        }
+
+      },
+      shortcut_find_replace: function () {
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_find_replace`)
           }
         }
 

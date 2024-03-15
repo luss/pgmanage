@@ -119,6 +119,29 @@ let default_shortcuts = {
         'shortcut_key': 'S',
     }
   },
+  'shortcut_find_replace': {
+    'windows': {
+        'ctrl_pressed': true,
+        'shift_pressed': false,
+        'alt_pressed': false,
+        'meta_pressed': false,
+        'shortcut_key': 'F',
+    },
+    'linux': {
+        'ctrl_pressed': true,
+        'shift_pressed': false,
+        'alt_pressed': false,
+        'meta_pressed': false,
+        'shortcut_key': 'F',
+    },
+    'macos': {
+        'ctrl_pressed': true,
+        'shift_pressed': false,
+        'alt_pressed': false,
+        'meta_pressed': false,
+        'shortcut_key': 'F',
+    }
+  },
   'shortcut_new_inner_tab': {
     'windows': {
         'ctrl_pressed': false,

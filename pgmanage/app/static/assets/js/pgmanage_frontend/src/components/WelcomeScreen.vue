@@ -6,10 +6,10 @@
         <div class="welcome__logo d-flex mt-3 mb-4">
           <img :src="logoUrl" alt="">
           <img id="gears" :src="gearsUrl">
-            
-        </div>     
+
+        </div>
       </div>
-       
+
       <div class="welcome__main">
         <div class='row'>
             <div class='col-4 welcome__col'>
@@ -33,7 +33,7 @@
                   </div>
                 </div>
               </div>
-            
+
             </div>
             <div class='col-4 welcome__col'>
               <div class="hotkeys">
@@ -52,7 +52,7 @@
                   </div>
                 </div>
               </div>
-             
+
             </div>
             <div class='col-4'>
               <div class="welcome__col links">
@@ -79,7 +79,7 @@
                     Report a Bug
                   </a>
                 </div>
-              </div>  
+              </div>
             </div>
         </div>
       </div>
@@ -186,6 +186,7 @@ export default {
         'shortcut_run_selection': 'Run Selection',
         'shortcut_cancel_query': 'Cancel Query',
         'shortcut_indent': 'Indent Code',
+        'shortcut_find_replace': 'Find/Replace',
         'shortcut_new_inner_tab': 'New Tab',
         'shortcut_remove_inner_tab': 'Close Tab',
         'shortcut_left_inner_tab': 'Switch Tab Left',
