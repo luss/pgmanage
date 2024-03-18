@@ -334,7 +334,7 @@ export default {
           else if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'console')
             emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_console`, false)
           else if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode == 'edit')
-            console.log('Not implemented') //TODO: implement shortcut functionality for new edit data
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_query_edit`)
         }
       },
       shortcut_run_selection: function () {

@@ -50,6 +50,7 @@ import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
+import { emitter } from '../emitter';
 
 // TODO: run query in transaction
 // TODO: remove old code, update request code numbers
@@ -119,6 +120,10 @@ export default {
 
     this.knex = Knex({ client: this.dialect || 'postgres'})
     this.getTableColumns().then(this.getTableData)
+
+    emitter.on(`${this.tabId}_query_edit`, () => {
+      this.getTableData()
+    })
   },
   methods: {
     actionsFormatter(cell, formatterParams, onRendered) {
