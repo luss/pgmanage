@@ -8,6 +8,11 @@ import {
   beforeAll,
 } from "vitest";
 import { mount, enableAutoUnmount } from "@vue/test-utils";
+
+vi.hoisted(() => {
+  vi.stubGlobal("v_csrf_cookie_name", "test_cookie");
+})
+
 import SideBarTabs from "../../src/components/SideBarTabs.vue";
 import "bootstrap";
 import { nextTick } from "vue";
