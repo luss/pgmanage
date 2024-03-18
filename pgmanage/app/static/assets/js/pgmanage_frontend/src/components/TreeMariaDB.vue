@@ -777,10 +777,11 @@ export default {
           });
 
           resp.data.reduceRight((_, el) => {
-            this.insertNode(node, el, {
+            this.insertNode(node, el.name, {
               icon: "fas node-all fa-database node-database",
               type: "database",
               contextMenu: "cm_database",
+              database: el.name,
             });
           }, null);
         })
