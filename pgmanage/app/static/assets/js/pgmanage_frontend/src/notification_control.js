@@ -159,22 +159,9 @@ function showConfirm(p_info,p_funcYes = null,p_funcNo = null, p_shownCallback = 
 
 }
 
-function checkSessionMessage() {
-
-	execAjax('/check_session_message/',
-				JSON.stringify({}),
-        function(p_return) {
-          if (p_return.v_data!='')
-          	showAlert(p_return.v_data);
-        },
-        null,
-    'box');
-
-}
-
 /**
  * Show a toast notification with a specified type and message.
- * 
+ *
  * @param {string} type - The type of the toast notification.
  *                       Possible values: 'success', 'info', 'warning', 'error', 'default'
  * @param {string} message - The message to display in the toast.
@@ -202,4 +189,4 @@ function showToast(type, message) {
   })
 }
 
-export { createMessageModal, showAlert, showConfirm, checkSessionMessage, showToast};
+export { createMessageModal, showAlert, showConfirm, showToast};

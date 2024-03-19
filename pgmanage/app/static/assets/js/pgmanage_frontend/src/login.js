@@ -3,7 +3,7 @@ import 'bootstrap/scss/bootstrap.scss'
 import 'bootstrap';
 import './assets/scss/omnidb.scss'
 import './assets/scss/login.scss'
-import { showAlert, checkSessionMessage } from './notification_control';
+import { showAlert } from './notification_control';
 import { getCookie } from './ajax_control'
 import axios from 'axios'
 
@@ -20,8 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   btn_sign_in.onclick = function() { signIn() }
-  checkSessionMessage();
-
 });
 
 function signIn() {
