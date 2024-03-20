@@ -77,7 +77,7 @@
         <pane>
           <div
             :id="`${connTabId}_div_right`"
-            class="omnidb__workspace__div-right col position-relative"
+            class="omnidb__workspace__div-right col position-relative right-div-height"
           >
             <div class="row">
               <DatabaseTabs
@@ -294,6 +294,11 @@ export default {
 .left-div-panes {
   height: calc(100vh - 30px);
 }
+
+.right-div-height {
+  height: 100vh;
+}
+
 .database-tree {
   overflow: auto;
   transition: scroll 0.3s;
