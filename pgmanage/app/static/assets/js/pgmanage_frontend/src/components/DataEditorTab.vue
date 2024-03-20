@@ -29,7 +29,7 @@
     </div>
   </div>
 
-    <div ref="tabulator" class="tabulator-custom data-grid">
+    <div ref="tabulator" class="tabulator-custom data-grid grid-height">
   </div>
 
   <div ref="bottomToolbar" class="data-editor__footer d-flex align-items-center justify-content-end p-2">
@@ -51,12 +51,9 @@ import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
 import { emitter } from '../emitter';
+import { settingsStore } from '../stores/stores_initializer';
 
 // TODO: run query in transaction
-// TODO: remove old code, update request code numbers
-// TODO: redraw the grid on font size change
-// TODO: handle font size change - recalculate top/bottom toolbar dimensions
-
 
 export default {
   name: "DataEditorTab",
@@ -101,12 +98,14 @@ export default {
     },
     hasPK() {
       return this.tableColumns.some(c => c.is_primary)
-    }
+    },
+    gridHeight() {
+      return `calc(100vh - ${this.heightSubtract}px)`;
+    },
   },
   mounted() {
     this.handleResize()
     this.tabulator = new Tabulator(this.$refs.tabulator, {
-      height: `calc(100vh - ${this.heightSubtract}px)`,
       layout: 'fitDataStretch',
       data: [],
       columnDefaults: {
@@ -124,6 +123,23 @@ export default {
     emitter.on(`${this.tabId}_query_edit`, () => {
       this.getTableData()
     })
+
+    settingsStore.$onAction((action) => {
+      if(action.name === "setFontSize") {
+        action.after(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.handleResize()
+              this.tabulator.redraw(true);
+            })
+          })
+        })
+      }
+    })
+  },
+  updated() {
+    this.handleResize()
+    this.tabulator.redraw(true);
   },
   methods: {
     actionsFormatter(cell, formatterParams, onRendered) {
@@ -401,5 +417,10 @@ export default {
 <style scoped>
   .grid-scrollable {
     width: 100%;
+  }
+
+  .grid-height {
+    height: v-bind(gridHeight);
+    
   }
 </style>
