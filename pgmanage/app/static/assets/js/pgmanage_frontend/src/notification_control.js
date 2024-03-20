@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import GenericMessageModal from "./components/GenericMessageModal.vue";
-import { execAjax } from "./ajax_control";
 import { useToast } from 'vue-toast-notification';
 
 let v_message_modal_animating = false;

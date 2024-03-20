@@ -25,31 +25,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { startLoading, endLoading, execAjax } from "./ajax_control";
-import { showConfirm } from "./notification_control";
+import { startLoading, endLoading, getCookie } from "./ajax_control";
+import { showConfirm, showAlert } from "./notification_control";
+import axios from 'axios'
 
 let v_usersObject;
 let newUsersObject;
-/// <summary>
-/// Creates new users.
-/// </summary>
-function newUserConfirm() {
-
-	execAjax('/new_user/',
-			JSON.stringify({'p_data':newUsersObject.newUsers}),
-			function(p_return) {
-
-				v_usersObject.v_cellChanges = [];
-				newUsersObject.newUsers = [];
-				if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0)
-					document.getElementById('div_save_users').disabled = true;
-				listUsers(true);
-			},
-			null,
-			'box');
-
-}
-
 /// <summary>
 /// Add a virtual new user with pending information.
 /// </summary>
@@ -70,34 +51,27 @@ function newUser() {
 /// <summary>
 /// Removes specific user.
 /// </summary>
-/// <param name="p_index">Connection index in the connection list.</param>
-function removeUserConfirm(p_id) {
-
-	var input = JSON.stringify({"p_id": p_id});
-
-	execAjax('/remove_user/',
-			input,
-			function(p_return) {
-				if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0)
-					document.getElementById('div_save_users').disabled = true;
-				listUsers(true);
-			},
-			null,
-			'box');
-
+/// <param name="id">User ID.</param>
+function removeUserConfirm(id) {
+	axios.post(
+		'/remove_user/',
+			{'id': id},
+			{headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) }}
+		).then((resp) => {
+			if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0)
+				document.getElementById('div_save_users').disabled = true;
+			listUsers(true);
+		}).catch((error) => {
+			showAlert('Request error')
+		})
 }
 
 /// <summary>
 /// Displays question to remove specific user and removes if accepted.
 /// </summary>
-/// <param name="p_id">User ID.</param>
-function removeUser(p_id) {
-
-	showConfirm('Are you sure you want to remove this user?',
-  function() {
-		removeUserConfirm(p_id);
-	});
-
+/// <param name="id">User ID.</param>
+function removeUser(id) {
+	showConfirm('Are you sure you want to remove this user?', ()=>{ removeUserConfirm(id) });
 }
 
 /// <summary>
@@ -146,57 +120,40 @@ function saveUsers() {
 	for (let row in v_usersObject.v_cellChanges) {
 		v_unique_rows_changed.push(row);
 	};
-	
+
 	$.each(v_unique_rows_changed, function(i, el){
 			v_data_changed[i] = v_usersObject.v_cellChanges[el].p_data;
 	    v_user_id_list[i] = v_usersObject.v_user_ids[el];
 	});
 
-	var v_data = {
+	var changes = {
 		edited: v_data_changed,
 		new: newUsersObject.newUsers
 	}
-	var input = JSON.stringify({"p_data": v_data, "p_user_id_list": v_user_id_list});
 
-	execAjax('/save_users/',
-			input,
-			function() {
-
-				// newUserConfirm();
-				v_usersObject.v_cellChanges = [];
-				newUsersObject.newUsers = [];
-				if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0) {
-					document.getElementById('div_save_users').disabled = true;
-				}
-				listUsers(true, {users_update: v_data});
-
-			},
-			null,
-			'box');
-
-}
-
-/// <summary>
-/// Hides users window.
-/// </summary>
-function hideUsers() {
-
-	$('#div_users').removeClass('isActive');
-
-	// v_usersObject.ht.destroy();
-
-	document.getElementById('div_user_list').innerHTML = '';
+	axios.post(
+		'/save_users/',
+			{'changes': changes, "user_id_list": v_user_id_list},
+			{headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) }}
+		).then((resp) => {
+			v_usersObject.v_cellChanges = [];
+			newUsersObject.newUsers = [];
+			if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0) {
+				document.getElementById('div_save_users').disabled = true;
+			}
+			listUsers(true, {users_update: v_data});
+		}).catch((error) => {
+			showAlert('Request error')
+		})
 
 }
 
 $('#modal_users').on('shown.bs.modal', function (e) {
-
   getUsers();
-
 });
 
 $('#modal_users').on('hidden.bs.modal', function (e) {
-		newUsersObject.newUsers = [];
+	newUsersObject.newUsers = [];
 });
 
 
@@ -270,7 +227,6 @@ function getUsers(p_options = false) {
 
 	}
 	else {
-
 		if (!newUsersObject) {
 			newUsersObject = new Object();
 		}
@@ -278,128 +234,126 @@ function getUsers(p_options = false) {
 			newUsersObject.newUsers = [];
 		}
 
-		execAjax('/get_users/',
-				JSON.stringify({}),
-				function(p_return) {
+		axios.post(
+			'/get_users/',
+				{},
+				{headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) }}
+			).then((resp) => {
+				v_usersObject = new Object();
+				v_usersObject.v_user_ids = resp.data.v_data.v_user_ids;
+				v_usersObject.v_cellChanges = [];
+				v_usersObject.list = resp.data.v_data.v_data;
 
-					v_usersObject = new Object();
-					v_usersObject.v_user_ids = p_return.v_data.v_user_ids;
-					v_usersObject.v_cellChanges = [];
-					v_usersObject.list = p_return.v_data.v_data;
-
-
-					var v_users_update_html = '';
-					if (p_options) {
-						if (p_options.users_update) {
-							if (p_options.users_update.edited.length > 0) {
-								v_users_update_html +=
-								'<div class="card p-4 mx-auto">' +
-								'<div><h5>Edited Users:</h5></div>' +
-								'<ul class="pl-4">';
-								for (let i = 0; i < p_options.users_update.edited.length; i++) {
-									v_users_update_html += '<li class="mt-2"> - ' + p_options.users_update.edited[i][0] + '</li>';
-								}
-								v_users_update_html +=
-								'</ul>' +
-								'</div>';
+				var v_users_update_html = '';
+				if (p_options) {
+					if (p_options.users_update) {
+						if (p_options.users_update.edited.length > 0) {
+							v_users_update_html +=
+							'<div class="card p-4 mx-auto">' +
+							'<div><h5>Edited Users:</h5></div>' +
+							'<ul class="pl-4">';
+							for (let i = 0; i < p_options.users_update.edited.length; i++) {
+								v_users_update_html += '<li class="mt-2"> - ' + p_options.users_update.edited[i][0] + '</li>';
 							}
-							if (p_options.users_update.new.length > 0) {
-								v_users_update_html +=
-								'<div class="card p-4 mx-auto">' +
-								'<div><h5>New Users:</h5></div>' +
-								'<ul class="pl-4">';
-								for (let i = 0; i < p_options.users_update.new.length; i++) {
-									v_users_update_html += '<li class="mt-2"> - ' + p_options.users_update.new[i][0] + '</li>';
-								}
-								v_users_update_html +=
-								'</ul>' +
-								'</div>';
+							v_users_update_html +=
+							'</ul>' +
+							'</div>';
+						}
+						if (p_options.users_update.new.length > 0) {
+							v_users_update_html +=
+							'<div class="card p-4 mx-auto">' +
+							'<div><h5>New Users:</h5></div>' +
+							'<ul class="pl-4">';
+							for (let i = 0; i < p_options.users_update.new.length; i++) {
+								v_users_update_html += '<li class="mt-2"> - ' + p_options.users_update.new[i][0] + '</li>';
 							}
+							v_users_update_html +=
+							'</ul>' +
+							'</div>';
 						}
 					}
+				}
 
-
-
-					var v_user_list_data = p_return.v_data.v_data;
-					var v_user_list_element = document.createElement('div');
-					v_user_list_element.classList = ["omnidb__user-list"];
-					var v_user_count = 0;
-					var v_user_list_html =
-					"<form class='d-none' autofill='false' onsubmit='(event)=>{event.preventDefault();};'>" +
-						"<input id='fake_username' type='text' placeholder='User name' value=''>" +
-						"<input id='fake_password' type='password' placeholder='Password' value=''>" +
-						"<button type='submit' disabled aria-hidden='true'></button>" +
-					"</form>" +
-					"<form class='omnidb__user-list__form' autofill='false' autocomplete='disabled'>" +
-						"<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-autofill-name' type='text' class='m-0 p-0' placeholder='Username' value=''>" +
-						"<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-password' type='password' class='m-0 p-0' placeholder='Password' value=''>" +
-						"<div class='form-inline mb-4'>" +
-							"<h5 class='mr-2'>Select an user</h5>" +
-							"<select id='omnidb_user_select' class='form-control'>";
-							if (p_options.focus_last)
-								v_user_list_html += "<option value=''> </option>";
-							else
-								v_user_list_html += "<option value='' selected> </option>";
-							for (var i = 0; i < v_user_list_data.length; i++) {
-								var v_user_item = v_user_list_data[i];
-								var v_user_is_superuser = (v_user_item[2] === 1) ? ' (superuser)' : '';
-								v_user_list_html +=
-								"<option value='" + i + "'>" + v_user_item[0] + v_user_is_superuser + "</option>";
-								v_user_count++;
-							}
-							for (var i = 0; i < newUsersObject.newUsers.length; i++) {
-								var v_user_item = newUsersObject.newUsers[i];
-								var v_user_is_superuser = (v_user_item[2] === 1) ? ' (superuser)' : '';
-								var v_user_item_index = parseInt(v_user_count) + parseInt(i);
-								var v_user_item_name = (v_user_item[0] === "") ? '(pending info)' : v_user_item[0] + v_user_is_superuser + ' (pending save)';
-								var v_user_is_selected = (p_options.focus_last && i + 1 == newUsersObject.newUsers.length) ? ' selected ' : '';
-								v_user_list_html +=
-								"<option class='bg-warning' value='" + v_user_item_index + "' " + v_user_is_selected + ">" + v_user_item_name + "</option>";
-							}
+				var v_user_list_data = resp.data.v_data.v_data;
+				var v_user_list_element = document.createElement('div');
+				v_user_list_element.classList = ["omnidb__user-list"];
+				var v_user_count = 0;
+				var v_user_list_html =
+				"<form class='d-none' autofill='false' onsubmit='(event)=>{event.preventDefault();};'>" +
+					"<input id='fake_username' type='text' placeholder='User name' value=''>" +
+					"<input id='fake_password' type='password' placeholder='Password' value=''>" +
+					"<button type='submit' disabled aria-hidden='true'></button>" +
+				"</form>" +
+				"<form class='omnidb__user-list__form' autofill='false' autocomplete='disabled'>" +
+					"<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-autofill-name' type='text' class='m-0 p-0' placeholder='Username' value=''>" +
+					"<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-password' type='password' class='m-0 p-0' placeholder='Password' value=''>" +
+					"<div class='form-inline mb-4'>" +
+						"<h5 class='mr-2'>Select an user</h5>" +
+						"<select id='omnidb_user_select' class='form-control'>";
+						if (p_options.focus_last)
+							v_user_list_html += "<option value=''> </option>";
+						else
+							v_user_list_html += "<option value='' selected> </option>";
+						for (var i = 0; i < v_user_list_data.length; i++) {
+							var v_user_item = v_user_list_data[i];
+							var v_user_is_superuser = (v_user_item[2] === 1) ? ' (superuser)' : '';
 							v_user_list_html +=
-							"</select>" +
-							"<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ml-2'><i class='fas fa-user-plus'></i><span class='ml-2'>Add new user</span></button>" +
-						"</div>" +
-						"<div id='omnidb_user_content' class='row'>" +
-							v_users_update_html +
-						"</div>" +
-						"<div class='text-center'>" +
-							"<button type='button' id='div_save_users' class='btn btn-success ml-1 d-none' disabled>Save</button>" +
-						"</div>" +
-						"<button type='submit' disabled style='display: none' aria-hidden='true'></button>" +
-					"</div>";
-					v_user_list_element.innerHTML = v_user_list_html;
-					
-					$('#div_users').addClass('isActive');
-					
-					window.scrollTo(0,0);
-					
-					var v_div_result = document.getElementById('div_user_list');
-					var container = v_div_result;
-					container.appendChild(v_user_list_element);
-					
-					let save_users = document.getElementById('div_save_users')
-					save_users.onclick = function() { saveUsers() }
-
-					let user_select = document.getElementById('omnidb_user_select')
-					user_select.onchange = (event) => { renderSelectedUser(event) }
-
-					let new_user_btn = document.getElementById('omnidb_utilities_menu_btn_new_user')
-					new_user_btn.onclick = function() { newUser() }
-					if (p_options) {
-						if (p_options.focus_last) {
-							setTimeout(function(){
-								$('#omnidb_user_select option:last-child').trigger('change');
-							},300);
+							"<option value='" + i + "'>" + v_user_item[0] + v_user_is_superuser + "</option>";
+							v_user_count++;
 						}
+						for (var i = 0; i < newUsersObject.newUsers.length; i++) {
+							var v_user_item = newUsersObject.newUsers[i];
+							var v_user_is_superuser = (v_user_item[2] === 1) ? ' (superuser)' : '';
+							var v_user_item_index = parseInt(v_user_count) + parseInt(i);
+							var v_user_item_name = (v_user_item[0] === "") ? '(pending info)' : v_user_item[0] + v_user_is_superuser + ' (pending save)';
+							var v_user_is_selected = (p_options.focus_last && i + 1 == newUsersObject.newUsers.length) ? ' selected ' : '';
+							v_user_list_html +=
+							"<option class='bg-warning' value='" + v_user_item_index + "' " + v_user_is_selected + ">" + v_user_item_name + "</option>";
+						}
+						v_user_list_html +=
+						"</select>" +
+						"<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ml-2'><i class='fas fa-user-plus'></i><span class='ml-2'>Add new user</span></button>" +
+					"</div>" +
+					"<div id='omnidb_user_content' class='row'>" +
+						v_users_update_html +
+					"</div>" +
+					"<div class='text-center'>" +
+						"<button type='button' id='div_save_users' class='btn btn-success ml-1 d-none' disabled>Save</button>" +
+					"</div>" +
+					"<button type='submit' disabled style='display: none' aria-hidden='true'></button>" +
+				"</div>";
+				v_user_list_element.innerHTML = v_user_list_html;
+
+				$('#div_users').addClass('isActive');
+
+				window.scrollTo(0,0);
+
+				var v_div_result = document.getElementById('div_user_list');
+				var container = v_div_result;
+				container.appendChild(v_user_list_element);
+
+				let save_users = document.getElementById('div_save_users')
+				save_users.onclick = function() { saveUsers() }
+
+				let user_select = document.getElementById('omnidb_user_select')
+				user_select.onchange = (event) => { renderSelectedUser(event) }
+
+				let new_user_btn = document.getElementById('omnidb_utilities_menu_btn_new_user')
+				new_user_btn.onclick = function() { newUser() }
+				if (p_options) {
+					if (p_options.focus_last) {
+						setTimeout(function(){
+							$('#omnidb_user_select option:last-child').trigger('change');
+						},300);
 					}
-					if (v_usersObject.v_cellChanges.length > 0 || newUsersObject.newUsers.length > 0)
-						document.getElementById('div_save_users').disabled = false;
-					$('[data-toggle="tooltip"]').tooltip({animation:true});// Loads or Updates all tooltips
-	        endLoading();
-				},
-				null,
-				'box');
+				}
+				if (v_usersObject.v_cellChanges.length > 0 || newUsersObject.newUsers.length > 0)
+					document.getElementById('div_save_users').disabled = false;
+				$('[data-toggle="tooltip"]').tooltip({animation:true});// Loads or Updates all tooltips
+				endLoading();
+			}).catch((error) => {
+				showAlert('Request error')
+			})
 	}
 
 
@@ -505,7 +459,7 @@ function renderSelectedUser(event) {
 
 				let user_item_password = document.getElementById(`user_item_password_${i}`)
 				user_item_password.oninput = (event) => { changeUser(event.target.value, i, 1)}
-				
+
 				let user_remove = document.getElementById(`user_remove_${i}`)
 				user_remove.onclick = function() { removeUser(user_id)}
 
@@ -572,7 +526,7 @@ function renderSelectedUser(event) {
 			}
 		}
 	}
-	
+
 }
 
 export { listUsers, newUser }
