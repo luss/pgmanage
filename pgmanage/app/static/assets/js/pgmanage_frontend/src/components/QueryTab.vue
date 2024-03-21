@@ -506,7 +506,10 @@ export default {
     async saveFile() {
       const today = new Date()
       const nameSuffix = `${today.getHours()}${today.getMinutes()}`
-      const file = new File([this.editorContent], `pgmanage-query-${nameSuffix}.sql`, {
+      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
+      const fileName = tab.metaData?.editingFile ? tab.name : `pgmanage-query-${nameSuffix}.sql`
+
+      const file = new File([this.editorContent], fileName, {
         type: "application/sql",
       })
 

@@ -41,10 +41,7 @@ export default {
             selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
           }
           selectedTab.name = file.name;
-
-          if (!!file?.path) {
-            selectedTab.metaData.filePath = file.path.replace(file.name, "");
-          }
+          selectedTab.metaData.editingFile = true;
         }
       } catch (err) {
         showToast("error", err);
