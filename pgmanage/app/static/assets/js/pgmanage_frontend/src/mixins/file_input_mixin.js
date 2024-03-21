@@ -5,6 +5,7 @@ import {
 } from "../constants";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   methods: {
@@ -29,6 +30,21 @@ export default {
             emitter.emit(`${this.tabId}_copy_to_editor`, reader.result);
           };
           reader.readAsText(file);
+
+          let selectedTab;
+          if (this.$options.name === "SnippetTab") {
+            let snippetPanel = tabsStore.tabs.find(
+              (tab) => tab.name === "Snippets"
+            );
+            selectedTab = snippetPanel.metaData.selectedTab;
+          } else {
+            selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
+          }
+          selectedTab.name = file.name;
+
+          if (!!file?.path) {
+            selectedTab.metaData.filePath = file.path.replace(file.name, "");
+          }
         }
       } catch (err) {
         showToast("error", err);

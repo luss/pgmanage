@@ -137,7 +137,7 @@ export default {
       });
 
       this.editor.focus();
-      setupAceDragDrop(this.editor);
+      setupAceDragDrop(this.editor, true);
     },
     setupEvents() {
       emitter.on(`${this.tabId}_editor_focus`, () => {

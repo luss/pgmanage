@@ -4,8 +4,9 @@ import {
   maxFileSizeInMB,
   maxFileSizeInKB,
 } from "./constants";
+import { tabsStore } from "./stores/stores_initializer";
 
-function setupAceDragDrop(editor) {
+function setupAceDragDrop(editor, isSnippetTab = false) {
   function handleFileDrop(e, file) {
     try {
       if (window.FileReader) {
@@ -14,6 +15,22 @@ function setupAceDragDrop(editor) {
           editor.session.setValue(reader.result);
         };
         reader.readAsText(file);
+
+        let selectedTab;
+
+        if (isSnippetTab) {
+          let snippetPanel = tabsStore.tabs.find(
+            (tab) => tab.name === "Snippets"
+          );
+          selectedTab = snippetPanel.metaData.selectedTab;
+        } else {
+          selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
+        }
+        selectedTab.name = file.name;
+
+        if (!!file?.path) {
+          selectedTab.metaData.filePath = file.path.replace(file.name, "");
+        }
       }
       return e.preventDefault();
     } catch (err) {
