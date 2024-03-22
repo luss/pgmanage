@@ -540,23 +540,21 @@ def get_autocomplete_results(request, v_database):
                 pass
 
     if not alias:
-        parsed = sqlparse.parse(sql)[0].flatten()
+        # parsed = sqlparse.parse(sql)[0].flatten()
+        # # find the token index to the left of pos, skip whitespace tokens
+        # sumlen = 0
+        # cur_tok_idx = 0
+        # for (idx, tok) in enumerate(parsed):
+        #     sumlen += len(tok.value)
+        #     if(sumlen >= pos):
+        #         cur_tok_idx = idx
+        #         break
 
-        # find the token index to the left of pos, skip whitespace tokens
-        sumlen = 0
-        cur_tok_idx = 0
-        for (idx, tok) in enumerate(parsed):
-            # print(tok)
-            sumlen += len(tok.value)
-            if(sumlen >= pos):
-                cur_tok_idx = idx
-                break
-        # import pdb; pdb.set_trace()
-
-        print(idx)
-        left_token = None
-        # if(idx > 0):
-        #     # import pdb; pdb.set_trace()
+        # print(cur_tok_idx)
+        # # left_token = None
+        # if(cur_tok_idx > 0):
+        #     lst = list(parsed)
+        #     import pdb; pdb.set_trace()
         #     print(parsed.tokens)
         #     left_token = parsed.token_prev(idx)[1]
         #     print(left_token)
@@ -565,7 +563,7 @@ def get_autocomplete_results(request, v_database):
         # PREFMAP = {
         #     'from': ['table', 'view', 'function']
         # }
-        # the list of completions for the from wors is: 1 - user tables, 2 - builtin tables, 3 user views, 4 builtin views, 4 user functions,
+        # the list of completions for the from word is: 1 - user tables, 2 - builtin tables, 3 user views, 4 builtin views, 4 user functions,
 
         filter_part = f"where search.result like '{value}%' "
         query_columns = "type,sequence,result,select_value,complement"

@@ -33,8 +33,10 @@ export default {
       default: true,
     },
     tabId: String,
+    tabDbId: String,
     tabMode: String,
     dialect: String,
+    databaseIndex: String,
   },
   emits: ["editorChange"],
   data() {
@@ -139,16 +141,14 @@ export default {
       this.editor.setOptions({
         enableBasicAutocompletion: [
           {
-            getCompletions: function (editor, session, pos, prefix, callback) {
+            getCompletions: (function (editor, session, pos, prefix, callback) {
               // console.log(prefix)
 
-              // debugger
               // p_value should be the whole word to the left of cursor
 
               // console.log(last_word)
               // todo: resolve context to complete from: like select * from [resolve table here]
               let ret = [];
-              // debugger
               let prefix_is_upcase = /^[A-Z]+$/.test(prefix)
               v_keywords.forEach(function(keyword) {
                 let dist = distance(prefix, keyword, { caseSensitive: false })
@@ -164,14 +164,13 @@ export default {
               console.log(ret)
               let last_word = get_editor_last_word(editor)
               axios.post("/get_autocomplete_results/", {
-                p_database_index: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
-                p_tab_id: window.v_connTabControl.selectedTab.id,
+                p_database_index: this.databaseIndex,
+                p_tab_id: this.tabId,
                 p_sql: editor.getValue(),
                 p_value: last_word,
                 p_pos: pos.column
               })
               .then((resp) => {
-
                 let data = resp.data.v_data.data;
                 console.log(last_word)
                 data.forEach((el) => {
@@ -190,7 +189,7 @@ export default {
               .catch((error) => {
                 showToast("error", error.response.data.data)
               })
-            }
+            }).bind(this)
           }
         ],
         // to make popup appear automatically, without explicit _ctrl+space_
@@ -295,6 +294,7 @@ export default {
       this.editor.focus();
     },
     setupEvents() {
+      console.log('subscribing', `${this.tabId}_show_autocomplete_results`)
       emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
         this.autocompleteStart(event, true);
       });

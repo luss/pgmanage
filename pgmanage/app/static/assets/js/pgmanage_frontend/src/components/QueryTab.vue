@@ -2,7 +2,7 @@
   <div>
   <splitpanes class="default-theme query-body" horizontal>
     <pane size="30">
-      <QueryEditor ref="editor" class="h-100 mr-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
+      <QueryEditor ref="editor" class="h-100 mr-2" :read-only="readOnlyEditor" :tab-id="connId" :database-index="databaseIndex" tab-mode="query"
         :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
     </pane>
 
