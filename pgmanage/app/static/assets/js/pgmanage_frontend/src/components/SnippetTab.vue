@@ -95,6 +95,11 @@ export default {
     editorSize() {
       return `calc(100vh - ${this.heightSubtract}px)`;
     },
+    snippetPanel() {
+      return tabsStore.tabs.find(
+          (tab) => tab.name === "Snippets"
+        );
+    },
   },
   beforeMount() {
     if (!!this.snippet.id) {
@@ -137,7 +142,7 @@ export default {
       });
 
       this.editor.focus();
-      setupAceDragDrop(this.editor);
+      setupAceDragDrop(this.editor, true);
     },
     setupEvents() {
       emitter.on(`${this.tabId}_editor_focus`, () => {
@@ -250,10 +255,12 @@ export default {
       const nameSuffix = this.$props.snippet?.name
         ? this.$props.snippet?.name
         : `${today.getHours()}${today.getMinutes()}`;
+      let snippetTab = tabsStore.getSelectedSecondaryTab(this.snippetPanel.id)
+      const fileName = snippetTab.metaData?.editingFile ? snippetTab.name : `pgmanage-snippet-${nameSuffix}.sql`
 
       const file = new File(
         [this.editor.getValue()],
-        `pgmanage-snippet-${nameSuffix}.sql`,
+        fileName,
         {
           type: "application/sql",
         }
