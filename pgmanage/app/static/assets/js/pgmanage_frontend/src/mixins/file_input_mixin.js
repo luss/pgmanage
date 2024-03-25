@@ -36,12 +36,14 @@ export default {
             let snippetPanel = tabsStore.tabs.find(
               (tab) => tab.name === "Snippets"
             );
-            selectedTab = snippetPanel.metaData.selectedTab;
+            selectedTab = snippetPanel?.metaData?.selectedTab;
           } else {
-            selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab;
+            selectedTab = tabsStore.selectedPrimaryTab?.metaData?.selectedTab;
           }
-          selectedTab.name = file.name;
-          selectedTab.metaData.editingFile = true;
+          if (selectedTab) {
+            selectedTab.name = file.name;
+            selectedTab.metaData.editingFile = true;
+          }
         }
       } catch (err) {
         showToast("error", err);

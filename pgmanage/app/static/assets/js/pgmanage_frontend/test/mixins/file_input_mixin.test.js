@@ -1,13 +1,39 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import mixin from "../../src/mixins/file_input_mixin";
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import {
+  describe,
+  test,
+  expect,
+  vi,
+  beforeEach,
+  beforeAll,
+  afterEach,
+} from "vitest";
 import * as notificatonModule from "../../src/notification_control";
 import { maxFileSizeInKB, maxFileSizeInMB } from "../../src/constants";
+import { useTabsStore } from "../../src/stores/tabs";
+
+vi.mock("@/workspace.js", () => {
+  const renameTab = vi.fn();
+  const showMenuNewTabOuter = vi.fn();
+  return { renameTab, showMenuNewTabOuter };
+});
 
 describe("File Input Mixin", () => {
-  let wrapper;
+  let wrapper, tabsStore, snippetTab;
+
+  beforeAll(() => {
+    tabsStore = useTabsStore();
+    const snippetPanel = tabsStore.addTab({ name: "Snippets" });
+    snippetTab = tabsStore.addTab({
+      parentId: snippetPanel.id,
+      name: "SnippetTab",
+    });
+    tabsStore.selectTab(snippetTab);
+  });
 
   beforeEach(() => {
+    vi.unstubAllGlobals();
     wrapper = mount({
       mixins: [mixin],
       template: `<div></div>`,
@@ -76,11 +102,12 @@ describe("File Input Mixin", () => {
     const preventDefault = vi.fn();
     const stopPropagation = vi.fn();
     const error = new Error("An error occurred");
-    window.FileReader = vi.fn(() => ({
+    const FileReader = vi.fn(() => ({
       readAsText: vi.fn(() => {
         throw error;
       }),
     }));
+    vi.stubGlobal("FileReader", FileReader);
 
     const fileMock = new File(["content"], "example.txt", {
       type: "text/plain",
@@ -95,5 +122,25 @@ describe("File Input Mixin", () => {
     expect(showToastSpy).toHaveBeenCalledWith("error", error);
     expect(preventDefault).toHaveBeenCalled();
     expect(stopPropagation).toHaveBeenCalled();
+  });
+
+  test("changes tab title on file change", () => {
+    wrapper.unmount();
+
+    wrapper = mount({
+      name: "SnippetTab",
+      mixins: [mixin],
+      template: `<div></div>`,
+    });
+
+    const fileMock = new File(["content"], "example.sql", {
+      type: "application/sql",
+    });
+
+    const eventMock = { target: { files: [fileMock] } };
+
+    wrapper.vm.handleFileInputChange(eventMock);
+
+    expect(snippetTab.name).toEqual(fileMock.name);
   });
 });
