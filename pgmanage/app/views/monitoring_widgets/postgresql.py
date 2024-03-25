@@ -11,39 +11,40 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":False
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "TPS"
+                    "text": "TPS"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -65,7 +66,7 @@ datasets.append({
         "label": 'Rate',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]['tps']]
@@ -94,41 +95,42 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Backends (max_connections: " + str(max_connections) + ")"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Backends (max_connections: " + str(max_connections) + ")"
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Value"
+                    "text": "Value"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": int(max_connections)
-                }
-            }]
+                "beginAtZero": True,
+                "max": int(max_connections)
+            }
         }
     }
 }
@@ -147,7 +149,7 @@ datasets.append({
         "label": 'Backends',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [backends.Rows[0]["count"]]
@@ -172,40 +174,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":False
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "%"
+                    "text": "%"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": 100.0
-                }
-            }]
+                "beginAtZero": True,
+                "max": 100.0
+            }
         }
     }
 }
@@ -227,7 +230,7 @@ datasets.append({
         "label": 'Workers busy (%)',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [perc]
@@ -252,39 +255,40 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":False
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "MB/s"
+                    "text": "MB/s"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -347,7 +351,7 @@ datasets.append({
         "label": 'Rate (MB/s)',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [r.Rows[0]['rate']]
@@ -374,39 +378,40 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":False
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "MB/s"
+                    "text": "MB/s"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -435,7 +440,7 @@ datasets.append({
         "label": 'Rate (MB/s)',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [r.Rows[0]['rate']]
@@ -464,41 +469,42 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Autovacuum Freeze (autovacuum_freeze_max_age: " + str(max_age) + ")"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Autovacuum Freeze (autovacuum_freeze_max_age: " + str(max_age) + ")"
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "%"
+                    "text": "%"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": 100.0
-                }
-            }]
+                "beginAtZero": True,
+                "max": 100.0
+            }
         }
     }
 }
@@ -522,7 +528,7 @@ datasets.append({
         "label": 'Freeze (%)',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [r.Rows[0]['perc']]
@@ -547,40 +553,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Locks Blocked"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Locks Blocked"
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Value"
+                    "text": "Value"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -599,7 +606,7 @@ datasets.append({
         "label": 'Locks Blocked',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]["count"]]
@@ -624,40 +631,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Database Size"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Database Size"
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Size (MB)"
+                    "text": "Size (MB)"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -677,7 +685,7 @@ datasets.append({
         "label": 'Database Size',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [round(query_data.Rows[0]["sum"] / Decimal(1048576.0),1)]
@@ -701,40 +709,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text": "Database Growth Rate"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text": "Database Growth Rate"
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "MB/s"
+                    "text": "MB/s"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -773,7 +782,7 @@ datasets.append({
         "label": 'Rate',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]['database_growth']]
@@ -802,41 +811,42 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Heap Cache Miss Ratio (Database: {0})".format(database_name)
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Heap Cache Miss Ratio (Database: {0})".format(database_name)
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "%"
+                    "text": "%"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": 100.0
-                }
-            }]
+                "beginAtZero": True,
+                "max": 100.0
+            }
         }
     }
 }
@@ -877,7 +887,7 @@ datasets.append({
         "label": 'Miss Ratio',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]["miss_ratio"]]
@@ -907,41 +917,42 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Index Cache Miss Ratio (Database: {0})".format(database_name)
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Index Cache Miss Ratio (Database: {0})".format(database_name)
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "%"
+                    "text": "%"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": 100.0
-                }
-            }]
+                "beginAtZero": True,
+                "max": 100.0
+            }
         }
     }
 }
@@ -982,7 +993,7 @@ datasets.append({
         "label": 'Miss Ratio',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]["miss_ratio"]]
@@ -1012,41 +1023,42 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text":"Seq Scan Ratio (Database: {0})".format(database_name)
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Seq Scan Ratio (Database: {0})".format(database_name)
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "%"
+                    "text": "%"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": 100.0
-                }
-            }]
+                "beginAtZero": True,
+                "max": 100.0
+            }
         }
     }
 }
@@ -1087,7 +1099,7 @@ datasets.append({
         "label": 'Seq Scan Ratio',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]["ratio"]]
@@ -1114,40 +1126,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text": "Long Transaction"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text": "Long Transaction"
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Seconds"
+                    "text": "Seconds"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -1190,7 +1203,7 @@ datasets.append({
         "label": 'Seconds',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]['seconds']]
@@ -1214,40 +1227,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text": "Long Query"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text": "Long Query"
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Seconds"
+                    "text": "Seconds"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -1296,7 +1310,7 @@ datasets.append({
         "label": 'Seconds',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]['seconds']]
@@ -1320,40 +1334,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text": "Long Autovacuum"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text": "Long Autovacuum"
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Seconds"
+                    "text": "Seconds"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -1402,7 +1417,7 @@ datasets.append({
         "label": 'Seconds',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]['seconds']]
@@ -1426,40 +1441,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
-        "legend": {
-            "display": False
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display":True,
+                "text": "Checkpoints"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text": "Checkpoints"
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
+        "maintainAspectRatio": False,
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Checkpoints"
+                    "text": "Checkpoints"
                 },
-                "ticks": {
-                    "beginAtZero": True
-                }
-            }]
+                "beginAtZero": True
+            }
         }
     }
 }
@@ -1480,7 +1496,7 @@ datasets.append({
         "label": 'Checkpoints',
         "backgroundColor": 'rgba(129,223,129,0.4)',
         "borderColor": 'rgba(129,223,129,1)',
-        "lineTension": 0,
+        "tension": 0,
         "pointRadius": 0,
         "borderWidth": 1,
         "data": [query_data.Rows[0]['checkpoints_diff']]
@@ -1659,14 +1675,17 @@ result = {
     "type": "pie",
     "data": None,
     "options": {
-        "legend": {
-            "position": "bottom",
+        "plugins": {
+            "legend": {
+                "position": "bottom",
+            },
+            "title":{
+                "display":True,
+                "text":"Database Size (Total: " + str(total_size) + " MB)"
+            }
         },
+        "maintainAspectRatio": False,
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Database Size (Total: " + str(total_size) + " MB)"
-        }
     }
 }
 """,
@@ -1724,14 +1743,17 @@ result = {
     "type": "pie",
     "data": None,
     "options": {
-        "legend": {
-            "position": "bottom",
+        "plugins": {
+            "legend": {
+                "position": "bottom",
+            },
+            "title":{
+                "display":True,
+                "text":"Backends (max_connections: " + str(max_connections) + ")"
+            }
         },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Backends (max_connections: " + str(max_connections) + ")"
-        }
+        "maintainAspectRatio": False,
     }
 }
 """,
