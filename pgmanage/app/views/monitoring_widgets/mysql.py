@@ -14,41 +14,41 @@ result = {
     "type": "line",
     "data": None,
     "options": {
+        "plugins": {
+            "legend": {
+                "display": False
+            },
+            "title":{
+                "display": True,
+                "text":"Threads (max_connections: " + str(max_connections) + ")"
+            },
+            "tooltip": {
+                "mode": "index",
+                "intersect": False
+            },
+        },
         "responsive": True,
-        "title":{
-            "display":True,
-            "text":"Threads (max_connections: " + str(max_connections) + ")"
-        },
-        "legend": {
-            "display": False
-        },
-        "tooltips": {
-            "mode": "index",
-            "intersect": False
-        },
         "hover": {
             "mode": "nearest",
             "intersect": True
         },
         "scales": {
-            "xAxes": [{
+            "x": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": False,
-                    "labelString": "Time"
+                    "text": "Time"
                 }
-            }],
-            "yAxes": [{
+            },
+            "y": {
                 "display": True,
-                "scaleLabel": {
+                "title": {
                     "display": True,
-                    "labelString": "Value"
+                    "text": "Value"
                 },
-                "ticks": {
-                    "beginAtZero": True,
-                    "max": int(max_connections)
-                }
-            }]
+                "beginAtZero": True,
+                "max": int(max_connections)
+            }
         }
     }
 }

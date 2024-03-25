@@ -96,8 +96,12 @@
 
           <div v-else-if="isGrid" ref="gridContent"></div>
 
-          <div v-else-if="isChart">
-            <canvas ref="canvas" class="w-100" style="height: 250px"></canvas>
+          <div
+            v-else-if="isChart"
+            class="w-100 position-relative"
+            style="height: 300px"
+          >
+            <canvas ref="canvas"></canvas>
           </div>
         </div>
       </div>
@@ -116,10 +120,11 @@ import CellDataModal from "./CellDataModal.vue";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { emitter } from "../emitter";
 import { showToast } from "../notification_control";
-import Chart from "chart.js";
+import Chart from "chart.js/auto";
 import { useVuelidate } from "@vuelidate/core";
 import { minValue, required } from "@vuelidate/validators";
 import { settingsStore } from "../stores/stores_initializer";
+import { markRaw } from "vue";
 
 export default {
   name: "MonitoringWidget",
@@ -309,9 +314,9 @@ export default {
           chartData.options.maintainAspectRatio = false;
         }
 
-        //TODO: upgrade chart.js from 2.7.2 to latest
-        //TODO: upgrade chartjs-plugin-annotation from 0.5.7 to latest
-        this.visualizationObject = new Chart(ctx, chartData);
+        const chartObj = new Chart(ctx, chartData);
+
+        this.visualizationObject = markRaw(chartObj);
         this.changeChartTheme();
       } else {
         //TODO this part of code still needs refactoring
@@ -382,8 +387,13 @@ export default {
 
           // update title
 
-          if (chartData.title && chartData.options && chartData.options.title) {
-            this.visualizationObject.options.title.text = chartData.title;
+          if (
+            chartData.title &&
+            chartData.options &&
+            chartData.options?.plugins?.title
+          ) {
+            this.visualizationObject.options.plugins.title.text =
+              chartData.title;
           }
 
           try {
@@ -448,8 +458,13 @@ export default {
           }
 
           //update title
-          if (chartData.title && chartData.options && chartData.options.title) {
-            this.visualizationObject.options.title.text = chartData.title;
+          if (
+            chartData.title &&
+            chartData.options &&
+            chartData.options?.plugins?.title
+          ) {
+            this.visualizationObject.options.plugins.title.text =
+              chartData.title;
           }
 
           try {
@@ -531,26 +546,26 @@ export default {
       }
 
       try {
-        this.visualizationObject.legend.options.labels.fontColor =
-          chartFontColor;
-        this.visualizationObject.options.title.fontColor = chartFontColor;
-        this.visualizationObject.scales["y-axis-0"].options.gridLines.color =
-          chartGridColor;
-        this.visualizationObject.scales["x-axis-0"].options.gridLines.color =
-          chartGridColor;
-        this.visualizationObject.scales[
-          "y-axis-0"
-        ].options.ticks.minor.fontColor = chartFontColor;
-        this.visualizationObject.scales[
-          "y-axis-0"
-        ].options.scaleLabel.fontColor = chartFontColor;
-        this.visualizationObject.scales[
-          "x-axis-0"
-        ].options.ticks.minor.fontColor = chartFontColor;
-        this.visualizationObject.scales[
-          "x-axis-0"
-        ].options.scaleLabel.fontColor = chartFontColor;
-      } catch (err) {}
+        if (this.monitoringWidget.type === "chart") {
+          this.visualizationObject.options.plugins.legend.labels.color =
+            chartFontColor;
+          this.visualizationObject.options.plugins.title.color = chartFontColor;
+        } else {
+          this.visualizationObject.scales.y.options.grid.border.color =
+            chartGridColor;
+          this.visualizationObject.scales.x.options.grid.border.color =
+            chartGridColor;
+          this.visualizationObject.scales.x.options.ticks.minor.fontColor =
+            chartFontColor;
+          this.visualizationObject.scales.y.options.ticks.minor.fontColor =
+            chartFontColor;
+          this.visualizationObject.scales.x.options.title.color =
+            chartFontColor;
+          this.visualizationObject.scales.y.options.title.color =
+            chartFontColor;
+        }
+      } catch (err) {
+      }
       this.visualizationObject.update();
     },
     clearEventsAndTimeout() {
