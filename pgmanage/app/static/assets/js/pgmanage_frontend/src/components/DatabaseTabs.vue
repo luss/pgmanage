@@ -240,7 +240,8 @@ export default {
           treeNode: tab.metaData.treeNode,
         },
         ERDTab: {
-          tabId: tab.parentId,
+          tabId: tab.id,
+          connTabId: tab.parentId,
           databaseIndex: tab?.metaData?.databaseIndex,
           databaseName: tab?.metaData?.databaseName,
           schema: tab.metaData?.schema,
