@@ -405,6 +405,52 @@ def get_table_columns(request, database):
 
 
 @user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_database_meta(request, database):
+    response_data = {
+        'schemas': None
+    }
+
+    schema_list = []
+
+    try:
+        if database.v_has_schema:
+            schemas = database.QuerySchemas()
+            for schema in schemas.Rows:
+                schema_data = {
+                    "name": schema["schema_name"],
+                    "tables": []
+                }
+
+                tables = database.QueryTables(False, schema["schema_name"])
+                for table in tables.Rows:
+                    table_data = {
+                        "name": table["table_name"],
+                        "columns": []
+                    }
+                    table_name = table.get('name_raw') or table["table_name"]
+                    table_columns = database.QueryTablesFields(
+                        table_name, False, schema["schema_name"]
+                    ).Rows
+
+                    table_data['columns'] = list((c['column_name'] for c in table_columns))
+                    schema_data['tables'].append(table_data)
+                schema_list.append(schema_data)
+        # else:
+            # schemas_list = ['dummy']
+
+
+        response_data["schemas"] = schema_list
+
+    except Exception as exc:
+        print(str(exc))
+        return error_response(message=str(exc), password_timeout=True)
+
+
+    return JsonResponse(response_data)
+
+
+@user_authenticated
 @database_required(p_check_timeout=True, p_open_connection=True)
 def get_completions_table(request, v_database):
     response_data = create_response_template()

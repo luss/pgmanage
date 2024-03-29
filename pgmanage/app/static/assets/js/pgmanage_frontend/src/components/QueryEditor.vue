@@ -1,5 +1,5 @@
 <template>
-  <div ref="editor" @contextmenu.stop.prevent="contextMenu" >
+  <div ref="editor" @contextmenu.stop.prevent="contextMenu" @keyup="autocompleteStart" @keydown="autocompleteKeyDown" >
   </div>
 </template>
 
@@ -21,6 +21,9 @@ import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
 import axios from 'axios'
 import distance from 'jaro-winkler'
+// import { tabsStore, connectionsStore } from "../stores/stores_initializer";
+import { dbMetadataStore } from "../stores/stores_initializer";
+import { SQLAutocomplete, SQLDialect } from 'sql-autocomplete';
 
 export default {
   props: {
@@ -33,10 +36,10 @@ export default {
       default: true,
     },
     tabId: String,
-    tabDbId: String,
     tabMode: String,
     dialect: String,
     databaseIndex: String,
+    databaseName: String,
   },
   emits: ["editorChange"],
   data() {
@@ -50,6 +53,7 @@ export default {
         language: this.dialect === "oracle" ? "plsql" : this.dialect,
         linesBetweenQueries: 1,
       },
+      completer: null
     };
   },
   computed: {
@@ -65,6 +69,7 @@ export default {
   mounted() {
     this.setupEditor();
     this.setupEvents();
+    this.setupCompleter()
     this.editor.on("change", () => {
       this.$emit("editorChange", this.editor.getValue().trim());
     });
@@ -108,92 +113,108 @@ export default {
       this.editor.setOption({enableBasicAutocompletion: true})
       this.editor.setOption({enableLiveAutocompletion: true})
 
-      let get_editor_last_word = function(editor) {
-        let cursor = editor.selection.getCursor();
-        let prefix_pos = editor.session.doc.positionToIndex(cursor)-1;
-        let editor_text = editor.getValue();
-        let left_text = editor_text
-        let pos_iterator = prefix_pos;
-        let word_length = 0;
+      // let get_editor_last_word = function(editor) {
+      //   let cursor = editor.selection.getCursor();
+      //   let prefix_pos = editor.session.doc.positionToIndex(cursor)-1;
+      //   let editor_text = editor.getValue();
+      //   let left_text = editor_text
+      //   let pos_iterator = prefix_pos;
+      //   let word_length = 0;
 
-        const SEPARATORS = [' ', '\n', '\'', '(', ')', ',']
+      //   const SEPARATORS = [' ', '\n', '\'', '(', ')', ',']
 
-        // skip any leading separators first
-        while ([' ', '\n'].includes(editor_text[pos_iterator]) && pos_iterator >=0 ) {
-          pos_iterator--
-        }
+      //   // skip any leading separators first
+      //   while ([' ', '\n'].includes(editor_text[pos_iterator]) && pos_iterator >=0 ) {
+      //     pos_iterator--
+      //   }
 
-        // adjust word start/end pointer until we meet another separator
-        while (!SEPARATORS.includes(editor_text[pos_iterator]) && pos_iterator >=0 ) {
-          pos_iterator--
-          word_length++
-        }
+      //   // adjust word start/end pointer until we meet another separator
+      //   while (!SEPARATORS.includes(editor_text[pos_iterator]) && pos_iterator >=0 ) {
+      //     pos_iterator--
+      //     word_length++
+      //   }
 
-        if (pos_iterator >= 0) {
-          pos_iterator++;
-          return editor_text.substring(pos_iterator,pos_iterator + word_length);
-        }
-        else {
-          return editor_text.substring(pos_iterator,pos_iterator + word_length + 1);
-        }
-      }
+      //   if (pos_iterator >= 0) {
+      //     pos_iterator++;
+      //     return editor_text.substring(pos_iterator,pos_iterator + word_length);
+      //   }
+      //   else {
+      //     return editor_text.substring(pos_iterator,pos_iterator + word_length + 1);
+      //   }
+      // }
 
       this.editor.setOptions({
         enableBasicAutocompletion: [
           {
             getCompletions: (function (editor, session, pos, prefix, callback) {
-              // console.log(prefix)
-
-              // p_value should be the whole word to the left of cursor
-
               // console.log(last_word)
               // todo: resolve context to complete from: like select * from [resolve table here]
+              if(!this.completer)
+                return
+              const options = this.completer.autocomplete(
+                editor.getValue(),
+                editor.session.doc.positionToIndex(editor.selection.getCursor())
+              );
+
+
+              // debugger
               let ret = [];
-              let prefix_is_upcase = /^[A-Z]+$/.test(prefix)
-              v_keywords.forEach(function(keyword) {
-                let dist = distance(prefix, keyword, { caseSensitive: false })
-                if(dist > 0.85) {
-                  ret.push({
-                      caption: keyword,
-                      value: prefix_is_upcase ? keyword : keyword.toLowerCase(),
-                      meta: 'keyword',
-                      score: dist * 100
-                  });
-                }
-              });
-              console.log(ret)
-              let last_word = get_editor_last_word(editor)
-              axios.post("/get_autocomplete_results/", {
-                p_database_index: this.databaseIndex,
-                p_tab_id: this.tabId,
-                p_sql: editor.getValue(),
-                p_value: last_word,
-                p_pos: pos.column
+              options.forEach(function(opt) {
+                ret.push({
+                    caption: opt.value,
+                    value: opt.value,
+                    meta: opt.optionType,
+                    score: 200
+                });
               })
-              .then((resp) => {
-                let data = resp.data.v_data.data;
-                console.log(last_word)
-                data.forEach((el) => {
-                  let candidates = el.elements.map((item) => {
-                    return {
-                      caption: item.select_value,
-                      value: item.value,
-                      meta: el.type,
-                      score: 0
-                    }
-                  })
-                  ret = ret.concat(candidates)
-                })
-                callback(null,ret)
-              })
-              .catch((error) => {
-                showToast("error", error.response.data.data)
-              })
+              callback(null,ret)
+              // let prefix_is_upcase = /^[A-Z]+$/.test(prefix)
+              // v_keywords.forEach(function(keyword) {
+              //   let dist = distance(prefix, keyword, { caseSensitive: false })
+              //   if(dist > 0.55) {
+              //     ret.push({
+              //         caption: keyword,
+              //         value: prefix_is_upcase ? keyword : keyword.toLowerCase(),
+              //         meta: 'keyword',
+              //         score: dist * 100
+              //     });
+              //   }
+              // });
+              // // callback(null,ret)
+              // console.log(ret)
+              // let last_word = get_editor_last_word(editor)
+              // axios.post("/get_autocomplete_results/", {
+              //   p_database_index: this.databaseIndex,
+              //   p_tab_id: this.tabId,
+              //   p_sql: editor.getValue(),
+              //   p_value: last_word,
+              //   p_pos: pos.column
+              // })
+              // .then((resp) => {
+              //   let data = resp.data.v_data.data;
+              //   console.log(last_word)
+              //   data.forEach((el) => {
+              //     let candidates = el.elements.map((item) => {
+              //       return {
+              //         caption: item.select_value,
+              //         value: item.value,
+              //         meta: el.type,
+              //         score: 0
+              //       }
+              //     })
+              //     ret = ret.concat(candidates)
+              //   })
+              //   callback(null,ret)
+              // })
+              // .catch((error) => {
+              //   showToast("error", error.response.data.data)
+              // })
             }).bind(this)
           }
         ],
         // to make popup appear automatically, without explicit _ctrl+space_
-        enableLiveAutocompletion: false
+        enableLiveAutocompletion: true,
+        liveAutocompletionDelay: 100,
       });
 
 
@@ -201,6 +222,28 @@ export default {
       this.editor.resize();
 
       setupAceDragDrop(this.editor);
+    },
+    setupCompleter() {
+      if (this.autocomplete && this.databaseIndex && this.databaseName) {
+        const dbMeta = dbMetadataStore.getDbMeta(this.databaseIndex, this.databaseName)
+
+        if(!dbMeta)
+          return
+        let tableNames = []
+        let columnNames = []
+
+        dbMeta.forEach((schema) => {
+          if(['information_schema', 'pg_catalog'].includes(schema.name))
+            return
+
+          tableNames = tableNames.concat(schema.tables.map((t) => t.name))
+          schema.tables.forEach((t) => {
+            columnNames = columnNames.concat(t.columns)
+          })
+        })
+        columnNames = [...new Set(columnNames)]
+        this.completer = new SQLAutocomplete(SQLDialect.PLpgSQL, tableNames, columnNames);
+      }
     },
     getQueryEditorValue(raw_query) {
       if (raw_query) return this.editor.getValue().trim();
@@ -269,7 +312,7 @@ export default {
     },
     autocompleteStart(event, force = null) {
       if (this.autocomplete) {
-        autocomplete_start(this.editor, this.autocompleteMode, event, force);
+        //autocomplete_start(this.editor, this.autocompleteMode, event, force);
       }
     },
     indentSQL() {
@@ -294,7 +337,6 @@ export default {
       this.editor.focus();
     },
     setupEvents() {
-      console.log('subscribing', `${this.tabId}_show_autocomplete_results`)
       emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
         this.autocompleteStart(event, true);
       });
