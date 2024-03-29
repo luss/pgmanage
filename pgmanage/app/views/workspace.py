@@ -415,37 +415,35 @@ def get_database_meta(request, database):
 
     try:
         if database.v_has_schema:
-            schemas = database.QuerySchemas()
-            for schema in schemas.Rows:
-                schema_data = {
-                    "name": schema["schema_name"],
-                    "tables": []
+            schemas = database.QuerySchemas().Rows
+        else:
+            schemas = [{'schema_name': '-noschema-'}]
+
+        for schema in schemas:
+            schema_data = {
+                "name": schema["schema_name"],
+                "tables": []
+            }
+
+            tables = database.QueryTables(False, schema["schema_name"])
+            for table in tables.Rows:
+                table_data = {
+                    "name": table["table_name"],
+                    "columns": []
                 }
+                table_name = table.get('name_raw') or table["table_name"]
+                table_columns = database.QueryTablesFields(
+                    table_name, False, schema["schema_name"]
+                ).Rows
 
-                tables = database.QueryTables(False, schema["schema_name"])
-                for table in tables.Rows:
-                    table_data = {
-                        "name": table["table_name"],
-                        "columns": []
-                    }
-                    table_name = table.get('name_raw') or table["table_name"]
-                    table_columns = database.QueryTablesFields(
-                        table_name, False, schema["schema_name"]
-                    ).Rows
-
-                    table_data['columns'] = list((c['column_name'] for c in table_columns))
-                    schema_data['tables'].append(table_data)
-                schema_list.append(schema_data)
-        # else:
-            # schemas_list = ['dummy']
-
+                table_data['columns'] = list((c['column_name'] for c in table_columns))
+                schema_data['tables'].append(table_data)
+            schema_list.append(schema_data)
 
         response_data["schemas"] = schema_list
 
     except Exception as exc:
-        print(str(exc))
         return error_response(message=str(exc), password_timeout=True)
-
 
     return JsonResponse(response_data)
 
@@ -586,36 +584,10 @@ def get_autocomplete_results(request, v_database):
                 pass
 
     if not alias:
-        # parsed = sqlparse.parse(sql)[0].flatten()
-        # # find the token index to the left of pos, skip whitespace tokens
-        # sumlen = 0
-        # cur_tok_idx = 0
-        # for (idx, tok) in enumerate(parsed):
-        #     sumlen += len(tok.value)
-        #     if(sumlen >= pos):
-        #         cur_tok_idx = idx
-        #         break
-
-        # print(cur_tok_idx)
-        # # left_token = None
-        # if(cur_tok_idx > 0):
-        #     lst = list(parsed)
-        #     import pdb; pdb.set_trace()
-        #     print(parsed.tokens)
-        #     left_token = parsed.token_prev(idx)[1]
-        #     print(left_token)
-        #     print(left_token.ttype)
-
-        # PREFMAP = {
-        #     'from': ['table', 'view', 'function']
-        # }
-        # the list of completions for the from word is: 1 - user tables, 2 - builtin tables, 3 user views, 4 builtin views, 4 user functions,
-
         filter_part = f"where search.result like '{value}%' "
         query_columns = "type,sequence,result,select_value,complement"
         if num_dots > 0:
             filter_part = f"where search.result_complete like '{value}%' and search.num_dots <= {num_dots}"
-            # query_columns = "type,sequence,result_complete as result,select_value,complement_complete as complement"
             query_columns = "type,sequence,result,result_complete,select_value,complement_complete as complement"
         elif value == "":
             filter_part = "where search.num_dots = 0 "

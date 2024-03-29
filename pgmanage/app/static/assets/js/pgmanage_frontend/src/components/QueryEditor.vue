@@ -1,5 +1,5 @@
 <template>
-  <div ref="editor" @contextmenu.stop.prevent="contextMenu" @keyup="autocompleteStart" @keydown="autocompleteKeyDown" >
+  <div ref="editor" @contextmenu.stop.prevent="contextMenu">
   </div>
 </template>
 
@@ -7,21 +7,11 @@
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { snippetsStore, settingsStore } from "../stores/stores_initializer";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
-import {
-  autocomplete_start,
-  autocomplete_keydown,
-  autocomplete_update_editor_cursor,
-  close_autocomplete,
-  v_keywords
-} from "../autocomplete";
 import { emitter } from "../emitter";
 import { format } from "sql-formatter";
 import { setupAceDragDrop } from "../file_drop";
 import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
-import axios from 'axios'
-import distance from 'jaro-winkler'
-// import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 import { dbMetadataStore } from "../stores/stores_initializer";
 import { SQLAutocomplete, SQLDialect } from 'sql-autocomplete';
 
@@ -74,12 +64,6 @@ export default {
       this.$emit("editorChange", this.editor.getValue().trim());
     });
 
-    this.editor.on("blur", () => {
-      setTimeout(() => {
-        close_autocomplete();
-      }, 200);
-    });
-
     settingsStore.$subscribe((mutation, state) => {
       this.editor.setTheme(`ace/theme/${state.editorTheme}`);
       this.editor.setFontSize(state.fontSize);
@@ -110,45 +94,11 @@ export default {
       this.editor.commands.bindKey("Up", null);
       this.editor.commands.bindKey("Down", null);
 
-      this.editor.setOption({enableBasicAutocompletion: true})
-      this.editor.setOption({enableLiveAutocompletion: true})
-
-      // let get_editor_last_word = function(editor) {
-      //   let cursor = editor.selection.getCursor();
-      //   let prefix_pos = editor.session.doc.positionToIndex(cursor)-1;
-      //   let editor_text = editor.getValue();
-      //   let left_text = editor_text
-      //   let pos_iterator = prefix_pos;
-      //   let word_length = 0;
-
-      //   const SEPARATORS = [' ', '\n', '\'', '(', ')', ',']
-
-      //   // skip any leading separators first
-      //   while ([' ', '\n'].includes(editor_text[pos_iterator]) && pos_iterator >=0 ) {
-      //     pos_iterator--
-      //   }
-
-      //   // adjust word start/end pointer until we meet another separator
-      //   while (!SEPARATORS.includes(editor_text[pos_iterator]) && pos_iterator >=0 ) {
-      //     pos_iterator--
-      //     word_length++
-      //   }
-
-      //   if (pos_iterator >= 0) {
-      //     pos_iterator++;
-      //     return editor_text.substring(pos_iterator,pos_iterator + word_length);
-      //   }
-      //   else {
-      //     return editor_text.substring(pos_iterator,pos_iterator + word_length + 1);
-      //   }
-      // }
 
       this.editor.setOptions({
         enableBasicAutocompletion: [
           {
             getCompletions: (function (editor, session, pos, prefix, callback) {
-              // console.log(last_word)
-              // todo: resolve context to complete from: like select * from [resolve table here]
               if(!this.completer)
                 return
               const options = this.completer.autocomplete(
@@ -156,8 +106,6 @@ export default {
                 editor.session.doc.positionToIndex(editor.selection.getCursor())
               );
 
-
-              // debugger
               let ret = [];
               options.forEach(function(opt) {
                 ret.push({
@@ -168,47 +116,6 @@ export default {
                 });
               })
               callback(null,ret)
-              // let prefix_is_upcase = /^[A-Z]+$/.test(prefix)
-              // v_keywords.forEach(function(keyword) {
-              //   let dist = distance(prefix, keyword, { caseSensitive: false })
-              //   if(dist > 0.55) {
-              //     ret.push({
-              //         caption: keyword,
-              //         value: prefix_is_upcase ? keyword : keyword.toLowerCase(),
-              //         meta: 'keyword',
-              //         score: dist * 100
-              //     });
-              //   }
-              // });
-              // // callback(null,ret)
-              // console.log(ret)
-              // let last_word = get_editor_last_word(editor)
-              // axios.post("/get_autocomplete_results/", {
-              //   p_database_index: this.databaseIndex,
-              //   p_tab_id: this.tabId,
-              //   p_sql: editor.getValue(),
-              //   p_value: last_word,
-              //   p_pos: pos.column
-              // })
-              // .then((resp) => {
-              //   let data = resp.data.v_data.data;
-              //   console.log(last_word)
-              //   data.forEach((el) => {
-              //     let candidates = el.elements.map((item) => {
-              //       return {
-              //         caption: item.select_value,
-              //         value: item.value,
-              //         meta: el.type,
-              //         score: 0
-              //       }
-              //     })
-              //     ret = ret.concat(candidates)
-              //   })
-              //   callback(null,ret)
-              // })
-              // .catch((error) => {
-              //   showToast("error", error.response.data.data)
-              // })
             }).bind(this)
           }
         ],
@@ -300,21 +207,6 @@ export default {
         items: option_list,
       });
     },
-    autocompleteKeyDown(event) {
-      // don't call autocomplete while typing in the searchbar
-      if(event.target.classList.contains('ace_search_field'))
-        return
-      if (this.autocomplete) {
-        autocomplete_keydown(this.editor, event);
-      } else {
-        autocomplete_update_editor_cursor(this.editor, event);
-      }
-    },
-    autocompleteStart(event, force = null) {
-      if (this.autocomplete) {
-        //autocomplete_start(this.editor, this.autocompleteMode, event, force);
-      }
-    },
     indentSQL() {
       let editor_value = this.editor.getValue();
 
@@ -338,7 +230,8 @@ export default {
     },
     setupEvents() {
       emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
-        this.autocompleteStart(event, true);
+        debugger
+        console.warn('fixme: implement autocomplete on hotkey')
       });
 
       emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
