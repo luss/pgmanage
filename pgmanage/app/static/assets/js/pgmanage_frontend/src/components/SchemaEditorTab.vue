@@ -61,6 +61,25 @@ import axios from 'axios'
 import { showToast } from '../notification_control'
 import { settingsStore } from '../stores/stores_initializer'
 
+
+function formatDefaultValue(defaultValue, dataType, table) {
+  if (!defaultValue) return null
+  if (defaultValue.trim().toLowerCase() == 'null') return null
+
+  let textTypesMap = ['CHAR', 'VARCHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
+    'TEXT', 'CHARACTER', 'NCHAR', 'NVARCHAR',
+    'CHARACTER VARYING',
+  ]
+
+  if (textTypesMap.includes(dataType.toUpperCase())) {
+    const stringValue = defaultValue.toString()
+    return stringValue
+  }
+
+  // If no conversion matches, return raw value
+  return table.client.raw(defaultValue);
+}
+
 export default {
   name: "SchemaEditor",
   props: {
@@ -252,17 +271,20 @@ export default {
           if(changes.drops.length) table.dropColumns(changes.drops)
 
           changes.typeChanges.forEach((coldef) => {
-            if(coldef.dataType === 'autoincrement') {
+            if (coldef.dataType === 'autoincrement') {
               table.increments(coldef.name).alter()
-            }else {
-              table.specificType(coldef.name, coldef.dataType).defaultTo(coldef.defaultValue).alter({alterNullable : false})
+            } else {
+              let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table)
+              table.specificType(coldef.name, coldef.dataType).defaultTo(formattedDefault).alter({ alterNullable: false })
+              coldef.skipDefaults = true
             }
           })
 
-          changes.defaults.forEach(function(coldef) {
-            if (coldef.defaultValue !== '') {
-              table.specificType(coldef.name, coldef.dataType).alter().defaultTo(table.client.raw(coldef.defaultValue)).alter({alterNullable : false, alterType: false})
-            }
+          changes.defaults.forEach(function (coldef) {
+            if (!!coldef?.skipDefaults) return
+            let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table)
+            table.specificType(coldef.name, coldef.dataType).alter().defaultTo(formattedDefault).alter({ alterNullable: false, alterType: false })
+
             // FIXME: this does not work, figure out how to do drop default via Knex.
             //  else {
             //   table.specificType(coldef.name, coldef.dataType).defaultTo().alter({alterNullable : false, alterType: false})
@@ -270,7 +292,11 @@ export default {
           })
 
           changes.nullableChanges.forEach((coldef) => {
-            coldef.nullable ? table.setNullable(coldef.name) : table.dropNullable(coldef.name)
+            if (table.client.dialect === "mysql") {
+              coldef.nullable ? table.setNullable(coldef) : table.dropNullable(coldef)
+            } else {
+              coldef.nullable ? table.setNullable(coldef.name) : table.dropNullable(coldef.name)
+            }
           })
 
           // FIXME: commenting generates drop default - how to avoid this?
@@ -295,7 +321,7 @@ export default {
           tabledef.columns.forEach((coldef) => {
             // use Knex's magic to create a proper auto-incrementing column in database-agnostic way
             let col = coldef.dataType === 'autoincrement' ?
-              table.increments(coldef.name) :
+              table.increments(coldef.name, {primaryKey: false}) :
               table.specificType(coldef.name, coldef.dataType)
 
             coldef.nullable ? col.nullable() : col.notNullable()
