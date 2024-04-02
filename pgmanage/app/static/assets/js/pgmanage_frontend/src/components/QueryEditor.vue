@@ -68,6 +68,15 @@ export default {
       this.editor.setTheme(`ace/theme/${state.editorTheme}`);
       this.editor.setFontSize(state.fontSize);
     });
+
+    dbMetadataStore.$onAction((action) => {
+      if (action.name === "fetchDbMeta") {
+        console.log(action.name)
+      //   action.after(() => {
+      //     this.changeChartTheme();
+      //   });
+      }
+    });
   },
   unmounted() {
     this.clearEvents();
@@ -111,11 +120,11 @@ export default {
                 ret.push({
                     caption: opt.value,
                     value: opt.value,
-                    meta: opt.optionType,
-                    score: 200
+                    meta: opt.optionType.toLowerCase(),
+                    score: 100
                 });
               })
-              callback(null,ret)
+              callback(null, ret)
             }).bind(this)
           }
         ],
@@ -131,14 +140,29 @@ export default {
       setupAceDragDrop(this.editor);
     },
     setupCompleter() {
+      // TODO:
+      // load database meta for restored tabs
+      // load database meta for tabs created by default
+      // reuse existing dbmeta if available
+      // setup completer with different dialect
+      // figure out how to do completion for console tab
+      // create/destroy completer when autocomplete switch is toggled
+      // reuse completer instance for the same dbindex/database combo if possible
+      // use fuzzy matching for completions
+      // fix cursor overlapping with text letters in the editor
+      console.log('setup competer for ', this.databaseIndex, this.databaseName )
       if (this.autocomplete && this.databaseIndex && this.databaseName) {
+        // console.log(dbMetadataStore.dbMeta)
         const dbMeta = dbMetadataStore.getDbMeta(this.databaseIndex, this.databaseName)
 
-        if(!dbMeta)
+        if(!dbMeta) {
+          console.log('no dbmeta found')
           return
+        }
+
         let tableNames = []
         let columnNames = []
-
+        console.time('processmeta')
         dbMeta.forEach((schema) => {
           if(['information_schema', 'pg_catalog'].includes(schema.name))
             return
@@ -149,7 +173,9 @@ export default {
           })
         })
         columnNames = [...new Set(columnNames)]
+
         this.completer = new SQLAutocomplete(SQLDialect.PLpgSQL, tableNames, columnNames);
+        console.timeEnd('processmeta')
       }
     },
     getQueryEditorValue(raw_query) {
@@ -230,7 +256,6 @@ export default {
     },
     setupEvents() {
       emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
-        debugger
         console.warn('fixme: implement autocomplete on hotkey')
       });
 
