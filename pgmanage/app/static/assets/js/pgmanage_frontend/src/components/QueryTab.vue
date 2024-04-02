@@ -4,7 +4,7 @@
     <pane size="30">
       <QueryEditor ref="editor" class="h-100 mr-2"
         :read-only="readOnlyEditor"
-        :tab-id="connId"
+        :tab-id="tabId"
         :database-index="databaseIndex"
         :database-name="databaseName"
         tab-mode="query"
