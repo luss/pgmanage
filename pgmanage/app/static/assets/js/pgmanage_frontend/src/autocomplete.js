@@ -618,7 +618,7 @@ $(function() {
           data: [],
           columns: columnProperties,
           headerVisible: false,
-          selectable: "highlight",
+          selectableRows: "highlight",
           layout: "fitDataStretch",
         }
       );
