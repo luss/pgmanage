@@ -35,12 +35,13 @@ ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
 
 axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 
-await settingsStore.getSettings()
+settingsStore.getSettings().then(() => {
+  const app = createApp(App);
+  setupLogger(app);
 
-const app = createApp(App);
-setupLogger(app);
+  app.use(ToastPlugin, {
+    duration: 0,
+  });
+  app.mount("#app");
+});
 
-app.use(ToastPlugin, {
-  duration: 0
-})
-app.mount("#app");
