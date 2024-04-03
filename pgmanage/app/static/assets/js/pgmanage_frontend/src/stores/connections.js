@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-import { dbMetadataStore } from "../stores/stores_initializer";
-
 const useConnectionsStore = defineStore({
   id: "connections",
   state: () => ({
@@ -28,13 +26,10 @@ const useConnectionsStore = defineStore({
       }
     },
     changeActiveDatabaseThreadSafe(data) {
-      console.log(data)
       this.changeActiveDatabaseCallRunning = true;
       axios
         .post("/change_active_database/", data)
-        .then(async (resp) => {
-          // debugger
-          await dbMetadataStore.fetchDbMeta(data.database_index, data.tab_id, data.database)
+        .then((resp) => {
           this.changeActiveDatabaseCallRunning = false;
           if (this.changeActiveDatabaseCallList.length > 0)
             this.changeActiveDatabaseThreadSafe(

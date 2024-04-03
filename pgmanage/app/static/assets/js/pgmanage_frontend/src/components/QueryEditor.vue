@@ -28,7 +28,7 @@ export default {
     tabId: String,
     tabMode: String,
     dialect: String,
-    databaseIndex: String,
+    databaseIndex: Number,
     databaseName: String,
   },
   emits: ["editorChange"],
@@ -55,11 +55,16 @@ export default {
     readOnly(newValue, oldValue) {
       this.editor.setReadOnly(newValue);
     },
+    autocomplete(newVal, oldVal) {
+      this.editor.setOptions({
+        enableLiveAutocompletion: newVal,
+        liveAutocompletionDelay: 100,
+      })
+    }
   },
   mounted() {
     this.setupEditor();
     this.setupEvents();
-    this.setupCompleter()
     this.editor.on("change", () => {
       this.$emit("editorChange", this.editor.getValue().trim());
     });
@@ -69,14 +74,23 @@ export default {
       this.editor.setFontSize(state.fontSize);
     });
 
-    dbMetadataStore.$onAction((action) => {
-      if (action.name === "fetchDbMeta") {
-        console.log(action.name)
-      //   action.after(() => {
-      //     this.changeChartTheme();
-      //   });
-      }
-    });
+    if(this.databaseIndex && this.databaseName) {
+      dbMetadataStore.$onAction((action) => {
+        if (action.name === "fetchDbMeta" && action.args[0] == this.databaseIndex && action.args[1] == this.tabId) {
+          action.after((result) => {
+            this.setupCompleter();
+          });
+        }
+      });
+
+      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.tabId, this.databaseName)
+    }
+    if(this.autocomplete) {
+      this.editor.setOptions({
+        enableLiveAutocompletion: true,
+        liveAutocompletionDelay: 100,
+      })
+    }
   },
   unmounted() {
     this.clearEvents();
@@ -128,11 +142,7 @@ export default {
             }).bind(this)
           }
         ],
-        // to make popup appear automatically, without explicit _ctrl+space_
-        enableLiveAutocompletion: true,
-        liveAutocompletionDelay: 100,
       });
-
 
       this.editor.focus();
       this.editor.resize();
@@ -141,42 +151,41 @@ export default {
     },
     setupCompleter() {
       // TODO:
-      // load database meta for restored tabs
-      // load database meta for tabs created by default
-      // reuse existing dbmeta if available
-      // setup completer with different dialect
-      // figure out how to do completion for console tab
-      // create/destroy completer when autocomplete switch is toggled
+      // figure out how to do completion for console tab - suggest keyword only?
       // reuse completer instance for the same dbindex/database combo if possible
       // use fuzzy matching for completions
       // fix cursor overlapping with text letters in the editor
-      console.log('setup competer for ', this.databaseIndex, this.databaseName )
-      if (this.autocomplete && this.databaseIndex && this.databaseName) {
-        // console.log(dbMetadataStore.dbMeta)
-        const dbMeta = dbMetadataStore.getDbMeta(this.databaseIndex, this.databaseName)
+      // oracle support
+      // multiple get meta requests ?
+      // autocomplete widget breaks when font size changes
+      // figure out cancelsqlbutton bundle growing
 
-        if(!dbMeta) {
-          console.log('no dbmeta found')
+      const dbMeta = dbMetadataStore.getDbMeta(this.databaseIndex, this.databaseName)
+
+      if(!dbMeta)
+        return
+
+      let tableNames = []
+      let columnNames = []
+      dbMeta.forEach((schema) => {
+        if(['information_schema', 'pg_catalog'].includes(schema.name))
           return
-        }
 
-        let tableNames = []
-        let columnNames = []
-        console.time('processmeta')
-        dbMeta.forEach((schema) => {
-          if(['information_schema', 'pg_catalog'].includes(schema.name))
-            return
-
-          tableNames = tableNames.concat(schema.tables.map((t) => t.name))
-          schema.tables.forEach((t) => {
-            columnNames = columnNames.concat(t.columns)
-          })
+        tableNames = tableNames.concat(schema.tables.map((t) => t.name))
+        schema.tables.forEach((t) => {
+          columnNames = columnNames.concat(t.columns)
         })
-        columnNames = [...new Set(columnNames)]
+      })
 
-        this.completer = new SQLAutocomplete(SQLDialect.PLpgSQL, tableNames, columnNames);
-        console.timeEnd('processmeta')
+      columnNames = [...new Set(columnNames)]
+      const DIALECT_MAP = {
+        'postgresql': SQLDialect.PLpgSQL,
+        'mysql': SQLDialect.MYSQL,
+        'mariadb': SQLDialect.MYSQL,
+        'oracle': SQLDialect.PLpgSQL,
       }
+
+      this.completer = new SQLAutocomplete(DIALECT_MAP[this.dialect] || SQLDialect.PLpgSQL, tableNames, columnNames);
     },
     getQueryEditorValue(raw_query) {
       if (raw_query) return this.editor.getValue().trim();
@@ -256,7 +265,7 @@ export default {
     },
     setupEvents() {
       emitter.on(`${this.tabId}_show_autocomplete_results`, (event) => {
-        console.warn('fixme: implement autocomplete on hotkey')
+        this.editor.execCommand("startAutocomplete")
       });
 
       emitter.on(`${this.tabId}_copy_to_editor`, (command) => {
@@ -283,6 +292,6 @@ export default {
       emitter.all.delete(`${this.tabId}_copy_to_editor`);
       emitter.all.delete(`${this.tabId}_indent_sql`);
     },
-  },
+  }
 };
 </script>

@@ -13,15 +13,16 @@ const useDbMetadataStore = defineStore("dbMetadata", {
           return this.dbMeta[conn_id][db_name]
     },
     async fetchDbMeta(conn_id, tab_id, db_name) {
-      console.time('fetchmeta')
+      // console.time('fetchmeta')
       if(this.dbMeta[conn_id])
         if(this.dbMeta[conn_id][db_name])
           return
       const meta_response = await axios.post('/get_database_meta/', {
         database_index: conn_id,
-        tab_id: tab_id
+        tab_id: tab_id,
+        database_name: db_name
       })
-      console.timeEnd('fetchmeta')
+      // console.timeEnd('fetchmeta')
 
       if(!this.dbMeta[conn_id])
         this.dbMeta[conn_id] = {}
