@@ -276,7 +276,7 @@ class MariaDB:
         return self.Query('show databases', True, True)
 
     def QuerySchemas(self):
-        return self.v_connection.Query('select schema_name from information_schema.schemata', True)
+        return self.v_connection.Query('select schema_name as schema_name from information_schema.schemata', True)
 
     def QueryTables(self, p_all_schemas=False, p_schema=None):
         v_filter = ''

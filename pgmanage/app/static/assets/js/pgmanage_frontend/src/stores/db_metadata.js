@@ -13,7 +13,6 @@ const useDbMetadataStore = defineStore("dbMetadata", {
           return this.dbMeta[conn_id][db_name]
     },
     async fetchDbMeta(conn_id, tab_id, db_name) {
-      // console.time('fetchmeta')
       if(this.dbMeta[conn_id])
         if(this.dbMeta[conn_id][db_name])
           return
@@ -22,7 +21,6 @@ const useDbMetadataStore = defineStore("dbMetadata", {
         tab_id: tab_id,
         database_name: db_name
       })
-      // console.timeEnd('fetchmeta')
 
       if(!this.dbMeta[conn_id])
         this.dbMeta[conn_id] = {}
