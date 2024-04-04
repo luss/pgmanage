@@ -2,7 +2,6 @@
   <div ref="editor" @contextmenu.stop.prevent="contextMenu">
   </div>
 </template>
-
 <script>
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { snippetsStore, settingsStore } from "../stores/stores_initializer";
@@ -114,9 +113,6 @@ export default {
       this.editor.commands.bindKey("Ctrl-Down", null);
       this.editor.commands.bindKey("Ctrl-F", null);
       this.editor.commands.bindKey("Ctrl-,", null);
-      this.editor.commands.bindKey("Up", null);
-      this.editor.commands.bindKey("Down", null);
-
 
       this.editor.setOptions({
         enableBasicAutocompletion: [
@@ -151,14 +147,12 @@ export default {
     },
     setupCompleter() {
       // TODO:
-      // figure out how to do completion for console tab - suggest keyword only?
+      // figure out how to do completion for console tab - suggest keywords only?
       // reuse completer instance for the same dbindex/database combo if possible
       // use fuzzy matching for completions
       // fix cursor overlapping with text letters in the editor
       // oracle support
       // multiple get meta requests ?
-      // autocomplete widget breaks when font size changes
-      // figure out cancelsqlbutton bundle growing
 
       const dbMeta = dbMetadataStore.getDbMeta(this.databaseIndex, this.databaseName)
 
