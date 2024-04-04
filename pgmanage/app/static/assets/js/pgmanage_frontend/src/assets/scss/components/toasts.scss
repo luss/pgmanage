@@ -27,6 +27,12 @@
         .v-toast__text {
             padding: 1rem;
         }
+
+        .v-toast-scrollable {
+            max-height:100px;
+            overflow: auto;
+            scrollbar-color: auto;
+        }
     }
 
     &__details {
