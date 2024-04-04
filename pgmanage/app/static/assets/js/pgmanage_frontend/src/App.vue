@@ -3,6 +3,7 @@
   <SideBarTabs />
   <PasswordModal />
   <MasterPasswordModal />
+  <UtilityJobsJobDetail />
 </template>
 
 <script>
@@ -10,6 +11,7 @@ import SettingsModal from "./components/SettingsModal.vue";
 import SideBarTabs from "./components/SideBarTabs.vue";
 import PasswordModal from "./components/PasswordModal.vue";
 import MasterPasswordModal from './components/MasterPasswordModal.vue'
+import UtilityJobsJobDetail from "./components/UtilityJobsJobDetail.vue";
 import { emitter } from "./emitter";
 import { conn_app, connectionsModalInit } from "./connections_modal";
 
@@ -19,7 +21,8 @@ export default {
     SettingsModal,
     SideBarTabs,
     PasswordModal,
-    MasterPasswordModal
+    MasterPasswordModal,
+    UtilityJobsJobDetail
   },
   mounted() {
     // Ask for master password
