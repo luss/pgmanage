@@ -611,10 +611,6 @@ export default {
     },
     changeInterfaceFontSize() {
       document.documentElement.style.fontSize = `${this.fontSize}px`
-      $('.ace_editor').each(function (index) {
-        let editor = ace.edit(this);
-        editor.setFontSize(`${this.fontSize}px`);
-      });
       refreshHeights();
     },
     changeTheme() {
