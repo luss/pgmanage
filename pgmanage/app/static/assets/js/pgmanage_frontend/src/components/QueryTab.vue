@@ -1,6 +1,6 @@
 <template>
   <div>
-  <splitpanes class="default-theme query-body" horizontal>
+  <splitpanes class="default-theme query-body" horizontal @resized="handleResize">
     <pane size="30">
       <QueryEditor ref="editor" class="h-100 mr-2"
         :read-only="readOnlyEditor"
@@ -125,8 +125,8 @@
         </div>
       </div>
       <QueryResultTabs ref="queryResults" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"
-        :dialect="dialect" :tab-status="tabStatus" @enable-explain-buttons="toggleExplainButtons"
-        @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" />
+        :dialect="dialect" :tab-status="tabStatus" :resize-div="resizeResultDiv" @enable-explain-buttons="toggleExplainButtons"
+        @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" @resized="resizeResultDiv = false"/>
     </pane>
   </splitpanes>
 
@@ -200,6 +200,7 @@ export default {
       commandsModalVisible: false,
       lastQuery: null,
       queryInterval: null,
+      resizeResultDiv: false,
     };
   },
   computed: {
@@ -546,14 +547,17 @@ export default {
         setTimeout(() => URL.revokeObjectURL(downloadLink.href), 60000 )
       }
     },
+    handleResize() {
+      this.resizeResultDiv = true
+    }
   },
 };
 </script>
 
 <style scoped>
 .query-body {
-  height: calc(100vh - 60px);
-  padding-top: 16px;
+  height: calc(100vh - 2.5rem);
+  /* padding-top: 16px; */
 }
 
 .tab-actions {
