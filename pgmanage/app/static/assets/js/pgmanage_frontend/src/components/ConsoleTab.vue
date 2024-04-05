@@ -175,6 +175,7 @@ export default {
     this.setupEvents();
 
     settingsStore.$subscribe((mutation, state) => {
+      if (!this.terminal) return
       this.terminal.options.theme = state.terminalTheme;
       this.terminal.options.fontSize = state.fontSize;
     });

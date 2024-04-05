@@ -104,7 +104,7 @@
                     </div>
                   </div>
                 </div>
-                <div id="job_statistics_grid"></div>
+                <div id="job_statistics_grid" class="tabulator-custom"></div>
                 <h4 v-if="jobLogs.length" class="mb-0 mt-2">Showing last {{jobLogs.length}} records</h4>
             </div>
           </div>
@@ -304,7 +304,7 @@ export default {
         {'title': 'Start', field: "start_time",},
         {'title': 'End', field: "end_time",},
         {'title': 'Return Message', field: "return_message"},
-        {'title': 'Command', field: "command", layout: "fitData"},
+        {'title': 'Command', field: "command"},
       ]
       axios.post('/get_pgcron_job_logs/', {
         database_index: this.databaseIndex,
