@@ -75,7 +75,7 @@ export default {
 
     if(this.databaseIndex && this.databaseName) {
       dbMetadataStore.$onAction((action) => {
-        if (action.name === "fetchDbMeta" && action.args[0] == this.databaseIndex && action.args[1] == this.tabId) {
+        if (action.name === "fetchDbMeta" && action.args[0] == this.databaseIndex) {
           action.after((result) => {
             this.setupCompleter();
           });
@@ -95,6 +95,10 @@ export default {
     this.clearEvents();
   },
   methods: {
+    refetchMetaHandler(e) {
+      if(e.databaseIndex == this.databaseIndex)
+        dbMetadataStore.fetchDbMeta(this.databaseIndex, this.tabId, this.databaseName)
+    },
     setupEditor() {
       this.editor = ace.edit(this.$refs.editor);
       this.editor.$blockScrolling = Infinity;
@@ -280,11 +284,18 @@ export default {
       emitter.on(`${this.tabId}_find_replace`, () => {
         this.editor.execCommand("find")
       });
+
+      // by using a scoped function we can then unsubscribe with mitt.off
+      emitter.on("refetchMeta", this.refetchMetaHandler)
     },
     clearEvents() {
       emitter.all.delete(`${this.tabId}_show_autocomplete_results`);
       emitter.all.delete(`${this.tabId}_copy_to_editor`);
+      emitter.all.delete(`${this.tabId}_insert_to_editor`);
       emitter.all.delete(`${this.tabId}_indent_sql`);
+      emitter.all.delete(`${this.tabId}_find_replace`);
+
+      emitter.off("refetchMeta", this.refetchMetaHandler)
     },
   }
 };

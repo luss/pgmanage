@@ -1,7 +1,7 @@
 import { emitter } from "../emitter";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import axios from "axios";
-import { showAlert, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 import { tabsStore, settingsStore } from "../stores/stores_initializer";
 import { logger } from "../logging/logger_setup";
 import { axiosHooks } from "../logging/service";
@@ -179,6 +179,8 @@ export default {
         emitter.emit('show_password_prompt', {
           databaseIndex: this.databaseIndex,
           successCallback: () => {
+            // notify queryEditors that we are authenticated and db metadata can be now fetched
+            emitter.emit("refetchMeta", {databaseIndex: this.databaseIndex})
             this.refreshNode();
           },
           message: error_response.response.data.data,
