@@ -97,7 +97,7 @@
     </div>
 
     <div
-      class="`tab-content omnidb__tab-content omnidb__tab-content--secondary"
+      class="tab-content omnidb__tab-content omnidb__tab-content--secondary"
     >
       <component
         v-for="tab in tabs"
