@@ -7,33 +7,7 @@ import { startLoading } from './ajax_control'
 import axios from 'axios'
 import { showAlert, showConfirm } from './notification_control'
 import { emitter } from './emitter'
-import { startTutorial } from './tutorial'
 import { tabsStore, connectionsStore } from './stores/stores_initializer.js'
-
-/// <summary>
-/// Startup function.
-/// </summary>
-$(function () {
-
-  // Creating omnis.
-  v_omnis.root = document.getElementById('app');
-  v_omnis.div = document.createElement('div');
-  v_omnis.div.setAttribute('id', 'omnis');
-  v_omnis.div.classList.add('omnis');
-  v_omnis.div.style.top = v_omnis.root.getBoundingClientRect().height - 45 + 'px';
-  v_omnis.div.style.left = v_omnis.root.getBoundingClientRect().width - 45 + 'px';
-  v_omnis.div.style['z-index'] = '99999999';
-  v_omnis.div.style.opacity = 0
-  v_omnis.div.innerHTML = v_omnis.template;
-  document.body.appendChild(v_omnis.div);
-  v_omnis.div.addEventListener('click',function(){
-    startTutorial('getting_started');
-  });
-
-  // Loads or Updates all tooltips.
-  $('[data-toggle="tooltip"]').tooltip({animation:true});
-
-});
 
 
 /// <summary>
