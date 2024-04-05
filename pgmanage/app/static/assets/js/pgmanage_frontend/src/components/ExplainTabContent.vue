@@ -44,7 +44,7 @@ export default {
 
 <style scoped>
 .explain-wrap {
-  height: calc(100% - 20px);
+  height: 100%;
 }
 
 .result-div {

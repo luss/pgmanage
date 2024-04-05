@@ -1,5 +1,5 @@
 <template>
-  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs tab-body">
+  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs">
     <button :id="`bt_fullscreen_${tabId}`" style="position: absolute; top: 0.25rem; right: 0.5rem" type="button"
       class="btn btn-sm btn-icon btn-icon-secondary" @click="toggleFullScreen()">
       <i class="fas fa-expand"></i>
@@ -72,8 +72,9 @@
 import ExplainTabContent from "./ExplainTabContent.vue";
 import { queryModes, tabStatusMap } from "../constants";
 import { emitter } from "../emitter";
-import { TabulatorFull as Tabulator} from "tabulator-tables";
+import { TabulatorFull as Tabulator } from "tabulator-tables";
 import CellDataModal from "./CellDataModal.vue";
+import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   components: {
@@ -86,8 +87,18 @@ export default {
     editorContent: String,
     dialect: String,
     tabStatus: Number,
+    resizeDiv: Boolean,
   },
-  emits: ["enableExplainButtons", "runExplain", "showFetchButtons"],
+  watch: {
+    resizeDiv(newValue, oldValue) {
+      if (newValue) {
+        this.handleResize();
+        this.table.redraw()
+        this.$emit("resized");
+      }
+    },
+  },
+  emits: ["enableExplainButtons", "runExplain", "showFetchButtons", "resized"],
   data() {
     return {
       errorMessage: "",
@@ -100,7 +111,7 @@ export default {
         placeholderHeaderFilter: "No Matching Data",
         autoResize: false,
         selectableRows: true,
-        height: "90%",
+        height: "100%",
         layout: "fitDataStretch",
         columnDefaults: {
           headerHozAlign: "left",
@@ -117,6 +128,7 @@ export default {
       table: "",
       cellContent: "",
       cellModalVisible: false,
+      heightSubtract: 200,
     };
   },
   computed: {
@@ -136,8 +148,12 @@ export default {
         !!this.queryInfoText
       );
     },
+    resultTabHeight() {
+      return `calc(100vh - ${this.heightSubtract}px)`;
+    },
   },
   mounted() {
+    this.handleResize();
     if (this.dialect === "postgresql") {
       $(`#${this.$refs.explainTab.id}`).on("shown.bs.tab", () => {
         this.$emit("enableExplainButtons");
@@ -150,7 +166,24 @@ export default {
       });
     }
 
+    window.addEventListener("resize", this.handleResize);
+
     this.table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+    settingsStore.$onAction((action) => {
+      if (action.name === "setFontSize") {
+        action.after(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.handleResize();
+              this.table.redraw();
+            });
+          });
+        });
+      }
+    });
+  },
+  updated() {
+    this.handleResize();
   },
   methods: {
     renderResult(data, context) {
@@ -281,16 +314,18 @@ export default {
           this.errorMessage = error;
         });
 
-      this.table.on("cellDblClick", function(e, cell){
-        this.cellContent = cell.getValue();
-        if(this.cellContent)
-          this.cellModalVisible = true;
-      }.bind(this));
+      this.table.on(
+        "cellDblClick",
+        function (e, cell) {
+          this.cellContent = cell.getValue();
+          if (this.cellContent) this.cellModalVisible = true;
+        }.bind(this)
+      );
     },
     fetchData(data) {
       let initialData = this.table.getData();
       data.data.unshift(...initialData);
-      this.table.replaceData(data.data)
+      this.table.replaceData(data.data);
     },
     clearData() {
       this.notices = [];
@@ -302,18 +337,20 @@ export default {
     toggleFullScreen() {
       this.$refs.resultDiv.classList.toggle("omnidb__panel-view--full");
     },
+    handleResize() {
+      if (this.$refs === null) return;
+
+      this.heightSubtract =
+        this.$refs.resultDiv.getBoundingClientRect().top + 25;
+    },
   },
 };
 </script>
 
 <style scoped>
-.tab-body {
-  height: calc(100% - 25px);
-}
-
 .tab-content,
 .messages__wrap {
-  height: calc(100% - 20px);
+  height: v-bind(resultTabHeight);
 }
 
 .tab-pane,
