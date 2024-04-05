@@ -73,7 +73,7 @@
             class="flex-shrink-0 btn btn-icon btn-icon-primary navigation-add"
             @click="addTab"
           >
-            <i class="fas fa-lg fa-plus"></i>
+            <i class="fas fa-plus"></i>
           </button>
         </div>
 
@@ -417,5 +417,9 @@ export default {
 
 .scrollable-inner::-webkit-scrollbar {
   display: none;
+}
+
+.navigation-add {
+  padding: 0.5rem 0;
 }
 </style>
