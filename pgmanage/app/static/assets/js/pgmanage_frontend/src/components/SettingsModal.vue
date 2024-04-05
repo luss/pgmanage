@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title font-weight-bold">Settings</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="resetUnsavedSettings">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -49,8 +49,7 @@
               <div class="form-row">
                 <div class="form-group col-6">
                   <label for="sel_theme" class="font-weight-bold mb-2">Theme</label>
-                  <select id="sel_theme" class="form-control" @change="changeTheme"
-                    v-model="theme">
+                  <select id="sel_theme" class="form-control" v-model="theme">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                   </select>
@@ -251,7 +250,10 @@ export default {
         "utf-32-le", "utf-16", "utf-16-be", "utf-16-le", "utf-7", "utf-8",
         "utf-8-sig", "windows-1252"
       ],
-      dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A']
+      dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A'],
+      fallbackFontSize: null,
+      fallbackTheme: null,
+      hidden: true
     }
   },
   validations() {
@@ -360,11 +362,18 @@ export default {
   },
   watch: {
     fontSize(newValue, oldValue) {
+      if (!this.hidden)
+        this.fallbackFontSize = oldValue
       this.changeInterfaceFontSize()
     },
     csvDelimiter(newValue, oldValue) {
       this.v$.csvDelimiter.$validate()
-    }
+    },
+    theme(newValue, oldValue) {
+      if (!this.hidden)
+        this.fallbackTheme = oldValue
+      this.applyThemes();
+    },
   },
   mounted() {
     if (navigator.userAgent.indexOf("Win") != -1) settingsStore.currentOS = "windows";
@@ -535,6 +544,7 @@ export default {
     this.applyThemes()
 
     $('#modal_settings').on("show.bs.modal", () => {
+      this.hidden = false
       settingsStore.getSettings();
     });
   },
@@ -613,9 +623,6 @@ export default {
       document.documentElement.style.fontSize = `${this.fontSize}px`
       refreshHeights();
     },
-    changeTheme() {
-      this.applyThemes();
-    },
     applyThemes() {
       if (this.theme === 'dark') {
         settingsStore.setEditorTheme('omnidb_dark')
@@ -650,6 +657,9 @@ export default {
     saveSettings() {
       if(!this.v$.$invalid) {
         settingsStore.saveSettings().then(() => {
+          this.fallbackFontSize = null
+          this.fallbackTheme = null
+          this.hidden = true
           $('#modal_settings').modal('hide');
         })
       }
@@ -748,6 +758,18 @@ export default {
     setPigzPath(e) {
       const [file] = e.target.files
       this.pigzPath = file?.path
+    },
+    resetUnsavedSettings() {
+      this.hidden = true
+      if (this.fallbackFontSize) {
+        this.fontSize = this.fallbackFontSize
+        this.fallbackFontSize = null
+      }
+
+      if (this.fallbackTheme) {
+        this.theme = this.fallbackTheme
+        this.fallbackTheme = null
+      }
     },
   }
 }
