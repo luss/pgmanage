@@ -2,6 +2,7 @@ import {
   allowedFileTypes,
   maxFileSizeInKB,
   maxFileSizeInMB,
+  mimeTypeMap,
 } from "../constants";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
@@ -10,9 +11,20 @@ import { tabsStore } from "../stores/stores_initializer";
 export default {
   methods: {
     handleFileInputChange(e) {
+      let fileType, fileExtension;
       const [file] = e.target.files;
-      if (!file?.type || !allowedFileTypes.includes(file.type)) {
-        showToast("error", `File with type '${file.type}' is not supported.`);
+
+      fileType = file.type === "" ? "" : file.type;
+
+      if (fileType === "") {
+        let splitName = file.name.split(".");
+        fileExtension = splitName[splitName.length - 1].toLowerCase();
+
+        fileType = mimeTypeMap[fileExtension] ?? "text/plain";
+      }
+
+      if (!allowedFileTypes.includes(fileType)) {
+        showToast("error", `File with type '${fileType}' is not supported.`);
         return;
       }
 
