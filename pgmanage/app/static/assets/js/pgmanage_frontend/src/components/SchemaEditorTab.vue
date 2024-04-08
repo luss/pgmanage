@@ -222,6 +222,11 @@ export default {
       this.editor.clearSelection();
       this.editor.setReadOnly(true);
       this.editor.setShowPrintMargin(false)
+
+      settingsStore.$subscribe((mutation, state) => {
+        this.editor.setTheme(`ace/theme/${state.editorTheme}`);
+        this.editor.setFontSize(state.fontSize);
+      });
     },
     generateSQL() {
       //add knex error handing with notification to the user
