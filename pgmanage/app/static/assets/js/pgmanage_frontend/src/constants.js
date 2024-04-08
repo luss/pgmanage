@@ -62,6 +62,12 @@ const queryResponseCodes = {
 
 const allowedFileTypes = ["application/sql", "text/csv", "text/plain", "Text"];
 
+const mimeTypeMap = {
+  sql: "application/sql",
+  csv: "text/csv",
+  txt: "text/plain",
+};
+
 const maxFileSizeInMB = 50;
 
 const maxFileSizeInKB = 1024 ** 2 * maxFileSizeInMB;
@@ -78,4 +84,5 @@ export {
   maxFileSizeInMB,
   maxFileSizeInKB,
   maxLinesForIndentSQL,
+  mimeTypeMap,
 };

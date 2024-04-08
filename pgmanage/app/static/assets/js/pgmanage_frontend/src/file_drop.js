@@ -3,6 +3,7 @@ import {
   allowedFileTypes,
   maxFileSizeInMB,
   maxFileSizeInKB,
+  mimeTypeMap,
 } from "./constants";
 import { tabsStore } from "./stores/stores_initializer";
 
@@ -46,7 +47,7 @@ function setupAceDragDrop(editor, isSnippetTab = false) {
   });
 
   editor.container.addEventListener("drop", (e) => {
-    let file;
+    let file, fileType, fileExtension;
 
     if (e?.dataTransfer?.files?.length > 1) {
       showToast("error", "Only one file at a time is possible to drop");
@@ -56,8 +57,17 @@ function setupAceDragDrop(editor, isSnippetTab = false) {
     }
     file = e.dataTransfer.files[0];
 
-    if (!file?.type || !allowedFileTypes.includes(file.type)) {
-      showToast("error", `File with type '${file.type}' is not supported.`);
+    fileType = file.type === "" ? "" : file.type;
+
+    if (fileType === "") {
+      let splitName = file.name.split(".");
+      fileExtension = splitName[splitName.length - 1].toLowerCase();
+
+      fileType = mimeTypeMap[fileExtension] ?? "text/plain";
+    }
+
+    if (!allowedFileTypes.includes(fileType)) {
+      showToast("error", `File with type '${fileType}' is not supported.`);
       e.preventDefault();
       e.stopPropagation();
       return false;
