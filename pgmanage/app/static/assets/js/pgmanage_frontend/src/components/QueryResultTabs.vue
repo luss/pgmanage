@@ -75,6 +75,7 @@ import { emitter } from "../emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import CellDataModal from "./CellDataModal.vue";
 import { settingsStore } from "../stores/stores_initializer";
+import { showToast } from "../notification_control";
 
 export default {
   components: {
@@ -188,11 +189,11 @@ export default {
   methods: {
     renderResult(data, context) {
       this.clearData();
-      if (data.v_error) {
+      if (data.v_error && context.cmd_type !== 'explain') {
         this.errorMessage = data.v_data.message;
       } else {
         if (context.cmd_type === "explain") {
-          this.showExplainTab(data.v_data.data);
+          this.showExplainTab(data);
         } else if (!!context.cmd_type && context.cmd_type.includes("export")) {
           this.showExport(data.v_data);
         } else {
@@ -215,9 +216,15 @@ export default {
     },
     showExplainTab(data) {
       $(`#${this.$refs.explainTab.id}`).tab("show");
+      if (data?.v_error) {
+        this.query = this.editorContent;
+        this.plan = data.v_data.message;
+        showToast("error", data.v_data.message)
+        return
+      }
 
       // Adjusting data.
-      let explain_text = data.join("\n");
+      let explain_text = data.v_data.data.join("\n");
 
       if (explain_text.length > 0) {
         this.query = this.editorContent;
