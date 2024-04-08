@@ -42,7 +42,7 @@ const useSettingsStore = defineStore("settings", {
             : userSettings.date_format,
         });
 
-        this.shortcuts = response.data.shortcuts;
+        this.shortcuts = Object.assign({}, this.shortcuts, response.data.shortcuts);
         moment.defaultFormat = this.dateFormat;
         document.documentElement.style.fontSize = `${this.fontSize}px`;
 
