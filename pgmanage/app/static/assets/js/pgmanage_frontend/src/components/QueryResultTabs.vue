@@ -343,6 +343,7 @@ export default {
     },
     toggleFullScreen() {
       this.$refs.resultDiv.classList.toggle("omnidb__panel-view--full");
+      this.handleResize();
     },
     handleResize() {
       if (this.$refs === null) return;
