@@ -237,6 +237,8 @@ import { required, between, maxLength, helpers } from '@vuelidate/validators'
 import { connectionsStore } from '../stores/stores_initializer'
 
 import ConfirmableButton from './ConfirmableButton.vue'
+import { createMessageModal } from '../notification_control'
+
   export default {
     name: 'ConnectionsModalConnectionForm',
     components: {
@@ -337,7 +339,7 @@ import ConfirmableButton from './ConfirmableButton.vue'
       return baseRules;
     },
     setup() {
-      return { v$: useVuelidate({ $lazy: true }) }
+      return { v$: useVuelidate({ $lazy: true, $autoDirty: true }) }
     },
     props: {
       visible: Boolean,
@@ -467,8 +469,20 @@ import ConfirmableButton from './ConfirmableButton.vue'
         this.connectionLocal.port = ''
       },
       selectConnection(connection) {
-        $('#connections-modal').modal('hide')
-        connectionsStore.selectConnection(connection)
+        if (this.v$.$anyDirty) {
+          createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.v$.$reset()
+            $('#connections-modal').modal('hide')
+            connectionsStore.selectConnection(connection)
+          },
+          null
+        );
+        } else {
+          $('#connections-modal').modal('hide')
+          connectionsStore.selectConnection(connection)
+        }
       },
       trySave() {
         this.v$.connectionLocal.$validate()

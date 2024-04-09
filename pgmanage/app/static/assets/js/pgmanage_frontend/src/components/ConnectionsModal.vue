@@ -95,13 +95,19 @@ import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
-import { showToast } from '../notification_control'
+import { showToast, createMessageModal } from '../notification_control'
 import { emitter } from '../emitter'
 import { tabsStore } from '../stores/stores_initializer'
 import { settingsStore, connectionsStore } from "../stores/stores_initializer";
+import { useVuelidate } from '@vuelidate/core'
 
 export default {
   name: 'ConnectionsModal',
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  },
   data() {
       return {
         technologies: [],
@@ -260,13 +266,24 @@ export default {
       return `${techname} - ${connection.server}:${connection.port}`
     },
     showForm(form_type, object) {
-      if(form_type === 'group') {
-        this.activeForm = 'group'
-        this.selectedGroup = object
-      }
-      if(form_type === 'connection') {
-        this.activeForm = 'connection'
-        this.selectedConnection = object
+      if (this.v$.$anyDirty) {
+        createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.v$.$reset()
+            this.showForm(form_type, object)
+          },
+          null
+        );
+      } else {
+        if (form_type === 'group') {
+          this.activeForm = 'group'
+          this.selectedGroup = object
+        }
+        if (form_type === 'connection') {
+          this.activeForm = 'connection'
+          this.selectedConnection = object
+        }
       }
     },
     newConnection() {
@@ -342,6 +359,20 @@ export default {
 
     $('#connections-modal').on("shown.bs.modal", () => {
       this.loadData(false)})
+    
+    $('#connections-modal').on("hide.bs.modal", (event) => {
+      if (this.v$.$anyDirty) {
+        event.preventDefault()
+        createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.v$.$reset()
+            $('#connections-modal').modal('hide')
+          },
+          null
+        );
+      }
+    })
 
     emitter.on("connection-save", (connection) => {
       this.saveConnection(connection)
