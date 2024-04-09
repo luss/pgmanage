@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 import sqlparse
 from app.client_manager import client_manager
-from app.models.main import Connection, Shortcut, UserDetails
+from app.models.main import Connection, Shortcut, UserDetails, Tab
 from app.utils.crypto import make_hash
 from app.utils.decorators import (database_required, database_required_new,
                                   user_authenticated)
@@ -122,9 +122,15 @@ class SettingsView(View):
         session.v_csv_delimiter = settings_data.get("csv_delimiter")
         try:
             user_details = UserDetails.objects.get(user=request.user)
+            restore_tabs = settings_data.get('restore_tabs', None)
+            erase_tabs = restore_tabs is False and user_details.restore_tabs != restore_tabs
+
             for attr, value in settings_data.items():
                 setattr(user_details, attr, value)
             user_details.save()
+
+            if erase_tabs:
+                Tab.objects.filter(user=request.user).delete()
 
             request.session["pgmanage_session"] = session
 
