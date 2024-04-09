@@ -55,7 +55,7 @@
                 :placeholder="placeholder.server"
                 :disabled="dbFormDisabled">
                 <div class="invalid-feedback">
-                  <span v-for="error of v$.connectionLocal.server.$errors" :key="error.$uid">
+                  <span class="mr-2" v-for="error of v$.connectionLocal.server.$errors" :key="error.$uid">
                     {{ error.$message }}
                   </span>
                 </div>
