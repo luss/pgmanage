@@ -28,7 +28,7 @@
           </div>
 
           <div class="modal-body">
-            <div class="form-row mt-3">
+            <div ref="topToolbar" class="form-row mt-3">
               <div class="form-group col-3">
                 <label for="widgetName" class="font-weight-bold mb-2"
                   >Name</label
@@ -152,7 +152,7 @@
             </Transition>
           </div>
 
-          <div class="modal-footer">
+          <div ref="bottomToolbar" class="modal-footer">
             <button
               v-if="!showTestWidget"
               data-testid="widget-edit-test-button"
@@ -222,7 +222,13 @@ export default {
       widgetInterval: "",
       showTestWidget: false,
       testWidgetData: {},
+      heightSubtract: 150,
     };
+  },
+  computed: {
+    gridHeight() {
+      return `calc(100vh - ${this.heightSubtract}px)`;
+    },
   },
   validations() {
     return {
@@ -387,6 +393,7 @@ export default {
       this.$emit("modalHide");
     },
     setupModal() {
+      this.handleResize();
       this.dataEditor = this.setupEditor(this.$refs.dataEditor);
       this.scriptEditor = this.setupEditor(this.$refs.scriptEditor);
       settingsStore.$subscribe((mutation, state) => {
@@ -400,6 +407,14 @@ export default {
         this.getMonitoringWidgetDetails();
       }
     },
+    handleResize() {
+      if (this.$refs === null) return;
+
+      this.heightSubtract =
+        this.$refs.bottomToolbar.getBoundingClientRect().height +
+        this.$refs.topToolbar.getBoundingClientRect().bottom +
+        50;
+    },
   },
 };
 </script>
@@ -411,6 +426,6 @@ export default {
 
 .custom-editor {
   width: 100%;
-  height: calc(100vh - 400px);
+  height: v-bind(gridHeight);
 }
 </style>
