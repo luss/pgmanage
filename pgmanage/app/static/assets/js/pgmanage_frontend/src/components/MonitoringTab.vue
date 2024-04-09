@@ -1,17 +1,16 @@
 <template>
   <div class="p-2">
-    <button
-      class="btn btn-primary btn-sm my-2 mr-1"
-      title="Refresh"
-      @click="refreshMonitoring"
-    >
-      <i class="fas fa-sync-alt mr-2"></i>Refresh
-    </button>
-    <span class="query_info"> Number of records: {{ dataLength }} </span>
-    <div
-      ref="tabulator"
-      class="omnidb__query-result-tabs__content tabulator-custom"
-    ></div>
+    <div ref="topToolbar">
+      <button
+        class="btn btn-primary btn-sm my-2 mr-1"
+        title="Refresh"
+        @click="refreshMonitoring"
+      >
+        <i class="fas fa-sync-alt mr-2"></i>Refresh
+      </button>
+      <span class="query_info"> Number of records: {{ dataLength }} </span>
+    </div>
+    <div ref="tabulator" class="tabulator-custom grid-height"></div>
   </div>
 </template>
 
@@ -21,6 +20,7 @@ import { cellDataModal } from "../header_actions";
 import axios from "axios";
 import { createMessageModal, showToast } from "../notification_control";
 import { emitter } from "../emitter";
+import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: "MonitoringTab",
@@ -34,10 +34,34 @@ export default {
     return {
       table: null,
       dataLength: 0,
+      heightSubtract: 150,
     };
   },
+  computed: {
+    gridHeight() {
+      return `calc(100vh - ${this.heightSubtract}px)`;
+    },
+  },
   mounted() {
+    this.handleResize();
     this.setupTable();
+
+    settingsStore.$onAction((action) => {
+      if (action.name === "setFontSize") {
+        action.after(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.handleResize();
+              this.table.redraw();
+            });
+          });
+        });
+      }
+    });
+  },
+  updated() {
+    this.handleResize();
+    this.table.redraw();
   },
   methods: {
     setupTable() {
@@ -59,8 +83,6 @@ export default {
       ];
 
       this.table = new Tabulator(this.$refs.tabulator, {
-        height: "90vh",
-        width: "100%",
         autoColumns: true,
         layout: "fitDataStretch",
         columnDefaults: {
@@ -224,6 +246,18 @@ export default {
           }
         });
     },
+    handleResize() {
+      if (this.$refs === null) return;
+
+      this.heightSubtract =
+        this.$refs.topToolbar.getBoundingClientRect().bottom;
+    },
   },
 };
 </script>
+
+<style scoped>
+.grid-height {
+  height: v-bind(gridHeight);
+}
+</style>
