@@ -3452,6 +3452,7 @@ export default {
           this.insertNode(node, "Replication Slots", {
             icon: "fas node-all fa-sitemap node-repslot-list",
             type: "replication",
+            database: false,
           });
 
           const replication_node = this.getFirstChildNode(node);
@@ -3460,30 +3461,35 @@ export default {
             icon: "fas node-all fa-sitemap node-repslot-list",
             type: "logical_replication_slot_list",
             contextMenu: "cm_logical_replication_slots",
+            database: false,
           });
 
           this.insertNode(replication_node, "Physical Replication Slots", {
             icon: "fas node-all fa-sitemap node-repslot-list",
             type: "physical_replication_slot_list",
             contextMenu: "cm_physical_replication_slots",
+            database: false,
           });
 
           this.insertNode(node, "Roles", {
             icon: "fas node-all fa-users node-user-list",
             type: "role_list",
             contextMenu: "cm_roles",
+            database: false,
           });
 
           this.insertNode(node, "Tablespaces", {
             icon: "fas node-all fa-folder-open node-tablespace-list",
             type: "tablespace_list",
             contextMenu: "cm_tablespaces",
+            database: false,
           });
 
           this.insertNode(node, "Databases", {
             icon: "fas node-all fa-database node-database-list",
             type: "database_list",
             contextMenu: "cm_databases",
+            database: false,
           });
         })
         .catch((error) => {
@@ -5792,6 +5798,7 @@ export default {
                 type: "tablespace",
                 contextMenu: "cm_tablespace",
                 oid: el.oid,
+                database: false,
               },
               true
             );
@@ -5819,6 +5826,7 @@ export default {
               contextMenu: "cm_role",
               oid: el.oid,
               raw_value: el.name_raw,
+              database: false,
             },
             true
           );
@@ -5843,6 +5851,7 @@ export default {
                 icon: "fas node-all fa-sitemap node-repslot",
                 type: "physical_replication_slot",
                 contextMenu: "cm_physical_replication_slot",
+                database: false,
               },
               true
             );
@@ -5870,6 +5879,7 @@ export default {
                 icon: "fas node-all fa-sitemap node-repslot",
                 type: "logical_replication_slot",
                 contextMenu: "cm_logical_replication_slot",
+                database: false,
               },
               true
             );
