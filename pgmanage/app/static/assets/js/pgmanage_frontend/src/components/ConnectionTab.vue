@@ -239,6 +239,7 @@ export default {
             });
           })
           .catch((error) => {
+            if (error.response.data.password_timeout) return
             showToast("error", error?.response?.data?.data);
           });
       }
