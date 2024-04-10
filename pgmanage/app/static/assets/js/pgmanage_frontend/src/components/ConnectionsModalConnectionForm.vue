@@ -147,7 +147,7 @@
           </div>
 
           <div class="custom-control custom-switch mb-3">
-            <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="custom-control-input" id="sshTunel" data-toggle="collapse" data-target="#sshSettings">
+            <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="custom-control-input" id="sshTunel" data-toggle="collapse" data-target="#sshSettings" :disabled="connectionLocal.technology==='terminal'">
             <label class="custom-control-label font-weight-bold" for="sshTunel">Use SSH tunnel</label>
           </div>
 
