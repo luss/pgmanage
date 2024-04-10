@@ -1,10 +1,10 @@
 # PgManage
 ![](https://pgmanage.readthedocs.io/en/latest/_images/intro.png)
 
-PgManage is a Postgres management GUI, though we will be adding features for
+PgManage is a modern Postgres-centric graphical database client, though we will be adding features for
 developers the initial focus is on the "management" of Postgres.
 
-We proudly leverage all of the great work Open Source work done by the original
+We proudly leverage all of the great work done by the original
 (now dormant) project https://github.com/OmniDB/OmniDB
 
 
