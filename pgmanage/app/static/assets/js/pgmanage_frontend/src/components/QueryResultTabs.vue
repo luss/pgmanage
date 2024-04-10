@@ -74,7 +74,7 @@ import { queryModes, tabStatusMap } from "../constants";
 import { emitter } from "../emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import CellDataModal from "./CellDataModal.vue";
-import { settingsStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore } from "../stores/stores_initializer";
 import { showToast } from "../notification_control";
 
 export default {
@@ -94,7 +94,7 @@ export default {
     resizeDiv(newValue, oldValue) {
       if (newValue) {
         this.handleResize();
-        this.table.redraw()
+        this.table.redraw();
         this.$emit("resized");
       }
     },
@@ -167,11 +167,21 @@ export default {
       });
     }
 
-    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("resize", () => {
+      if (
+        tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id !== this.tabId
+      )
+        return;
+      this.handleResize();
+    });
 
     this.table = new Tabulator(this.$refs.tabulator, this.tableSettings);
     settingsStore.$onAction((action) => {
       if (action.name === "setFontSize") {
+        if (
+          tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id !== this.tabId
+        )
+          return;
         action.after(() => {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -182,6 +192,10 @@ export default {
         });
       }
     });
+
+    $(this.$refs.dataTab).on("shown.bs.tab", (event) => {
+      this.table.redraw();
+    });
   },
   updated() {
     this.handleResize();
@@ -189,7 +203,7 @@ export default {
   methods: {
     renderResult(data, context) {
       this.clearData();
-      if (data.v_error && context.cmd_type !== 'explain') {
+      if (data.v_error && context.cmd_type !== "explain") {
         this.errorMessage = data.v_data.message;
       } else {
         if (context.cmd_type === "explain") {
@@ -219,8 +233,8 @@ export default {
       if (data?.v_error) {
         this.query = this.editorContent;
         this.plan = data.v_data.message;
-        showToast("error", data.v_data.message)
-        return
+        showToast("error", data.v_data.message);
+        return;
       }
 
       // Adjusting data.

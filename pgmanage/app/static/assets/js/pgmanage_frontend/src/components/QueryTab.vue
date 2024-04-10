@@ -239,6 +239,11 @@ export default {
   unmounted() {
     this.clearEvents();
   },
+  updated() {
+    if (tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id === this.tabId) {
+      this.handleResize()
+    }
+  },
   methods: {
     getQueryEditorValue(raw_query) {
       return this.$refs.editor.getQueryEditorValue(raw_query);
