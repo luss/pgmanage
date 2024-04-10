@@ -405,7 +405,8 @@ export default {
       shortcut_explain: function () {
 
         if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
-          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode == 'query') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            if(tabsStore?.selectedPrimaryTab?.metaData?.selectedTab?.metaData?.dialect !== 'postgresql') return
             emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_explain`)
           }
         }
@@ -414,6 +415,7 @@ export default {
 
         if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
           if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            if(tabsStore?.selectedPrimaryTab?.metaData?.selectedTab?.metaData?.dialect !== 'postgresql') return
             emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_explain_analyze`)
           }
         }
