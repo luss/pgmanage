@@ -40,7 +40,7 @@ function createPgCronModal(node, mode) {
   cronLight.install.installed = false;
   const wrap_div = document.getElementById("pgcron-modal-wrap");
 
-  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" conn-id="connId"></pgcron-modal>`;
+  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :conn-id="connId"></pgcron-modal>`;
 
   const app = createApp({
     components: {
