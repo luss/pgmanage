@@ -152,7 +152,7 @@ function startTutorial(p_tutorial_name) {
         <p>Let's first <span class="badge badge-info">add a new connection</span>.</p>
         <p>Please, click on the <i class="fas fa-bolt"></i> button.</p>
         `,
-        p_target: document.getElementsByClassName('omnidb__tab-menu omnidb__tab-menu--primary')[0],
+        p_target: document.querySelectorAll('.omnidb__tab-menu--primary .omnidb__tab-menu__link .omnidb__tab-menu__link-icon')[0],
         p_title: 'Primary menu'
       },
       {
@@ -242,7 +242,7 @@ function startTutorial(p_tutorial_name) {
       {
         p_message: `
         <p>You may want to hit 'Test' before saving the connection.</p>
-        <p>After that, click save.</p>
+        <p>After that, click <strong>Save changes</strong>.</p>
         `,
         p_target: function() {var v_target = document.getElementById('connectionTestButton'); return v_target},
         p_title: 'Test the Connection'
@@ -252,10 +252,10 @@ function startTutorial(p_tutorial_name) {
       {
         p_clone_target: true,
         p_message: `
-        <p>First let's open the <strong>connections management</strong> interface.</p>
+        <p>First let's open the <strong>connections manager</strong> interface.</p>
         `,
-        p_target: document.getElementsByClassName('omnidb__tab-menu omnidb__tab-menu--primary')[0],
-        p_title: 'Accessing connections management'
+        p_target: document.querySelector('.omnidb__tab-menu--primary .omnidb__tab-menu__link .omnidb__tab-menu__link-icon'),
+        p_title: 'Accessing connections manager'
       },
       {
         // p_callback_after_update_start: function() {setTimeout(function(){var v_target = document.getElementById('button_new_connection'); v_omnis.omnis_ui_assistant.divClonedElement.children[0].classList.remove('ml-2');},50);},
@@ -338,12 +338,13 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_message: `
+        <p>This is <strong>optional</strong>.</p>
         <p>If you want you can save the Passphrase of your user.</p>
         <p>* Leaving this empty will force the tool to request for your passphrase everytime you open a terminal connection.</p>
         <p>i.e: If you are on linux, your linux user is available for a local connection.</p>
         `,
         p_target: function() {var v_target = document.getElementById('sshPassphrase'); return v_target},
-        p_title: 'SSH Passphrase (optional)'
+        p_title: 'SSH Passphrase'
       },
       {
         p_message: `
@@ -358,7 +359,7 @@ function startTutorial(p_tutorial_name) {
           document.getElementById('connectionTestButton').focus()
         },
         p_message: `
-        <p>You may want to hit 'test' before saving the connection.</p>
+        <p>You may want to hit 'Test' before saving the connection.</p>
         <p>After that, click <strong>Save changes</strong>.</p>
         `,
         p_target: function() {var v_target = document.getElementById('connectionTestButton'); return v_target},
@@ -369,10 +370,10 @@ function startTutorial(p_tutorial_name) {
       {
         p_clone_target: true,
         p_message: `
-        <p>The snippet panel is now accessible globally.</p>
+        <p>The snippet panel is accessible globally.</p>
         <p>Please, click on the <i class="fas fa-file-code"></i> button.</p>
         `,
-        p_target: document.getElementsByClassName('omnidb__tab-menu omnidb__tab-menu--primary')[0],
+        p_target: document.querySelectorAll('.omnidb__tab-menu--primary .omnidb__tab-menu__link .omnidb__tab-menu__link-icon')[2],
         p_title: 'Global Snippet Panel'
       },
       {
@@ -382,7 +383,7 @@ function startTutorial(p_tutorial_name) {
         <p>Inside this tab you can create and edit a snippet.</p>
         <p>Go ahead and try to create some simple snippet, i.e:</p>
         <code>WHERE true SELECT 1;</code>
-        <p>Then experiment clicking on the <strong>indent button</strong> below the editor, and then <strong>next</strong>.</p>
+        <p>Then experiment clicking on the <strong>Indent</strong> button below the editor, and then <strong>Next</strong>.</p>
         `,
         p_next_button: true,
         p_target: function() {var v_target = document.querySelector('.omnidb__snippets__div-right a[draggable="false"]'); return v_target},
@@ -392,7 +393,7 @@ function startTutorial(p_tutorial_name) {
       {
         p_message: `
         <p>As you can see, the identation feature automatically adjusts your code following a pattern.</p>
-        <p>Now go ahead and click <strong>save</strong></p>
+        <p>Now go ahead and click <strong>Save</strong>.</p>
         `,
         p_next_button: true,
         p_target: function() {var v_target =  document.querySelector('.omnidb__snippets__div-right a[draggable="false"]'); return v_target},
@@ -434,7 +435,7 @@ function startTutorial(p_tutorial_name) {
     'connection_tab': [
       {
         p_message: `
-        <p>This identifies the database you are connected with:</p>
+        <p>This identifies the database you are connected with.</p>
         `,
         p_target: function(){var v_target = document.querySelector('div[class*="connection-details"]'); return v_target;},
         p_title: 'Current Connection'
@@ -458,7 +459,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_message: `
-        <p>These tabs provide additional info on the node selcted in the Database Object Tree.</p>
+        <p>These tabs provide additional info on the node selected in the Database Object Tree.</p>
         <p>Keep in mind that every node interaction that returns this type of info needs to query for consistency.</p>
         <p>To minimize queries, these only run when one of these tabs is visible.</p>
         <p><strong>Recommendation</strong>: Only open the property/ddl when you need to update this info.</p>
@@ -474,24 +475,26 @@ function startTutorial(p_tutorial_name) {
             <strong><i class="fas fa-terminal"></i> Console Tab</strong>: Contains a psql console.
           </li>
           <li class="mb-1">
-            <strong>Query Tabs</strong>: These have SQL editors whose commands are executed on the selected database.
+            <strong><i class="fas fa-database"></i> Query Tabs</strong>: These have SQL editors whose commands are executed on the selected database.
+          </li>
+
+        ${['oracle', 'sqlite'].includes(tabsStore.selectedPrimaryTab.metaData.selectedDBMS) ? '' : `          <li class="mb-1">
+            <strong><i class="fas fa-chart-line"></i> Monitoring Dashboard</strong>: Displays various performance metrics for the current DB connection.
           </li>
           <li class="mb-1">
-          <strong>Monitoring Dashboard</strong>: Displays various performance metrics for the current DB connection.
-          </li>
-          <li class="mb-1">
-          <strong>Backends</strong>: Displays a list of running database server backends of the current DB connection.
-        </li>
+            <strong><i class="fas fa-tasks"></i> Backends</strong>: Displays a list of running database server backends of the current DB connection.
+        </li>`}
         </ol>
         `,
-        p_target: function(){var v_target = document.querySelector(`a#${tabsStore.selectedPrimaryTab.metaData.secondaryTabs[0]?.id}`); return v_target;},
+        p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.id} [data-testid="add-tab-button"]`); return v_target;},
         p_title: 'Inner Tabs'
       },
       {
         p_message: `
         <p>These buttons request actions based on the SQL editor and the querying status.</p>
-        <p>For example, you can <span class="bg-info rounded px-1 text-white">run</span> a query, <span class="bg-info rounded px-1 text-white">cancel</span> an ongoing query, <span class="bg-info rounded px-1 text-white">fetch more</span>, <span class="bg-info rounded px-1 text-white">explain</span>, <span class="bg-info rounded px-1 text-white">explain analyze</span>.</p>
-        <p>If you navigate the Tree on the left to find a table and use the action Query Table from it's context menu, the editor will autofill and the run query will be issued.</p>
+        <p>For example, you can <span class="bg-info rounded px-1 text-white">run</span> a query, <span class="bg-info rounded px-1 text-white">cancel</span> an ongoing query, <span class="bg-info rounded px-1 text-white">fetch more</span>, <span class="bg-info rounded px-1 text-white">fetch all</span>
+         ${tabsStore.selectedPrimaryTab.metaData.selectedDBMS === 'postgresql' ? '<span class="bg-info rounded px-1 text-white">explain</span>, <span class="bg-info rounded px-1 text-white">explain analyze</span>' : ''}.</p>
+        <p>If you navigate the Tree on the left to find a table and use the action <strong>Query Data</strong> from it's context menu, the editor will autofill and the run query will be issued.</p>
         `,
         p_position: function() {var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
         p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
@@ -500,25 +503,26 @@ function startTutorial(p_tutorial_name) {
       {
         p_message: `
         <p>Query returns will fill the area below your screen, even when they return errors.</p>
-        <p>After running a query, this area will contain 3 special tabs.</p>
-        <ol style="padding-left: 1.5rem;">
+        <p>After running a query, this area will contain special tabs.</p>
+        <ul style="padding-left: 1.5rem;">
           <li class="mb-1">
-            <strong>Data</strong>: Contains a table with query results, when successful.
+            <strong>Data</strong>: Contains a table with query results.
           </li>
-          <li class="mb-1">
+          ${tabsStore.selectedPrimaryTab.metaData.selectedDBMS !== 'postgresql' ? '' : `   <li class="mb-1">
             <strong>Messages</strong>: Displays error messages.
           </li>
           <li class="mb-1">
             <strong>Explain</strong>: Contains a special component to display explain/explain analyze results.
-          </li>
-        </ol>
+          </li>`}
+       
+        </ul>
         `,
         p_position: function() {
           let v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .result-div`);
           if (!v_target) {
             v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .ace-editor`);
           }
-          return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y + 40}},
+          return {x:v_target.getBoundingClientRect().x + 200,y:v_target.getBoundingClientRect().y + 40}},
         p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
         p_title: 'Query Result'
       }

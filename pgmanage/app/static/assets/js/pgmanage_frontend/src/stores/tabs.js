@@ -232,6 +232,7 @@ const useTabsStore = defineStore("tabs", {
         tooltip: "Snippets Panel",
         closable: false,
         selectable: false,
+        isDraggable: false,
         clickFunction: function () {
           emitter.emit("toggle_snippet_panel");
         },
@@ -244,6 +245,7 @@ const useTabsStore = defineStore("tabs", {
         tooltip: "Connections",
         closable: false,
         selectable: false,
+        isDraggable: false,
         clickFunction: function (e) {
           showMenuNewTabOuter(e);
         },
@@ -256,6 +258,7 @@ const useTabsStore = defineStore("tabs", {
         icon: '<i class="fas fa-hand-spock"></i>',
         tooltip: "Welcome to PgManage",
         closable: false,
+        isDraggable: false,
         selectFunction: function () {
           document.title = "Welcome to PgManage";
         },
