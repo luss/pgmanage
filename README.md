@@ -41,7 +41,7 @@ python3.9 -mvenv .env
     pip install -r requirements.txt
     ```
 
-3. Navigate to the pgmanage/app/static/assets/js/pgmanage_frontend/ directory and install Node.js dependencies using npm:
+3. Navigate to the pgmanage/app/static/assets/js/pgmanage_frontend/ directory and install Node.js dependencies using npm (Node.js version 18.x is required):
     ```bash
     cd pgmanage/app/static/assets/js/pgmanage_frontend/
     npm install
