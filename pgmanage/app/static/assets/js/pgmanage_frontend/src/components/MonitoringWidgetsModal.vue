@@ -28,7 +28,7 @@
         </div>
         <div class="modal-footer">
           <button
-            @click="editMonitoringWidget(null)"
+            @click="editMonitoringWidget()"
             class="btn btn-primary btn-sm mr-3"
           >
             New Widget
