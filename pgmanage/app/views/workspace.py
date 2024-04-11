@@ -123,7 +123,7 @@ class SettingsView(View):
         try:
             user_details = UserDetails.objects.get(user=request.user)
             restore_tabs = settings_data.get('restore_tabs', None)
-            erase_tabs = restore_tabs is False and user_details.restore_tabs != restore_tabs
+            erase_tabs = user_details.restore_tabs != restore_tabs
 
             for attr, value in settings_data.items():
                 setattr(user_details, attr, value)
