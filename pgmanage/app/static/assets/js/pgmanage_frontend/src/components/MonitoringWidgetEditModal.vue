@@ -364,11 +364,13 @@ export default {
           widget_script_chart: this.scriptEditor.getValue(),
         })
         .then((resp) => {
+          this.resetToDefault()
           $(this.$refs.editWidgetModal).modal("hide");
+          this.$emit("modalHide");
           showToast("success", "Monitoring widget created.");
         })
         .catch((error) => {
-          showToast("error", error);
+          showToast("error", error.response?.data?.data);
         });
     },
     updateMonitoringWidget() {
@@ -381,11 +383,13 @@ export default {
           widget_script_chart: this.scriptEditor.getValue(),
         })
         .then((resp) => {
+          this.resetToDefault()
           $(this.$refs.editWidgetModal).modal("hide");
+          this.$emit("modalHide");
           showToast("success", "Monitoring widget updated.");
         })
         .catch((error) => {
-          showToast("error", error);
+          showToast("error", error.response?.data?.data);
         });
     },
     closeModal() {
