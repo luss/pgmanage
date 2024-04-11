@@ -202,7 +202,7 @@ export default {
               nullable: col.nullable,
               isPK: col.is_primary,
               comment: col.comment,
-              editable: col.name == 'name' ? true : this.editable
+              editable: this.editable
             }
           })
           this.initialTable.columns = coldefs

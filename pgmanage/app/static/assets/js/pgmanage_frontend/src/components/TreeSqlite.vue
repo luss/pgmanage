@@ -176,7 +176,6 @@ export default {
             },
           },
         ],
-        cm_column: [],
         cm_pks: [this.cmRefreshObject],
         cm_pk: [this.cmRefreshObject],
         cm_fks: [this.cmRefreshObject],
@@ -468,7 +467,6 @@ export default {
             this.insertNode(columns_node, el.column_name, {
               icon: "fas node-all fa-columns node-column",
               type: "table_field",
-              contextMenu: "cm_column",
             });
             const table_field = this.getFirstChildNode(columns_node);
 
@@ -755,7 +753,6 @@ export default {
           this.insertNode(node, "Triggers", {
             icon: "fas node-all fa-bolt node-trigger",
             type: "trigger_list",
-            contextMenu: "cm_view_triggers",
           });
           this.insertNode(node, `Columns (${resp.data.length})`, {
             icon: "fas node-all fa-columns node-column",
