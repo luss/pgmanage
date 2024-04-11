@@ -51,7 +51,7 @@ import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
 import { emitter } from '../emitter';
-import { settingsStore } from '../stores/stores_initializer';
+import { settingsStore, tabsStore } from '../stores/stores_initializer';
 
 // TODO: run query in transaction
 
@@ -105,7 +105,7 @@ export default {
   },
   mounted() {
     this.handleResize()
-    this.tabulator = new Tabulator(this.$refs.tabulator, {
+    let table = new Tabulator(this.$refs.tabulator, {
       layout: 'fitDataStretch',
       data: [],
       columnDefaults: {
@@ -115,7 +115,11 @@ export default {
       selectableRows: false,
       rowFormatter: this.rowFormatter
     })
-    this.tabulator.on("cellEdited", this.cellEdited);
+
+    table.on("tableBuilt", () => {
+      this.tabulator = table;
+      this.tabulator.on("cellEdited", this.cellEdited);
+    })
 
     this.knex = Knex({ client: this.dialect || 'postgres'})
     this.getTableColumns().then(this.getTableData)
@@ -138,8 +142,11 @@ export default {
     })
   },
   updated() {
-    this.handleResize()
-    this.tabulator.redraw();
+    if (tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id === this.tabId) {
+      this.handleResize();
+      if (this.tabulator)
+        this.tabulator.redraw();
+    }
   },
   methods: {
     actionsFormatter(cell, formatterParams, onRendered) {
