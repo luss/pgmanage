@@ -94,7 +94,8 @@ export default {
     resizeDiv(newValue, oldValue) {
       if (newValue) {
         this.handleResize();
-        this.table.redraw();
+        if (this.table)
+          this.table.redraw();
         this.$emit("resized");
       }
     },
@@ -126,7 +127,7 @@ export default {
       },
       query: "",
       plan: "",
-      table: "",
+      table: null,
       cellContent: "",
       cellModalVisible: false,
       heightSubtract: 200,
@@ -175,7 +176,10 @@ export default {
       this.handleResize();
     });
 
-    this.table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+    let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+    table.on("tableBuilt", () => {
+      this.table = table
+    })
     settingsStore.$onAction((action) => {
       if (action.name === "setFontSize") {
         if (
