@@ -180,8 +180,9 @@ export default {
     $('[data-toggle="tooltip"]').tooltip({ animation: true }); // Loads or Updates all tooltips
     this.$nextTick(() => {
       if (this.connectionTab.metaData.createInitialTabs) {
+        let name = tabsStore.selectedPrimaryTab.metaData.selectedDatabase.replace('\\', '/').split('/').pop()
         tabsStore.createConsoleTab();
-        tabsStore.createQueryTab();
+        tabsStore.createQueryTab(name);
       }
     });
   },
