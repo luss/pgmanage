@@ -468,6 +468,11 @@ import { createMessageModal } from '../notification_control'
       clearPort() {
         this.connectionLocal.port = ''
       },
+      reset() {
+        let defaults = this.$options.props.initialConnection.default
+        this.connectionLocal = {...defaults}
+        this.v$.connectionLocal.$reset()
+      },
       selectConnection(connection) {
         if (this.v$.$anyDirty) {
           createMessageModal(
