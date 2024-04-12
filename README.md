@@ -63,6 +63,63 @@ python3.9 -mvenv .env
     - Username: admin
     - Password: admin
 
+# PgManage 1.0 Release
+
+## Release Date: Apr 17 2024
+
+## Release Notes
+
+ - New features:
+  - added SQL file import into Query and Snippet tabs
+  - added SQL file export from Query and Snippet tabs
+  - query tab title now displays the name of the imported file
+  - query history can now be filtered by database
+  - added MySQL and MariaDB support in database Schema editor
+  - new autocomplete in SQL code editor
+  - added search and replace in SQL code editor
+  - added live query execution timer for long-running queries
+  - make "restore application tabs" behavior configurable in application settings
+  - make DB object tree "scroll into view" behavior configurable in application settings
+
+ - Major Bugs fixed:
+  - fixed database tab restore concurrency issues when restoring multiple workspaces
+  - change selected database when database child nodes are clicked
+  - update workspace tooltips when corresponding connection gets renamed
+  - don't try to run explain/analyze visualizer for non-Postgres database connections
+  - don't allow setting nullable and primary-key column properties on schema editor
+  - fixed various layout isues in UI walkthrough component
+  - fixed issue when new monitoring widget modal wasn't possible to open after widget save/update
+  - fixed automatic selection of last used database when reconnecting
+  - reset connection properties form when connection manager dialog is closed
+  
+ - UI/UX Improvements:
+  - improved application font size change handling various parts of the app
+  - copy only selected text into clipboard if editor has a selection
+  - application tabs now fit within a single row and can be scrolled if there are too many tabs
+  - improved UI performance during application panel resize
+  - improved UI responsiveness when application window is resized
+  - application data grids layout improvements
+  - data editor cell contents modal can now be shown by double-clicking the cell
+  - database query tabs now show the associated database in tab title
+  - added buttons for database tab scrolling
+  - improved displaying of long error messages in application toast notifications
+  - warn user about unsaved connection changes in connection manager dialog
+  
+ - Other changes
+  - code indent feature now has a maximum content length limited to 75mb
+  - monitoring dashboard was rewritten in Vuejs
+  - application tab management code was rewritten in Vuejs
+  - password dialogs were rewritten in Vuejs
+  - improved SSH tunnel error handling
+  - improved error reporting when SSH tunnel issues occur
+  - legacy code cleaned-up/removed
+  - improved database back-end clean-up when query is cancelled by the user
+  - updated django from 3.2.18 to 3.2.25
+  - updeated tabulator.js  from 5.5.2 to 6.2 
+  - updated chart.js
+  - signigicantly improved application error logging
+  
+
 # PgManage 1.0 RC 1
 
 ## Release Date: Jan 4 2024
@@ -242,4 +299,3 @@ removed the option to make connections public in desktop variant of the app (whi
 - Other changes
   - added postgresql 14 and 15  support
   - application data directory and db/log file naming was changed from omnidb* to pgmanage*.
-
