@@ -269,7 +269,11 @@ export default {
 
             coldef.nullable ? col.nullable() : col.notNullable()
 
-            if(coldef.defaultValue !== '') col.defaultTo(coldef.defaultValue)
+            if(coldef.defaultValue !== '') {
+              let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table);
+              col.defaultTo(formattedDefault);
+            }
+ 
             if(coldef.comment) col.comment(coldef.comment)
           })
 
@@ -331,7 +335,11 @@ export default {
 
             coldef.nullable ? col.nullable() : col.notNullable()
 
-            if(coldef.defaultValue) col.defaultTo(coldef.defaultValue)
+            if(coldef.defaultValue) {
+              let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table);
+              col.defaultTo(formattedDefault);
+            }
+
             if(coldef.comment) col.comment(coldef.comment)
           })
 
