@@ -19,6 +19,11 @@ const useConnectionsStore = defineStore({
     getConnection(conn_id) {
       return this.connections.find((conn) => conn.id === conn_id);
     },
+    updateConnection(conn_id, data) {
+      let con = this.getConnection(conn_id);
+      if (!con) return;
+      Object.assign(con, { ...data });
+    },
     selectConnection(connection) {
       connection.last_access_date = moment.now();
       if (connection.technology === "terminal") {

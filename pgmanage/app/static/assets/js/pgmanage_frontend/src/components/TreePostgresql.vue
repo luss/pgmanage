@@ -37,7 +37,7 @@ import {
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
 import { showConfirm, showToast } from "../notification_control";
-import { tabsStore } from "../stores/stores_initializer";
+import { connectionsStore, tabsStore } from "../stores/stores_initializer";
 import ContextMenu from "@imengyu/vue3-context-menu";
 
 
@@ -3220,6 +3220,7 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
+              connectionsStore.updateConnection(this.databaseIndex, {"last_used_database" : node.data.database})
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
               database_nodes.forEach((el) => {
