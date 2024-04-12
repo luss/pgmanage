@@ -82,6 +82,7 @@
                   :initialConnection="selectedConnection"
                   :technologies="technologies"
                   :visible="activeForm == 'connection'"
+                  ref='connectionForm'
                 />
           </div>
         </div>
@@ -367,6 +368,7 @@ export default {
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset()
+            this.$refs.connectionForm.reset()
             $('#connections-modal').modal('hide')
           },
           null
