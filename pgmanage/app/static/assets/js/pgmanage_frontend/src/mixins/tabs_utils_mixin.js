@@ -3,6 +3,7 @@ import { createRequest } from "../long_polling.js";
 import { queryRequestCodes } from "../constants.js";
 import { showConfirm } from "../notification_control.js";
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { emitter } from "../emitter.js";
 
 export default {
   mounted() {
@@ -26,6 +27,10 @@ export default {
   },
   methods: {
     clickHandler(event, tab) {
+      if (tab.parentId === null && tab.name !== "Snippets") {
+        emitter.emit("hide_snippet_panel");
+      }
+
       if (tab.selectable) {
         tabsStore.selectTab(tab);
       }

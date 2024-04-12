@@ -10,7 +10,7 @@
     <button
       type="button"
       class="px-4 btn btn-secondary omnidb__panel__toggler"
-      @click="showPanel"
+      @click="togglePanel"
     >
       <i class="fas fa-arrows-alt-v"></i>
     </button>
@@ -37,11 +37,7 @@
               class="omnidb__snippets__div-right pt-0 col h-100 position-relative"
             >
               <div class="row">
-                <DatabaseTabs
-                  :id="`${tabId}`"
-                  class="w-100"
-                  :tab-id="tabId"
-                />
+                <DatabaseTabs :id="`${tabId}`" class="w-100" :tab-id="tabId" />
               </div>
             </div>
           </pane>
@@ -83,9 +79,12 @@ export default {
     this.clearEvents();
   },
   methods: {
-    showPanel() {
+    togglePanel() {
       $(".omnidb__panel-view--full").removeClass("omnidb__panel-view--full");
       this.isVisible = !this.isVisible;
+    },
+    hidePanel() {
+      this.isVisible = false;
     },
     getAllSnippets() {
       axios
@@ -102,8 +101,13 @@ export default {
     },
     setupEvents() {
       emitter.on("toggle_snippet_panel", () => {
-        this.showPanel();
+        this.togglePanel();
       });
+
+      emitter.on("hide_snippet_panel", () => {
+        this.hidePanel();
+      });
+
       emitter.on("get_all_snippets", () => {
         this.getAllSnippets();
       });
@@ -118,6 +122,7 @@ export default {
       emitter.all.delete("toggle_snippet_panel");
       emitter.all.delete("get_all_snippets");
       emitter.all.delete("save_snippet_text_confirm");
+      emitter.all.delete("hide_snippet_panel");
     },
     saveSnippetTextConfirm(save_object, text, callback) {
       axios
@@ -156,6 +161,7 @@ export default {
 .panel-body {
   height: 100vh;
 }
+
 .omnidb__panel--slide-in {
   transform: translateY(-98vh);
 }
