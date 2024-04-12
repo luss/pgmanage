@@ -49,7 +49,7 @@
       </nav>
     </div>
 
-    <div class="tab-content omnidb__tab-content omnidb__tab-content--primary overflow-auto">
+    <div class="tab-content omnidb__tab-content omnidb__tab-content--primary">
       <component
         v-for="tab in tabs"
         :key="tab.id"
