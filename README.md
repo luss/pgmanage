@@ -115,9 +115,9 @@ python3.9 -mvenv .env
    - legacy code cleaned-up/removed
    - improved database back-end clean-up when query is cancelled by the user
    - updated django from 3.2.18 to 3.2.25
-   - updeated tabulator.js  from 5.5.2 to 6.2 
+   - updated tabulator.js  from 5.5.2 to 6.2 
    - updated chart.js
-   - signigicantly improved application error logging
+   - significantly improved application error logging
   
 
 # PgManage 1.0 RC 1
