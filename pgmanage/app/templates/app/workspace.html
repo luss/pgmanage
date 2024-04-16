@@ -34,14 +34,6 @@
     <connections-modal></connections-modal>
   </div>
 
-  <div id="settings-modal-wrap">
-    <settings-modal></settings-modal>
-  </div>
-
-  <div id="utility-job-detail-wrap">
-    <job-detail></job-detail>
-  </div>
-
   <div id="extension-modal-wrap">
   </div>
 
@@ -49,6 +41,9 @@
   </div>
 
   <div id="pgcron-modal-wrap">
+  </div>
+
+  <div id="app" class="omnidb__main omnidb__explain--default" style="min-height: 100vh;">
   </div>
 
 
@@ -97,10 +92,10 @@
     </nav>
   </div>
 
-    <div id="omnidb__main" class="omnidb__main" style="min-height: 100vh">
+    <!-- <div id="omnidb__main" class="omnidb__main" style="min-height: 100vh">
       <div id="omnidb_main_tablist">
       </div>
-    </div>
+    </div> -->
 
     <div id="div_loading" class="div_loading" style='z-index: 100005; display: block;'>
       <div class="div_loading_cover"></div>
@@ -216,26 +211,6 @@
     </div>
 
 
-    <!-- Modal Monitoring Units -->
-    <div class="modal fade" id="modal_monitoring_units" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header align-items-center">
-            <h2 class="modal-title font-weight-bold">Monitoring Units</h2>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div id="monitoring_units_grid" class="tabulator-custom" style="width: 100%; height: 300px; overflow: hidden;"></div>
-          </div>
-          <div class="modal-footer">
-            <button id="modal_monitoring_units_new_unit_btn" class='btn btn-primary btn-sm mr-3'>New Unit</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Modal Users -->
     <div class="modal fade" id="modal_users" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -275,27 +250,6 @@
       </div>
     </div>
 
-    <!-- Modal Monitoring Unit Test -->
-    <div class="modal fade" id="modal_monitoring_unit_test" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header align-items-center">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="dashboard_unit_content_group">
-              <div id="monitoring_unit_test_result">
-              </div>
-              <div id="monitoring_unit_test_legend" class="dashboard_unit_legend_box">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Modal Generic Message -->
     <div class="modal show" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
       <div id="modal_message_dialog" class="modal-dialog" role="document">
@@ -317,234 +271,31 @@
       </div>
     </div>
 
-    <!-- Modal Password -->
-    <div class="modal fade" id="modal_password" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header align-items-center">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div id="modal_password_content"></div>
-            <div class="form-group">
-              <input id="txt_password_prompt" class="form-control" type="password" placeholder="Password"/>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button id="modal_password_ok" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-            <button id="modal_password_cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Master Password -->
-
-    <div class="modal fade" id="modal_password_set" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header align-items-center">
-            <h2 class="modal-title font-weight-bold">Master Password</h2>
-          </div>
-
-          <div class="modal-body">
-            <div id="modal_password_content">
-            </div>
-
-            <div class="form-row">
-              <div class="form-group col-6">
-                <input id="master_password" type="password" class="form-control" placeholder="New Password" minlength="8" required>
-              </div>
-
-              <div class="form-group col-6">
-                <input id="master_password_confirm" type="password" class="form-control" placeholder="Confirm Password" minlength="8" required>
-                <div class="invalid-tooltip">
-                  Password must be matching.
-                </div>
-                </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button id="password_set" type="button" class="btn btn-success" data-dismiss="modal" disabled>Set Master password</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="modal_password_check" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header align-items-center">
-            <h2 class="modal-title font-weight-bold">Master Password</h2>
-          </div>
-          <div class="modal-body">
-            <div id="master_password_content" class="mb-3">
-            </div>
-            <div class="form-group">
-              <input id="master_password_check" class="form-control" type="password" placeholder="Password" minlength="8" required/>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button id="password_check_button" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
-            <button id="password_reset_button" type="button" class="btn btn-danger" data-dismiss="modal">Reset Master Password</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="div_autocomplete" class="omnidb__autocomplete">
-      <div id='div_autocomplete_loading' class='div_loading_local' style='z-index: 1000;'></div>
-      <div id="div_test_length"></div>
-      <!--<div id="div_autocomplete_label"></div>-->
-      <div id="div_autocomplete_noresults">No results</div>
-      <div id="div_autocomplete_scroll">
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Keywords</div>
-            <i class="fas fa-font node-all node-keyword" title="Keywords"></i>
-            <div id="autocomplete_count_keyword">0 results</div>
-          </div>
-          <div id="autocomplete_grid_keyword" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Databases</div>
-            <i class="fas fa-database node-all node-database-list" title="Databases"></i>
-            <div id="autocomplete_count_database">0 results</div>
-          </div>
-          <div id="autocomplete_grid_database" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Roles</div>
-            <i class="fas fa-users node-all node-user-list" title="Roles"></i>
-            <div id="autocomplete_count_role">0 results</div>
-          </div>
-          <div id="autocomplete_grid_role" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Tablespaces</div>
-            <i class="fas fa-folder-open node-all node-tablespace-list" title="Tablespaces"></i>
-            <div id="autocomplete_count_tablespace">0 results</div>
-          </div>
-          <div id="autocomplete_grid_tablespace" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Schemas</div>
-            <i class="fas fa-layer-group node-all node-schema-list" title="Schemas"></i>
-            <div id="autocomplete_count_schema">0 results</div>
-          </div>
-          <div id="autocomplete_grid_schema" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Extensions</div>
-            <i class="fas fa-cubes node-all node-extension-list" title="Extensions"></i>
-            <div id="autocomplete_count_extension">0 results</div>
-          </div>
-          <div id="autocomplete_grid_extension" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Tables</div>
-            <i class="fas fa-table node-all node-table-list" title="Tables"></i>
-            <div id="autocomplete_count_table">0 results</div>
-          </div>
-          <div id="autocomplete_grid_table" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Views</div>
-            <i class="fas fa-eye node-all node-view-list" title="Views"></i>
-            <div id="autocomplete_count_view">0 results</div>
-          </div>
-          <div id="autocomplete_grid_view" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Columns</div>
-            <i class="fas fa-columns node-all node-column" title="Columns"></i>
-            <div id="autocomplete_count_column">0 results</div>
-          </div>
-          <div id="autocomplete_grid_column" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Functions</div>
-            <i class="fas fa-cog node-all node-function-list" title="Indexes"></i>
-            <div id="autocomplete_count_function">0 results</div>
-          </div>
-          <div id="autocomplete_grid_function" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-        <div class="omnidb__autocomplete__row">
-          <div class="omnidb__autocomplete__type">
-            <div>Indexes</div>
-            <i class="fas fa-thumbtack node-all node-index" title="Indexes"></i>
-            <div id="autocomplete_count_index">0 results</div>
-          </div>
-          <div id="autocomplete_grid_index" class="omnidb__autocomplete__data">
-          </div>
-        </div>
-      </div>
-      <div id="div_autocomplete_searching">Searching...</div>
-
-    </div>
     {% vite_asset 'src/main.js' %}
     <script src="{{url_folder}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
 
     <script type="text/javascript">
   	//Global variables
     var master_key = '{{master_key}}'
-    var v_editor_theme = '{{ editor_theme }}';
-  	var	v_theme = '{{ theme }}';
-    var v_font_size = {{ font_size }};
   	var v_user_id = {{ user_id }};
     var v_user_key = '{{ user_key }}';
     var v_user_name = '{{ user_name }}';
-    var v_csv_encoding = '{{ csv_encoding }}';
-    var v_csv_delimiter = '{{ csv_delimiter }}';
     var v_session_key = v_user_key;
     var v_user_login = v_user_name;
     var v_version = '{{ pgmanage_version }}';
     var v_short_version = '{{ pgmanage_short_version }}';
     var v_url_folder = '{{ url_folder }}'; //left for compatibility reasons, use app_base_path instead
     var app_base_path = '{{ url_folder }}'
-  	var v_connections_data;
   	var gv_desktopMode = ('{{ desktop_mode }}' === 'True');
-  	var v_tab_token = '{{ tab_token }}';
     var v_omnis = createOmnis();
     var v_explain_control = {context: 'default'};
 
-    var v_menu_item = '{{ menu_item }}'
-
     var ht;
     var network;
-    var v_connTabControl;
-    var v_editDataObject;
     var v_canEditContent;
     var v_editContentObject;
-    var v_database_list = null;
-    var v_completer_ready = true;
-    var v_tree_object;
     var v_super_user = {{ super_user|lower }};
     var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
-    var binary_path = '{{ binary_path|addslashes }}';
-    var pigz_path = '{{ pigz_path|addslashes}}';
-    var date_format = '{{ date_format }}' === 'None' ? 'YYYY-MM-DD, HH:mm:ss' : '{{ date_format }}'
     </script>
     <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js" defer></script>
   </body>

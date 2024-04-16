@@ -1,12 +1,11 @@
 import axios from 'axios'
 import ShortUniqueId from 'short-unique-id';
 
-import { terminalReturn } from "./terminal";
 import { queryResponseCodes } from "./constants";
 import { debugResponse } from "./debug";
-import { showPasswordPrompt } from "./passwords";
 import { getCookie } from './ajax_control'
 import { showAlert, showToast } from "./notification_control";
+import { emitter } from './emitter';
 
 const uid = new ShortUniqueId({dictionary: 'alpha_upper', length: 4})
 
@@ -104,6 +103,15 @@ function polling_response(message) {
       }
       break;
     }
+    case parseInt(queryResponseCodes.OperationCancelled): {
+      if (context) {
+        if(context.callback!=null) {
+          context.callback(message)
+        }
+        removeContext(context_code)
+      }
+      break;
+    }
     case parseInt(queryResponseCodes.ConsoleResult): {
       if (context) {
         if (message.v_data.v_last_block || message.v_error) {
@@ -117,7 +125,7 @@ function polling_response(message) {
     }
     case parseInt(queryResponseCodes.TerminalResult): {
       if (context) {
-        terminalReturn(message, context);
+          context.callback(message, context)
       }
       break;
     }
@@ -166,30 +174,18 @@ function polling_response(message) {
 }
 
 function QueryPasswordRequired(p_context, p_message) {
-	if (p_context.tab_tag.mode=='query') {
-		showPasswordPrompt(
-			p_context.database_index,
-			function() {
+  if(["query", "console"].includes(p_context.tab.metaData.mode)) {
+    emitter.emit("show_password_prompt", {
+      databaseIndex: p_context.database_index,
+      successCallback: function() {
         p_context.passwordSuccessCallback(p_context)
+      },
+      cancelCallback: function() {
+        p_context.passwordFailCalback()
 			},
-			function() {
-        p_context.passwordFailCalback(p_context)
-			},
-			p_message
-		);
-	}
-	else if (p_context.tab_tag.mode=='console') {
-		showPasswordPrompt(
-			p_context.database_index,
-			function() {
-        p_context.passwordSuccessCallback(p_context)
-			},
-			function() {
-        p_context.passwordFailCalback(p_context.tab_tag)
-			},
-			p_message
-		);
-	}
+      message: p_message
+    })
+  }
 }
 
 function createContext(context) {
@@ -219,6 +215,7 @@ function createRequest(message_code, message_data, context) {
       }
       createContext(ctx)
       context_code = ctx.code
+      context.code = context_code
 		}
     // if context code is passed do not create a new context
 		else {

@@ -47,11 +47,11 @@
           </div>
 
           <div class="col-1 d-flex align-items-center">
-            <input type='checkbox' class="custom-checkbox" v-model="column.nullable" :disabled="!column.editable"/>
+            <input type='checkbox' class="custom-checkbox" v-model="column.nullable" :disabled="!column.editable || column.isPK"/>
           </div>
 
           <div class="col-1 d-flex align-items-center">
-            <input type='checkbox' class="custom-checkbox" v-model="column.isPK" :disabled="disabledPrimaryKey"/>
+            <input type='checkbox' class="custom-checkbox" v-model="column.isPK" :disabled="disabledPrimaryKey || column.nullable"/>
           </div>
 
           <div v-if="commentable" class="col-3">

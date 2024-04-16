@@ -246,11 +246,11 @@ def get_columns(request, database):
 @database_required_new(check_timeout=True, open_connection=True)
 def get_table_definition(request, v_database):
     data = request.data
-    table = data["table"]
-    schema = data["schema"]
-
     columns = []
     try:
+        table = data["table"]
+        schema = data["schema"]
+
         q_primaries = v_database.QueryTablePKColumns(table, schema)
         pk_column_names = [x[0] for x in q_primaries.Rows]
         q_definition = v_database.QueryTableDefinition(table, schema)
@@ -1577,7 +1577,7 @@ def template_select(request, v_database):
     try:
         v_template = v_database.TemplateSelect(v_schema, v_table, v_kind).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 
@@ -1596,7 +1596,7 @@ def template_insert(request, v_database):
     try:
         v_template = v_database.TemplateInsert(v_schema, v_table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 
@@ -1615,7 +1615,7 @@ def template_update(request, v_database):
     try:
         v_template = v_database.TemplateUpdate(v_schema, v_table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 
@@ -1637,7 +1637,7 @@ def template_select_function(request, v_database):
             v_schema, v_function, v_functionid
         ).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 

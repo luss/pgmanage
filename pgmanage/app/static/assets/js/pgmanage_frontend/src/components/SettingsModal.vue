@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title font-weight-bold">Settings</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="resetUnsavedSettings">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -31,17 +31,17 @@
                 <div style="position: absolute; top: 50%; width: 100%;">Press key combination... (ESC to cancel)</div>
               </div>
 
-              <div v-for="(shortcut, shortcut_id, index) in shortcutObject.shortcuts" :key="index" class="form-group row">
-                <label :for="shortcut_id" class="col-sm-6 col-form-label">{{ shortcutLabels[index] }}</label>
+              <div v-for="(shortcut, idx) in shortcuts" :key="idx" class="form-group row">
+                <label :for="idx" class="col-sm-6 col-form-label">{{ shortcutLabel(shortcut) }}</label>
                 <div class="col-sm-6">
-                  <button :id="shortcut_id" class='btn btn-secondary btn-sm btn-block' @click="startSetShortcut">{{
+                  <button :id="idx" class='btn btn-secondary btn-sm btn-block' @click="startSetShortcut">{{
                     buildButtonText(shortcut)
                   }}</button>
                 </div>
               </div>
 
               <div class="text-right">
-                <button class='btn btn-success' @click='saveShortcuts'>Save</button>
+                <button class='btn btn-success' @click='saveSettings'>Save</button>
               </div>
             </div>
 
@@ -49,16 +49,14 @@
               <div class="form-row">
                 <div class="form-group col-6">
                   <label for="sel_theme" class="font-weight-bold mb-2">Theme</label>
-                  <select id="sel_theme" class="form-control" @change="changeTheme"
-                    v-model="theme">
+                  <select id="sel_theme" class="form-control" v-model="theme">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                   </select>
                 </div>
                 <div class="form-group col-6">
                   <label for="sel_interface_font_size" class="font-weight-bold mb-2">Font Size</label>
-                  <select id="sel_interface_font_size" class="form-control" @change="changeInterfaceFontSize"
-                    v-model="fontSize">
+                  <select id="sel_interface_font_size" class="form-control" v-model="fontSize">
                     <option v-for="font_size in fontSizeOptions" :key="font_size" :value="font_size">{{ font_size }}
                     </option>
                   </select>
@@ -68,7 +66,7 @@
               <div class="form-row">
                 <div class="form-group col-6">
                   <label for="sel_csv_encoding" class="font-weight-bold mb-2">CSV Encoding</label>
-                  <select id="sel_csv_encoding" class="form-control" v-model="selectedCSVEncoding">
+                  <select id="sel_csv_encoding" class="form-control" v-model="csvEncoding">
                     <option v-for="encoding in encodingValues" :key="encoding" :value="encoding">{{ encoding }}</option>
                   </select>
                 </div>
@@ -85,6 +83,22 @@
                   </div>
                 </div>
 
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-6">
+                  <div class="custom-control custom-switch">
+                    <input v-model="restoreTabs" id="restore_tabs" type="checkbox" class="custom-control-input" >
+                    <label for="restore_tabs" class="custom-control-label font-weight-bold mb-2">Restore Tabs on Start</label>
+                  </div>
+                </div>
+
+                <div class="form-group col-6">
+                  <div class="custom-control custom-switch">
+                    <input v-model="scrollTree" id="scroll_tree" type="checkbox" class="custom-control-input" >
+                    <label for="scroll_tree" title="Scroll datatase tree node into view when opened" class="custom-control-label font-weight-bold mb-2">Database Tree Autoscroll</label>
+                  </div>
+                </div>
               </div>
 
               <div class="form-row">
@@ -146,7 +160,7 @@
               </div>
 
               <div class="text-right">
-                <button class='btn btn-success' @click='saveSettingsUser'>Save</button>
+                <button class='btn btn-success' @click='saveSettings'>Save</button>
               </div>
             </div>
 
@@ -167,7 +181,7 @@
                 </div>
               </div>
               <div class="text-right">
-                <button class='btn btn-success' @click='saveSettingsUser' :disabled="buttonFormDisabled">Save</button>
+                <button class='btn btn-success' @click='saveUserPassword' :disabled="buttonFormDisabled">Save</button>
               </div>
             </div>
           </div>
@@ -179,15 +193,12 @@
 
 <script>
 import { refreshHeights } from '../workspace'
-import { terminalRun } from '../terminal'
 import { default_shortcuts } from '../shortcuts'
-import { changeTheme } from '../header_actions'
-import ace from 'ace-builds'
 import axios from 'axios'
 import { showAlert, showToast } from '../notification_control'
 import moment from 'moment'
 import { emitter } from '../emitter'
-import { settingsStore } from '../stores/settings'
+import { settingsStore, tabsStore } from '../stores/stores_initializer'
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, maxLength } from '@vuelidate/validators'
@@ -212,19 +223,10 @@ export default {
   name: 'SettingsModal',
   data() {
     return {
-      currentOS: '',
-      desktopMode: window.gv_desktopMode,
       shortcutObject: {
-        shortcuts: {},
         button: null,
         actions: null
       },
-      shortcutList: [],
-      selectedCSVEncoding: window.v_csv_encoding,
-      selectedDateFormat: window.date_format,
-      csvDelimiter: window.v_csv_delimiter,
-      binaryPath: window.binary_path,
-      pigzPath: window.pigz_path,
       buttonFormDisabled: true,
       password: '',
       passwordConfirm: '',
@@ -248,12 +250,10 @@ export default {
         "utf-32-le", "utf-16", "utf-16-be", "utf-16-le", "utf-7", "utf-8",
         "utf-8-sig", "windows-1252"
       ],
-      shortcutLabels: [
-        "Run Query", "Run Selection", "Cancel Query", "Indent", "New Inner Tab",
-        "Remove Current Inner Tab", "Select Left Inner Tab", "Select Right Inner Tab",
-        "Autocomplete", "Run Explain", "Run Explain Analyze",
-      ],
-      dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A']
+      dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A'],
+      fallbackFontSize: null,
+      fallbackTheme: null,
+      hidden: true
     }
   },
   validations() {
@@ -297,127 +297,211 @@ export default {
         settingsStore.setTheme(value);
       },
     },
+    csvEncoding: {
+      get() {
+        return settingsStore.csvEncoding
+      },
+      set(value) {
+        settingsStore.setCSVEncoding(value)
+      }
+    },
+    csvDelimiter: {
+      get() {
+        return settingsStore.csvDelimiter
+      },
+      set(value) {
+        settingsStore.setCSVDelimiter(value)
+      }
+    },
+    binaryPath: {
+      get() {
+        return settingsStore.binaryPath
+      },
+      set(value) {
+        settingsStore.setBinaryPath(value)
+      }
+    },
+    pigzPath: {
+      get() {
+        return settingsStore.pigzPath
+      },
+      set(value) {
+        settingsStore.setPigzPath(value)
+      }
+    },
+    selectedDateFormat: {
+      get() {
+        return settingsStore.dateFormat
+      },
+      set(value) {
+        settingsStore.setDateFormat(value)
+      }
+    },
+    restoreTabs: {
+      get() {
+        return settingsStore.restoreTabs
+      },
+      set(value) {
+        settingsStore.setRestoreTabs(value)
+      }
+    },
+    scrollTree: {
+      get() {
+        return settingsStore.scrollTree
+      },
+      set(value) {
+        settingsStore.setScrollTree(value)
+      }
+    },
+    shortcuts() {
+      return settingsStore.shortcuts
+    },
+    desktopMode() {
+      return settingsStore.desktopMode
+    }
   },
-  created() {
-    this.getShortcuts();
+  watch: {
+    fontSize(newValue, oldValue) {
+      if (!this.hidden)
+        this.fallbackFontSize = oldValue
+      this.changeInterfaceFontSize()
+    },
+    csvDelimiter(newValue, oldValue) {
+      this.v$.csvDelimiter.$validate()
+    },
+    theme(newValue, oldValue) {
+      if (!this.hidden)
+        this.fallbackTheme = oldValue
+      this.applyThemes();
+    },
   },
   mounted() {
-    this.currentOS = "Unknown OS";
-    if (navigator.userAgent.indexOf("Win") != -1) this.currentOS = "windows";
-    if (navigator.userAgent.indexOf("Mac") != -1) this.currentOS = "macos";
-    if (navigator.userAgent.indexOf("X11") != -1) this.currentOS = "linux";
-    if (navigator.userAgent.indexOf("Linux") != -1) this.currentOS = "linux";
+    if (navigator.userAgent.indexOf("Win") != -1) settingsStore.currentOS = "windows";
+    if (navigator.userAgent.indexOf("Mac") != -1) settingsStore.currentOS = "macos";
+    if (navigator.userAgent.indexOf("X11") != -1) settingsStore.currentOS = "linux";
+    if (navigator.userAgent.indexOf("Linux") != -1) settingsStore.currentOS = "linux";
 
     //Shortcut actions
     this.shortcutObject.actions = {
       shortcut_run_query: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_query`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
           }
-          else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'console')
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_console`, false)
-          else if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'edit')
-            console.log('Not implemented') //TODO: implement shortcut functionality for new edit data
+          else if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'console')
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_console`, false)
+          else if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode == 'edit')
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_query_edit`)
         }
-        else if (window.v_connTabControl.selectedTab.tag.mode == 'outer_terminal')
-          terminalRun();
       },
       shortcut_run_selection: function () {
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_selection`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_selection`)
           }
         }
       },
       shortcut_explain: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_explain`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            if(tabsStore?.selectedPrimaryTab?.metaData?.selectedTab?.metaData?.dialect !== 'postgresql') return
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_explain`)
           }
         }
       },
       shortcut_explain_analyze: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode == 'query') {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_run_explain_analyze`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode === 'query') {
+            if(tabsStore?.selectedPrimaryTab?.metaData?.selectedTab?.metaData?.dialect !== 'postgresql') return
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_explain_analyze`)
           }
         }
       },
       shortcut_cancel_query: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_cancel_query`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_cancel_query`)
           }
         }
       },
       shortcut_indent: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
-            emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_indent_sql`)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_indent_sql`)
+          }
+        }
+
+      },
+      shortcut_find_replace: function () {
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+            emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_find_replace`)
           }
         }
 
       },
       shortcut_new_inner_tab: function () {
-
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection' || window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          window.v_connTabControl.tag.createQueryTab();
-        }
-        else if (window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          // check this
-          let tabControl = window.v_connTabControl.selectedTab.tag.tabControl;
-          tabControl.tabList[tabControl.tabList.length - 1].elementLi.click();
+        if (['snippets', 'connection'].includes(tabsStore.selectedPrimaryTab.metaData.mode)) {
+          let name = tabsStore.selectedPrimaryTab.metaData.selectedDatabase.replace('\\', '/').split('/').pop()
+          tabsStore.createQueryTab(name)
         }
       },
       shortcut_remove_inner_tab: function () {
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          let tab = window.v_connTabControl.selectedTab.tag.tabControl.selectedTab;
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          let tab = tabsStore.selectedPrimaryTab.metaData.selectedTab
           if (tab) {
-            if (tab.closeFunction && tab.closeFunction != null) {
+            if (tab.closeFunction && tab.closeFunction !== null) {
               tab.closeFunction(null, tab);
             }
             else {
-              window.v_connTabControl.selectedTab.tag.tabControl.removeTab(tab);
+              tabsStore.removeTab(tab);
             }
           }
         }
       },
       shortcut_left_inner_tab: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection' || window.v_connTabControl.selectedTab.tag.mode == 'snippets') {
-          let tabControl = window.v_connTabControl.selectedTab.tag.tabControl;
-          let actualIndex = tabControl.tabList.indexOf(tabControl.selectedTab);
+        if (['snippets', 'connection'].includes(tabsStore.selectedPrimaryTab.metaData.mode)) {
+          let secondaryTabs = tabsStore.selectedPrimaryTab.metaData.secondaryTabs;
+          let selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab
+          let actualIndex = secondaryTabs.indexOf(selectedTab);
 
-          if (actualIndex == 0) //avoid triggering click on '+' tab
-            tabControl.tabList[tabControl.tabList.length - 2].elementA.click();
-          else
-            tabControl.tabList[actualIndex - 1].elementA.click();
+          if (actualIndex === -1) return
+
+          if (actualIndex === 0) {
+            tabsStore.selectTab(secondaryTabs[secondaryTabs.length - 1])
+          } else {
+            tabsStore.selectTab(secondaryTabs[actualIndex - 1])
+          }
         }
 
       },
       shortcut_right_inner_tab: function () {
 
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          let tabControl = window.v_connTabControl.selectedTab.tag.tabControl;
-          let actualIndex = tabControl.tabList.indexOf(tabControl.selectedTab);
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          let secondaryTabs = tabsStore.selectedPrimaryTab.metaData.secondaryTabs;
+          let selectedTab = tabsStore.selectedPrimaryTab.metaData.selectedTab
+          let actualIndex = secondaryTabs.indexOf(selectedTab);
 
-          if (actualIndex == tabControl.tabList.length - 2) //avoid triggering click on '+' tab
-            tabControl.tabList[0].elementA.click();
-          else
-            tabControl.tabList[actualIndex + 1].elementA.click();
+          if (actualIndex === -1) return
+
+          if (actualIndex === secondaryTabs.length - 1) {
+            tabsStore.selectTab(secondaryTabs[0])
+          } else {
+            tabsStore.selectTab(secondaryTabs[actualIndex + 1])
+          }
         }
 
       },
       shortcut_autocomplete: function (e) {
-        if (window.v_connTabControl.selectedTab.tag.mode == 'connection') {
-          if (['query', 'console'].includes(window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag.mode)) {
-              emitter.emit(`${window.v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}_show_autocomplete_results`, e)
+        if (tabsStore.selectedPrimaryTab.metaData.mode === 'connection') {
+          if (['query', 'console'].includes(tabsStore.selectedPrimaryTab.metaData.selectedTab.metaData.mode)) {
+              emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_show_autocomplete_results`, e)
             }
         }
       }
@@ -428,17 +512,17 @@ export default {
         // Find corresponding user defined
         let found = false;
 
-        for (let user_code in this.shortcutObject.shortcuts) {
-          if (this.shortcutObject.shortcuts.hasOwnProperty(user_code)) {
-            if ((default_code == user_code) && (this.currentOS == this.shortcutObject.shortcuts[user_code]['os'])) {
+        for (let user_code in this.shortcuts) {
+          if (this.shortcuts.hasOwnProperty(user_code)) {
+            if ((default_code == user_code) && (settingsStore.currentOS == this.shortcuts[user_code]['os'])) {
               found = true;
               break
             }
           }
         }
         if (!found) {
-          this.shortcutObject.shortcuts[default_code] = default_shortcuts[default_code][this.currentOS]
-          this.shortcutObject.shortcuts[default_code]['shortcut_code'] = default_code
+          settingsStore.shortcuts[default_code] = default_shortcuts[default_code][settingsStore.currentOS]
+          settingsStore.shortcuts[default_code]['shortcut_code'] = default_code
         }
       }
     }
@@ -461,37 +545,28 @@ export default {
 
     this.applyThemes()
 
+    $('#modal_settings').on("show.bs.modal", () => {
+      this.hidden = false
+      settingsStore.getSettings();
+    });
   },
   methods: {
-    getShortcuts() {
-      axios.get('/shortcuts')
-        .then((resp) => {
-          this.shortcutObject.shortcuts = Object.assign({}, this.shortcutObject.shortcuts, resp.data.data)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
-    saveShortcuts() {
-
-      for (let property in this.shortcutObject.shortcuts) {
-        if (this.shortcutObject.shortcuts.hasOwnProperty(property)) {
-          this.shortcutList.push(this.shortcutObject.shortcuts[property]);
-        }
-      }
-
-      axios.post('/shortcuts/', {
-        current_os: this.currentOS,
-        shortcuts: this.shortcutList
-      })
-        .then((resp) => {
-          showToast("success", "Shortcuts saved.")
-          emitter.emit('shortcuts_updated', "")
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-
+    shortcutLabel(shortcut) {
+      const LABEL_MAP = {
+        'shortcut_run_query': 'Run Query',
+        'shortcut_run_selection': 'Run Selection',
+        'shortcut_cancel_query': 'Cancel Query',
+        'shortcut_indent': 'Indent Code',
+        'shortcut_find_replace': 'Find/Replace',
+        'shortcut_new_inner_tab': 'New Tab',
+        'shortcut_remove_inner_tab': 'Close Tab',
+        'shortcut_left_inner_tab': 'Switch Tab Left',
+        'shortcut_right_inner_tab': 'Switch Tab Right',
+        'shortcut_autocomplete': 'Autocomplete',
+        'shortcut_explain': 'Explain Query',
+        'shortcut_explain_analyze': 'Analyze Query'
+      };
+      return LABEL_MAP[shortcut.shortcut_code] || 'unknown'
     },
     startSetShortcut(event) {
       this.$refs.shortcutBackground.style.display = 'block'
@@ -521,7 +596,7 @@ export default {
       if (event.keyCode == 16 || event.keyCode == 17 || event.keyCode == 18 || event.keyCode == 91)
         return;
 
-      let shortcutElement = this.shortcutObject.shortcuts[this.shortcutObject.button.id];
+      let shortcutElement = settingsStore.shortcuts[this.shortcutObject.button.id];
 
       if (shortcutElement) {
         shortcutElement.ctrl_pressed = event.ctrlKey;
@@ -547,35 +622,8 @@ export default {
       document.body.addEventListener('keydown', this.keyBoardShortcuts);
     },
     changeInterfaceFontSize() {
-      document.getElementsByTagName('html')[0].style['font-size'] = `${this.fontSize}px`;
-      $('.ace_editor').each(function (index) {
-        let editor = ace.edit(this);
-        editor.setFontSize(`${this.fontSize}px`);
-      });
-      let outer_tab_list = window.v_connTabControl.tabList;
-      for (let i = 0; i < outer_tab_list.length; i++) {
-        let outer_tab_tag = outer_tab_list[i].tag;
-        if (outer_tab_tag) {
-          let outer_tab_tag_inner_tab_control = outer_tab_tag.tabControl;
-          if (outer_tab_tag_inner_tab_control) {
-            let outer_tab_tag_inner_tab_list = outer_tab_tag_inner_tab_control.tabList;
-            for (let j = 0; j < outer_tab_tag_inner_tab_list.length; j++) {
-              let inner_tab_tag = outer_tab_tag_inner_tab_list[j].tag;
-              if (inner_tab_tag) {
-                if (inner_tab_tag.editor_console) {
-                  inner_tab_tag.editor_console.options.fontSize = Number(this.fontSize);
-                }
-              }
-            }
-          }
-        }
-      }
-
+      document.documentElement.style.fontSize = `${this.fontSize}px`
       refreshHeights();
-    },
-    changeTheme() {
-      this.applyThemes();
-      changeTheme();
     },
     applyThemes() {
       if (this.theme === 'dark') {
@@ -608,33 +656,32 @@ export default {
       else
         return text + shortcut_object.shortcut_key
     },
-    saveSettingsUser() {
+    saveSettings() {
+      if(!this.v$.$invalid) {
+        settingsStore.saveSettings().then(() => {
+          this.fallbackFontSize = null
+          this.fallbackTheme = null
+          this.hidden = true
+          $('#modal_settings').modal('hide');
+        })
+      }
+    },
+    saveUserPassword() {
       if ((this.passwordConfirm != '' || this.password != '') && (this.password != this.passwordConfirm))
         showToast("error", "New Password and Confirm New Password fields do not match.")
       else if ((this.password === this.passwordConfirm) && (this.password.length < 8 && this.password.length >= 1))
         showToast("error", "New Password and Confirm New Password fields must be longer than 8.")
       else {
-        this.v$.csvDelimiter.$validate()
-        if(!this.v$.$invalid) {
-          axios.post('/save_config_user/', {
-            "font_size": this.fontSize,
-            "theme": this.theme,
+          axios.post("/save-user-password/", {
             "password": this.password,
-            "csv_encoding": this.selectedCSVEncoding,
-            "csv_delimiter": this.csvDelimiter,
-            "binary_path": this.binaryPath,
-            "date_format": this.selectedDateFormat,
-            "pigz_path": this.pigzPath,
           })
-            .then((resp) => {
-              $('#modal_settings').modal('hide');
-              moment.defaultFormat = this.selectedDateFormat
-              showToast("success", "Configuration saved.");
+          .then(() => {
+            $('#modal_settings').modal('hide');
+            showToast("success", "Password saved.");
+          })
+          .catch((error) => {
+              showToast("error", error.response.data.data)
             })
-            .catch((error) => {
-              console.log(error)
-            })
-        }
       }
     },
     checkPassword() {
@@ -665,9 +712,9 @@ export default {
       if (event.keyCode == 16 || event.keyCode == 17 || event.keyCode == 18 || event.keyCode == 91 || event.keyCode == 27)
         return;
 
-      for (let property in this.shortcutObject.shortcuts) {
-        if (this.shortcutObject.shortcuts.hasOwnProperty(property)) {
-          let element = this.shortcutObject.shortcuts[property];
+      for (let property in this.shortcuts) {
+        if (this.shortcuts.hasOwnProperty(property)) {
+          let element = this.shortcuts[property];
           if (this.checkShortcutPressed(event, element)) {
             event.preventDefault();
             event.stopPropagation();
@@ -713,6 +760,18 @@ export default {
     setPigzPath(e) {
       const [file] = e.target.files
       this.pigzPath = file?.path
+    },
+    resetUnsavedSettings() {
+      this.hidden = true
+      if (this.fallbackFontSize) {
+        this.fontSize = this.fallbackFontSize
+        this.fallbackFontSize = null
+      }
+
+      if (this.fallbackTheme) {
+        this.theme = this.fallbackTheme
+        this.fallbackTheme = null
+      }
     },
   }
 }

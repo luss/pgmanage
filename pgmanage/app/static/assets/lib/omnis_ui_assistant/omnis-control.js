@@ -117,7 +117,7 @@ function createOmnisUiAssistant({p_callback_end = false, p_omnis, p_steps = []})
     self_destruct: function() {
       var v_control = this;
       v_control.setStateDisabled();
-      document.getElementById('omnidb__main').removeChild(v_control.divElement);
+      document.getElementById('app').removeChild(v_control.divElement);
       for (let i = 0; i < v_control.stepList.length; i++) {
         if (v_control.stepList[i].callback_end !== false) {
           v_control.stepList[i].callback_end();
@@ -385,7 +385,7 @@ function createOmnisUiAssistant({p_callback_end = false, p_omnis, p_steps = []})
     },
     updateOmnisPosition : function(p_target, p_pos = false) {
       try {
-        let v_root = document.getElementById('omnidb__main');
+        let v_root = document.getElementById('app');
         let v_window_width = v_root.offsetWidth;
         let v_window_width_half = Math.round(v_window_width / 2);
         let v_window_height = v_root.offsetHeight;
@@ -469,7 +469,7 @@ function createOmnisUiAssistant({p_callback_end = false, p_omnis, p_steps = []})
   v_omnisControl.divElement.appendChild(v_omnisControl.divClonedElement);
   v_omnisControl.divElement.appendChild(v_omnisControl.divWavesElement);
   v_omnisControl.divElement.appendChild(v_omnisControl.divBackdropElement);
-  document.getElementById('omnidb__main').appendChild(v_omnisControl.divElement);
+  document.getElementById('app').appendChild(v_omnisControl.divElement);
 
   return v_omnisControl;
 

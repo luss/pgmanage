@@ -52,24 +52,24 @@ def build_snippets_object_recursive(
 
 @session_required(include_session=False)
 def get_node_children(request):
-    snippet_id = request.data["snippet_id"]
+    snippet_id = request.data.get("snippet_id")
 
-    data = {"list_nodes": [], "list_texts": []}
+    data = {"folders": [], "snippets": []}
 
     for folder in SnippetFolder.objects.filter(user=request.user, parent=snippet_id):
         node_data = {"id": folder.id, "name": folder.name}
-        data["list_nodes"].append(node_data)
+        data["folders"].append(node_data)
 
     for file in SnippetFile.objects.filter(user=request.user, parent=snippet_id):
         node_data = {"id": file.id, "name": file.name}
-        data["list_texts"].append(node_data)
+        data["snippets"].append(node_data)
 
     return JsonResponse(data=data)
 
 
 @session_required(include_session=False)
 def get_snippet_text(request):
-    snippet_id = request.data["snippet_id"]
+    snippet_id = request.data.get("snippet_id")
 
     try:
         snippet_text = SnippetFile.objects.get(id=snippet_id).text
@@ -81,9 +81,9 @@ def get_snippet_text(request):
 @session_required(include_session=False)
 def new_node_snippet(request):
     data = request.data
-    snippet_id = data["snippet_id"]
-    mode = data["mode"]
-    name = data["name"]
+    snippet_id = data.get("snippet_id")
+    mode = data.get("mode")
+    name = data.get("name")
 
     parent = SnippetFolder.objects.filter(id=snippet_id).first()
 
@@ -116,11 +116,11 @@ def new_node_snippet(request):
 @session_required(include_session=False)
 def delete_node_snippet(request):
     data = request.data
-    snippet_id = data["id"]
-    mode = data["mode"]
+    snippet_id = data.get("id")
+    mode = data.get("mode")
 
     try:
-        if mode == "node":
+        if mode == "folder":
             folder = SnippetFolder.objects.get(id=snippet_id)
             folder.delete()
         else:
@@ -135,10 +135,10 @@ def delete_node_snippet(request):
 @session_required(include_session=False)
 def save_snippet_text(request):
     data = request.data
-    snippet_id = data["id"]
-    name = data["name"]
-    parent_id = data["parent_id"]
-    text = data["text"]
+    snippet_id = data.get("id")
+    name = data.get("name")
+    parent_id = data.get("parent_id")
+    text = data.get("text")
 
     parent = SnippetFolder.objects.filter(id=parent_id).first()
 
@@ -177,12 +177,12 @@ def save_snippet_text(request):
 @session_required(include_session=False)
 def rename_node_snippet(request):
     data = request.data
-    node_id = data["id"]
-    name = data["name"]
-    mode = data["mode"]
+    node_id = data.get("id")
+    name = data.get("name")
+    mode = data.get("mode")
 
     try:
-        if mode == "node":
+        if mode == "folder":
             folder = SnippetFolder.objects.get(id=node_id)
             folder.name = name
             folder.modify_date = make_aware(datetime.now())

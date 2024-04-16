@@ -97,7 +97,7 @@ SOFTWARE.
     }
 
     &__cloned-element__waves span {
-      background-color: #2E53B9;
+      background-color: #2FB344;
     }
   }
 
@@ -221,6 +221,7 @@ SOFTWARE.
 
       &:first-of-type.active {
         border-left: transparent;
+        border-radius: 0 4px 0 0;
       }
 
       &:not(.active):hover {
@@ -469,25 +470,6 @@ SOFTWARE.
     color: #1560AD;
   }
 
-  /* Autocomplete */
-  .omnidb__autocomplete {
-    background: #FFFFFF;
-
-    &__data {
-      background-color: #FBFBFB;
-    }
-  }
-
-  #div_autocomplete .tabulator .tabulator-row:hover {
-    background-color: #c7d6ff !important;
-    cursor: pointer;
-  }
-
-  /* Ace-search */
-  .ace_search {
-    background-color: #F4F4F4;
-    box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
-  }
 
   /* Tree Component */
   span.node_selected span {

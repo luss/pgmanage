@@ -42,8 +42,6 @@ base_urlpatterns = [
 
     #WORKSPACE
     re_path(r'^workspace/', views.workspace.index, name='workspace'),
-    re_path(r'^save_config_user/', views.workspace.save_config_user, name='save_config_user'),
-    re_path(r'^shortcuts/', views.workspace.shortcuts, name='shortcuts'),
     re_path(r'^renew_password/', views.workspace.renew_password, name='renew_password'),
     re_path(r'^master_password/', views.workspace.master_password, name='master_password'),
     re_path(r'^reset_master_password/', views.workspace.reset_master_password, name='reset_master_password'),
@@ -54,6 +52,11 @@ base_urlpatterns = [
     re_path(r'^refresh_monitoring/', views.workspace.refresh_monitoring, name='refresh_monitoring'),
     re_path(r'^get_autocomplete_results/', views.workspace.get_autocomplete_results, name='get_autocomplete_results'),
     re_path(r'^delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
+    re_path(r'^get_database_meta/', views.workspace.get_database_meta, name='get_database_meta'),
+
+    #SETINGS
+    re_path(r'^settings/', views.workspace.SettingsView.as_view(), name="settings"),
+    re_path(r'^save-user-password/', views.workspace.save_user_password, name="save-user-password"),
 
     #COMMANDS HISTORY
     re_path(r'^get_commands_history/', views.commands_history.get_commands_history, name="get_commands_history"),
@@ -236,6 +239,7 @@ base_urlpatterns = [
     re_path(r'^template_select_mysql/', views.tree_mysql.template_select, name='template_select'),
     re_path(r'^template_insert_mysql/', views.tree_mysql.template_insert, name='template_insert'),
     re_path(r'^template_update_mysql/', views.tree_mysql.template_update, name='template_update'),
+    re_path(r'^get_table_definition_mysql/', views.tree_mysql.get_table_definition, name='get_table_definition'),
 
     #TREE_MARIADB
     re_path(r'^get_tree_info_mariadb/', views.tree_mariadb.get_tree_info, name='get_tree_info'),
@@ -294,16 +298,15 @@ base_urlpatterns = [
     re_path(r'^get_table_definition_sqlite/', views.tree_sqlite.get_table_definition, name="get_table_definition_sqlite"),
 
     #MONITORING SYSTEM
-    re_path(r'^test_monitor_script/', views.monitor_dashboard.test_monitor_script, name='test_monitor_script'),
-    re_path(r'^get_monitor_unit_list/', views.monitor_dashboard.get_monitor_unit_list, name='get_monitor_unit_list'),
-    re_path(r'^get_monitor_unit_details/', views.monitor_dashboard.get_monitor_unit_details, name='get_monitor_unit_details'),
-    re_path(r'^get_monitor_units/', views.monitor_dashboard.get_monitor_units, name='get_monitor_units'),
-    re_path(r'^refresh_monitor_units/', views.monitor_dashboard.refresh_monitor_units, name='refresh_monitor_units'),
-    re_path(r'^get_monitor_unit_template/', views.monitor_dashboard.get_monitor_unit_template, name='get_monitor_unit_template'),
-    re_path(r'^save_monitor_unit/', views.monitor_dashboard.save_monitor_unit, name='save_monitor_unit'),
-    re_path(r'^delete_monitor_unit/', views.monitor_dashboard.delete_monitor_unit, name='delete_monitor_unit'),
-    re_path(r'^remove_saved_monitor_unit/', views.monitor_dashboard.remove_saved_monitor_unit, name='remove_saved_monitor_unit'),
-    re_path(r'^update_saved_monitor_unit_interval/', views.monitor_dashboard.update_saved_monitor_unit_interval, name='update_saved_monitor_unit_interval'),
+    path("monitoring-widgets", views.monitoring_dashboard.monitoring_widgets, name="monitoring-widgets"),
+    path("monitoring-widgets/list", views.monitoring_dashboard.monitoring_widgets_list, name="monitoring-widgets-list"),
+    path("monitoring-widgets/test", views.monitoring_dashboard.test_monitoring_widget, name="test-monitoring-widget"),
+    path("monitoring-widgets/create", views.monitoring_dashboard.create_dashboard_monitoring_widget, name="create-dashboard-widget"),
+    path("monitoring-widgets/<int:widget_id>", views.monitoring_dashboard.widget_detail, name="dashboard-widget-detail"),
+    path("monitoring-widgets/<int:widget_id>/template", views.monitoring_dashboard.widget_template, name="widget-template"),
+    path("monitoring-widgets/<int:widget_saved_id>/refresh", views.monitoring_dashboard.refresh_monitoring_widget, name="refresh-monitoring-widget"),
+    path("monitoring-widgets/user-created", views.monitoring_dashboard.create_widget, name="create-custom-widget"),
+    path("monitoring-widgets/user-created/<int:widget_id>", views.monitoring_dashboard.user_created_widget_detail, name="widget-detail"),
 
     # Configuration
     path('configuration/<int:config_id>/', views.configuration.delete_config, name="delete_configuration"),
@@ -330,7 +333,9 @@ base_urlpatterns = [
     path('file_manager/rename/', views.file_manager.rename, name="rename_file_or_directory"),
     path('file_manager/delete/', views.file_manager.delete, name='delete_file_or_directory'),
 
-    path('validate_binary_path/', views.workspace.validate_binary_path, name='validate_binary_path')
+    path('validate_binary_path/', views.workspace.validate_binary_path, name='validate_binary_path'),
+
+    path('log/', views.logging.log_message, name="log_message")
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

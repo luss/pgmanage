@@ -717,7 +717,7 @@ class PostgreSQL:
             'YEAR',
             'ZONE',
         ]
-        self.v_console_help = "Console tab. Type the commands in the editor below this box. \? to view command list."
+        self.v_console_help = "Console tab. Type the commands in the editor below this box. \\? to view command list."
         self.v_version = ''
         self.v_version_num = ''
         self.v_use_server_cursor = True
@@ -4687,17 +4687,7 @@ LOCATION 'directory'
         return Template('DROP TABLESPACE #tablespace_name#')
 
     def TemplateCreateDatabase(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90500:
-            return Template('''CREATE DATABASE name
---OWNER user_name
---TEMPLATE template
---ENCODING encoding
---LC_COLLATE lc_collate
---LC_CTYPE lc_ctype
---TABLESPACE tablespace
---CONNECTION LIMIT connlimit
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''CREATE DATABASE name
 --OWNER user_name
 --TEMPLATE template
@@ -4844,57 +4834,7 @@ $function$
 ''')
 
     def TemplateAlterFunction(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''ALTER FUNCTION #function_name#
---CALLED ON NULL INPUT
---RETURNS NULL ON NULL INPUT
---STRICT
---IMMUTABLE
---STABLE
---VOLATILE
---NOT LEAKPROOF
---LEAKPROOF
---EXTERNAL SECURITY INVOKER
---SECURITY INVOKER
---EXTERNAL SECURITY DEFINER
---SECURITY DEFINER
---COST execution_cost
---ROWS result_rows
---SET configuration_parameter { TO | = } { value | DEFAULT }
---SET configuration_parameter FROM CURRENT
---RESET configuration_parameter
---RESET ALL
---RENAME TO new_name
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---SET SCHEMA new_schema
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''ALTER FUNCTION #function_name#
---CALLED ON NULL INPUT
---RETURNS NULL ON NULL INPUT
---STRICT
---IMMUTABLE
---STABLE
---VOLATILE
---NOT LEAKPROOF
---LEAKPROOF
---EXTERNAL SECURITY INVOKER
---SECURITY INVOKER
---EXTERNAL SECURITY DEFINER
---SECURITY DEFINER
---PARALLEL { UNSAFE | RESTRICTED | SAFE }
---COST execution_cost
---ROWS result_rows
---SET configuration_parameter { TO | = } { value | DEFAULT }
---SET configuration_parameter FROM CURRENT
---RESET configuration_parameter
---RESET ALL
---RENAME TO new_name
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---SET SCHEMA new_schema
---DEPENDS ON EXTENSION extension_name
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''ALTER FUNCTION #function_name#
 --CALLED ON NULL INPUT
 --RETURNS NULL ON NULL INPUT
@@ -5010,57 +4950,7 @@ $function$
 ''')
 
     def TemplateAlterTriggerFunction(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''ALTER FUNCTION #function_name#
---CALLED ON NULL INPUT
---RETURNS NULL ON NULL INPUT
---STRICT
---IMMUTABLE
---STABLE
---VOLATILE
---NOT LEAKPROOF
---LEAKPROOF
---EXTERNAL SECURITY INVOKER
---SECURITY INVOKER
---EXTERNAL SECURITY DEFINER
---SECURITY DEFINER
---COST execution_cost
---ROWS result_rows
---SET configuration_parameter { TO | = } { value | DEFAULT }
---SET configuration_parameter FROM CURRENT
---RESET configuration_parameter
---RESET ALL
---RENAME TO new_name
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---SET SCHEMA new_schema
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''ALTER FUNCTION #function_name#
---CALLED ON NULL INPUT
---RETURNS NULL ON NULL INPUT
---STRICT
---IMMUTABLE
---STABLE
---VOLATILE
---NOT LEAKPROOF
---LEAKPROOF
---EXTERNAL SECURITY INVOKER
---SECURITY INVOKER
---EXTERNAL SECURITY DEFINER
---SECURITY DEFINER
---PARALLEL { UNSAFE | RESTRICTED | SAFE }
---COST execution_cost
---ROWS result_rows
---SET configuration_parameter { TO | = } { value | DEFAULT }
---SET configuration_parameter FROM CURRENT
---RESET configuration_parameter
---RESET ALL
---RENAME TO new_name
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---SET SCHEMA new_schema
---DEPENDS ON EXTENSION extension_name
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''ALTER FUNCTION #function_name#
 --CALLED ON NULL INPUT
 --RETURNS NULL ON NULL INPUT
@@ -5138,57 +5028,7 @@ $function$
 ''')
 
     def TemplateAlterEventTriggerFunction(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''ALTER FUNCTION #function_name#
---CALLED ON NULL INPUT
---RETURNS NULL ON NULL INPUT
---STRICT
---IMMUTABLE
---STABLE
---VOLATILE
---NOT LEAKPROOF
---LEAKPROOF
---EXTERNAL SECURITY INVOKER
---SECURITY INVOKER
---EXTERNAL SECURITY DEFINER
---SECURITY DEFINER
---COST execution_cost
---ROWS result_rows
---SET configuration_parameter { TO | = } { value | DEFAULT }
---SET configuration_parameter FROM CURRENT
---RESET configuration_parameter
---RESET ALL
---RENAME TO new_name
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---SET SCHEMA new_schema
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''ALTER FUNCTION #function_name#
---CALLED ON NULL INPUT
---RETURNS NULL ON NULL INPUT
---STRICT
---IMMUTABLE
---STABLE
---VOLATILE
---NOT LEAKPROOF
---LEAKPROOF
---EXTERNAL SECURITY INVOKER
---SECURITY INVOKER
---EXTERNAL SECURITY DEFINER
---SECURITY DEFINER
---PARALLEL { UNSAFE | RESTRICTED | SAFE }
---COST execution_cost
---ROWS result_rows
---SET configuration_parameter { TO | = } { value | DEFAULT }
---SET configuration_parameter FROM CURRENT
---RESET configuration_parameter
---RESET ALL
---RENAME TO new_name
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---SET SCHEMA new_schema
---DEPENDS ON EXTENSION extension_name
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''ALTER FUNCTION #function_name#
 --CALLED ON NULL INPUT
 --RETURNS NULL ON NULL INPUT
@@ -5250,54 +5090,7 @@ $function$
 ''')
 
     def TemplateCreateAggregate(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''CREATE AGGREGATE #schema_name#.name
---([ argmode ] [ argname ] arg_data_type [ , ... ])
---ORDER BY [ argmode ] [ argname ] arg_data_type [ , ... ] )
-(
-    SFUNC = sfunc,
-    STYPE = state_data_type
---    , SSPACE = state_data_size
---    , FINALFUNC = ffunc
---    , FINALFUNC_EXTRA
---    , INITCOND = initial_condition
---    , MSFUNC = msfunc
---    , MINVFUNC = minvfunc
---    , MSTYPE = mstate_data_type
---    , MSSPACE = mstate_data_size
---    , MFINALFUNC = mffunc
---    , MFINALFUNC_EXTRA
---    , MINITCOND = minitial_condition
---    , SORTOP = sort_operator
-)
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 110000:
-            return Template('''CREATE AGGREGATE #schema_name#.name
---([ argmode ] [ argname ] arg_data_type [ , ... ])
---ORDER BY [ argmode ] [ argname ] arg_data_type [ , ... ] )
-(
-SFUNC = sfunc,
-STYPE = state_data_type
---    , SSPACE = state_data_size
---    , FINALFUNC = ffunc
---    , FINALFUNC_EXTRA
---    , COMBINEFUNC = combinefunc
---    , SERIALFUNC = serialfunc
---    , DESERIALFUNC = deserialfunc
---    , INITCOND = initial_condition
---    , MSFUNC = msfunc
---    , MINVFUNC = minvfunc
---    , MSTYPE = mstate_data_type
---    , MSSPACE = mstate_data_size
---    , MFINALFUNC = mffunc
---    , MFINALFUNC_EXTRA
---    , MINITCOND = minitial_condition
---    , SORTOP = sort_operator
---    , PARALLEL = { SAFE | RESTRICTED | UNSAFE }
-)
-''')
-        else:
-            return Template('''CREATE AGGREGATE #schema_name#.name
+        return Template('''CREATE AGGREGATE #schema_name#.name
 --([ argmode ] [ argname ] arg_data_type [ , ... ])
 --ORDER BY [ argmode ] [ argname ] arg_data_type [ , ... ] )
 (
@@ -5393,24 +5186,7 @@ SELECT ...
 ''')
 
     def TemplateAlterMaterializedView(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''ALTER MATERIALIZED VIEW #view_name#
---ALTER COLUMN column_name SET STATISTICS integer
---ALTER COLUMN column_name SET ( attribute_option = value )
---ALTER COLUMN column_name RESET ( attribute_option )
---ALTER COLUMN column_name SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
---CLUSTER ON index_name
---SET WITHOUT CLUSTER
---SET ( storage_parameter = value )
---RESET ( storage_parameter )
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---RENAME COLUMN column_name TO new_column_name
---RENAME TO new_name
---SET SCHEMA new_schema
---SET TABLESPACE new_tablespace [ NOWAIT ]
-''')
-        else:
-            return Template('''ALTER MATERIALIZED VIEW #view_name#
+        return Template('''ALTER MATERIALIZED VIEW #view_name#
 --ALTER COLUMN column_name SET STATISTICS integer
 --ALTER COLUMN column_name SET ( attribute_option = value )
 --ALTER COLUMN column_name RESET ( attribute_option )
@@ -5433,52 +5209,7 @@ SELECT ...
 ''')
 
     def TemplateCreateTable(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''CREATE
---TEMPORARY
---UNLOGGED
-TABLE #schema_name#.table_name
---OF type_name
---AS query [ WITH [ NO ] DATA ]
---PARTITION OF parent_table
-(
-    column_name data_type
-    --COLLATE collation
-    --CONSTRAINT constraint_name
-    --NOT NULL
-    --NULL
-    --CHECK ( expression ) [ NO INHERIT ]
-    --DEFAULT default_expr
-    --GENERATED { ALWAYS | BY DEFAULT } AS IDENTITY [ ( sequence_options ) ]
-    --GENERATED ALWAYS AS ( generation_expr ) STORED
-    --UNIQUE [ WITH ( storage_parameter [= value] [, ... ] ) ] [ USING INDEX TABLESPACE tablespace_name ]
-    --PRIMARY KEY [ WITH ( storage_parameter [= value] [, ... ] ) ] [ USING INDEX TABLESPACE tablespace_name ]
-    --REFERENCES reftable [ ( refcolumn ) ] [ MATCH FULL | MATCH PARTIAL | MATCH SIMPLE ] [ ON DELETE { NO ACTION | RESTRICT | CASCADE | SET NULL | SET DEFAULT } ] [ ON UPDATE { NO ACTION | RESTRICT | CASCADE | SET NULL | SET DEFAULT } ]
-    --CHECK ( expression ) [ NO INHERIT ]
-    --UNIQUE ( column_name [, ... ] ) [ WITH ( storage_parameter [= value] [, ... ] ) ] [ USING INDEX TABLESPACE tablespace_name ]
-    --PRIMARY KEY ( column_name [, ... ] ) [ WITH ( storage_parameter [= value] [, ... ] ) ] [ USING INDEX TABLESPACE tablespace_name ]
-    --EXCLUDE [ USING index_method ] ( { column_name | ( expression ) } [ opclass ] [ ASC | DESC ] [ NULLS { FIRST | LAST } ] WITH operator [, ... ] ) [ WITH ( storage_parameter [= value] [, ... ] ) ] [ USING INDEX TABLESPACE tablespace_name ] [ WHERE ( predicate ) ]
-    --FOREIGN KEY ( column_name [, ... ] ) REFERENCES reftable [ ( refcolumn [, ... ] ) ] [ MATCH FULL | MATCH PARTIAL | MATCH SIMPLE ] [ ON DELETE { NO ACTION | RESTRICT | CASCADE | SET NULL | SET DEFAULT } ] [ ON UPDATE { NO ACTION | RESTRICT | CASCADE | SET NULL | SET DEFAULT } ]
-    --DEFERRABLE
-    --NOT DEFERRABLE
-    --INITIALLY DEFERRED
-    --INITIALLY IMMEDIATE
-    --LIKE source_table [ { INCLUDING | EXCLUDING } { COMMENTS | CONSTRAINTS | DEFAULTS | IDENTITY | INDEXES | STATISTICS | STORAGE | ALL } ... ]
-)
---FOR VALUES IN ( { numeric_literal | string_literal | TRUE | FALSE | NULL } [, ...] )
---FOR VALUES FROM ( { numeric_literal | string_literal | TRUE | FALSE | MINVALUE | MAXVALUE } [, ...] ) TO ( { numeric_literal | string_literal | TRUE | FALSE | MINVALUE | MAXVALUE } [, ...] )
---FOR VALUES WITH ( MODULUS numeric_literal, REMAINDER numeric_literal )
---DEFAULT
---INHERITS ( parent_table [, ... ] )
---PARTITION BY { RANGE | LIST | HASH } ( { column_name | ( expression ) } [ COLLATE collation ] [ opclass ] [, ... ] )
---WITH ( storage_parameter [= value] [, ... ] )
---WITH OIDS
---WITHOUT OIDS
---ON COMMIT { PRESERVE ROWS | DELETE ROWS | DROP }
---TABLESPACE tablespace_name
-''')
-        else:
-            return Template('''CREATE
+        return Template('''CREATE
 --TEMPORARY
 --UNLOGGED
 TABLE #schema_name#.table_name
@@ -5522,63 +5253,7 @@ TABLE #schema_name#.table_name
 ''')
 
     def TemplateAlterTable(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''ALTER TABLE
---ONLY
-#table_name#
---ADD [ COLUMN ] [ IF NOT EXISTS ] column_name data_type [ COLLATE collation ] [ column_constraint [ ... ] ]
---DROP [ COLUMN ] [ IF EXISTS ] column_name [ RESTRICT | CASCADE ]
---ALTER [ COLUMN ] column_name [ SET DATA ] TYPE data_type [ COLLATE collation ] [ USING expression ]
---ALTER [ COLUMN ] column_name SET DEFAULT expression
---ALTER [ COLUMN ] column_name DROP DEFAULT
---ALTER [ COLUMN ] column_name { SET | DROP } NOT NULL
---ALTER [ COLUMN ] column_name ADD GENERATED { ALWAYS | BY DEFAULT } AS IDENTITY [ ( sequence_options ) ]
---ALTER [ COLUMN ] column_name { SET GENERATED { ALWAYS | BY DEFAULT } | SET sequence_option | RESTART [ [ WITH ] restart ] } [...]
---ALTER [ COLUMN ] column_name DROP IDENTITY [ IF EXISTS ]
---ALTER [ COLUMN ] column_name SET STATISTICS integer
---ALTER [ COLUMN ] column_name SET ( attribute_option = value [, ... ] )
---ALTER [ COLUMN ] column_name RESET ( attribute_option [, ... ] )
---ALTER [ COLUMN ] column_name SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
---ADD table_constraint [ NOT VALID ]
---ADD CONSTRAINT constraint_name { UNIQUE | PRIMARY KEY } USING INDEX index_name [ DEFERRABLE | NOT DEFERRABLE ] [ INITIALLY DEFERRED | INITIALLY IMMEDIATE ]
---ALTER CONSTRAINT constraint_name [ DEFERRABLE | NOT DEFERRABLE ] [ INITIALLY DEFERRED | INITIALLY IMMEDIATE ]
---VALIDATE CONSTRAINT constraint_name
---DROP CONSTRAINT [ IF EXISTS ]  constraint_name [ RESTRICT | CASCADE ]
---DISABLE TRIGGER [ trigger_name | ALL | USER ]
---ENABLE TRIGGER [ trigger_name | ALL | USER ]
---ENABLE REPLICA TRIGGER trigger_name
---ENABLE ALWAYS TRIGGER trigger_name
---DISABLE RULE rewrite_rule_name
---ENABLE RULE rewrite_rule_name
---ENABLE REPLICA RULE rewrite_rule_name
---ENABLE ALWAYS RULE rewrite_rule_name
---DISABLE ROW LEVEL SECURITY
---ENABLE ROW LEVEL SECURITY
---FORCE ROW LEVEL SECURITY
---NO FORCE ROW LEVEL SECURITY
---CLUSTER ON index_name
---SET WITHOUT CLUSTER
---SET WITH OIDS
---SET WITHOUT OIDS
---SET TABLESPACE new_tablespace
---SET { LOGGED | UNLOGGED }
---SET ( storage_parameter = value [, ... ] )
---RESET ( storage_parameter [, ... ] )
---INHERIT parent_table
---NO INHERIT parent_table
---OF type_name
---NOT OF
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
---REPLICA IDENTITY { DEFAULT | USING INDEX index_name | FULL | NOTHING }
---RENAME [ COLUMN ] column_name TO new_column_name
---RENAME CONSTRAINT constraint_name TO new_constraint_name
---RENAME TO new_name
---SET SCHEMA new_schema
---ALL IN TABLESPACE name [ OWNED BY role_name [, ... ] ] SET TABLESPACE new_tablespace [ NOWAIT ]
---ATTACH PARTITION partition_name FOR VALUES partition_bound_spec
---DETACH PARTITION partition_name
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''ALTER TABLE
 --ONLY
 #table_name#
@@ -5774,15 +5449,7 @@ DROP CONSTRAINT #constraint_name#
 ''')
 
     def TemplateCreateIndex(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 110000:
-            return Template('''CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] name
-ON #table_name#
---USING method
-( { column_name | ( expression ) } [ COLLATE collation ] [ opclass ] [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [, ...] )
---WITH ( storage_parameter = value [, ... ] )
---WHERE predicate
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] name
 ON [ ONLY ] #table_name#
 --USING method
@@ -5802,22 +5469,7 @@ ON [ ONLY ] #table_name#
 ''')
 
     def TemplateAlterIndex(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''ALTER INDEX #index_name#
---RENAME to new_name
---SET TABLESPACE tablespace_name
---SET ( storage_parameter = value [, ... ] )
---RESET ( storage_parameter [, ... ] )
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 110000:
-            return Template('''ALTER INDEX #index_name#
---RENAME to new_name
---SET TABLESPACE tablespace_name
---DEPENDS ON EXTENSION extension_name
---SET ( storage_parameter = value [, ... ] )
---RESET ( storage_parameter [, ... ] )
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''ALTER INDEX #index_name#
 --RENAME to new_name
 --SET TABLESPACE tablespace_name
@@ -5845,15 +5497,7 @@ USING #index_name#
 ''')
 
     def TemplateReindex(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90500:
-            return Template('REINDEX INDEX #index_name#')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''REINDEX
---( VERBOSE )
-INDEX #index_name#
-''')
-        else:
-            return Template('''REINDEX
+        return Template('''REINDEX
 --( VERBOSE )
 INDEX
 --CONCURRENTLY
@@ -5937,11 +5581,7 @@ ON #table_name#
 ''')
 
     def TemplateAlterTrigger(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''ALTER TRIGGER #trigger_name# ON #table_name#
---RENAME TO new_name
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''ALTER TRIGGER #trigger_name# ON #table_name#
 --RENAME TO new_name
 --DEPENDS ON EXTENSION extension_name
@@ -6142,20 +5782,7 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateVacuum(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''VACUUM
---FULL
---FREEZE
---ANALYZE
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''VACUUM
---FULL
---FREEZE
---ANALYZE
---DISABLE_PAGE_SKIPPING
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''VACUUM
 --FULL
 --FREEZE
@@ -6178,25 +5805,7 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateVacuumTable(self):
-        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 90600:
-            return Template('''VACUUM
---FULL
---FREEZE
---ANALYZE
-#table_name#
---(column_name, [, ...])
-''')
-
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 120000:
-            return Template('''VACUUM
---FULL
---FREEZE
---ANALYZE
---DISABLE_PAGE_SKIPPING
-#table_name#
---(column_name, [, ...])
-''')
-        elif int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
+        if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
             return Template('''VACUUM
 --FULL
 --FREEZE
@@ -13620,7 +13229,8 @@ FROM #table_name#
                    quote_ident(datname) as result_complete,
                    quote_ident(datname) as select_value,
                    '' as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                   false as is_builtin
             from pg_database) search
             {1}
             LIMIT 500)
@@ -13635,7 +13245,8 @@ FROM #table_name#
                    quote_ident(spcname) as result_complete,
                    quote_ident(spcname) as select_value,
                    '' as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                    false as is_builtin
             from pg_tablespace) search
             {1}
             LIMIT 500)
@@ -13650,7 +13261,8 @@ FROM #table_name#
                    quote_ident(rolname) as result_complete,
                    quote_ident(rolname) as select_value,
                    '' as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                   false as is_builtin
             from pg_roles) search
             {1}
             LIMIT 500)
@@ -13665,7 +13277,8 @@ FROM #table_name#
                    quote_ident(extname) as result_complete,
                    quote_ident(extname) as select_value,
                    '' as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                   false as is_builtin
             from pg_extension) search
             {1}
             LIMIT 500)
@@ -13680,7 +13293,8 @@ FROM #table_name#
                    quote_ident(nspname) as result_complete,
                    quote_ident(nspname) as select_value,
                    '' as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                   false as is_builtin
             from pg_catalog.pg_namespace
             where nspname not in ('pg_toast') and nspname not like 'pg%%temp%%') search
             {1}
@@ -13696,13 +13310,14 @@ FROM #table_name#
                    quote_ident(n.nspname) || '.' || quote_ident(c.relname) as result_complete,
                    quote_ident(n.nspname) || '.' || quote_ident(c.relname) as select_value,
                    quote_ident(n.nspname) as complement,
-
-                   '' as complement_complete
+                   '' as complement_complete,
+                    n.nspname IN ('information_schema', 'pg_catalog') as is_builtin
             from pg_class c
             inner join pg_namespace n
             on n.oid = c.relnamespace
             where c.relkind in ('r', 'p')) search
             {1}
+            order by is_builtin ASC, complement, result
             LIMIT 500)
 
             UNION ALL
@@ -13715,7 +13330,8 @@ FROM #table_name#
                    quote_ident(table_schema) || '.' || quote_ident(table_name) as result_complete,
                    quote_ident(table_schema) || '.' || quote_ident(table_name) as select_value,
                    quote_ident(table_schema) as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                    false as is_builtin
             from information_schema.views) search
             {1}
             LIMIT 500)
@@ -13730,7 +13346,8 @@ FROM #table_name#
                    quote_ident(n.nspname) || '.' || quote_ident(p.proname) as result_complete,
                    quote_ident(n.nspname) || '.' || quote_ident(p.proname) || '(' as select_value,
                    quote_ident(n.nspname) as complement,
-                   '' as complement_complete
+                   '' as complement_complete,
+                    false as is_builtin
             from pg_proc p
             join pg_namespace n
             on p.pronamespace = n.oid
@@ -13748,7 +13365,8 @@ FROM #table_name#
                    quote_ident(i.schemaname) || '.' || quote_ident(i.indexname) as result_complete,
                    quote_ident(i.schemaname) || '.' || quote_ident(i.indexname) as select_value,
                    quote_ident(i.schemaname) || '.' || quote_ident(i.tablename) as complement,
-                   quote_ident(i.tablename) as complement_complete
+                   quote_ident(i.tablename) as complement_complete,
+                   false as is_builtin
             from pg_indexes i) search
             {1}
             LIMIT 500 )) search

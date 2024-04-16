@@ -66,12 +66,12 @@ def database_required_new(check_timeout=True, open_connection=True):
         @wraps(function)
         def wrap(request, session, *args, **kwargs):
             data = request.data
+            database_name = data.get("database_name")
             database_index = data.get("database_index")
             tab_id = data.get("tab_id")
             client = client_manager.get_or_create_client(
                 client_id=request.session.session_key
             )
-
             if database_index is not None:
                 try:
                     if check_timeout:
@@ -83,6 +83,7 @@ def database_required_new(check_timeout=True, open_connection=True):
                             data = {
                                 "password_timeout": True,
                                 "data": timeout["message"],
+                                "kind": timeout.get("kind", "database")
                             }
                             return JsonResponse(data=data, status=400)
 
@@ -90,6 +91,7 @@ def database_required_new(check_timeout=True, open_connection=True):
                         session=session,
                         conn_tab_id=tab_id,
                         database_index=database_index,
+                        database_name=database_name,
                         attempt_to_open_connection=open_connection,
                     )
                 except Exception as exc:
@@ -157,7 +159,7 @@ def session_required(
             return JsonResponse({"data": "Invalid session"}, status=401)
 
         if include_session:
-            return func(request, session, *args, **kwargs)
+            return func(request, *args, **kwargs, session=session)
         return func(request, *args, **kwargs)
 
     return containing_func

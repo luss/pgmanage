@@ -57,7 +57,22 @@ const queryResponseCodes = {
   ConsoleResult: 11,
   TerminalResult: 12,
   Pong: 13,
+  OperationCancelled: 14,
 };
+
+const allowedFileTypes = ["application/sql", "text/csv", "text/plain", "Text"];
+
+const mimeTypeMap = {
+  sql: "application/sql",
+  csv: "text/csv",
+  txt: "text/plain",
+};
+
+const maxFileSizeInMB = 50;
+
+const maxFileSizeInKB = 1024 ** 2 * maxFileSizeInMB;
+
+const maxLinesForIndentSQL = 7 * 1000;
 
 export {
   requestState,
@@ -65,4 +80,9 @@ export {
   queryModes,
   queryRequestCodes,
   queryResponseCodes,
+  allowedFileTypes,
+  maxFileSizeInMB,
+  maxFileSizeInKB,
+  maxLinesForIndentSQL,
+  mimeTypeMap,
 };

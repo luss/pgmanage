@@ -1,5 +1,5 @@
 <template>
-  <div class="schema-editor-scrollable px-2">
+  <div class="schema-editor-scrollable px-2 pt-3">
     <div class="form-row">
       <div class="form-group col-2">
           <label class="font-weight-bold mb-2" for="tableNameInput">Table Name</label>
@@ -59,7 +59,26 @@ import { createRequest } from '../long_polling'
 import { queryRequestCodes } from '../constants'
 import axios from 'axios'
 import { showToast } from '../notification_control'
-import { settingsStore } from '../stores/settings'
+import { settingsStore } from '../stores/stores_initializer'
+
+
+function formatDefaultValue(defaultValue, dataType, table) {
+  if (!defaultValue) return null
+  if (defaultValue.trim().toLowerCase() == 'null') return null
+
+  let textTypesMap = ['CHAR', 'VARCHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
+    'TEXT', 'CHARACTER', 'NCHAR', 'NVARCHAR',
+    'CHARACTER VARYING',
+  ]
+
+  if (textTypesMap.includes(dataType.toUpperCase())) {
+    const stringValue = defaultValue.toString()
+    return stringValue
+  }
+
+  // If no conversion matches, return raw value
+  return table.client.raw(defaultValue);
+}
 
 export default {
   name: "SchemaEditor",
@@ -69,11 +88,11 @@ export default {
     dialect: String,
     schema: String,
     table: String,
-    tab_id: String,
-    database_index: Number,
-    database_name: String,
-    tree_node: Object,
-    tree: Object
+    connId: String,
+    tabId: String,
+    databaseIndex: Number,
+    databaseName: String,
+    treeNode: Object,
   },
   components: {
     ColumnList
@@ -141,8 +160,8 @@ export default {
       if (!schemasUrl) return;
 
       axios.post(schemasUrl, {
-        database_index: this.database_index,
-        tab_id: this.tab_id
+        database_index: this.databaseIndex,
+        tab_id: this.connId
       })
       .then((response) => {
         this.schemas = response.data.map((schema) => {return schema.name})
@@ -156,8 +175,8 @@ export default {
       if (!typesUrl) return;
 
       axios.post(typesUrl, {
-        database_index: this.database_index,
-        tab_id: this.tab_id,
+        database_index: this.databaseIndex,
+        tab_id: this.connId,
         schema: this.schema
       })
       .then((response) => {
@@ -169,8 +188,8 @@ export default {
     },
     loadTableDefinition() {
         axios.post(this.dialectData.api_endpoints.table_definition_url, {
-          database_index: this.database_index,
-          tab_id: this.tab_id,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
           table: this.localTable.tableName || this.table,
           schema: this.schema
         })
@@ -183,7 +202,7 @@ export default {
               nullable: col.nullable,
               isPK: col.is_primary,
               comment: col.comment,
-              editable: col.name == 'name' ? true : this.editable
+              editable: this.editable
             }
           })
           this.initialTable.columns = coldefs
@@ -203,6 +222,11 @@ export default {
       this.editor.clearSelection();
       this.editor.setReadOnly(true);
       this.editor.setShowPrintMargin(false)
+
+      settingsStore.$subscribe((mutation, state) => {
+        this.editor.setTheme(`ace/theme/${state.editorTheme}`);
+        this.editor.setFontSize(state.fontSize);
+      });
     },
     generateSQL() {
       //add knex error handing with notification to the user
@@ -245,24 +269,31 @@ export default {
 
             coldef.nullable ? col.nullable() : col.notNullable()
 
-            if(coldef.defaultValue !== '') col.defaultTo(coldef.defaultValue)
+            if(coldef.defaultValue !== '') {
+              let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table);
+              col.defaultTo(formattedDefault);
+            }
+ 
             if(coldef.comment) col.comment(coldef.comment)
           })
 
           if(changes.drops.length) table.dropColumns(changes.drops)
 
           changes.typeChanges.forEach((coldef) => {
-            if(coldef.dataType === 'autoincrement') {
+            if (coldef.dataType === 'autoincrement') {
               table.increments(coldef.name).alter()
-            }else {
-              table.specificType(coldef.name, coldef.dataType).defaultTo(coldef.defaultValue).alter({alterNullable : false})
+            } else {
+              let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table)
+              table.specificType(coldef.name, coldef.dataType).defaultTo(formattedDefault).alter({ alterNullable: false })
+              coldef.skipDefaults = true
             }
           })
 
-          changes.defaults.forEach(function(coldef) {
-            if (coldef.defaultValue !== '') {
-              table.specificType(coldef.name, coldef.dataType).alter().defaultTo(table.client.raw(coldef.defaultValue)).alter({alterNullable : false, alterType: false})
-            }
+          changes.defaults.forEach(function (coldef) {
+            if (!!coldef?.skipDefaults) return
+            let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table)
+            table.specificType(coldef.name, coldef.dataType).alter().defaultTo(formattedDefault).alter({ alterNullable: false, alterType: false })
+
             // FIXME: this does not work, figure out how to do drop default via Knex.
             //  else {
             //   table.specificType(coldef.name, coldef.dataType).defaultTo().alter({alterNullable : false, alterType: false})
@@ -270,7 +301,11 @@ export default {
           })
 
           changes.nullableChanges.forEach((coldef) => {
-            coldef.nullable ? table.setNullable(coldef.name) : table.dropNullable(coldef.name)
+            if (table.client.dialect === "mysql") {
+              coldef.nullable ? table.setNullable(coldef) : table.dropNullable(coldef)
+            } else {
+              coldef.nullable ? table.setNullable(coldef.name) : table.dropNullable(coldef.name)
+            }
           })
 
           // FIXME: commenting generates drop default - how to avoid this?
@@ -295,12 +330,16 @@ export default {
           tabledef.columns.forEach((coldef) => {
             // use Knex's magic to create a proper auto-incrementing column in database-agnostic way
             let col = coldef.dataType === 'autoincrement' ?
-              table.increments(coldef.name) :
+              table.increments(coldef.name, {primaryKey: false}) :
               table.specificType(coldef.name, coldef.dataType)
 
             coldef.nullable ? col.nullable() : col.notNullable()
 
-            if(coldef.defaultValue) col.defaultTo(coldef.defaultValue)
+            if(coldef.defaultValue) {
+              let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table);
+              col.defaultTo(formattedDefault);
+            }
+
             if(coldef.comment) col.comment(coldef.comment)
           })
 
@@ -321,22 +360,21 @@ export default {
 				sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
 				sql_save : false,
 				cmd_type: null,
-				v_db_index: this.database_index,
-				v_conn_tab_id: v_connTabControl.selectedTab.id,
-				v_tab_id: this.tab_id,
-				tab_db_id: this.database_index,
+				v_db_index: this.databaseIndex,
+				v_conn_tab_id: this.connId,
+				v_tab_id: this.tabId,
+				tab_db_id: this.databaseIndex,
 				mode: 0,
 				all_data: false,
 				log_query: false,
 				tab_title: 'schema editor',
 				autocommit: true,
-				database_name: this.database_name
+				database_name: this.databaseName
 			}
 
       let context = {
-				tab_tag: v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag,
 				cmd_type: null,
-				database_index: this.database_index,
+				database_index: this.databaseIndex,
 				mode: 0,
 				callback: this.handleResponse.bind(this),
 				acked: false,
@@ -355,7 +393,7 @@ export default {
         let msg = response.v_data.v_status === "CREATE TABLE" ? `Table "${this.localTable.tableName}" created` : `Table "${this.localTable.tableName}" updated`
         showToast("success", msg)
 
-        emitter.emit(`schemaChanged_${this.tree.id}`, { database_name: this.database_name, schema_name: this.localTable.schema })
+        emitter.emit(`schemaChanged_${this.connId}`, { database_name: this.databaseName, schema_name: this.localTable.schema })
         // ALTER: load table changes into UI
         if(this.mode === 'alter') {
           this.loadTableDefinition()

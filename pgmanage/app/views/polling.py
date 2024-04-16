@@ -77,6 +77,7 @@ class response(IntEnum):
   ConsoleResult       = 11
   TerminalResult      = 12
   Pong                = 13
+  OperationCancelled  = 14
 
 class debugState(IntEnum):
   Initial  = 0
@@ -188,6 +189,9 @@ def create_request(request, session):
                 else:
                     thread_data['thread'].stop()
                     thread_data['omnidatabase'].v_connection.Cancel(False)
+                    v_return['v_code'] = response.OperationCancelled
+                    v_return['v_context_code'] = v_context_code
+                    queue_response(client_object, v_return)
         except Exception:
             pass
 
@@ -686,7 +690,8 @@ def LogHistory(p_user_id,
                p_end,
                p_duration,
                p_status,
-               p_conn_id):
+               p_conn_id,
+               database):
 
     try:
 
@@ -697,7 +702,8 @@ def LogHistory(p_user_id,
             end_time=p_end,
             duration=p_duration,
             status=p_status,
-            snippet=p_sql
+            snippet=p_sql,
+            database=database
         )
         query_object.save()
     except Exception as exc:
@@ -964,14 +970,15 @@ def thread_query(self, args):
             queue_response(client_object, response_data)
 
     if mode == queryModes.DATA_OPERATION and log_query:
-        LogHistory(session.v_user_id,
-                   session.v_user_name,
-                   sql_cmd,
-                   log_start_time,
-                   log_end_time,
-                   duration,
-                   log_status,
-                   database.v_conn_id)
+        LogHistory(p_user_id=session.v_user_id,
+                   p_user_name=session.v_user_name,
+                   p_sql=sql_cmd,
+                   p_start=log_start_time,
+                   p_end=log_end_time,
+                   p_duration=duration,
+                   p_status=log_status,
+                   p_conn_id=database.v_conn_id,
+                   database=database.v_active_service)
 
 
     if mode == queryModes.DATA_OPERATION and tab_object.get('tab_db_id') and log_query:
@@ -1204,7 +1211,8 @@ def thread_console(self,args):
                 user=User.objects.get(id=session.v_user_id),
                 connection=Connection.objects.get(id=v_database.v_conn_id),
                 start_time=datetime.now(timezone.utc),
-                snippet=v_sql.replace("'","''")
+                snippet=v_sql.replace("'","''"),
+                database=v_database.v_active_service
             )
 
             query_object.save()

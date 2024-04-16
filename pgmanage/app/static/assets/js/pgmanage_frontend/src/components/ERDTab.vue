@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: calc(100vh - 70px); visibility: hidden" ref="cyContainer"></div>
+  <div class="pt-3" style="width: 100%; height: calc(100vh - 70px); visibility: hidden" ref="cyContainer"></div>
 </template>
 
 <script>
@@ -7,19 +7,17 @@ import axios from 'axios'
 import ShortUniqueId from 'short-unique-id'
 import cytoscape from 'cytoscape';
 import nodeHtmlLabel from 'cytoscape-node-html-label'
+import { tabsStore } from '../stores/stores_initializer';
 
-// const uid = new ShortUniqueId({dictionary: 'alpha_upper', length: 4})
-
-// TODO: add fit/pan/zoom buttons
-// TODO: handlecontainer resize
 
 export default {
   name: "ERDTab",
   props: {
     schema: String,
-    tab_id: String,
-    database_index: Number,
-    database_name: String,
+    connTabId: String,
+    tabId: String,
+    databaseIndex: Number,
+    databaseName: String,
   },
   setup(props) {
     if (typeof cytoscape("core", "nodeHtmlLabel") === "undefined")
@@ -38,11 +36,14 @@ export default {
     this.loadSchemaGraph()
     this.instance_uid = new ShortUniqueId({dictionary: 'alpha_upper', length: 4}).randomUUID()
   },
+  updated() {
+    this.$refs.cyContainer.style.visibility = 'visible';
+  },
   methods: {
     loadSchemaGraph() {
       axios.post('/draw_graph/', {
-        database_index: this.database_index,
-        tab_id: this.tab_id,
+        database_index: this.databaseIndex,
+        tab_id: this.connTabId,
         schema: this.schema,
       })
       .then((response) => {
@@ -207,8 +208,18 @@ export default {
         }],
       )
 
-      function adjustSizes() {
-        const padding = 2;
+      this.cy.on("resize", () => {
+        if(!(tabsStore.selectedPrimaryTab.metaData.selectedTab.id === this.tabId)) return;
+        this.cy.fit()
+      })
+
+
+      setTimeout(() => {
+        this.adjustSizes()
+      }, 100)
+    },
+    adjustSizes() {
+      const padding = 2;
         this.cy.nodes().forEach((node) => {
           let el = document.querySelector(`#${this.instance_uid}-${node.data().html_id}`)
           if (el) {
@@ -219,16 +230,6 @@ export default {
         this.layout.run()
         this.cy.fit()
         this.$refs.cyContainer.style.visibility = 'visible'
-      }
-
-
-      // FIXME: do this on render complete instead of just pausing
-      setTimeout(adjustSizes.bind(this), 100)
-      // not sure if we need it at all
-      // new ResizeObserver((function(){
-      //   this.cy.fit()
-      //   this.cy.center()
-      //   }).bind(this)).observe(this.$refs.cyContainer)
     },
   },
 };

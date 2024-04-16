@@ -1,5 +1,5 @@
 <template>
-  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs tab-body">
+  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs">
     <button :id="`bt_fullscreen_${tabId}`" style="position: absolute; top: 0.25rem; right: 0.5rem" type="button"
       class="btn btn-sm btn-icon btn-icon-secondary" @click="toggleFullScreen()">
       <i class="fas fa-expand"></i>
@@ -20,7 +20,7 @@
               :aria-controls="`nav_messages_${tabId}`" aria-selected="true">
               <span class="omnidb__tab-menu__link-name">
                 Messages
-                <a v-if="noticesCount">{{ noticesCount }}</a>
+                <span v-if="noticesCount" class="badge badge-pill badge-primary">{{ noticesCount }}</span>
               </span>
             </a>
             <a ref="explainTab" class="nav-item nav-link omnidb__tab-menu__link" :id="`nav_explain_tab_${tabId}`"
@@ -72,8 +72,10 @@
 import ExplainTabContent from "./ExplainTabContent.vue";
 import { queryModes, tabStatusMap } from "../constants";
 import { emitter } from "../emitter";
-import { TabulatorFull as Tabulator} from "tabulator-tables";
+import { TabulatorFull as Tabulator } from "tabulator-tables";
 import CellDataModal from "./CellDataModal.vue";
+import { settingsStore, tabsStore } from "../stores/stores_initializer";
+import { showToast } from "../notification_control";
 
 export default {
   components: {
@@ -86,8 +88,19 @@ export default {
     editorContent: String,
     dialect: String,
     tabStatus: Number,
+    resizeDiv: Boolean,
   },
-  emits: ["enableExplainButtons", "runExplain", "showFetchButtons"],
+  watch: {
+    resizeDiv(newValue, oldValue) {
+      if (newValue) {
+        this.handleResize();
+        if (this.table)
+          this.table.redraw();
+        this.$emit("resized");
+      }
+    },
+  },
+  emits: ["enableExplainButtons", "runExplain", "showFetchButtons", "resized"],
   data() {
     return {
       errorMessage: "",
@@ -99,8 +112,8 @@ export default {
         data: [],
         placeholderHeaderFilter: "No Matching Data",
         autoResize: false,
-        selectable: true,
-        height: "90%",
+        selectableRows: true,
+        height: "100%",
         layout: "fitDataStretch",
         columnDefaults: {
           headerHozAlign: "left",
@@ -114,9 +127,10 @@ export default {
       },
       query: "",
       plan: "",
-      table: "",
+      table: null,
       cellContent: "",
       cellModalVisible: false,
+      heightSubtract: 200,
     };
   },
   computed: {
@@ -136,8 +150,12 @@ export default {
         !!this.queryInfoText
       );
     },
+    resultTabHeight() {
+      return `calc(100vh - ${this.heightSubtract}px)`;
+    },
   },
   mounted() {
+    this.handleResize();
     if (this.dialect === "postgresql") {
       $(`#${this.$refs.explainTab.id}`).on("shown.bs.tab", () => {
         this.$emit("enableExplainButtons");
@@ -150,16 +168,50 @@ export default {
       });
     }
 
-    this.table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+    window.addEventListener("resize", () => {
+      if (
+        tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id !== this.tabId
+      )
+        return;
+      this.handleResize();
+    });
+
+    let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+    table.on("tableBuilt", () => {
+      this.table = table
+    })
+    settingsStore.$onAction((action) => {
+      if (action.name === "setFontSize") {
+        if (
+          tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id !== this.tabId
+        )
+          return;
+        action.after(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.handleResize();
+              this.table.redraw();
+            });
+          });
+        });
+      }
+    });
+
+    $(this.$refs.dataTab).on("shown.bs.tab", (event) => {
+      this.table.redraw();
+    });
+  },
+  updated() {
+    this.handleResize();
   },
   methods: {
     renderResult(data, context) {
       this.clearData();
-      if (data.v_error) {
+      if (data.v_error && context.cmd_type !== "explain") {
         this.errorMessage = data.v_data.message;
       } else {
         if (context.cmd_type === "explain") {
-          this.showExplainTab(data.v_data.data);
+          this.showExplainTab(data);
         } else if (!!context.cmd_type && context.cmd_type.includes("export")) {
           this.showExport(data.v_data);
         } else {
@@ -182,9 +234,15 @@ export default {
     },
     showExplainTab(data) {
       $(`#${this.$refs.explainTab.id}`).tab("show");
+      if (data?.v_error) {
+        this.query = this.editorContent;
+        this.plan = data.v_data.message;
+        showToast("error", data.v_data.message);
+        return;
+      }
 
       // Adjusting data.
-      let explain_text = data.join("\n");
+      let explain_text = data.v_data.data.join("\n");
 
       if (explain_text.length > 0) {
         this.query = this.editorContent;
@@ -267,7 +325,7 @@ export default {
       columns.unshift({
         formatter: "rownum",
         hozAlign: "center",
-        width: 40,
+        minWidth: 55,
         frozen: true,
       });
       this.table.setColumns(columns);
@@ -280,11 +338,19 @@ export default {
         .catch((error) => {
           this.errorMessage = error;
         });
+
+      this.table.on(
+        "cellDblClick",
+        function (e, cell) {
+          this.cellContent = cell.getValue();
+          if (this.cellContent) this.cellModalVisible = true;
+        }.bind(this)
+      );
     },
     fetchData(data) {
       let initialData = this.table.getData();
       data.data.unshift(...initialData);
-      this.table.replaceData(data.data)
+      this.table.replaceData(data.data);
     },
     clearData() {
       this.notices = [];
@@ -295,19 +361,22 @@ export default {
     },
     toggleFullScreen() {
       this.$refs.resultDiv.classList.toggle("omnidb__panel-view--full");
+      this.handleResize();
+    },
+    handleResize() {
+      if (this.$refs === null) return;
+
+      this.heightSubtract =
+        this.$refs.resultDiv.getBoundingClientRect().top + 25;
     },
   },
 };
 </script>
 
 <style scoped>
-.tab-body {
-  height: calc(100% - 25px);
-}
-
 .tab-content,
 .messages__wrap {
-  height: calc(100% - 20px);
+  height: v-bind(resultTabHeight);
 }
 
 .tab-pane,

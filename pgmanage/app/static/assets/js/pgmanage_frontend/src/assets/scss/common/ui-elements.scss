@@ -57,3 +57,9 @@
         background: transparent;
     }
 }
+
+.badge {
+    &-primary {
+        background-color: $primaryBlue;
+    }
+}

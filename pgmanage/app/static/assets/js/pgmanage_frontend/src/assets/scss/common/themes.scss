@@ -4,6 +4,7 @@
 $borderColor: 'borderColor';
 $border: 'border';
 $color: 'color';
+$disabledColor: 'disabledColor';
 $surfaceBg: 'surfaceBg';
 $surfaceBgSecondary: 'surfaceBgSecondary';
 $surfaceBgTertiary: 'surfaceBgTertiary';
@@ -46,6 +47,7 @@ $themes: (
         borderColor: $borderColorLight,
         border: $borderLight,
         color: $fontColorLight,
+        disabledColor: $disabledFontColorLight,
         surfaceBg: $bgSurfaceLight,
         surfaceBgSecondary: $bgLightSecondary,
         surfaceBgTertiary: $bgLightTertiary,
@@ -86,6 +88,7 @@ $themes: (
         borderColor: $borderColorDark,
         border: $borderDark,
         color: $fontColorDark,
+        disabledColor: $disabledFontColorDark,
         surfaceBg: $bgSurfaceDark,
         surfaceBgSecondary: $bgSurfaceSecondaryDark,
         surfaceBgTertiary: $bgSurfaceTertiaryDark,

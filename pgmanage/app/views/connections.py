@@ -41,6 +41,8 @@ def get_connections(request, session):
                 'port': '',
                 'service': '',
                 'user': '',
+                'password': '',
+                'password_set': False,
                 'tunnel': {
                     'enabled': conn.use_tunnel,
                     'server': conn.ssh_server,
@@ -200,23 +202,19 @@ def test_connection(request):
 
     conn_params = conn_object['connection_params']
 
-
-    password = conn_object['password'].strip()
+    password = conn_object.get('password','').strip()
     ssh_password = conn_object['tunnel']['password'].strip()
     ssh_key = conn_object['tunnel']['key']
     key = key_manager.get(request.user)
 
     if conn_id:
         conn = Connection.objects.get(id=conn_id)
-        if conn_object['password'].strip() == '':
+        if conn_object.get('password','').strip() == '' and conn_type != 'terminal':
             password = decrypt(conn.password, key) if conn.password else ''
         if conn_object['tunnel']['password'].strip() == '':
             ssh_password = decrypt(conn.ssh_password, key) if conn.ssh_password else ''
         if conn_object['tunnel']['key'].strip() == '':
             ssh_key = decrypt(conn.ssh_key, key) if conn.ssh_key else ''
-
-    # if conn_object['temp_password']:
-    #     password = conn_object['temp_password']
 
     if conn_type == 'terminal':
 
@@ -238,7 +236,10 @@ def test_connection(request):
             client.close()
             response_data['data'] = 'Connection successful.'
         except Exception as exc:
-            response_data['data'] = str(exc)
+            msg = str(exc)
+            if "checkints" in msg:
+                msg = "Unable to decrypt SSH Key. Wrong passphrase?"
+            response_data['data'] = msg
             response_data['status'] = 'failed'
             return JsonResponse(response_data, status=400)
     else:
@@ -292,7 +293,10 @@ def test_connection(request):
                     response_data['status'] = 'failed'
 
             except Exception as exc:
-                response_data['data'] = str(exc)
+                msg = str(exc)
+                if "checkints" in msg:
+                    msg = "Unable to decrypt SSH Key. Wrong passphrase?"
+                response_data['data'] = msg
                 response_data['status'] = 'failed'
                 return JsonResponse(response_data, status=400)
 
@@ -360,9 +364,15 @@ def save_connection(request, session):
             conn.port = conn_object['port']
             conn.database = conn_object['service']
             conn.username = conn_object['user']
-            if conn_object['password'] is not None:
-                if conn_object['password'].strip() != '':
-                    conn.password = encrypt(conn_object['password'], key)
+
+            if conn.technology.name != 'terminal':
+                if conn_object['password'] is not None:
+                    if conn_object['password'].strip() != '':
+                        conn.password = encrypt(conn_object['password'], key)
+                # clear password if password_set false AND the password is empty
+                if conn_object['password_set'] is False and conn_object['password'] == '':
+                    conn.password = ''
+
             conn.alias = conn_object['alias']
             conn.ssh_server = conn_object['tunnel']['server']
             conn.ssh_port = conn_object['tunnel']['port']
@@ -370,8 +380,15 @@ def save_connection(request, session):
             if conn_object['tunnel']['password'] is not None:
                 if conn_object['tunnel']['password'].strip() != '':
                     conn.ssh_password = encrypt(conn_object['tunnel']['password'], key)
+
+            if conn_object['tunnel']['password_set'] is False and conn_object['tunnel']['password'] == '':
+                conn.ssh_password = ''
+
             if conn_object['tunnel']['key'].strip() != '':
                 conn.ssh_key = encrypt(conn_object['tunnel']['key'], key)
+
+            if conn_object['tunnel']['key_set'] is False and conn_object['tunnel']['key'].strip() == '':
+                conn.ssh_key = ''
 
             if conn.technology.name in ['mariadb', 'mysql']:
                 conn.connection_params = {}

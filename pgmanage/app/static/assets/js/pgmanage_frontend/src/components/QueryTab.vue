@@ -1,7 +1,13 @@
 <template>
-  <splitpanes class="default-theme query-body" horizontal>
+  <div>
+  <splitpanes class="default-theme query-body" horizontal @resized="handleResize">
     <pane size="30">
-      <QueryEditor ref="editor" class="h-100 mr-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="query"
+      <QueryEditor ref="editor" class="h-100 mr-2"
+        :read-only="readOnlyEditor"
+        :tab-id="tabId"
+        :database-index="databaseIndex"
+        :database-name="databaseName"
+        tab-mode="query"
         :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
     </pane>
 
@@ -9,11 +15,11 @@
       <!-- ACTION BUTTONS-->
       <div class="py-2 pr-1 d-flex align-items-center">
         <div class="tab-actions d-flex w-100">
-          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run" @click="queryRunOrExplain()">
+          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
             <i class="fas fa-play fa-light"></i>
           </button>
 
-          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)">
+          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
             [
             <i class="fas fa-play fa-light"></i>
             ]
@@ -23,11 +29,22 @@
             <i class="fas fa-indent fa-light"></i>
           </button>
 
+          <button :id="`bt_indent_${tabId}`" class="btn btn-sm btn-secondary" title="Find/Replace" @click="showFindReplace()">
+            <i class="fas fa-magnifying-glass fa-light"></i>
+          </button>
+
           <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History"
             @click="showCommandsHistory()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
 
+          <button :id="`bt_open_file_${tabId}`" class="btn btn-sm btn-secondary ml-2" title="Load from File" @click="openFileManagerModal">
+            <i class="fas fa-folder-open fa-light"></i>
+          </button>
+
+          <button :disabled="fileSaveDisabled" :id="`bt_save_file_${tabId}`" class="btn btn-sm btn-secondary mr-2 " title="Save to File" @click="saveFile">
+            <i class="fas fa-download fa-light"></i>
+          </button>
 
           <template v-if="postgresqlDialect">
             <!-- EXPLAIN ANALYZE BUTTONS-->
@@ -85,11 +102,11 @@
               <b>Cancelled</b>
             </p>
             <p v-else-if="queryStartTime && queryDuration" class="h6 m-0  mr-2">
-              <b>Start time:</b> {{ queryStartTime }}<br/>
+              <b>Start time:</b> {{ queryStartTime.format() }}<br/>
               <b>Duration:</b> {{ queryDuration }}
             </p>
             <p v-else-if="queryStartTime" class=" m-0 h6">
-              <b>Start time:</b> {{ queryStartTime }}
+              <b>Start time:</b> {{ queryStartTime.format() }}
             </p>
           </div>
 
@@ -108,17 +125,19 @@
         </div>
       </div>
       <QueryResultTabs ref="queryResults" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"
-        :dialect="dialect" :tab-status="tabStatus" @enable-explain-buttons="toggleExplainButtons"
-        @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" />
+        :dialect="dialect" :tab-status="tabStatus" :resize-div="resizeResultDiv" @enable-explain-buttons="toggleExplainButtons"
+        @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" @resized="resizeResultDiv = false"/>
     </pane>
   </splitpanes>
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
+  <FileManager ref="fileManager"/>
+</div>
 </template>
 
 <script>
 import { Splitpanes, Pane } from "splitpanes";
-import { showToast } from "../notification_control";
+import { createMessageModal, showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
 import { queryModes, requestState, tabStatusMap, queryRequestCodes } from "../constants";
@@ -128,8 +147,9 @@ import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
-import { connectionsStore } from '../stores/connections.js'
-
+import FileManager from "./FileManager.vue";
+import FileInputChangeMixin from '../mixins/file_input_mixin'
+import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 
 export default {
   name: "QueryTab",
@@ -141,7 +161,9 @@ export default {
     CommandsHistoryModal,
     TabStatusIndicator,
     QueryResultTabs,
+    FileManager
   },
+  mixins: [FileInputChangeMixin],
   props: {
     connId: String,
     tabId: String,
@@ -149,6 +171,7 @@ export default {
     databaseName: String,
     dialect: String,
     initTabDatabaseId: Number,
+    initialQuery: String,
   },
   data() {
     return {
@@ -175,7 +198,9 @@ export default {
       editorContent: "",
       longQuery: false,
       commandsModalVisible: false,
-      lastQuery: null
+      lastQuery: null,
+      queryInterval: null,
+      resizeResultDiv: false,
     };
   },
   computed: {
@@ -199,13 +224,25 @@ export default {
     },
     autocomplete() {
       return connectionsStore.getConnection(this.databaseIndex).autocomplete
+    },
+    fileSaveDisabled() {
+      return !this.editorContent;
     }
   },
   mounted() {
     this.setupEvents();
+
+    if (!!this.initialQuery) {
+      emitter.emit(`${this.tabId}_copy_to_editor`, this.initialQuery);
+    }
   },
   unmounted() {
     this.clearEvents();
+  },
+  updated() {
+    if (tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id === this.tabId) {
+      this.handleResize()
+    }
   },
   methods: {
     getQueryEditorValue(raw_query) {
@@ -220,20 +257,20 @@ export default {
       save_query = this.editorContent,
       clear_data = false
     ) {
-      let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-      this.queryDuration = "";
-      this.cancelled = false;
-      this.showFetchButtons = false;
-      this.longQuery = false;
-      this.tempData = [];
-      this.lastQuery = query
-
       if (!this.idleState) {
         showToast("info", "Tab with activity in progress.");
       } else {
         if (!query) {
           showToast("info", "Please provide a string.");
         } else {
+          let tab = tabsStore.getSelectedSecondaryTab(this.connId);
+          this.queryDuration = "";
+          this.cancelled = false;
+          this.showFetchButtons = false;
+          this.longQuery = false;
+          this.tempData = [];
+          this.lastQuery = query
+
           let message_data = {
             sql_cmd: query,
             mode: mode,
@@ -247,18 +284,15 @@ export default {
             cmd_type: cmd_type,
             all_data: all_data,
             log_query: log_query,
-            // change the we are getting tab title
-            tab_title: tab_tag.tab_title_span.innerHTML,
+            tab_title: tab.name,
           };
 
           this.readOnlyEditor = true;
-
-          this.queryStartTime = moment().format();
+          this.queryStartTime = moment();
 
           let context = {
-            tab_tag: tab_tag,
+            tab: tab,
             database_index: this.databaseIndex,
-            start_datetime: this.queryStartTime,
             acked: false,
             clear_data: clear_data,
             cmd_type: cmd_type,
@@ -270,7 +304,7 @@ export default {
             },
           };
 
-          context.tab_tag.context = context;
+          context.tab.metaData.context = context;
 
           createRequest(queryRequestCodes.Query, message_data, context);
 
@@ -280,15 +314,21 @@ export default {
             this.longQuery = true;
           }, 1000);
 
-          //FIXME: change into event emitting later
-          tab_tag.tab_loading_span.style.visibility = "visible";
-          tab_tag.tab_check_span.style.display = "none";
+          this.queryInterval = setInterval((function(){
+            let diff = moment().diff(this.queryStartTime)
+            this.queryDuration = moment.utc(diff).format('HH:mm:ss')
+          }).bind(this), 1000)
+
+          tab.metaData.isLoading = true;
+          tab.metaData.isReady = false;
 
           this.tabStatus = tabStatusMap.RUNNING;
         }
       }
     },
     querySQLReturn(data, context) {
+      clearInterval(this.queryInterval)
+      this.queryInterval = null;
       if (!data.v_error) {
         this.tempData = this.tempData.concat(data.v_data.data)
       }
@@ -302,33 +342,30 @@ export default {
 
       if (!this.idleState && (data.v_data.last_block || data.v_data.file_name || data.v_error )) {
         data.v_data.data = this.tempData;
+        this.readOnlyEditor = false;
+        this.tabStatus = data.v_data.con_status;
 
         if (
-          this.tabId === context.tab_tag.tabControl.selectedTab.id &&
-          this.connId ===
-          context.tab_tag.connTab.tag.connTabControl.selectedTab.id
+          this.connId === tabsStore.selectedPrimaryTab.id &&
+          this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
           this.context = "";
           this.data = "";
-          this.readOnlyEditor = false;
-          this.queryState = requestState.Idle;
 
+          this.queryState = requestState.Idle;
           this.$refs.queryResults.renderResult(data, context);
 
-          this.tabStatus = data.v_data.con_status;
           this.queryDuration = data.v_data.duration;
 
-          // FIXME: change into event emitting later
-          context.tab_tag.tab_loading_span.style.visibility = "hidden";
-          context.tab_tag.tab_check_span.style.display = "none";
+          context.tab.metaData.isReady = false;
+          context.tab.metaData.isLoading = false;
         } else {
           this.queryState = requestState.Ready;
           this.data = data;
           this.context = context;
 
-          //FIXME: change into event emitting later
-          context.tab_tag.tab_loading_span.style.visibility = "hidden";
-          context.tab_tag.tab_check_span.style.display = "";
+          context.tab.metaData.isReady = true
+          context.tab.metaData.isLoading = false
         }
       }
     },
@@ -399,6 +436,9 @@ export default {
     indentSQL() {
       emitter.emit(`${this.tabId}_indent_sql`);
     },
+    showFindReplace() {
+      emitter.emit(`${this.tabId}_find_replace`);
+    },
     updateEditorContent(newContent) {
       this.editorContent = newContent;
     },
@@ -425,6 +465,10 @@ export default {
       emitter.on(`${this.tabId}_check_query_status`, () => {
         this.$refs.editor.focus();
         if (this.queryState === requestState.Ready) {
+          this.context.tab.metaData.isReady = false;
+          this.context.tab.metaData.isLoading = false;
+          this.queryState = requestState.Idle;
+
           this.$refs.queryResults.renderResult(this.data, this.context);
         }
       });
@@ -456,6 +500,60 @@ export default {
     },
     showCommandsHistory() {
       this.commandsModalVisible = true
+    },
+    openFileManagerModal() {
+      if (!!this.editorContent) {
+        createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.$refs.fileManager.show(true, this.handleFileInputChange);
+          },
+          null
+        );
+      } else {
+        this.$refs.fileManager.show(true, this.handleFileInputChange);
+      }
+    },
+    async saveFile() {
+      const today = new Date()
+      const nameSuffix = `${today.getHours()}${today.getMinutes()}`
+      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
+      const fileName = tab.metaData?.editingFile ? tab.name : `pgmanage-query-${nameSuffix}.sql`
+
+      const file = new File([this.editorContent], fileName, {
+        type: "application/sql",
+      })
+
+      if(window.showSaveFilePicker) {
+        try {
+          const handle = await showSaveFilePicker(
+            { suggestedName: file.name,
+              types: [{
+                description: 'SQL Script',
+                accept: {
+                  'application/sql': ['.sql'],
+                }
+              }],
+            }
+          )
+
+          const writable = await handle.createWritable()
+          await writable.write(file)
+          writable.close()
+        } catch(e) {
+          console.log(e)
+        }
+
+      } else {
+        const downloadLink = document.createElement("a")
+        downloadLink.href = URL.createObjectURL(file)
+        downloadLink.download = file.name
+        downloadLink.click();
+        setTimeout(() => URL.revokeObjectURL(downloadLink.href), 60000 )
+      }
+    },
+    handleResize() {
+      this.resizeResultDiv = true
     }
   },
 };
@@ -463,8 +561,8 @@ export default {
 
 <style scoped>
 .query-body {
-  height: calc(100vh - 60px);
-  padding-top: 16px;
+  height: calc(100vh - 2.5rem);
+  /* padding-top: 16px; */
 }
 
 .tab-actions {

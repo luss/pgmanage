@@ -28,10 +28,8 @@ import {
 } from "../tree_context_functions/tree_sqlite";
 
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
-import { getProperties, clearProperties } from "../properties";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
-import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "TreeSqlite",
@@ -75,14 +73,14 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab();
+              tabsStore.createERDTab()
             },
           },
           {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createSchemaEditorTab(this.selectedNode, "create", "sqlite3");
+              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "sqlite3")
             },
           },
         ],
@@ -103,10 +101,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.title,
-                    null
-                  );
+                  tabsStore.createDataEditorTab(this.selectedNode.title, null)
                 },
               },
               {
@@ -146,7 +141,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  createSchemaEditorTab(this.selectedNode, "alter", "sqlite3");
+                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "sqlite3")
                 },
               },
               {
@@ -181,7 +176,6 @@ export default {
             },
           },
         ],
-        cm_column: [],
         cm_pks: [this.cmRefreshObject],
         cm_pk: [this.cmRefreshObject],
         cm_fks: [this.cmRefreshObject],
@@ -371,13 +365,16 @@ export default {
         "unique",
       ];
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_sqlite/", {
-          table: table,
-          object: node.title,
-          type: node.data.type,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            table: table,
+            object: node.title,
+            type: node.data.type,
+          },
+          view: "/get_properties_sqlite/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsSqlite(node) {
@@ -470,7 +467,6 @@ export default {
             this.insertNode(columns_node, el.column_name, {
               icon: "fas node-all fa-columns node-column",
               type: "table_field",
-              contextMenu: "cm_column",
             });
             const table_field = this.getFirstChildNode(columns_node);
 
@@ -757,7 +753,6 @@ export default {
           this.insertNode(node, "Triggers", {
             icon: "fas node-all fa-bolt node-trigger",
             type: "trigger_list",
-            contextMenu: "cm_view_triggers",
           });
           this.insertNode(node, `Columns (${resp.data.length})`, {
             icon: "fas node-all fa-columns node-column",

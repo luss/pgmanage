@@ -1,22 +1,22 @@
 <template>
-<div class="welcome">
+<div class="welcome pt-3 overflow-auto">
     <div class='welcome__container'>
       <div class="welcome__header mt-1 mb-4">
         <p class='mb-0'>Welcome to</p>
         <div class="welcome__logo d-flex mt-3 mb-4">
           <img :src="logoUrl" alt="">
           <img id="gears" :src="gearsUrl">
-            
-        </div>     
+
+        </div>
       </div>
-       
+
       <div class="welcome__main">
         <div class='row'>
             <div class='col-4 welcome__col'>
               <div class="recent-conections">
                 <h2 class="mb-3">Recent Connections</h2>
                 <div class="recent-conections__list d-flex flex-column">
-                  <div v-for="(connection, idx) in recentConnections" :key="idx" @click="dispatchConnectionSelected(connection)" class="recent-conections__item">
+                  <div v-for="(connection, idx) in recentConnections" :key="idx" @click="selectConnection(connection)" class="recent-conections__item">
                     <div class="recent-conections__item_wrap d-flex align-items-center m-0">
                         <div class="recent-conections__item_logo mr-3">
                             <div :class="['icon', 'icon-' + connection.technology]"></div>
@@ -33,7 +33,7 @@
                   </div>
                 </div>
               </div>
-            
+
             </div>
             <div class='col-4 welcome__col'>
               <div class="hotkeys">
@@ -52,7 +52,7 @@
                   </div>
                 </div>
               </div>
-             
+
             </div>
             <div class='col-4'>
               <div class="welcome__col links">
@@ -79,7 +79,7 @@
                     Report a Bug
                   </a>
                 </div>
-              </div>  
+              </div>
             </div>
         </div>
       </div>
@@ -88,10 +88,8 @@
 </template>
 
 <script>
-import axios from 'axios'
 import moment from 'moment'
-import { emitter } from '../emitter'
-import { connectionsStore } from '../stores/connections.js'
+import { connectionsStore, settingsStore } from '../stores/stores_initializer'
 import { showConfigUser } from '../header_actions'
 import { startTutorial } from '../tutorial'
 import { endLoading } from "../ajax_control";
@@ -145,25 +143,18 @@ export default {
       if(connection.technology === 'terminal') return `${connection.tunnel.server}:${connection.tunnel.port}`
       return `${connection.server}:${connection.port}/${connection.service}`
     },
-    dispatchConnectionSelected(connection) {
-      let event = new CustomEvent('connection:selected', { detail: connection })
-      document.dispatchEvent(event)
+    selectConnection(connection) {
+      connectionsStore.selectConnection(connection);
     },
     loadShortcuts() {
-      axios.get('/shortcuts/')
-        .then((resp) => {
-          this.shortcuts = resp.data.data
-          let shortcut_keys = Object.keys(this.shortcuts)
-          Object.keys(default_shortcuts).forEach((key) => {
-            if(!shortcut_keys.includes(key)) {
-              this.shortcuts[key] = Object.assign({}, default_shortcuts[key][this.currentOS])
-            }
-          })
-          // merge missing shortcuts forom default_shortcuts
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      this.shortcuts = JSON.parse(JSON.stringify(settingsStore.shortcuts))
+      let shortcut_keys = Object.keys(this.shortcuts)
+      Object.keys(default_shortcuts).forEach((key) => {
+        if(!shortcut_keys.includes(key)) {
+          this.shortcuts[key] = Object.assign({}, default_shortcuts[key][this.currentOS])
+        }
+      })
+        // merge missing shortcuts forom default_shortcuts
     },
     shortcutKeyNames(shortcut) {
       let keys = []
@@ -186,6 +177,7 @@ export default {
         'shortcut_run_selection': 'Run Selection',
         'shortcut_cancel_query': 'Cancel Query',
         'shortcut_indent': 'Indent Code',
+        'shortcut_find_replace': 'Find/Replace',
         'shortcut_new_inner_tab': 'New Tab',
         'shortcut_remove_inner_tab': 'Close Tab',
         'shortcut_left_inner_tab': 'Switch Tab Left',
@@ -203,9 +195,13 @@ export default {
       startTutorial('getting_started')
     },
     setupEvents() {
-      emitter.on('shortcuts_updated', (event) => {
-        this.loadShortcuts()
-      });
+      settingsStore.$onAction((action) => {
+        if ( action.name === 'saveSettings') {
+          action.after(() => {
+            this.loadShortcuts();
+          })
+        }
+      })
     },
   },
 };

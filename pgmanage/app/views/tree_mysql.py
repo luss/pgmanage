@@ -275,7 +275,7 @@ def get_indexes_columns(request, database):
 def get_databases(request, database):
     try:
         databases = database.QueryDatabases()
-        list_databases = [db[0] for db in databases.Rows]
+        list_databases = [{"name": db[0]} for db in databases.Rows]
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=400)
     return JsonResponse(data=list_databases, safe=False)
@@ -482,7 +482,7 @@ def template_select(request, v_database):
     try:
         v_template = v_database.TemplateSelect(v_schema, v_table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 
@@ -501,7 +501,7 @@ def template_insert(request, v_database):
     try:
         v_template = v_database.TemplateInsert(v_schema, v_table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 
@@ -520,8 +520,33 @@ def template_update(request, v_database):
     try:
         v_template = v_database.TemplateUpdate(v_schema, v_table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return error_response(message=str(exc), password_timeout=True, status=400)
 
     v_return["v_data"] = {"v_template": v_template}
 
     return JsonResponse(v_return)
+
+
+@user_authenticated
+@database_required_new(check_timeout=False, open_connection=True)
+def get_table_definition(request, database):
+    data = request.data
+    table = data["table"]
+
+    columns = []
+    try:
+        q_definition = database.QueryTableDefinition(table)
+        for col in q_definition.Rows:
+            column_data = {
+                "name": col["Field"],
+                "data_type": col["Type"],
+                "default_value": col["Default"],
+                "nullable": col["Null"] == "YES",
+                "is_primary": bool(col["Key"]),
+                "comment": col["Comment"],
+            }
+            columns.append(column_data)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=400)
+
+    return JsonResponse(data={"data": columns})

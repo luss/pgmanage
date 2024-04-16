@@ -28,8 +28,6 @@ SOFTWARE.
 import { createRequest } from "../long_polling";
 import { queryRequestCodes } from "../constants";
 import { checkDebugStatus } from "../debug";
-import { createTabControl } from "../tabs";
-import ace from 'ace-builds'
 
 let createDebuggerTabFunction = function(p_function) {
   // Removing last tab of the inner tab list.
@@ -428,5 +426,3 @@ let createDebuggerTabFunction = function(p_function) {
 
   v_editor.focus();
 }
-
-export { createDebuggerTabFunction }

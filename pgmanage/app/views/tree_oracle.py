@@ -494,57 +494,45 @@ def kill_backend(request, database):
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def template_select(request, v_database):
-    v_return = create_response_template()
-
+@database_required_new(check_timeout=True, open_connection=True)
+def template_select(request, database):
     data = request.data
-    v_table = data["p_table"]
-    v_schema = data["p_schema"]
+    table = data["table"]
+    schema = data["schema"]
 
     try:
-        v_template = v_database.TemplateSelect(v_schema, v_table).v_text
+        template = database.TemplateSelect(schema, table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
-    v_return["v_data"] = {"v_template": v_template}
-
-    return JsonResponse(v_return)
+    return JsonResponse(data={"template": template})
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def template_insert(request, v_database):
-    v_return = create_response_template()
-
+@database_required_new(check_timeout=True, open_connection=True)
+def template_insert(request, database):
     data = request.data
-    v_table = data["p_table"]
-    v_schema = data["p_schema"]
+    table = data["table"]
+    schema = data["schema"]
 
     try:
-        v_template = v_database.TemplateInsert(v_schema, v_table).v_text
+        template = database.TemplateInsert(schema, table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
-    v_return["v_data"] = {"v_template": v_template}
-
-    return JsonResponse(v_return)
+    return JsonResponse(data={"template": template})
 
 
 @user_authenticated
-@database_required(p_check_timeout=True, p_open_connection=True)
-def template_update(request, v_database):
-    v_return = create_response_template()
-
+@database_required_new(check_timeout=True, open_connection=True)
+def template_update(request, database):
     data = request.data
-    v_table = data["p_table"]
-    v_schema = data["p_schema"]
+    table = data["table"]
+    schema = data["schema"]
 
     try:
-        v_template = v_database.TemplateUpdate(v_schema, v_table).v_text
+        template = database.TemplateUpdate(schema, table).v_text
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
-    v_return["v_data"] = {"v_template": v_template}
-
-    return JsonResponse(v_return)
+    return JsonResponse(data={"template": template})

@@ -46,6 +46,7 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, requiredUnless, minValue, maxValue, helpers } from '@vuelidate/validators'
+import { tabsStore } from '../stores/stores_initializer';
 
 export default {
   setup() {
@@ -84,7 +85,7 @@ export default {
                 <td><b>${this.initialSetting.max_val}</b></td>
               </tr>
               </table>`,
-      inputId: `${this.initialSetting.name}_${v_connTabControl.selectedTab.tag.tabControl.selectedTab.id}`,
+      inputId: `${this.initialSetting.name}_${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}`,
       buttonId: `buttonResetDefault_${this.initialSetting.name}`,
     };
   },

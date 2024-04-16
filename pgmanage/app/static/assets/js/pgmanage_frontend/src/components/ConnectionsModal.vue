@@ -82,6 +82,7 @@
                   :initialConnection="selectedConnection"
                   :technologies="technologies"
                   :visible="activeForm == 'connection'"
+                  ref='connectionForm'
                 />
           </div>
         </div>
@@ -91,16 +92,23 @@
 </template>
 
 <script>
-import {connectionsStore} from '../stores/connections.js'
 import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue'
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
-import { showToast } from '../notification_control'
+import { showToast, createMessageModal } from '../notification_control'
 import { emitter } from '../emitter'
+import { tabsStore } from '../stores/stores_initializer'
+import { settingsStore, connectionsStore } from "../stores/stores_initializer";
+import { useVuelidate } from '@vuelidate/core'
 
 export default {
   name: 'ConnectionsModal',
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  },
   data() {
       return {
         technologies: [],
@@ -204,6 +212,9 @@ export default {
         }
       })
       .catch((error) => {
+        if(error.response && error.response?.data) {
+          showToast("error", error.response.data.data)
+        }
         console.log(error)
       })
     },
@@ -256,13 +267,24 @@ export default {
       return `${techname} - ${connection.server}:${connection.port}`
     },
     showForm(form_type, object) {
-      if(form_type === 'group') {
-        this.activeForm = 'group'
-        this.selectedGroup = object
-      }
-      if(form_type === 'connection') {
-        this.activeForm = 'connection'
-        this.selectedConnection = object
+      if (this.v$.$anyDirty) {
+        createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.v$.$reset()
+            this.showForm(form_type, object)
+          },
+          null
+        );
+      } else {
+        if (form_type === 'group') {
+          this.activeForm = 'group'
+          this.selectedGroup = object
+        }
+        if (form_type === 'connection') {
+          this.activeForm = 'connection'
+          this.selectedConnection = object
+        }
       }
     },
     newConnection() {
@@ -274,60 +296,85 @@ export default {
       this.selectedGroup = undefined
     },
     getExistingTabs() {
-      axios.post('/get_existing_tabs/')
+      axios
+        .post("/get_existing_tabs/")
         .then((response) => {
           if (connectionsStore.connections.length > 0) {
             // Create existing tabs
             let currentParent = null;
 
-            response.data.existing_tabs.forEach((tab) => {
-              let tooltip_name = "";
-              if (currentParent !== tab.index) {
-                startLoading();
-                const conn = connectionsStore.connections.find((c) => c.id === tab.index)
-
-                if (conn) {
-                  if (conn.alias) {
-                    tooltip_name +=
-                      `<h5 class="mb-1">${conn.alias}</h5>`;
-                  }
-                  if (conn.details1) {
-                    tooltip_name +=
-                      `<div class="mb-1">${conn.details1}</div>`;
-                  }
-                  if (conn.details2) {
-                    tooltip_name +=
-                      `<div class="mb-1">${conn.details2}</div>`;
-                  }
-
-                  window.v_connTabControl.tag.createConnTab(
-                    tab.index,
-                    false,
-                    conn.alias,
-                    tooltip_name
+            response.data.existing_tabs.forEach((tab, index) => {
+                let tooltip_name = "";
+                if (currentParent !== tab.index) {
+                  startLoading();
+                  const conn = connectionsStore.connections.find(
+                    (c) => c.id === tab.index
                   );
-                  window.v_connTabControl.tag.createConsoleTab();
 
+                  if (conn) {
+                    if (conn.alias) {
+                      tooltip_name += `<h5 class="mb-1">${conn.alias}</h5>`;
+                    }
+                    if (conn.details1) {
+                      tooltip_name += `<div class="mb-1">${conn.details1}</div>`;
+                    }
+                    if (conn.details2) {
+                      tooltip_name += `<div class="mb-1">${conn.details2}</div>`;
+                    }
+                    currentParent = tab.index;
+                    tabsStore
+                      .createConnectionTab(
+                        tab.index,
+                        false,
+                        conn.alias,
+                        tooltip_name
+                      )
+                      .then((connTab) => {
+                        tabsStore.createConsoleTab(connTab.id);
+
+                        response.data.existing_tabs
+                          .filter((databaseTab) => databaseTab.index === tab.index)
+                          .forEach((databaseTab) => {
+                            tabsStore.createQueryTab(
+                              databaseTab.title,
+                              databaseTab.tab_db_id,
+                              databaseTab.database_name,
+                              databaseTab.snippet,
+                              connTab.id
+                            );
+                          });
+                      });
+                  }
                 }
-
-              }
-              currentParent = tab.index
-              window.v_connTabControl.tag.createQueryTab(tab.title, tab.tab_db_id, tab.database_name);
-              let selectedTab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-              emitter.emit(`${selectedTab.id}_copy_to_editor`, tab.snippet)
-            })
-            endLoading();
+                endLoading();
+            });
           }
         })
         .catch((response) => {
-          console.log(response)
-        })
-    }
+          console.log(response);
+        });
+    },
   },
   mounted() {
-    this.loadData(true)
+    this.loadData(settingsStore.restoreTabs)
+
     $('#connections-modal').on("shown.bs.modal", () => {
       this.loadData(false)})
+    
+    $('#connections-modal').on("hide.bs.modal", (event) => {
+      if (this.v$.$anyDirty) {
+        event.preventDefault()
+        createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.v$.$reset()
+            this.$refs.connectionForm.reset()
+            $('#connections-modal').modal('hide')
+          },
+          null
+        );
+      }
+    })
 
     emitter.on("connection-save", (connection) => {
       this.saveConnection(connection)

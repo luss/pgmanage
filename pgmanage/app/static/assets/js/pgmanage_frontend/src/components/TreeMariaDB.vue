@@ -26,9 +26,8 @@ import {
   TemplateInsertMariadb,
   TemplateUpdateMariadb,
 } from "../tree_context_functions/tree_mariadb";
-import { getProperties, clearProperties } from "../properties";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
 import { emitter } from "../emitter";
+import { tabsStore } from "../stores/stores_initializer";
 
 export default {
   name: "TreeMariaDB",
@@ -82,7 +81,7 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab(this.selectedNode.data.database);
+              tabsStore.createERDTab(this.selectedNode.data.database)
             },
           },
           {
@@ -118,13 +117,7 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              tabSQLTemplate(
-                "Create Table",
-                this.templates.create_table.replace(
-                  "#schema_name#",
-                  this.getParentNode(this.selectedNode).title
-                )
-              );
+              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "mysql")
             },
           },
         ],
@@ -148,10 +141,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.title,
-                    null
-                  );
+                  tabsStore.createDataEditorTab(this.selectedNode.title, null)
                 },
               },
               {
@@ -195,17 +185,10 @@ export default {
             icon: "fas cm-all fa-list",
             children: [
               {
-                label: "Alter Table (SQL)",
+                label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  tabSQLTemplate(
-                    "Alter Table",
-                    this.templates.alter_table.replace(
-                      "#table_name#",
-                      `${this.getParentNodeDeep(this.selectedNode, 2).title}.${this.selectedNode.title
-                      }`
-                    )
-                  );
+                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "mysql")
                 },
               },
               {
@@ -489,19 +472,17 @@ export default {
               let table_name = `${this.getParentNodeDeep(this.selectedNode, 2).title
                 }.${this.selectedNode.title}`;
 
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
-
-              let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
               let command = `-- Querying Data\nselect t.*\nfrom ${table_name} t`
-              emitter.emit(`${tab.id}_run_query`, command)
+              tabsStore.createQueryTab(this.selectedNode.title, null, null, command)
+              setTimeout(() => {
+                emitter.emit(`${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_run_query`)
+              }, 200)
             },
           },
           {
             label: "Edit View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getViewDefinitionMariadb(this.selectedNode);
             },
           },
@@ -542,8 +523,6 @@ export default {
             label: "Edit Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              //Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getFunctionDefinitionMariadb(this.selectedNode);
             },
           },
@@ -583,8 +562,6 @@ export default {
             label: "Edit Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              // Fix this not to use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getProcedureDefinitionMariadb(this.selectedNode);
             },
           },
@@ -720,14 +697,17 @@ export default {
         "procedure",
       ];
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_mariadb/", {
-          schema: this.getParentNodeDeep(node, 2).title,
-          table: null,
-          object: node.title,
-          type: node.data.type,
-        });
+        this.$emit("treeTabsUpdate", {
+          data: {
+            schema: this.getParentNodeDeep(node, 2).title,
+            table: null,
+            object: node.title,
+            type: node.data.type,
+          },
+          view: "/get_properties_mariadb/"
+        })
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getTreeDetailsMariadb(node) {
@@ -764,17 +744,7 @@ export default {
                 label: "Process List",
                 icon: "fas cm-all fa-chart-line",
                 onClick: () => {
-                  window.v_connTabControl.tag.createMonitoringTab(
-                    "Process List",
-                    "select * from information_schema.processlist",
-                    [
-                      {
-                        icon: "fas cm-all fa-times",
-                        title: "Terminate",
-                        action: "mariadbTerminateBackend",
-                      },
-                    ]
-                  );
+                  tabsStore.createMonitoringTab("Process List", "select * from information_schema.processlist")
                 },
               },
             ],
@@ -794,10 +764,11 @@ export default {
           });
 
           resp.data.reduceRight((_, el) => {
-            this.insertNode(node, el, {
+            this.insertNode(node, el.name, {
               icon: "fas node-all fa-database node-database",
               type: "database",
               contextMenu: "cm_database",
+              database: el.name,
             });
           }, null);
         })
@@ -812,30 +783,35 @@ export default {
         icon: "fas node-all fa-cog node-procedure-list",
         type: "procedure_list",
         contextMenu: "cm_procedures",
+        database: node.data.database
       });
 
       this.insertNode(node, "Functions", {
         icon: "fas node-all fa-cog node-function-list",
         type: "function_list",
         contextMenu: "cm_functions",
+        database: node.data.database
       });
 
       this.insertNode(node, "Views", {
         icon: "fas node-all fa-eye node-view-list",
         type: "view_list",
         contextMenu: "cm_views",
+        database: node.data.database
       });
 
       this.insertNode(node, "Sequences", {
         icon: "fas node-all fa-sort-numeric-down node-sequence-list",
         type: "sequence_list",
         contextMenu: "cm_sequences",
+        database: node.data.database
       });
 
       this.insertNode(node, "Tables", {
         icon: "fas node-all fa-th node-table-list",
         type: "table_list",
         contextMenu: "cm_tables",
+        database: node.data.database
       });
     },
     getTablesMariadb(node) {
@@ -855,6 +831,7 @@ export default {
               icon: "fas node-all fa-table node-table",
               type: "table",
               contextMenu: "cm_table",
+              database: node.data.database
             });
           }, null);
         })
@@ -875,29 +852,34 @@ export default {
             icon: "fas node-all fa-thumbtack node-index",
             type: "indexes",
             contextMenu: "cm_indexes",
+            database: node.data.database
           });
 
           this.insertNode(node, "Uniques", {
             icon: "fas node-all fa-key node-unique",
             type: "uniques",
             contextMenu: "cm_uniques",
+            database: node.data.database
           });
 
           this.insertNode(node, "Foreign Keys", {
             icon: "fas node-all fa-key node-fkey",
             type: "foreign_keys",
             contextMenu: "cm_fks",
+            database: node.data.database
           });
           this.insertNode(node, "Primary Key", {
             icon: "fas node-all fa-key node-pkey",
             type: "primary_key",
             contextMenu: "cm_pks",
+            database: node.data.database
           });
 
           this.insertNode(node, `Columns (${resp.data.length})`, {
             icon: "fas node-all fa-columns node-column",
             type: "column_list",
             contextMenu: "cm_columns",
+            database: node.data.database
           });
           const columns_node = this.getFirstChildNode(node);
 
@@ -906,6 +888,7 @@ export default {
               icon: "fas node-all fa-columns node-column",
               type: "table_field",
               contextMenu: "cm_column",
+              database: node.data.database
             });
             const table_field = this.getFirstChildNode(columns_node);
 
@@ -947,6 +930,7 @@ export default {
               icon: "fas node-all fa-key node-pkey",
               type: "pk",
               contextMenu: "cm_pk",
+              database: node.data.database
             });
           });
         })
@@ -998,6 +982,7 @@ export default {
               icon: "fas node-all fa-key node-fkey",
               type: "foreign_key",
               contextMenu: "cm_fk",
+              database: node.data.database
             });
           }, null);
         })
@@ -1071,6 +1056,7 @@ export default {
               icon: "fas node-all fa-key node-unique",
               type: "unique",
               contextMenu: "cm_unique",
+              database: node.data.database
             });
           });
         })
@@ -1120,6 +1106,7 @@ export default {
               type: "index",
               contextMenu: "cm_index",
               uniqueness: el.uniqueness,
+              database: node.data.database
             });
           });
         })
@@ -1171,6 +1158,7 @@ export default {
                 icon: "fas node-all fa-sort-numeric-down node-sequence",
                 type: "sequence",
                 contextMenu: "cm_sequence",
+                database: node.data.database
               },
               true
             );
@@ -1196,6 +1184,7 @@ export default {
               icon: "fas node-all fa-eye node-view",
               type: "view",
               contextMenu: "cm_view",
+              database: node.data.database
             });
           });
         })
@@ -1246,9 +1235,7 @@ export default {
           schema: this.getParentNodeDeep(node, 2).title,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1272,6 +1259,7 @@ export default {
               type: "function",
               id: el.id,
               contextMenu: "cm_function",
+              database: node.data.database
             });
           });
         })
@@ -1329,9 +1317,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -1355,6 +1341,7 @@ export default {
               type: "procedure",
               contextMenu: "cm_procedure",
               id: el.id,
+              database: node.data.database
             });
           });
         })
@@ -1412,9 +1399,7 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data)
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

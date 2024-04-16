@@ -1,4 +1,8 @@
 .welcome {
+    &__container {
+        height: 100vh;
+    }
+
     &__header, &__main {
         padding: 0 1.5rem;
         h1 {

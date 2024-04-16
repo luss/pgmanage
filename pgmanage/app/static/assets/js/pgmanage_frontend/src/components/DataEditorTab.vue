@@ -1,5 +1,5 @@
 <template>
-<div class="data-editor">
+<div class="data-editor p-2">
   <div ref="topToolbar" class="form-row">
     <div class="form-group col-9">
       <form class="form" @submit.prevent>
@@ -29,7 +29,7 @@
     </div>
   </div>
 
-    <div ref="tabulator" class="tabulator-custom data-grid">
+    <div ref="tabulator" class="tabulator-custom data-grid grid-height">
   </div>
 
   <div ref="bottomToolbar" class="data-editor__footer d-flex align-items-center justify-content-end p-2">
@@ -50,12 +50,10 @@ import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
+import { emitter } from '../emitter';
+import { settingsStore, tabsStore } from '../stores/stores_initializer';
 
 // TODO: run query in transaction
-// TODO: remove old code, update request code numbers
-// TODO: redraw the grid on font size change
-// TODO: handle font size change - recalculate top/bottom toolbar dimensions
-
 
 export default {
   name: "DataEditorTab",
@@ -63,9 +61,10 @@ export default {
     dialect: String,
     schema: String,
     table: String,
-    tab_id: String,
-    database_index: Number,
-    database_name: String,
+    tabId: String,
+    connId: String,
+    databaseIndex: Number,
+    databaseName: String,
     initial_filter: {
       type: String,
     default: ''
@@ -99,25 +98,55 @@ export default {
     },
     hasPK() {
       return this.tableColumns.some(c => c.is_primary)
-    }
+    },
+    gridHeight() {
+      return `calc(100vh - ${this.heightSubtract}px)`;
+    },
   },
   mounted() {
     this.handleResize()
-    this.tabulator = new Tabulator(this.$refs.tabulator, {
-      height: `calc(100vh - ${this.heightSubtract}px)`,
+    let table = new Tabulator(this.$refs.tabulator, {
       layout: 'fitDataStretch',
       data: [],
       columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
         },
-      selectable: false,
+      selectableRows: false,
       rowFormatter: this.rowFormatter
     })
-    this.tabulator.on("cellEdited", this.cellEdited);
+
+    table.on("tableBuilt", () => {
+      this.tabulator = table;
+      this.tabulator.on("cellEdited", this.cellEdited);
+    })
 
     this.knex = Knex({ client: this.dialect || 'postgres'})
     this.getTableColumns().then(this.getTableData)
+
+    emitter.on(`${this.tabId}_query_edit`, () => {
+      this.getTableData()
+    })
+
+    settingsStore.$onAction((action) => {
+      if(action.name === "setFontSize") {
+        action.after(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.handleResize()
+              this.tabulator.redraw();
+            })
+          })
+        })
+      }
+    })
+  },
+  updated() {
+    if (tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id === this.tabId) {
+      this.handleResize();
+      if (this.tabulator)
+        this.tabulator.redraw();
+    }
   },
   methods: {
     actionsFormatter(cell, formatterParams, onRendered) {
@@ -161,8 +190,8 @@ export default {
     getTableColumns() {
       return axios
         .post("/get_table_columns/", {
-          database_index: this.database_index,
-          tab_id: this.tab_id,
+          database_index: this.databaseIndex,
+          tab_id: this.connId,
           schema: this.schema,
           table: this.table
         })
@@ -209,18 +238,18 @@ export default {
       var message_data = {
         v_table: this.table,
         v_schema: this.schema,
-        v_db_index: this.database_index,
+        v_db_index: this.databaseIndex,
         v_filter : this.queryFilter,
         v_count: this.rowLimit,
-        v_conn_tab_id: v_connTabControl.selectedTab.id,
-        v_tab_id: this.tab_id
+        v_conn_tab_id: this.connId,
+        v_tab_id: this.tabId
       }
 
       var context = {
         tab_tag: null,
         callback: this.handleResponse.bind(this),
         start_time: new Date().getTime(),
-        database_index: this.database_index
+        database_index: this.databaseIndex
       }
 
       createRequest(queryRequestCodes.QueryEditData, message_data, context)
@@ -361,10 +390,10 @@ export default {
       let message_data = {
         v_sql_cmd : query,
         v_sql_save : false,
-        v_db_index: this.database_index,
-        v_conn_tab_id: v_connTabControl.selectedTab.id,
-        v_tab_id: this.tab_id,
-        v_tab_db_id: this.database_index,
+        v_db_index: this.databaseIndex,
+        v_conn_tab_id: this.connId,
+        v_tab_id: this.tabId,
+        v_tab_db_id: this.databaseIndex,
       }
 
       let context = {
@@ -395,5 +424,10 @@ export default {
 <style scoped>
   .grid-scrollable {
     width: 100%;
+  }
+
+  .grid-height {
+    height: v-bind(gridHeight);
+    
   }
 </style>

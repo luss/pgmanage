@@ -34,16 +34,12 @@ import {
   TemplateInsertPostgresql,
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
-import { createConfTab } from "../tab_functions/conf_tab";
-import { createSchemaEditorTab } from "../tab_functions/schema_editor_tab";
-import { createDataEditorTab } from "../tab_functions/data_editor_tab";
-import { createUtilityTab } from "../tab_functions/postgresql_utility_tab";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
 import { createMessageModal } from "../notification_control";
-import { getProperties, clearProperties } from "../properties";
-import { startMonitorDashboard } from "../monitoring";
 import { showConfirm, showToast } from "../notification_control";
-import { addDbTreeHeader } from "../tab_functions/outer_connection_tab";
+import { connectionsStore, tabsStore } from "../stores/stores_initializer";
+import ContextMenu from "@imengyu/vue3-context-menu";
+
 
 export default {
   name: "TreePostgresql",
@@ -105,6 +101,14 @@ export default {
         ],
         cm_database: [
           {
+            label: "Query Database",
+            icon: "fas cm-all fa-search",
+            onClick: () => {
+              let tab_name = `Query: ${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}`
+              tabsStore.createQueryTab(tab_name)
+            }
+          },
+          {
             label: "Alter Database",
             icon: "fas cm-all fa-edit",
             onClick: () => {
@@ -142,14 +146,14 @@ export default {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Backup");
+              tabsStore.createUtilityTab(this.selectedNode, 'Backup')
             },
           },
           {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
         ],
@@ -179,23 +183,21 @@ export default {
             label: "ER Diagram",
             icon: "fab cm-all fa-hubspot",
             onClick: () => {
-              v_connTabControl.tag.createERDTab(
-                this.selectedNode.data.schema_raw
-              );
+              tabsStore.createERDTab(this.selectedNode.data.schema_raw)
             },
           },
           {
             label: "Backup",
             icon: "fa-solid fa-download cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Backup");
+              tabsStore.createUtilityTab(this.selectedNode, 'Backup')
             },
           },
           {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
           {
@@ -238,7 +240,7 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createSchemaEditorTab(this.selectedNode, "create", "postgres");
+              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "postgres")
             },
           },
           {
@@ -296,10 +298,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.data.raw_value,
-                    this.selectedNode.data.schema_raw
-                  );
+                  tabsStore.createDataEditorTab(this.selectedNode.data.raw_value, this.selectedNode.data.schema_raw)
                 },
               },
               {
@@ -384,7 +383,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  createSchemaEditorTab(this.selectedNode, "alter", "postgres");
+                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "postgres")
                 },
               },
               {
@@ -411,14 +410,14 @@ export default {
                 label: "Backup",
                 icon: "fa-solid fa-download cm-all",
                 onClick: () => {
-                  createUtilityTab(this.selectedNode, "Backup");
+                  tabsStore.createUtilityTab(this.selectedNode, 'Backup')
                 },
               },
               {
                 label: "Restore",
                 icon: "fa-solid fa-upload cm-all",
                 onClick: () => {
-                  createUtilityTab(this.selectedNode, "Restore");
+                  tabsStore.createUtilityTab(this.selectedNode, 'Restore')
                 },
               },
             ],
@@ -843,9 +842,6 @@ export default {
             label: "Edit Rule",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(
-                this.selectedNode.data.raw_value
-              );
               this.getRuleDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -982,7 +978,7 @@ export default {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
         ],
@@ -992,7 +988,6 @@ export default {
             label: "Edit Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getTriggerFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1282,10 +1277,7 @@ export default {
                 label: "Edit Data",
                 icon: "fas cm-all fa-table",
                 onClick: () => {
-                  createDataEditorTab(
-                    this.selectedNode.data.raw_value,
-                    this.selectedNode.data.schema_raw
-                  );
+                  tabsStore.createDataEditorTab(this.selectedNode.data.raw_value, this.selectedNode.data.schema_raw)
                 },
               },
               {
@@ -1534,8 +1526,6 @@ export default {
             label: "Edit View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              //FIXME:  do not use v_connTabControl
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getViewDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1645,9 +1635,6 @@ export default {
             label: "Edit Mat. View",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(
-                this.selectedNode.data.raw_value
-              ); // CHECK HERE
               this.getMaterializedViewDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1755,7 +1742,6 @@ export default {
             label: "Edit Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1776,7 +1762,7 @@ export default {
             label: "Restore",
             icon: "fa-solid fa-upload cm-all",
             onClick: () => {
-              createUtilityTab(this.selectedNode, "Restore");
+              tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
           {
@@ -1832,7 +1818,6 @@ export default {
             label: "Edit Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getTriggerFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -1902,7 +1887,6 @@ export default {
             label: "Edit Event Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getEventTriggerFunctionDefinitionPostgresql(
                 this.selectedNode
               );
@@ -1986,7 +1970,6 @@ export default {
             label: "Edit Procedure",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getProcedureDefinitionPostgresql(this.selectedNode);
             },
           },
@@ -2552,7 +2535,6 @@ export default {
             label: "Edit Event Trigger Function",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              v_connTabControl.tag.createQueryTab(this.selectedNode.title);
               this.getEventTriggerFunctionDefinitionPostgresql(
                 this.selectedNode
               );
@@ -3052,7 +3034,7 @@ export default {
         });
       }, 200);
     });
-    emitter.on(`schemaChanged_${this.id}`, ({ schema_name, database_name }) => {
+    emitter.on(`schemaChanged_${this.tabId}`, ({ schema_name, database_name }) => {
       const tree = this.$refs.tree;
       let db_node = tree.getNextNode([0], (node) => {
         return (
@@ -3070,6 +3052,22 @@ export default {
     });
   },
   methods: {
+    onContextMenu(node, e) {
+      this.$refs.tree.select(node.path);
+      e.preventDefault();
+      if (!!node.data.contextMenu) {
+        this.checkCurrentDatabase(node, true, () => {
+          ContextMenu.showContextMenu({
+            theme: "pgmanage",
+            x: e.x,
+            y: e.y,
+            zIndex: 1000,
+            minWidth: 230,
+            items: this.contextMenu[node.data.contextMenu],
+          });
+        });
+      }
+    },
     refreshTreePostgresqlConfirm(node) {
       if (node.children.length == 0) this.insertSpinnerNode(node);
       if (node.data.type == "server") {
@@ -3222,26 +3220,13 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
-              let tab_tag = v_connTabControl.selectedTab.tag;
-              addDbTreeHeader(
-                tab_tag.divDetails,
-                this.tabId,
-                node.data.database,
-                this.databaseIndex,
-              );
+              connectionsStore.updateConnection(this.databaseIndex, {"last_used_database" : node.data.database})
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
               database_nodes.forEach((el) => {
                 if (node.data.database === el.title) {
                   this.selectedDatabase = node.data.database;
-                  tab_tag.selectedDatabase = node.data.database;
-                  tab_tag.selectedDatabaseNode = el;
-
-                  if (tab_tag.selectedTitle != "")
-                    tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>${tab_tag.selectedTitle} - ${this.selectedDatabase}`;
-                  else
-                    tab_tag.tabTitle.innerHTML = `<img src="${v_url_folder}/static/assets/images/${tab_tag.selectedDBMS}_medium.png"/>
-                      ${this.selectedDatabase}`;
+                  tabsStore.selectedPrimaryTab.metaData.selectedDatabase = node.data.database;
                 }
               });
               if (callback_continue) callback_continue();
@@ -3251,11 +3236,11 @@ export default {
             });
         }
       } else {
-        callback_continue();
+        if (callback_continue) callback_continue();
       }
     },
     getProperties(node) {
-      this.checkCurrentDatabase(node, false, () => {
+      this.checkCurrentDatabase(node, true, () => {
         this.getPropertiesConfirm(node);
       });
     },
@@ -3328,14 +3313,15 @@ export default {
       }
 
       if (handledTypes.includes(node.data.type)) {
-        getProperties("/get_properties_postgresql/", {
-          schema: schema,
+        this.$emit("treeTabsUpdate", {data:
+          {schema: schema,
           table: table,
           object: object,
-          type: node.data.type,
+          type: node.data.type,},
+          view: "/get_properties_postgresql/"
         });
       } else {
-        clearProperties();
+        this.$emit("clearTabs");
       }
     },
     getObjectDescriptionPostgresql(node) {
@@ -3368,10 +3354,7 @@ export default {
           position: position,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          v_connTabControl.tag.createQueryTab(`${node.title} Comment`);
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(`${node.title} Comment`, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -3389,21 +3372,21 @@ export default {
               label: "Server Configuration",
               icon: "fas cm-all fa-cog",
               onClick: () => {
-                createConfTab();
+                tabsStore.createConfigurationTab()
               },
             },
             {
               label: "Backup Server",
               icon: "fa-solid fa-download cm-all",
               onClick: () => {
-                createUtilityTab(this.selectedNode, "Backup", "server");
+                tabsStore.createUtilityTab(this.selectedNode, 'Backup', 'server')
               },
             },
             {
               label: "Restore Server",
               icon: "fa-solid fa-upload cm-all",
               onClick: () => {
-                createUtilityTab(this.selectedNode, "Restore", "server");
+                tabsStore.createUtilityTab(this.selectedNode, 'Restore', 'server')
               },
             },
             {
@@ -3414,25 +3397,14 @@ export default {
                   label: "Dashboard",
                   icon: "fas cm-all fa-chart-line",
                   onClick: () => {
-                    v_connTabControl.tag.createMonitorDashboardTab();
-                    startMonitorDashboard();
+                    tabsStore.createMonitoringDashboardTab()
                   },
                 },
                 {
                   label: "Backends",
                   icon: "fas cm-all fa-tasks",
                   onClick: () => {
-                    v_connTabControl.tag.createMonitoringTab(
-                      "Backends",
-                      "SELECT * FROM pg_stat_activity",
-                      [
-                        {
-                          icon: "fas cm-all fa-times",
-                          title: "Terminate",
-                          action: "postgresqlTerminateBackend",
-                        },
-                      ]
-                    );
+                    tabsStore.createMonitoringTab("Backends", "SELECT * FROM pg_stat_activity")
                   },
                 },
               ],
@@ -3481,6 +3453,7 @@ export default {
           this.insertNode(node, "Replication Slots", {
             icon: "fas node-all fa-sitemap node-repslot-list",
             type: "replication",
+            database: false,
           });
 
           const replication_node = this.getFirstChildNode(node);
@@ -3489,30 +3462,35 @@ export default {
             icon: "fas node-all fa-sitemap node-repslot-list",
             type: "logical_replication_slot_list",
             contextMenu: "cm_logical_replication_slots",
+            database: false,
           });
 
           this.insertNode(replication_node, "Physical Replication Slots", {
             icon: "fas node-all fa-sitemap node-repslot-list",
             type: "physical_replication_slot_list",
             contextMenu: "cm_physical_replication_slots",
+            database: false,
           });
 
           this.insertNode(node, "Roles", {
             icon: "fas node-all fa-users node-user-list",
             type: "role_list",
             contextMenu: "cm_roles",
+            database: false,
           });
 
           this.insertNode(node, "Tablespaces", {
             icon: "fas node-all fa-folder-open node-tablespace-list",
             type: "tablespace_list",
             contextMenu: "cm_tablespaces",
+            database: false,
           });
 
           this.insertNode(node, "Databases", {
             icon: "fas node-all fa-database node-database-list",
             type: "database_list",
             contextMenu: "cm_databases",
+            database: false,
           });
         })
         .catch((error) => {
@@ -4317,9 +4295,7 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.data.raw_value, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4896,8 +4872,7 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5002,9 +4977,7 @@ export default {
           schema: node.data.schema_raw,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.data.raw_value, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5104,9 +5077,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5151,9 +5122,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5198,9 +5167,7 @@ export default {
           function: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5290,9 +5257,7 @@ export default {
           procedure: node.data.id,
         })
         .then((resp) => {
-          // Fix this not to use v_connTabControl
-          let tab = v_connTabControl.selectedTab.tag.tabControl.selectedTab;
-          emitter.emit(`${tab.id}_copy_to_editor`, resp.data.data);
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, resp.data.data)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5834,6 +5799,7 @@ export default {
                 type: "tablespace",
                 contextMenu: "cm_tablespace",
                 oid: el.oid,
+                database: false,
               },
               true
             );
@@ -5861,6 +5827,7 @@ export default {
               contextMenu: "cm_role",
               oid: el.oid,
               raw_value: el.name_raw,
+              database: false,
             },
             true
           );
@@ -5885,6 +5852,7 @@ export default {
                 icon: "fas node-all fa-sitemap node-repslot",
                 type: "physical_replication_slot",
                 contextMenu: "cm_physical_replication_slot",
+                database: false,
               },
               true
             );
@@ -5912,6 +5880,7 @@ export default {
                 icon: "fas node-all fa-sitemap node-repslot",
                 type: "logical_replication_slot",
                 contextMenu: "cm_logical_replication_slot",
+                database: false,
               },
               true
             );

@@ -13,7 +13,7 @@
         <div class="modal-body">
           <div class="mb-3">
             <div class="form-row">
-              <div class="form-group col-5">
+              <div class="form-group col-lg-3 col-xl-2 col-sm-4">
                 <p class="font-weight-bold mb-2">Select a daterange:</p>
                 <input v-model="startedFrom" type="text" class="form-control form-control-sm d-none"
                   placeholder="Start Time" />
@@ -25,13 +25,25 @@
                 </button>
               </div>
 
-              <div class="form-group col-7 d-flex justify-content-end align-items-end">
+              <div class="form-group col-lg-3 col-xl-2 col-sm-4">
+                <label class="font-weight-bold mb-2">Filter by database:</label>
+                <select v-model="databaseFilter" @change="getCommandsHistory(true)" id="databaseFilter" class="form-control" placeholder="Filter database">
+                    <option value="" selected>All Databases</option>
+                    <option v-for="(name, index) in databaseNames"
+                      :key=index
+                      :value="name">
+                        {{name}}
+                    </option>
+                </select>
+              </div>
+
+              <div class="form-group col-lg-6 col-md-12 col-xl-8 d-flex justify-content-end align-items-end">
                 <div>
                   <label class="font-weight-bold mb-2">Command contains:</label>
-                  <input v-model="commandContains" @change="getCommandsHistory()" type="text" class="form-control" />
+                  <input v-model="commandContains" @change="getCommandsHistory(true)" type="text" class="form-control" />
                 </div>
 
-                <button class="bt_execute btn btn-primary ml-1" title="Refresh" @click="getCommandsHistory()">
+                <button class="bt_execute btn btn-primary ml-1" title="Refresh" @click="getCommandsHistory(true)">
                   <i class="fas fa-sync-alt mr-1"></i>
                   Refresh
                 </button>
@@ -116,6 +128,8 @@ export default {
       timeRangeLabel: "Last 6 Hours",
       cellContent: "",
       cellModalVisible: false,
+      databaseNames: [],
+      databaseFilter: ''
     };
   },
   computed: {
@@ -133,12 +147,10 @@ export default {
           {
             title: "Duration",
             field: "duration",
-            width: 100,
           },
           {
             title: "Status",
             field: "status",
-            width: 50,
             hozAlign: "center",
             formatter: function (cell, formatterParams, onRendered) {
               if (cell.getValue() === "success") {
@@ -149,9 +161,12 @@ export default {
             },
           },
           {
+            title: "Database",
+            field: "database",
+          },
+          {
             title: "Command",
             field: "snippet",
-            widthGrow: 4,
             contextMenu: [
               {
                 label: "Copy Content To Query Tab",
@@ -170,9 +185,12 @@ export default {
           field: "start_time",
         },
         {
+          title: "Database",
+          field: "database",
+        },
+        {
           title: "Command",
           field: "snippet",
-          widthGrow: 4,
           contextMenu: [
             {
               label:
@@ -209,7 +227,7 @@ export default {
         this.resetToDefault();
         this.showCommandsModal();
         setTimeout(() => {
-          this.getCommandsHistory();
+          this.getCommandsHistory(true);
         }, 200);
       }
     },
@@ -297,15 +315,16 @@ export default {
           } else {
             this.startedTo = null;
           }
-          this.getCommandsHistory();
+          this.getCommandsHistory(true);
         }
       );
     },
     setupTabulator() {
       this.table = new Tabulator(`#${this.tabId}_commands_history_table`, {
         placeholder: "No Data Available",
-        selectable: true,
-        layout: "fitColumns",
+        selectableRows: true,
+        layout: "fitDataStretch",
+        width: '100%',
         clipboard: "copy",
         clipboardCopyConfig: {
           columnHeaders: false, //do not include column headers in clipboard output
@@ -323,7 +342,10 @@ export default {
         columns: this.defaultColumns,
       });
     },
-    getCommandsHistory() {
+    getCommandsHistory(resetCurrentPage=false) {
+      if(resetCurrentPage)
+        this.currentPage = 1
+
       axios
         .post("/get_commands_history/", {
           command_from: this.startedFrom,
@@ -331,10 +353,12 @@ export default {
           command_contains: this.commandContains,
           command_type: this.tabType,
           current_page: this.currentPage,
+          database_filter: this.databaseFilter,
           database_index: this.databaseIndex,
         })
         .then((resp) => {
           this.pages = resp.data.pages;
+          this.databaseNames = resp.data.database_names;
           if (this.currentPage > resp.data.pages) this.currentPage = 1;
 
           resp.data.command_list.forEach((el) => {
@@ -342,6 +366,7 @@ export default {
             if (el.end_time) el.end_time = moment(el.end_time).format();
           });
           this.table.setData(resp.data.command_list);
+          this.table.redraw();
         })
         .catch((error) => {
           showToast("error", error.response.data.data);
@@ -353,12 +378,12 @@ export default {
           command_from: this.startedFrom,
           command_to: this.startedTo,
           command_contains: this.commandContains,
+          database_filter: this.databaseFilter,
           database_index: this.databaseIndex,
           command_type: this.tabType,
         })
         .then((resp) => {
-          this.currentPage = 1;
-          this.getCommandsHistory();
+          this.getCommandsHistory(true);
         })
         .catch((error) => {
           showToast("error", error.response.data.data);
@@ -396,6 +421,7 @@ export default {
       this.startedTo = moment().toISOString();
       this.timeRangeLabel = "Last 6 Hours";
       this.commandContains = "";
+      this.databaseFilter = "";
     },
   },
 };

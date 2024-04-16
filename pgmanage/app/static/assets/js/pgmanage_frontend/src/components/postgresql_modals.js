@@ -1,16 +1,7 @@
-import { createApp } from "vue";
-import UtilityJobsJobDetail from "./UtilityJobsJobDetail.vue";
+import { createApp, defineAsyncComponent } from "vue";
 import cronLight from "@vue-js-cron/light";
-import ExtensionModal from "../components/ExtensionModal.vue";
-import PgCronModal from "../components/PgCronModal.vue";
+import { tabsStore } from "../stores/stores_initializer";
 
-const jobDetailModal = createApp({
-  components: {
-    "job-detail": UtilityJobsJobDetail,
-  },
-});
-
-jobDetailModal.mount("#utility-job-detail-wrap");
 
 function createExtensionModal(node, mode) {
   const wrap_div = document.getElementById("extension-modal-wrap");
@@ -19,14 +10,14 @@ function createExtensionModal(node, mode) {
 
   const app = createApp({
     components: {
-      "extension-modal": ExtensionModal,
+      "extension-modal": defineAsyncComponent(() => import("@/components/ExtensionModal.vue")),
     },
     data() {
       return {
         mode: mode,
         treeNode: node,
-        tabId: window.v_connTabControl.selectedTab.id,
-        databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
+        tabId: tabsStore.selectedPrimaryTab.id,
+        databaseIndex: tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex
       };
     },
     mounted() {
@@ -49,16 +40,19 @@ function createPgCronModal(node, mode) {
   cronLight.install.installed = false;
   const wrap_div = document.getElementById("pgcron-modal-wrap");
 
-  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode></pgcron-modal>`;
+  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :conn-id="connId"></pgcron-modal>`;
 
   const app = createApp({
     components: {
-      "pgcron-modal": PgCronModal,
+      "pgcron-modal": defineAsyncComponent(() => import("@/components/PgCronModal.vue")),
     },
     data() {
       return {
         mode: mode,
         treeNode: node,
+        databaseIndex:
+          tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+        connId: tabsStore.selectedPrimaryTab.id,
       };
     },
     mounted() {

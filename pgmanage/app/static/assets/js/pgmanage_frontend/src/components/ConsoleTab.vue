@@ -1,4 +1,5 @@
 <template>
+  <div>
   <splitpanes class="default-theme console-body" horizontal @resized="onResize">
     <pane size="80">
       <div ref="console" :id="`txt_console_${tabId}`" class="omnidb__txt-console mr-2 h-100"></div>
@@ -6,8 +7,12 @@
 
     <pane size="20" class="pl-2 border-top">
       <div class="tab-actions py-2 d-flex align-items-center">
-        <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)">
+        <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)" :disabled="executingState">
           <i class="fas fa-play fa-light"></i>
+        </button>
+
+        <button class="btn btn-sm btn-secondary" title="Open File" @click="openFileManagerModal">
+            <i class="fas fa-folder-open fa-light"></i>
         </button>
 
         <button class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
@@ -58,16 +63,16 @@
           @cancelled="cancelConsoleTab()" />
 
         <div :id="`div_query_info_${tabId}`">
-          <span v-if="cancelled">
+          <p class="m-0 h6" v-if="cancelled">
             <b>Cancelled</b>
-          </span>
-          <span v-else-if="queryStartTime && queryDuration" class="mr-2">
-            <b>Start time:</b> {{ queryStartTime }} <b>Duration:</b>
-            {{ queryDuration }}
-          </span>
-          <span v-else-if="queryStartTime">
-            <b>Start time:</b> {{ queryStartTime }}
-          </span>
+          </p>
+          <p v-else-if="queryStartTime && queryDuration" class="m-0 h6 mr-2">
+            <b>Start time:</b> {{ queryStartTime.format() }}<br/>
+            <b>Duration:</b> {{ queryDuration }}
+          </p>
+          <p v-else-if="queryStartTime" class="m-0 h6 mr-2">
+            <b>Start time:</b> {{ queryStartTime.format() }}
+          </p>
         </div>
       </div>
       <!--FIXME: add proper editor height recalculation-->
@@ -77,6 +82,8 @@
   </splitpanes>
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Console" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
+  <FileManager ref="fileManager"/>
+</div>
 </template>
 
 <script>
@@ -84,16 +91,17 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
-import { showToast } from "../notification_control";
+import { showToast, createMessageModal } from "../notification_control";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { settingsStore } from "../stores/settings";
-import { connectionsStore } from "../stores/connections";
+import { settingsStore, tabsStore, connectionsStore } from "../stores/stores_initializer";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
 import { tabStatusMap, requestState, queryRequestCodes } from "../constants";
+import FileManager from "./FileManager.vue";
+import FileInputChangeMixin from '../mixins/file_input_mixin'
 
 export default {
   name: "ConsoleTab",
@@ -104,7 +112,9 @@ export default {
     TabStatusIndicator,
     QueryEditor,
     CancelButton,
+    FileManager
   },
+  mixins: [FileInputChangeMixin],
   props: {
     connId: String,
     tabId: String,
@@ -128,7 +138,9 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
-      commandsModalVisible: false
+      commandsModalVisible: false,
+      terminal: null,
+      fitAddon: null,
     };
   },
   computed: {
@@ -145,18 +157,29 @@ export default {
       return connectionsStore.getConnection(this.databaseIndex).autocomplete
     }
   },
+  updated() { 
+    if (!this.terminal) {
+      this.setupTerminal()
+    }
+    this.onResize()
+  },
   mounted() {
-    this.setupTerminal();
+    if (tabsStore.selectedPrimaryTab.metaData.selectedTab.id === this.tabId) {
+      this.setupTerminal()
+      requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.onResize();
+            })
+          })
+    }
     this.setupEvents();
 
     settingsStore.$subscribe((mutation, state) => {
+      if (!this.terminal) return
       this.terminal.options.theme = state.terminalTheme;
       this.terminal.options.fontSize = state.fontSize;
     });
 
-    setTimeout(() => {
-      this.onResize();
-    }, 200);
   },
   unmounted() {
     this.clearEvents();
@@ -176,7 +199,6 @@ export default {
       this.fitAddon = new FitAddon();
 
       this.terminal.loadAddon(this.fitAddon);
-      this.fitAddon.fit();
     },
     setupEvents() {
       emitter.on(`${this.tabId}_resize`, () => {
@@ -199,15 +221,11 @@ export default {
       emitter.all.delete(`${this.tabId}_run_console`);
     },
     onResize() {
-      this.fitAddon.fit();
+      if (this.fitAddon)
+        this.fitAddon.fit();
     },
     consoleSQL(check_command = true, mode = 0) {
       const command = this.editorContent.trim();
-      let tab_tag = v_connTabControl.selectedTab.tag.tabControl.selectedTab.tag;
-      this.queryDuration = "";
-      this.cancelled = false;
-      this.longQuery = false;
-
       if (!check_command || command[0] === "\\") {
         if (!this.idleState) {
           showToast("info", "Tab with activity in progres.");
@@ -216,6 +234,10 @@ export default {
           if (command === "" && mode === 0) {
             showToast("info", "Please provide a string.");
           } else {
+            let tab = tabsStore.getSelectedSecondaryTab(this.connId)
+            this.queryDuration = "";
+            this.cancelled = false;
+            this.longQuery = false;
             emitter.emit(`${this.tabId}_copy_to_editor`, "");
             this.lastCommand = command;
 
@@ -230,12 +252,11 @@ export default {
 
             this.readOnlyEditor = true;
 
-            this.queryStartTime = moment().format();
+            this.queryStartTime = moment();
 
             let context = {
-              tab_tag: tab_tag,
+              tab: tab,
               database_index: this.databaseIndex,
-              start_datetime: this.queryStartTime,
               acked: false,
               last_command: this.lastCommand,
               check_command: check_command,
@@ -248,7 +269,7 @@ export default {
               },
             };
 
-            context.tab_tag.context = context;
+            context.tab.metaData.context = context
 
             createRequest(queryRequestCodes.Console, message_data, context);
 
@@ -258,9 +279,13 @@ export default {
               this.longQuery = true;
             }, 1000);
 
-            //FIXME: change into event emitting later
-            tab_tag.tab_loading_span.style.visibility = "visible";
-            tab_tag.tab_check_span.style.display = "none";
+            this.queryInterval = setInterval((function(){
+              let diff = moment().diff(this.queryStartTime)
+              this.queryDuration = moment.utc(diff).format('HH:mm:ss')
+            }).bind(this), 1000)
+
+            tab.metaData.isLoading = true
+            tab.metaData.isReady = false
 
             this.tabStatus = tabStatusMap.RUNNING;
           }
@@ -269,11 +294,9 @@ export default {
     },
     consoleReturn(data, context) {
       if (!this.idleState) {
-        //FIXME: get rid of it when we will have own vue tab wrapper
         if (
-          this.tabId === context.tab_tag.tabControl.selectedTab.id &&
-          this.connId ===
-          context.tab_tag.connTab.tag.connTabControl.selectedTab.id
+          this.connId === tabsStore.selectedPrimaryTab.id &&
+          this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
           this.consoleReturnRender(data, context);
         } else {
@@ -281,23 +304,23 @@ export default {
           this.data = data;
           this.context = context;
 
-          //FIXME: change into event emitting later
-          context.tab_tag.tab_loading_span.style.visibility = "hidden";
-          context.tab_tag.tab_check_span.style.display = "";
+          context.tab.metaData.isReady = true
+          context.tab.metaData.isLoading = false
         }
       }
     },
     consoleReturnRender(data, context) {
-      this.consoleState = requestState.Idle;
+      clearInterval(this.queryInterval)
+      this.queryInterval = null;
 
+      this.consoleState = requestState.Idle;
       this.tabStatus = data.v_data.v_con_status;
       this.readOnlyEditor = false;
 
       this.terminal.write(data.v_data.v_data);
 
-      //FIXME: change into event emitting later
-      context.tab_tag.tab_loading_span.style.visibility = "hidden";
-      context.tab_tag.tab_check_span.style.display = "none";
+      context.tab.metaData.isLoading = false
+      context.tab.metaData.isReady = false
 
       this.fetchMoreData = data.v_data.v_show_fetch_button;
       this.queryDuration = data.v_data.v_duration;
@@ -342,6 +365,19 @@ export default {
     showCommandsHistory() {
       this.commandsModalVisible = true
     },
+    openFileManagerModal() {
+      if (!!this.editorContent) {
+        createMessageModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.$refs.fileManager.show(true, this.handleFileInputChange);
+          },
+          null
+        );
+      } else {
+        this.$refs.fileManager.show(true, this.handleFileInputChange);
+      }
+    },
   },
 };
 </script>
@@ -363,5 +399,9 @@ export default {
 
 .tab-actions>button {
   margin-right: 5px;
+}
+
+.splitpanes .splitpanes__pane {
+  transition: none;
 }
 </style>

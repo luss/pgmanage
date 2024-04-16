@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import GenericMessageModal from "./components/GenericMessageModal.vue";
-import { execAjax } from "./ajax_control";
 import { useToast } from 'vue-toast-notification';
 
 let v_message_modal_animating = false;
@@ -41,10 +40,10 @@ $(function () {
  * @param {Function} successFunc - The function to call when the success action is triggered.
  * @param {Function} cancelFunc - The function to call when the cancel action is triggered.
  */
-function createMessageModal(message, successFunc, cancelFunc) {
+function createMessageModal(message, successFunc, cancelFunc, closable) {
   const wrap_div = document.getElementById("generic-message-modal-wrap");
 
-  wrap_div.innerHTML = `<generic-modal :message="message" :success-func="successFunc" :cancel-func="cancelFunc"></generic-modal>`;
+  wrap_div.innerHTML = `<generic-modal :message="message" :success-func="successFunc" :cancel-func="cancelFunc" :closable="closable"></generic-modal>`;
 
   const app = createApp({
     components: {
@@ -55,6 +54,7 @@ function createMessageModal(message, successFunc, cancelFunc) {
         message: message,
         successFunc: successFunc,
         cancelFunc: cancelFunc,
+        closable: closable
       };
     },
     mounted() {
@@ -62,7 +62,10 @@ function createMessageModal(message, successFunc, cancelFunc) {
         $("#generic_modal_message").on("hidden.bs.modal", () => {
           app.unmount();
         });
-        $("#generic_modal_message").modal("show");
+        $("#generic_modal_message").modal({
+          backdrop: "static",
+          keyboard: false,
+        });
       }, 500);
     },
   });
@@ -155,22 +158,9 @@ function showConfirm(p_info,p_funcYes = null,p_funcNo = null, p_shownCallback = 
 
 }
 
-function checkSessionMessage() {
-
-	execAjax('/check_session_message/',
-				JSON.stringify({}),
-        function(p_return) {
-          if (p_return.v_data!='')
-          	showAlert(p_return.v_data);
-        },
-        null,
-    'box');
-
-}
-
 /**
  * Show a toast notification with a specified type and message.
- * 
+ *
  * @param {string} type - The type of the toast notification.
  *                       Possible values: 'success', 'info', 'warning', 'error', 'default'
  * @param {string} message - The message to display in the toast.
@@ -184,10 +174,10 @@ function showToast(type, message) {
   };
 
   let title = titleMap[type] || titleMap['default']
-
-  let html_msg = `<div class="v-toast__body p-0">
+  let scrollableClass = type === 'error' ? 'v-toast-scrollable' : ''
+  let html_msg = `<div class="v-toast__body p-0" >
                     <h3 class="font-weight-bold">${title}</h3>
-                    <p>${message}</p>
+                    <p class="${scrollableClass}">${message}</p>
                   </div>`
   const $toast = useToast()
 
@@ -198,4 +188,4 @@ function showToast(type, message) {
   })
 }
 
-export { createMessageModal, showAlert, showConfirm, checkSessionMessage, showToast};
+export { createMessageModal, showAlert, showConfirm, showToast};

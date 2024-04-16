@@ -104,7 +104,7 @@
                     </div>
                   </div>
                 </div>
-                <div id="job_statistics_grid"></div>
+                <div id="job_statistics_grid" class="tabulator-custom"></div>
                 <h4 v-if="jobLogs.length" class="mb-0 mt-2">Showing last {{jobLogs.length}} records</h4>
             </div>
           </div>
@@ -144,11 +144,10 @@ import ConfirmableButton from './ConfirmableButton.vue'
 import { required, maxLength } from '@vuelidate/validators'
 import { useVuelidate } from '@vuelidate/core'
 import { emitter } from '../emitter'
-import ace from 'ace-builds'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import moment from 'moment'
-import { settingsStore } from '../stores/settings'
+import { settingsStore } from '../stores/stores_initializer'
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 
 export default {
@@ -158,13 +157,12 @@ export default {
   },
   props: {
     mode: String,
-    treeNode: Object
+    treeNode: Object,
+    connId: String,
+    databaseIndex: Number,
   },
   data() {
     return {
-      tree: window.v_connTabControl.selectedTab.tag.tree,
-      tabId: window.v_connTabControl.selectedTab.id,
-      databaseIndex: window.v_connTabControl.selectedTab.tag.selectedDatabaseIndex,
       error: '',
       manualInput: false,
       jobName: '',
@@ -262,7 +260,7 @@ export default {
     getDatabases() {
       axios.post('/get_databases_postgresql/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        tab_id: this.connId,
       })
         .then((resp) => {
           this.databases = resp.data.map((x) => x.name)
@@ -275,7 +273,7 @@ export default {
     getJobDetails() {
       axios.post('/get_pgcron_job_details/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        tab_id: this.connId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
@@ -306,11 +304,11 @@ export default {
         {'title': 'Start', field: "start_time",},
         {'title': 'End', field: "end_time",},
         {'title': 'Return Message', field: "return_message"},
-        {'title': 'Command', field: "command", layout: "fitData"},
+        {'title': 'Command', field: "command"},
       ]
       axios.post('/get_pgcron_job_logs/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        tab_id: this.connId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
@@ -344,7 +342,7 @@ export default {
     clearJobStats() {
       axios.post('/delete_pgcron_job_logs/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        tab_id: this.connId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
@@ -360,7 +358,7 @@ export default {
       if(!this.v$.$invalid) {
           axios.post('/save_pgcron_job/', {
             database_index: this.databaseIndex,
-            tab_id: this.tabId,
+            tab_id: this.connId,
             jobId: this.jobId,
             jobName: this.jobName,
             schedule: this.schedule,
@@ -368,7 +366,7 @@ export default {
             inDatabase: this.inDatabase
           })
             .then((resp) => {
-              emitter.emit(`refreshNode_${this.tree.id}`, {"node": this.treeNode})
+              emitter.emit(`refreshNode_${this.connId}`, {"node": this.treeNode})
               $('#pgCronModal').modal('hide')
             })
             .catch((error) => {
@@ -394,11 +392,11 @@ export default {
     deleteJob() {
       axios.post('/delete_pgcron_job/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        tab_id: this.connId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
-          emitter.emit(`removeNode_${this.tree.id}`, {"node": this.treeNode})
+          emitter.emit(`removeNode_${this.connId}`, {"node": this.treeNode})
           $('#pgCronModal').modal('hide')
         })
         .catch((error) => {

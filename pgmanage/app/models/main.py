@@ -19,6 +19,8 @@ class UserDetails(models.Model):
     binary_path = models.CharField(max_length=256, null=True)
     date_format = models.CharField(max_length=200, null=True)
     pigz_path = models.CharField(max_length=256, null=True)
+    restore_tabs = models.BooleanField(default=True)
+    scroll_tree = models.BooleanField(default=True)
 
     def get_pigz_path(self):
 
@@ -39,6 +41,12 @@ class UserDetails(models.Model):
                 os.path.dirname(shutil.which("psql")) if shutil.which("psql") else ""
             )
         return binary_path
+
+    def get_editor_theme(self):
+        if self.theme == "light":
+            return "omnidb"
+        return "omnidb_dark"
+    
 
 class Shortcut(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -103,12 +111,14 @@ class QueryHistory(models.Model):
     duration = models.TextField(blank=False, default='')
     status = models.TextField(blank=False, default='')
     snippet = models.TextField(blank=False, default='')
+    database = models.CharField(max_length=200, null=True)
 
 class ConsoleHistory(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     connection = models.ForeignKey(Connection,on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     snippet = models.TextField(blank=False, default='')
+    database = models.CharField(max_length=200, null=True)
 
 class Group(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -123,17 +133,17 @@ class GroupConnection(models.Model):
             models.UniqueConstraint(fields=['group', 'connection'], name='unique_group_connection')
         ]
 
-class MonUnits(models.Model):
+class MonWidgets(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE, null=True)
     technology = models.ForeignKey(Technology,on_delete=models.CASCADE)
     script_chart = models.TextField(blank=False, default='')
     script_data = models.TextField(blank=False, default='')
     type = models.TextField(blank=False, default='')
     title = models.TextField(blank=False, default='')
-    is_default = models.BooleanField(default=False)
     interval = models.IntegerField(blank=False,default=60)
+    editable = models.BooleanField(default=True)
 
-class MonUnitsConnections(models.Model):
+class MonWidgetsConnections(models.Model):
     unit = models.IntegerField(blank=False,default=None)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     connection = models.ForeignKey(Connection,on_delete=models.CASCADE)

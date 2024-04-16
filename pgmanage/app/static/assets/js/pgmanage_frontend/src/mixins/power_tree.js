@@ -1,15 +1,17 @@
-import { emitter } from '../emitter'
-import ContextMenu from '@imengyu/vue3-context-menu'
-import { showPasswordPrompt } from '../passwords';
-import axios from 'axios';
-import { showAlert, showToast } from '../notification_control';
-
+import { emitter } from "../emitter";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import axios from "axios";
+import { showToast } from "../notification_control";
+import { tabsStore, settingsStore, connectionsStore } from "../stores/stores_initializer";
+import { logger } from "../logging/logger_setup";
+import { axiosHooks } from "../logging/service";
 
 export default {
+  emits: ["treeTabsUpdate", "clearTabs"],
   data() {
     return {
-      selectedDatabase: window.v_connTabControl.selectedTab.tag.selectedDatabase,
-    }
+      selectedDatabase: tabsStore.selectedPrimaryTab.metaData.selectedDatabase,
+    };
   },
   computed: {
     cmRefreshObject() {
@@ -20,11 +22,11 @@ export default {
       };
     },
     selectedNode() {
-      return this.getSelectedNode()
-    }
+      return this.getSelectedNode();
+    },
   },
   beforeCreate() {
-    this.id = Math.random().toString(16).slice(2)
+    this.id = Math.random().toString(16).slice(2);
   },
   mounted() {
     this.api = axios.create({
@@ -40,54 +42,43 @@ export default {
         ...axios.defaults.transformRequest,
       ],
     });
+    axiosHooks(logger, this.api)
 
-    this.api.interceptors.response.use(response => {
-      return response;
-    }, error => {
-      if (error.response.status === 401) {
-        showAlert('User not authenticated, please reload the page.');
-      }
-      return Promise.reject(error);
+    emitter.on(`refreshNode_${this.tabId}`, (e) => {
+      this.refreshTree(e.node);
     });
 
-    emitter.on(`refreshNode_${this.id}`, (e) => {
-      this.refreshTree(e.node);
-    })
-
-    emitter.on(`removeNode_${this.id}`, (e) => {
-      this.removeNode(e.node)
-    })
+    emitter.on(`removeNode_${this.tabId}`, (e) => {
+      this.removeNode(e.node);
+    });
 
     emitter.on(`refreshTreeRecursive_${this.tabId}`, (node_type) => {
-      this.refreshTreeRecursive(node_type)
-    })
+      this.refreshTreeRecursive(node_type);
+    });
 
-    // Temporary solution, use Pinia store later
-    if (this.getRootNode().title === 'Snippets') {
-      v_connTabControl.snippet_tree = this
-    } else {
-      v_connTabControl.selectedTab.tag.tree = this
-    }
   },
   unmounted() {
-    emitter.all.delete(`refreshNode_${this.id}`)
-    emitter.all.delete(`removeNode_${this.id}`)
+    emitter.all.delete(`refreshNode_${this.id}`);
+    emitter.all.delete(`removeNode_${this.id}`);
+    emitter.all.delete(`refreshTreeRecursive_${this.tabId}`)
   },
   methods: {
     onClickHandler(node, e) {
-      // fix this not to use window
-      if (window.v_connTabControl.selectedTab.tag.treeTabsVisible)
+      if (this.getRootNode().title !== "Snippets") {
         this.getProperties(node);
+      }
     },
     onToggle(node, e) {
       this.$refs.tree.select(node.path);
       if (node.isExpanded) return;
       this.refreshTree(node);
-      this.getNodeEl(node.path).scrollIntoView({
-        block: "start",
-        inline: "nearest",
-        behavior: "smooth",
-      });
+      if(settingsStore.scrollTree) {
+        this.getNodeEl(node.path).scrollIntoView({
+          block: "start",
+          inline: "nearest",
+          behavior: "smooth",
+        })
+      }
     },
     doubleClickNode(node, e) {
       if (node.isLeaf) return;
@@ -130,16 +121,14 @@ export default {
           isExpanded: false,
           isDraggable: false,
           data: {
-            database: this.selectedDatabase, ...data
-          }
+            database: this.selectedDatabase,
+            ...data,
+          },
         }
       );
     },
     insertNodes(node, child_nodes) {
-      this.$refs.tree.insert(
-        {node: node, placement: "inside"},
-        child_nodes
-      )
+      this.$refs.tree.insert({ node: node, placement: "inside" }, child_nodes);
     },
     getParentNode(node) {
       const parentNode = this.$refs.tree.getNode(node.path.slice(0, -1));
@@ -183,25 +172,32 @@ export default {
       return node.title;
     },
     removeNode(node) {
-      this.$refs.tree.remove([node.path])
+      this.$refs.tree.remove([node.path]);
     },
     nodeOpenError(error_response, node) {
       if (error_response.response.data?.password_timeout) {
-        showPasswordPrompt(
-          this.databaseIndex,
-          () => {
-            this.refreshNode();
+        emitter.emit('show_password_prompt', {
+          databaseIndex: this.databaseIndex,
+          successCallback: () => {
+            connectionsStore.queueChangeActiveDatabaseThreadSafe({
+              database_index: this.databaseIndex,
+              tab_id: this.tabId,
+              database: this.selectedDatabase,
+            });
+
+            // notify queryEditors that we are authenticated and db metadata can be now fetched
+            emitter.emit("refetchMeta", {databaseIndex: this.databaseIndex})
+            this.refreshNode()
           },
-          null,
-          error_response.response.data.data
-        );
+          message: error_response.response.data.data,
+          kind: error_response.response.data.kind})
       } else {
         this.removeChildNodes(node);
-        showToast("error", error_response.response.data.data)
+        showToast("error", error_response.response.data.data);
       }
     },
     getRootNode() {
-      return this.$refs.tree.getFirstNode()
+      return this.$refs.tree.getFirstNode();
     },
     refreshTreeRecursive(node_type) {
       const rootNode = this.getRootNode();
@@ -221,7 +217,7 @@ export default {
                 node_type === "extension_list"
               ) {
                 this.refreshTree(childNode);
-                
+
                 setTimeout(() => {
                   getInnerNode(childNode, node_type);
                 }, 200);
