@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { startLoading, endLoading, getCookie } from "./ajax_control";
-import { showConfirm, showAlert } from "./notification_control";
+import { showConfirm, showToast } from "./notification_control";
 import axios from 'axios'
 
 let v_usersObject;
@@ -56,13 +56,12 @@ function removeUserConfirm(id) {
     axios.post(
         '/remove_user/',
             {'id': id},
-            {headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) }}
-        ).then((resp) => {
+        ).then(() => {
             if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0)
                 document.getElementById('div_save_users').disabled = true;
             listUsers(true);
         }).catch((error) => {
-            showAlert('Request error')
+            showToast("error", error.response.data.data)
         })
 }
 
@@ -133,17 +132,16 @@ function saveUsers() {
 
     axios.post(
         '/save_users/',
-            {'changes': changes, "user_id_list": v_user_id_list},
-            {headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) }}
+            {'changes': changes, "user_id_list": v_user_id_list}
         ).then((resp) => {
             v_usersObject.v_cellChanges = [];
             newUsersObject.newUsers = [];
             if (v_usersObject.v_cellChanges.length === 0 && newUsersObject.newUsers.length === 0) {
                 document.getElementById('div_save_users').disabled = true;
             }
-            listUsers(true, {users_update: v_data});
+            listUsers(true, {users_update: changes});
         }).catch((error) => {
-            showAlert('Request error')
+            showToast("error", error.response.data.data)
         })
 
 }
@@ -237,12 +235,11 @@ function getUsers(p_options = false) {
         axios.post(
             '/get_users/',
                 {},
-                {headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) }}
             ).then((resp) => {
                 v_usersObject = new Object();
-                v_usersObject.v_user_ids = resp.data.v_data.v_user_ids;
+                v_usersObject.v_user_ids = resp.data.user_ids;
                 v_usersObject.v_cellChanges = [];
-                v_usersObject.list = resp.data.v_data.v_data;
+                v_usersObject.list = resp.data.user_list;
 
                 var v_users_update_html = '';
                 if (p_options) {
@@ -274,7 +271,7 @@ function getUsers(p_options = false) {
                     }
                 }
 
-                var v_user_list_data = resp.data.v_data.v_data;
+                var v_user_list_data = resp.data.user_list;
                 var v_user_list_element = document.createElement('div');
                 v_user_list_element.classList = ["omnidb__user-list"];
                 var v_user_count = 0;
@@ -352,7 +349,8 @@ function getUsers(p_options = false) {
                 $('[data-toggle="tooltip"]').tooltip({animation:true});// Loads or Updates all tooltips
                 endLoading();
             }).catch((error) => {
-                showAlert('Request error')
+                endLoading();
+                showToast("error", error.response.data.data)
             })
     }
 
