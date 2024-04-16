@@ -355,3 +355,17 @@ def get_table_definition(request, database):
         return JsonResponse(data={"data": str(exc)}, status=400)
 
     return JsonResponse(data={"data": columns})
+
+
+@user_authenticated
+@database_required_new(check_timeout=True, open_connection=True)
+def get_view_definition(request, database):
+    data = request.data
+    view = data["view"]
+
+    try:
+        view_definition = database.GetViewDefinition(view)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=400)
+
+    return JsonResponse(data={"data": view_definition})
