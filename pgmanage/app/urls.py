@@ -36,7 +36,6 @@ base_urlpatterns = [
 
     #USERS
     re_path(r'^get_users/$', views.users.get_users, name='get_users'),
-    re_path(r'^new_user/$', views.users.new_user, name='new_user'),
     re_path(r'^remove_user/$', views.users.remove_user, name='remove_user'),
     re_path(r'^save_users/$', views.users.save_users, name='save_users'),
 

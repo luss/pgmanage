@@ -108,13 +108,12 @@ def database_required_new(check_timeout=True, open_connection=True):
 
 
 def superuser_required(function):
-    @session_required(use_old_error_format=True)
+    @session_required
     @wraps(function)
     def wrap(request, session, *args, **kwargs):
         if session.v_super_user:
             return function(request, *args, **kwargs)
-        return error_response(message="You must be superuser to perform this operation")
-
+        return JsonResponse({"data": "You must be superuser to perform this operation"}, status=403)
     return wrap
 
 
