@@ -24,6 +24,7 @@ def get_tree_info(request, database):
             "drop_index": database.TemplateDropIndex().v_text,
             "delete": database.TemplateDelete().v_text,
             "create_trigger": database.TemplateCreateTrigger().v_text,
+            "alter_trigger": database.TemplateAlterTrigger().v_text,
             "drop_trigger": database.TemplateDropTrigger().v_text,
         }
     except Exception as exc:

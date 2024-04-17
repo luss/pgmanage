@@ -928,6 +928,9 @@ END
 
     def TemplateDropTrigger(self):
         return Template('DROP TRIGGER #trigger_name#')
+    
+    def TemplateAlterTrigger(self):
+        return Template(f"{self.TemplateDropTrigger().v_text};\n{self.TemplateCreateTrigger().v_text}")
 
     def GetAutocompleteValues(self, p_columns, p_filter):
         return None

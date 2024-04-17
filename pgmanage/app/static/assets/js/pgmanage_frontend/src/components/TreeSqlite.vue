@@ -245,6 +245,21 @@ export default {
         ],
         cm_trigger: [
           {
+            label: "Alter Trigger",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              tabSQLTemplate(
+                "Alter Trigger",
+                this.templates.alter_trigger
+                  .replace("#trigger_name#", this.selectedNode.title)
+                  .replace(
+                    "#table_name#",
+                    this.getParentNodeDeep(this.selectedNode, 2).title
+                  )
+              );
+            },
+          },
+          {
             label: "Drop Trigger",
             icon: "fas cm-all fa-times",
             onClick: () => {
@@ -355,9 +370,10 @@ export default {
       let table;
       switch (node.data.type) {
         case "table_field":
-          table = this.getParentNodeDeep(node, 2).title;
         case "unique":
+        case "trigger":
           table = this.getParentNodeDeep(node, 2).title;
+          break;
         default:
           table = null;
       }
