@@ -1083,3 +1083,7 @@ END
     @lock_required
     def QueryTableDefinition(self, table=None):
         return self.v_connection.Query("PRAGMA table_info('{0}')".format(table), True)
+    
+    @lock_required
+    def GetViewDefinition(self, view):
+        return self.v_connection.ExecuteScalar(f"SELECT sql from sqlite_master WHERE type = 'view' AND name = '{view}'")

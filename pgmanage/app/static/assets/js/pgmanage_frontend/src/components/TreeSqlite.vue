@@ -278,6 +278,13 @@ export default {
             },
           },
           {
+            label: "Edit View",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              this.getViewDefinition(this.selectedNode);
+            },
+          },
+          {
             label: "Drop View",
             icon: "fas cm-all fa-times",
             onClick: () => {
@@ -775,6 +782,22 @@ export default {
               true
             );
           }, null);
+        })
+        .catch((error) => {
+          this.nodeOpenError(error, node);
+        });
+    },
+    getViewDefinition(node) {
+      this.api
+        .post("/get_view_definition_sqlite/", {
+          view: node.title,
+        })
+        .then((resp) => {
+          let editTemplate = `${this.templates.drop_view.replace(
+                  "#view_name#",
+                  node.title
+                )};\n${resp.data.data}`
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, editTemplate)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
