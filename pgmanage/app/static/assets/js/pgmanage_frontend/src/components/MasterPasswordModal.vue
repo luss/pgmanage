@@ -97,7 +97,6 @@
               id="password_check_button"
               type="button"
               class="btn btn-success"
-              data-dismiss="modal"
               @click="checkMasterPassword"
             >
               Ok
@@ -142,7 +141,6 @@ export default {
       isNewPassword: false,
       passwordMessage:
         "Please provide your master password to unlock your connection credentials for this session.",
-      masterPassConfirmed: true,
     };
   },
   computed: {
@@ -179,14 +177,10 @@ export default {
           this.$refs.masterPassCheckInput.focus();
         }
       });
-
-      $(this.$refs.masterPasswordModal).on("hidden.bs.modal", () => {
-        if (!this.masterPassConfirmed) {
-          this.showModal();
-        }
-      });
     },
     showModal() {
+      this.passwordMessage =
+        "Please provide your master password to unlock your connection credentials for this session.";
       $(this.$refs.masterPasswordModal).modal({
         backdrop: "static",
         keyboard: false,
@@ -198,27 +192,24 @@ export default {
           master_password: this.password,
         })
         .then(() => {
-          this.$emit("checkCompleted")
+          this.$emit("checkCompleted");
           showToast("success", "Master password created.");
         });
     },
     checkMasterPassword() {
-      $(this.$refs.masterPasswordModal).modal("hide");
       axios
         .post("/master_password/", {
           master_password: this.checkPassword,
         })
         .then(() => {
-          this.$emit("checkCompleted")
-          this.masterPassConfirmed = true;
+          $(this.$refs.masterPasswordModal).modal("hide");
+          this.$emit("checkCompleted");
         })
         .catch((error) => {
           this.passwordMessage = error.response.data.data;
-          this.masterPassConfirmed = false;
         });
     },
     resetPassword() {
-      this.masterPassConfirmed = true;
       createMessageModal(
         `Are you sure you want to reset you master password?
                                You will lose your saved connection passwords.`,
