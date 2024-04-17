@@ -29,12 +29,12 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button v-if="action === 'rename'" type="button" class="btn btn-primary" data-dismiss="modal"
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button v-if="action === 'rename'" type="button" class="btn btn-primary" data-bs-dismiss="modal"
             @click="rename">Rename</button>
-          <button v-else-if="action === 'delete'" type="button" class="btn btn-danger" data-dismiss="modal"
+          <button v-else-if="action === 'delete'" type="button" class="btn btn-danger" data-bs-dismiss="modal"
             @click="delete">Delete</button>
-          <button v-else type="button" class="btn btn-primary" data-dismiss="modal"
+          <button v-else type="button" class="btn btn-primary" data-bs-dismiss="modal"
             @click="create($event, createdFileType)">Create</button>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default {
     }
   },
   mounted() {
-    $(this.$refs.fileManagerActionsModal).on('hidden.bs.modal', () => {
+    this.$refs.fileManagerActionsModal.addEventListener('hidden.bs.modal', () => {
       this.name = ''
     })
   },

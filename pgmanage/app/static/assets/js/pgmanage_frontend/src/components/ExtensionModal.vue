@@ -5,7 +5,7 @@
 
         <div class="modal-header align-items-center">
           <h2 class="modal-title font-weight-bold">{{ modalTitle }}</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -73,6 +73,7 @@ import { emitter } from '../emitter'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import { settingsStore } from '../stores/stores_initializer'
+import { Modal } from 'bootstrap'
 
 export default {
   name: 'ExtensionModal',
@@ -93,6 +94,7 @@ export default {
       selectedSchema: '',
       selectedVersion: '',
       editor: '',
+      modalInstance: null
     }
   },
   computed: {
@@ -156,9 +158,10 @@ export default {
     }
     this.setupEditor()
     if (this.mode !== 'Drop') {
-      $('#postgresqlExtensionModal').modal('show')
+      this.modalInstance = new Modal('#postgresqlExtensionModal')
+      this.modalInstance.show()
     } else {
-      $('#generic_modal_message').modal('show')
+      Modal.getOrCreateInstance('#generic_modal_message').show()
     }
   },
   methods: {
@@ -194,7 +197,7 @@ export default {
       })
         .then((resp) => {
           emitter.emit(`refreshTreeRecursive_${this.tabId}`, "extension_list");
-          $('#postgresqlExtensionModal').modal('hide')
+          this.modalInstance.hide()
         })
         .catch((error) => {
           showToast("error", error.response.data.data)

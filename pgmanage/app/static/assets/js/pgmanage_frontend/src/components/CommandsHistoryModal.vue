@@ -6,7 +6,7 @@
           <h2 class="modal-title font-weight-bold">
             {{ tabType }} commands history
           </h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -99,6 +99,7 @@ import { emitter } from "../emitter";
 import ConfirmableButton from "./ConfirmableButton.vue";
 import { showToast } from "../notification_control";
 import CellDataModal from "./CellDataModal.vue";
+import { Modal } from "bootstrap";
 
 export default {
   name: "CommandsHistoryModal",
@@ -172,7 +173,7 @@ export default {
                 label: "Copy Content To Query Tab",
                 action: (e, cell) => {
                   emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
-                  $(this.$refs.historyModal).modal("hide");
+                  this.modalInstance.hide()
                 },
               },
             ],
@@ -205,7 +206,7 @@ export default {
                 '<div style="position: absolute;"><i class="fas fa-bolt cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy Content To Console Tab</div>',
               action: (e, cell) => {
                 emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
-                $(this.$refs.historyModal).modal("hide");
+                this.modalInstance.hide()
               },
             },
             {
@@ -235,11 +236,11 @@ export default {
   mounted() {
     this.setupTabulator();
 
-    $(this.$refs.historyModal).on("shown.bs.modal", () => {
+    this.$refs.historyModal.addEventListener("shown.bs.modal", () => {
       this.setupDateRangePicker();
     });
 
-    $(this.$refs.historyModal).on("hide.bs.modal", () => {
+    this.$refs.historyModal.addEventListener("hide.bs.modal", () => {
       this.$emit("modalHide");
       $(this.$refs.timeRange).data('daterangepicker').remove()
     });
@@ -414,7 +415,8 @@ export default {
       }
     },
     showCommandsModal() {
-      $(this.$refs.historyModal).modal("show");
+      this.modalInstance = Modal.getOrCreateInstance(this.$refs.historyModal)
+      this.modalInstance.show()
     },
     resetToDefault() {
       this.startedFrom = moment().subtract(6, "hour").toISOString();

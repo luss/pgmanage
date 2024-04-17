@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title">File manager</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -97,6 +97,7 @@
 import FileManagerActionsModal from './FileManagerActionsModal.vue'
 import axios from 'axios'
 import { showToast } from '../notification_control'
+import { Modal } from 'bootstrap'
 
 export default {
   name: 'FileManager',
@@ -166,20 +167,20 @@ export default {
     },
     openActionsModal(action) {
       this.action = action
-      $(this.$refs.actionsModal.$el).modal('show')
+      Modal.getOrCreateInstance(this.$refs.actionsModal.$el).show()
     },
     confirmSelection() {
       this.$emit('changeFile', {
         filePath: this.selectedFile.file_path
       })
-      $(this.$refs.fileManagerModal).modal('hide')
+      Modal.getOrCreateInstance(this.$refs.fileManagerModal).hide()
     },
     show(desktop_mode, onChange, dialog_type) {
       if (desktop_mode) {
         this.showNative(onChange, dialog_type)
       } else {
         this.getDirContent()
-        $(this.$refs.fileManagerModal).modal('show')
+        Modal.getOrCreateInstance(this.$refs.fileManagerModal).show()
       }
     },
     showNative(onChange, dialog_type) {

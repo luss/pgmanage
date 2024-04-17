@@ -15,7 +15,7 @@
           >
             <a
               :id="tab.id"
-              data-toggle="tab"
+              data-bs-toggle="tab"
               :class="[
                 'omnidb__tab-menu__link',
                 'nav-item',

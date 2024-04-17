@@ -4,7 +4,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
-          <button v-if="closable" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button v-if="closable" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -19,9 +19,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button id="generic_modal_message_yes" type="button" class="btn btn-primary" data-dismiss="modal"
+          <button id="generic_modal_message_yes" type="button" class="btn btn-primary" data-bs-dismiss="modal"
             @click="successFunc">Yes</button>
-          <button id="generic_modal_message_no" type="button" class="btn btn-danger" data-dismiss="modal"
+          <button id="generic_modal_message_no" type="button" class="btn btn-danger" data-bs-dismiss="modal"
             @click="cancelFunc">No</button>
         </div>
       </div>

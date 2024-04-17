@@ -14,7 +14,7 @@
                   <b>{{ databaseName }}</b>
                   <div
                     class="omnidb__switch omnidb__switch--sm float-right"
-                    data-toggle="tooltip"
+                    data-bs-toggle="tooltip"
                     data-placement="bottom"
                     data-html="true"
                     title=""
@@ -177,7 +177,6 @@ export default {
   mounted() {
     this.changeDatabase(this.connectionTab.metaData.selectedDatabaseIndex);
     this.subscribeToConnectionChanges(this.connTabId, this.databaseIndex);
-    $('[data-toggle="tooltip"]').tooltip({ animation: true }); // Loads or Updates all tooltips
     this.$nextTick(() => {
       if (this.connectionTab.metaData.createInitialTabs) {
         let name = tabsStore.selectedPrimaryTab.metaData.selectedDatabase.replace('\\', '/').split('/').pop()

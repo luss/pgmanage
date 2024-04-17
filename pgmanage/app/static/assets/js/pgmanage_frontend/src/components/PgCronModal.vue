@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title font-weight-bold">{{ modalTitle }}</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -13,11 +13,11 @@
 
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" id="job_schedule-tab" data-toggle="tab" href="#job_schedule"
+              <a class="nav-link active" id="job_schedule-tab" data-bs-toggle="tab" href="#job_schedule"
                 role="tab" aria-controls="job_schedule" aria-selected="true">Schedule</a>
             </li>
             <li v-if="mode==='Edit'" class="nav-item">
-              <a class="nav-link" id="job_statistics-tab" data-toggle="tab" href="#job_statistics" role="tab"
+              <a class="nav-link" id="job_statistics-tab" data-bs-toggle="tab" href="#job_statistics" role="tab"
                 aria-controls="job_statistics" aria-selected="false">Job Statistics</a>
             </li>
           </ul>
@@ -149,6 +149,7 @@ import { showToast } from '../notification_control'
 import moment from 'moment'
 import { settingsStore } from '../stores/stores_initializer'
 import { TabulatorFull as Tabulator } from "tabulator-tables";
+import { Modal } from 'bootstrap'
 
 export default {
   name: 'PgCronModal',
@@ -243,10 +244,11 @@ export default {
     this.getDatabases()
     if (this.mode === 'Edit') {
         this.getJobDetails()
-        $('#job_statistics-tab').on('shown.bs.tab', this.setupJobStatisticsTab)
+        let tabEl = document.getElementById('#job_statistics-tab')
+        tabEl.addEventListener('shown.bs.tab', this.setupJobStatisticsTab)
     }
     this.setupEditor()
-    $('#pgCronModal').modal('show')
+    Modal.getOrCreateInstance('#pgCronModal').show()
   },
 
   methods: {
@@ -367,7 +369,7 @@ export default {
           })
             .then((resp) => {
               emitter.emit(`refreshNode_${this.connId}`, {"node": this.treeNode})
-              $('#pgCronModal').modal('hide')
+              Modal.getOrCreateInstance('#pgCronModal').hide()
             })
             .catch((error) => {
               showToast("error", error.response.data.data)
@@ -397,7 +399,7 @@ export default {
       })
         .then((resp) => {
           emitter.emit(`removeNode_${this.connId}`, {"node": this.treeNode})
-          $('#pgCronModal').modal('hide')
+          Modal.getOrCreateInstance('#pgCronModal').hide()
         })
         .catch((error) => {
           showToast("error", error.response.data.data)

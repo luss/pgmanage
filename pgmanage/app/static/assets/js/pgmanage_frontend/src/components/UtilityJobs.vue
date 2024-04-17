@@ -27,7 +27,7 @@
               'fa-circle-check text-success' : jobStatus(job.process_state) === 'Finished',
               'fa-circle-exclamation text-danger' : jobStatus(job.process_state) === 'Failed'
             }]"
-              data-toggle="tooltip" data-placement="bottom" :title="jobStatus(job.process_state)"
+              data-bs-toggle="tooltip" data-placement="bottom" :title="jobStatus(job.process_state)"
             ></i>
           </div>
           <div class="col-1">{{ job.duration }}</div>

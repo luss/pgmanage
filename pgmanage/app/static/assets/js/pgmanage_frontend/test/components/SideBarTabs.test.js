@@ -11,7 +11,7 @@ import { mount, enableAutoUnmount } from "@vue/test-utils";
 
 vi.hoisted(() => {
   vi.stubGlobal("v_csrf_cookie_name", "test_cookie");
-})
+});
 
 import SideBarTabs from "../../src/components/SideBarTabs.vue";
 import "bootstrap";
@@ -20,12 +20,9 @@ import { emitter } from "../../src/emitter";
 import { useTabsStore } from "../../src/stores/tabs";
 import { useConnectionsStore } from "../../src/stores/connections";
 
-vi.mock("@/workspace.js", () => {
-  const showMenuNewTabOuter = vi.fn();
-
-  return { showMenuNewTabOuter };
+vi.mock("@/users.js", () => {
+  return {};
 });
-
 vi.mock("@/header_actions.js", () => {
   const showConfigUser = vi.fn;
   return { showConfigUser };

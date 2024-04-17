@@ -25,6 +25,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { Modal } from "bootstrap";
 import { startLoading, endLoading, getCookie } from "./ajax_control";
 import { showConfirm, showAlert } from "./notification_control";
 import axios from 'axios'
@@ -148,11 +149,12 @@ function saveUsers() {
 
 }
 
-$('#modal_users').on('shown.bs.modal', function (e) {
+let usersModalEl = document.getElementById("modal_users")
+usersModalEl.addEventListener('shown.bs.modal', function (e) {
   getUsers();
 });
 
-$('#modal_users').on('hidden.bs.modal', function (e) {
+usersModalEl.addEventListener('hidden.bs.modal', function (e) {
     newUsersObject.newUsers = [];
 });
 
@@ -349,7 +351,6 @@ function getUsers(p_options = false) {
                 }
                 if (v_usersObject.v_cellChanges.length > 0 || newUsersObject.newUsers.length > 0)
                     document.getElementById('div_save_users').disabled = false;
-                $('[data-toggle="tooltip"]').tooltip({animation:true});// Loads or Updates all tooltips
                 endLoading();
             }).catch((error) => {
                 showAlert('Request error')
@@ -380,7 +381,7 @@ function listUsers(p_refresh,p_options = false) {
     }
 
   if (p_refresh==null) {
-        $('#modal_users').modal();
+        Modal.getOrCreateInstance('#modal_users').show()
     }
   else {
         getUsers(p_options);
@@ -432,7 +433,7 @@ function renderSelectedUser(event) {
                     "</div>" +
                     "<span class='ml-2'>Superuser?</span>" +
                     "<div class='ml-2 mb-2'>" +
-                        "<div class='omnidb__switch mr-2' data-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
+                        "<div class='omnidb__switch mr-2' data-bs-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
                             "<input type='checkbox' id='user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + ">" +
                             "<label for='user_item_superuser_" + i  + "' class='omnidb__switch--label'><span><i class='fas fa-star'></i></span></label>" +
                         "</div>" +
@@ -489,7 +490,7 @@ function renderSelectedUser(event) {
                     "</div>" +
                     "<span class='ml-2'>Superuser?</span>" +
                     "<div class='ml-2 mb-2'>" +
-                        "<div class='omnidb__switch mr-2' data-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
+                        "<div class='omnidb__switch mr-2' data-bs-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
                             "<input type='checkbox' id='new_user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + ">" +
                             "<label for='new_user_item_superuser_" + i  + "' class='omnidb__switch--label'><span><i class='fas fa-star'></i></span></label>" +
                         "</div>" +

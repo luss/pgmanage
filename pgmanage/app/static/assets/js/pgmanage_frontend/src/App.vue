@@ -64,9 +64,6 @@ export default {
       v_omnis.div.addEventListener('click', function () {
         startTutorial('getting_started');
       });
-
-      // Loads or Updates all tooltips.
-      $('[data-toggle="tooltip"]').tooltip({ animation: true });
     }
   }
 };

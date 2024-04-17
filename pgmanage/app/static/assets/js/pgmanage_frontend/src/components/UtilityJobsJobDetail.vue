@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="jobDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" id="jobDetailModal" ref="jobDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
@@ -45,6 +45,7 @@
 <script>
 import { utilityJobStore } from "../stores/stores_initializer";
 import axios from "axios";
+import { Modal } from "bootstrap";
 import $ from "jquery";
 
 export default {
@@ -59,21 +60,21 @@ export default {
     };
   },
   mounted() {
-    $("#jobDetailModal").on("hide.bs.modal", () => {
+    this.$refs.jobDetailModal.addEventListener("hide.bs.modal", () => {
       this.setDefault();
       utilityJobStore.clearSelected();
     });
-    $("#jobDetailModal").on("show.bs.modal", () => {
+    this.$refs.jobDetailModal.addEventListener("show.bs.modal", () => {
       this.getJobDetails(this.selectedJob.id, this.out, this.err);
     });
-    $("#jobDetailModal").on("shown.bs.modal", () => {
+    this.$refs.jobDetailModal.addEventListener("shown.bs.modal", () => {
       this.scrollToBottom();
     });
 
     utilityJobStore.$onAction((action) => {
       if (action.name === "setJob") {
         action.after(() => {
-          $("#jobDetailModal").modal("show");
+          Modal.getOrCreateInstance(this.$refs.jobDetailModal).show()
         });
       }
     });

@@ -13,7 +13,7 @@
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             aria-label="Close"
             @click="cancel"
           >
@@ -39,7 +39,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             @click="submit"
           >
             Ok
@@ -47,7 +47,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             @click="cancel"
           >
             Cancel
@@ -62,6 +62,7 @@
 import { emitter } from "../emitter";
 import axios from "axios";
 import { tabsStore } from "../stores/stores_initializer";
+import { Modal } from "bootstrap";
 
 export default {
   name: "PasswordModal",
@@ -74,6 +75,7 @@ export default {
       databaseIndex: null,
       passwordKind: null,
       resetToDefault: false,
+      modalInstance: null,
     };
   },
   mounted() {
@@ -95,7 +97,7 @@ export default {
       }
     );
 
-    $(this.$refs.modalPassword).on("hidden.bs.modal", () => {
+    this.$refs.modalPassword.addEventListener("hidden.bs.modal", () => {
       if (!this.resetToDefault) {
         this.showModal();
       } else {
@@ -103,19 +105,20 @@ export default {
       }
     });
 
-    $(this.$refs.modalPassword).on("shown.bs.modal", () => {
+    this.$refs.modalPassword.addEventListener("shown.bs.modal", () => {
       this.$refs.passwordInput.focus();
     });
   },
   methods: {
     showModal() {
-      $(this.$refs.modalPassword).modal({
+      this.modalInstance = Modal.getOrCreateInstance(this.$refs.modalPassword, {
         backdrop: "static",
         keyboard: false,
       });
+      this.modalInstance.show();
     },
     submit() {
-      $(this.$refs.modalPassword).modal("hide");
+      this.modalInstance.hide();
       this.renewPassword();
     },
     cancel() {

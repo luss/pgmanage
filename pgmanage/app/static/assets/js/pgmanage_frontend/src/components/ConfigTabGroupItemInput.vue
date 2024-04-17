@@ -47,6 +47,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, requiredUnless, minValue, maxValue, helpers } from '@vuelidate/validators'
 import { tabsStore } from '../stores/stores_initializer';
+import { Tooltip } from 'bootstrap';
 
 export default {
   setup() {
@@ -122,21 +123,28 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      $(`#${this.inputId}`).tooltip({
-        container: this.$refs.settingInput,
-        sanitize: false,
-        title: this.tooltipTitle,
-        boundary: "window",
-        html: true,
-        delay: { show: 500, hide: 100 },
-      });
-      $(`#${this.buttonId}`).tooltip({
-        container: this.$refs.resetButton,
-        sanitize: false,
-        boundary: "window",
-        html: true,
-        delay: { show: 500, hide: 100 },
-      });
+      const inputEl = document.getElementById(this.inputId)
+      const buttonEl = document.getElementById(this.buttonId)
+
+      if (inputEl) {
+        new Tooltip(inputEl, {
+          container: this.$refs.settingInput,
+          sanitize: false,
+          title: this.tooltipTitle,
+          boundary: "window",
+          html: true,
+          delay: { show: 500, hide: 100 }
+        })
+      }
+      if (buttonEl) {
+        new Tooltip(buttonEl, {
+          container: this.$refs.resetButton,
+          sanitize: false,
+          boundary: "window",
+          html: true,
+          delay: { show: 500, hide: 100 }
+        })
+      }
     });
   },
   methods: {

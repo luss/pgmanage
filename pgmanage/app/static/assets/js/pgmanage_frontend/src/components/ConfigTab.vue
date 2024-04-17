@@ -100,7 +100,7 @@
         <div class="modal-header align-items-center">
           <h2 v-if="!modalRevertConfig" class="modal-title">Config Management</h2>
           <h2 v-else class="modal-title">Revert Configuration</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
@@ -137,10 +137,10 @@
         </div>
         <div class="modal-footer">
           <button v-if="!modalRevertConfig" id="config_modal_button" type="button" class="btn btn-primary mr-2"
-            data-dismiss="modal" @click="saveConfiguration">
+            data-bs-dismiss="modal" @click="saveConfiguration">
             Save configuration
           </button>
-          <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-dismiss="modal"
+          <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-bs-dismiss="modal"
             @click="revertConfig" :disabled="!hasRevertValues">
             Revert configuration
           </button>
@@ -158,6 +158,7 @@ import axios from 'axios'
 import { showToast } from "../notification_control";
 import distance from 'jaro-winkler'
 import moment from 'moment'
+import { Modal } from "bootstrap";
 
 export default {
   name: "Config",
@@ -320,11 +321,11 @@ export default {
     confirmConfig(event, revert = false) {
       if (!revert) {
         this.modalRevertConfig = false
-        $(`#${this.modalId}`).modal();
+        Modal.getOrCreateInstance(`#${this.modalId}`).show()
       } else {
         this.getConfigurationDiffs()
         this.modalRevertConfig = true
-        $(`#${this.modalId}`).modal();
+        Modal.getOrCreateInstance(`#${this.modalId}`).show()
       }
     },
     revertConfig(event) {

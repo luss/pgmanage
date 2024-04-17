@@ -19,7 +19,7 @@
             <button
               type="button"
               class="close"
-              data-dismiss="modal"
+              data-bs-dismiss="modal"
               aria-label="Close"
               @click="closeModal"
             >
@@ -190,6 +190,7 @@ import { showToast } from "../notification_control";
 import MonitoringWidget from "./MonitoringWidget.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minValue, minLength } from "@vuelidate/validators";
+import { Modal } from "bootstrap";
 
 export default {
   name: "MonitoringWidgetEditModal",
@@ -223,6 +224,7 @@ export default {
       showTestWidget: false,
       testWidgetData: {},
       heightSubtract: 150,
+      modalInstance: null,
     };
   },
   computed: {
@@ -245,10 +247,11 @@ export default {
   watch: {
     modalVisible(newValue, oldValue) {
       if (newValue) {
-        $(this.$refs.editWidgetModal).modal({
+        this.modalInstance = Modal.getOrCreateInstance(this.$refs.editWidgetModal, {
           backdrop: "static",
           keyboard: false,
-        });
+        })
+        this.modalInstance.show();
         this.setupModal();
       }
     },
@@ -364,8 +367,8 @@ export default {
           widget_script_chart: this.scriptEditor.getValue(),
         })
         .then((resp) => {
-          this.resetToDefault()
-          $(this.$refs.editWidgetModal).modal("hide");
+          this.resetToDefault();
+          this.modalInstance.hide();
           this.$emit("modalHide");
           showToast("success", "Monitoring widget created.");
         })
@@ -383,8 +386,8 @@ export default {
           widget_script_chart: this.scriptEditor.getValue(),
         })
         .then((resp) => {
-          this.resetToDefault()
-          $(this.$refs.editWidgetModal).modal("hide");
+          this.resetToDefault();
+          this.modalInstance.hide();
           this.$emit("modalHide");
           showToast("success", "Monitoring widget updated.");
         })

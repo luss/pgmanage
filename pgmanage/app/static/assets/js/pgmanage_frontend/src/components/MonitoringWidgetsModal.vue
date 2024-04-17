@@ -13,7 +13,7 @@
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             aria-label="Close"
           >
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
@@ -52,6 +52,7 @@ import axios from "axios";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { createMessageModal, showToast } from "../notification_control";
 import MonitoringWidgetEditModal from "./MonitoringWidgetEditModal.vue";
+import { Modal } from "bootstrap";
 
 export default {
   name: "MonitoringWidgetsModal",
@@ -71,17 +72,19 @@ export default {
       table: null,
       editModalVisible: false,
       editWidgetId: null,
+      modalInstance: null,
     };
   },
   mounted() {
-    $(this.$refs.monitoringWidgetsModal).on("hide.bs.modal", () => {
+    this.$refs.monitoringWidgetsModal.addEventListener("hide.bs.modal", () => {
       this.$emit("modalHide");
     });
   },
   watch: {
     widgetsModalVisible(newVal, oldVal) {
       if (newVal) {
-        $(this.$refs.monitoringWidgetsModal).modal("show");
+        this.modalInstance = Modal.getOrCreateInstance(this.$refs.monitoringWidgetsModal)
+        this.modalInstance.show();
         this.getMonitoringWidgetList();
       } else {
         if (!!this.table) this.table.destroy();
@@ -184,7 +187,7 @@ export default {
       );
     },
     editMonitoringWidget(widgetId = null) {
-      $(this.$refs.monitoringWidgetsModal).modal("hide");
+      this.modalInstance.hide();
       this.editModalVisible = true;
       this.editWidgetId = widgetId;
     },

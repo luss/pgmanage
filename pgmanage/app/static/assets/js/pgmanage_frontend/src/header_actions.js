@@ -29,15 +29,8 @@ SOFTWARE.
 import { listUsers } from './users'
 import { showConfirm } from './notification_control';
 import { settingsStore } from './stores/stores_initializer';
+import { Modal } from 'bootstrap';
 
-/// <summary>
-/// Opens OmniDB about window.
-/// </summary>
-function showAbout() {
-
-	$('#modal_about').modal();
-
-}
 /*
 var v_light_terminal_theme = {
 	background: '#f4f4f4',
@@ -54,9 +47,6 @@ var v_light_terminal_theme = {
 /// Startup function.
 /// </summary>
 $(function() {
-
-	let link_about = document.getElementById('omnidb__utilities-menu__link-about')
-	link_about.onclick = function() { showAbout() }
 
 	let link_user = document.getElementById('omnidb__utilities-menu__link-user')
 	if (link_user) {
@@ -89,7 +79,9 @@ $(function() {
 /// Opens user config window.
 /// </summary>
 function showConfigUser() {
-	$('#modal_settings').modal({ backdrop: 'static', keyboard: false });
+	Modal.getOrCreateInstance('#modal_settings', {
+		backdrop: 'static', keyboard: false
+	}).show()
 	$('#txt_new_pwd').passtrength({passwordToggle: false});
 }
 
@@ -188,7 +180,7 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 	v_editor.session.setMode("ace/mode/sql");
 	v_editor.$blockScrolling = Infinity;
 
-	v_editor.setFontSize(Number(v_font_size));
+	v_editor.setFontSize(settingsStore.fontSize);
 
 	v_editor.setOptions({enableBasicAutocompletion: true});
 
@@ -220,15 +212,14 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 	v_editContentObject.col = p_col;
 	v_editContentObject.ht = p_ht;
 
-	$('#div_edit_content').modal({
-    backdrop: 'static',
-    keyboard: false
-  });
-
+	Modal.getOrCreateInstance("#div_edit_content", {
+		backdrop: 'static',
+		keyboard: false
+	}).show();
 }
 
 function saveEditContent() {
-	$('#div_edit_content').modal('hide');
+	Modal.getInstance(document.getElementById("div_edit_content")).hide();
 
 	if (v_canEditContent) {
 		v_editContentObject.ht.setDataAtCell(v_editContentObject.row, v_editContentObject.col, v_editContentObject.editor.getValue());
@@ -241,8 +232,7 @@ function saveEditContent() {
 }
 
 function cancelEditContent() {
-	$('#div_edit_content').modal('hide');
-
+	Modal.getInstance(document.getElementById("div_edit_content")).hide();
 	v_editContentObject.editor.setValue('');
 }
 
@@ -251,7 +241,7 @@ function cancelEditContent() {
 /// </summary>
 function hideEditContent() {
 
-	$('#div_edit_content').modal('hide');
+	Modal.getInstance(document.getElementById("div_edit_content")).hide();
 
 	if (v_canEditContent)
 		v_editContentObject.ht.setDataAtCell(v_editContentObject.row, v_editContentObject.col, v_editContentObject.editor.getValue());

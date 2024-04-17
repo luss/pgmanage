@@ -147,7 +147,7 @@
           </div>
 
           <div class="custom-control custom-switch mb-3">
-            <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="custom-control-input" id="sshTunel" data-toggle="collapse" data-target="#sshSettings" :disabled="connectionLocal.technology==='terminal'">
+            <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="custom-control-input" id="sshTunel" data-bs-toggle="collapse" data-target="#sshSettings" :disabled="connectionLocal.technology==='terminal'">
             <label class="custom-control-label font-weight-bold" for="sshTunel">Use SSH tunnel</label>
           </div>
 
@@ -238,6 +238,7 @@ import { connectionsStore } from '../stores/stores_initializer'
 
 import ConfirmableButton from './ConfirmableButton.vue'
 import { createMessageModal } from '../notification_control'
+import { Modal } from 'bootstrap'
 
   export default {
     name: 'ConnectionsModalConnectionForm',
@@ -479,13 +480,13 @@ import { createMessageModal } from '../notification_control'
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset()
-            $('#connections-modal').modal('hide')
+            Modal.getOrCreateInstance('#connections-modal').hide()
             connectionsStore.selectConnection(connection)
           },
           null
         );
         } else {
-          $('#connections-modal').modal('hide')
+          Modal.getOrCreateInstance('#connections-modal').hide()
           connectionsStore.selectConnection(connection)
         }
       },

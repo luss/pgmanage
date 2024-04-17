@@ -29,6 +29,7 @@ SOFTWARE.
 import { emitter } from "./emitter";
 import { listUsers, newUser } from "./users";
 import { tabsStore } from "./stores/stores_initializer";
+import { Modal } from "bootstrap";
 
 function startTutorial(p_tutorial_name) {
   if (v_omnis.omnis_ui_assistant) {
@@ -157,9 +158,7 @@ function startTutorial(p_tutorial_name) {
       },
       {
         p_callback_start: function() {
-          $('#connections-modal').modal({
-            show: true
-          });
+          Modal.getOrCreateInstance("#connections-modal").show()
           setTimeout(function() {
             document.getElementById('add_connection_button').click()
           }, 100)
@@ -260,9 +259,7 @@ function startTutorial(p_tutorial_name) {
       {
         // p_callback_after_update_start: function() {setTimeout(function(){var v_target = document.getElementById('button_new_connection'); v_omnis.omnis_ui_assistant.divClonedElement.children[0].classList.remove('ml-2');},50);},
         p_callback_start: function() {
-          $('#connections-modal').modal({
-            show: true
-          })
+          Modal.getOrCreateInstance("#connections-modal").show()
           setTimeout(function() {
             document.getElementById('add_connection_button').click()
           }, 100)

@@ -18,18 +18,6 @@ import { useSettingsStore } from "../../src/stores/settings.js";
 import * as notificatonModule from "../../src/notification_control";
 import { maxFileSizeInKB, maxFileSizeInMB } from "../../src/constants.js";
 
-window.$ = vi.fn().mockImplementation(() => {
-  return {
-    on: vi.fn(),
-  };
-});
-
-vi.mock("@/workspace.js", () => {
-  const renameTab = vi.fn();
-  const showMenuNewTabOuter = vi.fn();
-  return { renameTab, showMenuNewTabOuter };
-});
-
 describe("SnippetTab", () => {
   let wrapper, fileMock, showToastSpy, eventMock;
   let settingsStore;

@@ -23,12 +23,18 @@
 
 <script>
 import { settingsStore } from "../stores/stores_initializer";
+import { Modal } from "bootstrap";
 
 export default {
   name: "CellDataModal",
   props: {
     cellContent: String,
     showModal: Boolean,
+  },
+  data() {
+    return {
+      modalInstance: null
+    }
   },
   emits: ["modalHide"],
   watch: {
@@ -57,14 +63,15 @@ export default {
       this.setupEdidor();
       this.editor.setValue(this.cellContent);
       this.editor.clearSelection();
-      $(this.$refs.cellDataModal).modal({
+      this.modalInstance = Modal.getOrCreateInstance(this.$refs.cellDataModal, {
         backdrop: "static",
         keyboard: false,
       });
+      this.modalInstance.show();
     },
     hideCellDataModal() {
       this.editor.destroy();
-      $(this.$refs.cellDataModal).modal("hide");
+      this.modalInstance.hide();
       this.$emit("modalHide");
     },
   },

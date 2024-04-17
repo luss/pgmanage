@@ -2,7 +2,6 @@ import 'vite/modulepreload-polyfill';
 import 'bootstrap/scss/bootstrap.scss'
 import $ from 'jquery';
 import 'daterangepicker'
-import 'bootstrap';
 import ace from 'ace-builds'
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/mode-sql'

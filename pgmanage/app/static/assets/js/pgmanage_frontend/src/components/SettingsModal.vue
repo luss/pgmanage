@@ -1,25 +1,25 @@
 <template>
-  <div class="modal fade" id="modal_settings" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" ref="settingsModal" id="modal_settings" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title font-weight-bold">Settings</h2>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="resetUnsavedSettings">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" @click="resetUnsavedSettings">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
         <div class="modal-body">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" id="settings_shortcuts-tab" data-toggle="tab" href="#settings_shortcuts"
+              <a class="nav-link active" id="settings_shortcuts-tab" data-bs-toggle="tab" href="#settings_shortcuts"
                 role="tab" aria-controls="settings_shortcuts" aria-selected="true">Shortcuts</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="settings_options-tab" data-toggle="tab" href="#settings_options" role="tab"
+              <a class="nav-link" id="settings_options-tab" data-bs-toggle="tab" href="#settings_options" role="tab"
                 aria-controls="settings_options" aria-selected="false">Options</a>
             </li>
             <li v-if="!desktopMode" class="nav-item">
-              <a class="nav-link" id="settings_password-tab" data-toggle="tab" href="#settings_password" role="tab"
+              <a class="nav-link" id="settings_password-tab" data-bs-toggle="tab" href="#settings_password" role="tab"
                 aria-controls="settings_password" aria-selected="false">Password</a>
             </li>
           </ul>
@@ -202,6 +202,7 @@ import { settingsStore, tabsStore } from '../stores/stores_initializer'
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, maxLength } from '@vuelidate/validators'
+import { Modal } from 'bootstrap'
 
 const light_terminal_theme = {
       background: '#FFFFFF',
@@ -530,7 +531,7 @@ export default {
     document.body.addEventListener('keydown', this.keyBoardShortcuts);
 
     this.$nextTick(() => {
-      $('#modal_settings').on('hidden.bs.modal', (e) => {
+      this.$refs.settingsModal.addEventListener('hidden.bs.modal', (e) => {
         this.password = '';
         this.passwordConfirm = '';
         this.buttonFormDisabled = true;
@@ -545,7 +546,7 @@ export default {
 
     this.applyThemes()
 
-    $('#modal_settings').on("show.bs.modal", () => {
+    this.$refs.settingsModal.addEventListener("show.bs.modal", () => {
       this.hidden = false
       settingsStore.getSettings();
     });
@@ -662,7 +663,7 @@ export default {
           this.fallbackFontSize = null
           this.fallbackTheme = null
           this.hidden = true
-          $('#modal_settings').modal('hide');
+          Modal.getInstance(this.$refs.settingsModal).hide()
         })
       }
     },
@@ -676,7 +677,7 @@ export default {
             "password": this.password,
           })
           .then(() => {
-            $('#modal_settings').modal('hide');
+            Modal.getInstance(this.$refs.settingsModal).hide()
             showToast("success", "Password saved.");
           })
           .catch((error) => {
