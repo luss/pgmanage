@@ -1,20 +1,20 @@
 <template>
-<div v-if="visible" class="col-9 d-flex ml-auto">
+<div v-if="visible" class="col-9 d-flex ms-auto">
   <div class="modal-connections__forms position-absolute w-100">
     <div class="modal-connections__forms_connection connection-form position-absolute">
         <div class="connection-form__header d-flex justify-content-between align-items-center pb-3">
         <!-- TODO: integrate with active connection list -->
         <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
           <div>
-            <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary mr-2" id="connectionTestButton">Test</button>
+            <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary me-2" id="connectionTestButton">Test</button>
             <button v-if="this.connectionLocal.id" @click="selectConnection(this.connectionLocal)" class="btn btn-success">Connect</button>
           </div>
         </div>
 
         <form>
-          <div class="form-row mt-3">
+          <div class="row mt-3">
             <div class="form-group col-6">
-              <label for="connectionName" class="font-weight-bold mb-2">Name</label>
+              <label for="connectionName" class="fw-bold mb-2">Name</label>
               <input v-model="connectionLocal.alias" type="text"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.alias.$invalid }]" id="connectionName" placeholder="Connection name">
               <div class="invalid-feedback">
@@ -24,7 +24,7 @@
               </div>
             </div>
             <div class="form-group col-3">
-              <label for="connectionType" class="font-weight-bold mb-2">Type</label>
+              <label for="connectionType" class="fw-bold mb-2">Type</label>
               <select v-model="connectionLocal.technology" @change="handleTypeChange" id="connectionType" class="form-control" placeholder="Connection type">
                   <option disabled>Choose...</option>
                   <option v-for="(technology, index) in technologies"
@@ -35,7 +35,7 @@
               </select>
             </div>
             <div class="form-group col-3">
-              <label for="connectionGroup" class="font-weight-bold mb-2">Group</label>
+              <label for="connectionGroup" class="fw-bold mb-2">Group</label>
               <select v-model="connectionLocal.group" id="connectionGroup" class="form-control" placeholder="Connection group">
                   <option value=""></option>
                   <option v-for="(group, index) in connectionGroups"
@@ -47,22 +47,22 @@
             </div>
           </div>
 
-          <div class="form-row">
+          <div class="row">
             <div class="form-group col-6">
-              <label for="connectionName" class="font-weight-bold mb-2">Server</label>
+              <label for="connectionName" class="fw-bold mb-2">Server</label>
               <input v-model="connectionLocal.server" type="text" class="form-control" id="connectionServer"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.server.$invalid }]"
                 :placeholder="placeholder.server"
                 :disabled="dbFormDisabled">
                 <div class="invalid-feedback">
-                  <span class="mr-2" v-for="error of v$.connectionLocal.server.$errors" :key="error.$uid">
+                  <span class="me-2" v-for="error of v$.connectionLocal.server.$errors" :key="error.$uid">
                     {{ error.$message }}
                   </span>
                 </div>
             </div>
 
             <div class="form-group col-3">
-              <label for="connectionPort" class="font-weight-bold mb-2">Port</label>
+              <label for="connectionPort" class="fw-bold mb-2">Port</label>
               <input v-model="connectionLocal.port" type="text" class="form-control" id="connectionPort"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.port.$invalid }]"
                 :placeholder="placeholder.port"
@@ -75,7 +75,7 @@
             </div>
 
             <div class="form-group col-3">
-              <label for="connectionSSL" class="font-weight-bold mb-2">SSL</label>
+              <label for="connectionSSL" class="fw-bold mb-2">SSL</label>
                 <select v-if="connectionLocal.technology === 'postgresql'" id="connectionSSL" class="form-control" v-model="connectionLocal.connection_params.sslmode" :disabled="dbFormDisabled">
                     <option v-for="mode in sslModes" :key="mode" :value="mode">{{ mode }}</option>
                 </select>
@@ -89,9 +89,9 @@
             </div>
           </div>
 
-          <div class="form-row">
+          <div class="row">
             <div class="form-group col-6">
-              <label for="connectionDatabase" class="font-weight-bold mb-2">Database</label>
+              <label for="connectionDatabase" class="fw-bold mb-2">Database</label>
               <input v-model="connectionLocal.service" type="text" class="form-control" id="connectionDatabase"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.service.$invalid }]"
                 :placeholder="placeholder.service"
@@ -104,7 +104,7 @@
             </div>
 
             <div class="form-group col-3">
-              <label for="connectionUsername" class="font-weight-bold mb-2">Username</label>
+              <label for="connectionUsername" class="fw-bold mb-2">Username</label>
               <input v-model="connectionLocal.user" type="text" class="form-control" id="connectionUsername"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.user.$invalid }]"
                 :placeholder="placeholder.user"
@@ -117,7 +117,7 @@
             </div>
 
             <div class="form-group col-3">
-              <label for="connectionPassword" class="font-weight-bold mb-2">Password</label>
+              <label for="connectionPassword" class="fw-bold mb-2">Password</label>
               <div class="position-relative">
                 <input v-model="connectionLocal.password"
                   :placeholder="this.connectionLocal.password_set ? '••••••••' : ''" type="password" class="form-control" id="connectionPassword"
@@ -134,7 +134,7 @@
           </div>
 
           <div class="form-group">
-            <label for="connectionSring" class="font-weight-bold mb-2">Use a connection string</label>
+            <label for="connectionSring" class="fw-bold mb-2">Use a connection string</label>
             <input v-model="connectionLocal.conn_string" @input="clearPort" type="text" class="form-control" id="connectionSring"
               :class="['form-control', { 'is-invalid': v$.connectionLocal.conn_string.$invalid }]"
               :placeholder="placeholder.conn_string"
@@ -148,13 +148,13 @@
 
           <div class="custom-control custom-switch mb-3">
             <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="custom-control-input" id="sshTunel" data-bs-toggle="collapse" data-target="#sshSettings" :disabled="connectionLocal.technology==='terminal'">
-            <label class="custom-control-label font-weight-bold" for="sshTunel">Use SSH tunnel</label>
+            <label class="custom-control-label fw-bold" for="sshTunel">Use SSH tunnel</label>
           </div>
 
           <div id="sshSettings" :class="(connectionLocal.tunnel.enabled) ? 'collapse show':'collapse'">
-            <div class="form-row">
+            <div class="row">
               <div class="form-group col-6">
-                <label for="sshServer" class="font-weight-bold mb-2">SSH Server</label>
+                <label for="sshServer" class="fw-bold mb-2">SSH Server</label>
                 <input v-model="connectionLocal.tunnel.server"
                   :class="['form-control', { 'is-invalid': v$.connectionLocal.tunnel.server.$invalid }]"
                   type="text" id="sshServer" placeholder="SSH Server">
@@ -166,7 +166,7 @@
               </div>
 
               <div class="form-group col-3">
-                <label for="sshPort" class="font-weight-bold mb-2">SSH Port</label>
+                <label for="sshPort" class="fw-bold mb-2">SSH Port</label>
                 <input v-model="connectionLocal.tunnel.port"
                   :class="['form-control', { 'is-invalid': v$.connectionLocal.tunnel.port.$invalid }]"
                   type="text" class="form-control" id="sshPort" placeholder="SSH Port">
@@ -178,7 +178,7 @@
               </div>
 
               <div class="form-group col-3">
-                <label for="sshUsername" class="font-weight-bold mb-2">SSH Username</label>
+                <label for="sshUsername" class="fw-bold mb-2">SSH Username</label>
                 <input v-model="connectionLocal.tunnel.user"
                   :class="['form-control', { 'is-invalid': v$.connectionLocal.tunnel.user.$invalid }]"
                   type="text" class="form-control" id="sshUsername" placeholder="SSH Username">
@@ -190,9 +190,9 @@
               </div>
             </div>
 
-            <div class="form-row">
+            <div class="row">
               <div class="form-group col-6">
-                <label for="sshPassphrase" class="font-weight-bold mb-2">{{sshPassLabel}}</label>
+                <label for="sshPassphrase" class="fw-bold mb-2">{{sshPassLabel}}</label>
                 <div class="position-relative">
                     <input v-model="connectionLocal.tunnel.password"
                       :placeholder="this.connectionLocal.tunnel.password_set ? '••••••••' : ''" type="password" class="form-control"
@@ -204,14 +204,14 @@
               </div>
 
               <div class="form-group col-6">
-                <p class="font-weight-bold mb-2">SSH Key</p>
+                <p class="fw-bold mb-2">SSH Key</p>
                 <label class="btn btn-secondary" id="sshFileLabel">
                 {{connectionLocal.tunnel.key || connectionLocal.tunnel.key_set ? 'Key File Loaded' : 'Select Key' }} <input type="file" @change="updateConnectionKey" ref="keyFile" hidden>
                 </label>
                 <button
                   v-if="this.connectionLocal.tunnel.key_set || this.connectionLocal.tunnel.key != ''"
                   @click="this.connectionLocal.tunnel.key_set = false; this.connectionLocal.tunnel.key = ''; this.$refs.keyFile.value = ''"
-                  class="btn btn-outline-danger ml-2 mb-2">Clear
+                  class="btn btn-outline-danger ms-2 mb-2">Clear
                 </button>
               </div>
             </div>
@@ -224,7 +224,7 @@
     <button type="button"
       @click="trySave()"
       :disabled="connectionLocal.locked"
-      class="btn btn-primary ml-auto">Save changes</button>
+      class="btn btn-primary ms-auto">Save changes</button>
   </div>
 </div>
 </template>

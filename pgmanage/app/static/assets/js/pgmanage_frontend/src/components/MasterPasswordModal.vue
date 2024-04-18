@@ -10,7 +10,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
-          <h2 class="modal-title font-weight-bold">Master Password</h2>
+          <h2 class="modal-title fw-bold">Master Password</h2>
         </div>
 
         <div class="modal-body">
@@ -24,7 +24,7 @@
             </span>
           </div>
 
-          <div v-if="isNewPassword" class="form-row">
+          <div v-if="isNewPassword" class="row">
             <div class="form-group col-6">
               <input
                 ref="newMasterPassInput"

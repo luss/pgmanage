@@ -10,10 +10,10 @@
             <div class="row">
               <div class="omnidb__workspace__content-left border-right">
                 <div class="omnidb__workspace__connection-details">
-                  <i class="fas fa-server mr-1"></i>selected DB:
+                  <i class="fas fa-server me-1"></i>selected DB:
                   <b>{{ databaseName }}</b>
                   <div
-                    class="omnidb__switch omnidb__switch--sm float-right"
+                    class="omnidb__switch omnidb__switch--sm float-end"
                     data-bs-toggle="tooltip"
                     data-placement="bottom"
                     data-html="true"

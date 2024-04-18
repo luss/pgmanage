@@ -27,7 +27,7 @@
             @contextmenu="contextMenuHandler($event, tab)"
             v-for="tab in tabs"
           >
-            <span class="omnidb__tab-menu__link-content">
+            <span :id="`${tab.id}_tooltip`" class="omnidb__tab-menu__link-content">
               <span
                 v-if="tab.icon"
                 class="omnidb__menu__btn omnidb__tab-menu__link-icon"

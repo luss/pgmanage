@@ -1,17 +1,17 @@
 <template>
 <div class="p-2">
-  <div class="form-row">
+  <div class="row">
     <div class="form-group col-2">
       <form class="form" role="search" @submit.prevent>
-        <label class="font-weight-bold mb-2" for="selectServer">Search</label>
+        <label class="fw-bold mb-2" for="selectServer">Search</label>
         <input v-model.trim="query_filter" class="form-control" id="inputSearchSettings" name="filter"
           :disabled="v$.$invalid" placeholder="Find in settings" />
       </form>
     </div>
 
     <div class="form-group col-3">
-      <label class="font-weight-bold mb-2" for="selectConfCat">Category</label>
-      <select class="form-control text-truncate pr-4" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
+      <label class="fw-bold mb-2" for="selectConfCat">Category</label>
+      <select class="form-control text-truncate pe-4" id="selectConfCat" :disabled="!!query_filter || v$.$invalid" v-model="selected">
         <option v-for="(cat, index) in categories" :value="cat" :key="index">
           {{ cat }}
         </option>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="form-group col-3">
-      <label class="font-weight-bold mb-2" for="selectConf">Config History</label>
+      <label class="fw-bold mb-2" for="selectConf">Config History</label>
       <select class="form-control text-truncate" id="selectConf" v-model="selectedConf">
         <option disabled value="">Please select one</option>
         <option v-for="(config, index) in configHistory" :value="config" :key="index"
@@ -29,15 +29,15 @@
       </select>
     </div>
 
-    <div class="form-group col-4 d-flex align-items-end pl-0">
-      <button class="btn btn-success mr-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
+    <div class="form-group col-4 d-flex align-items-end ps-0">
+      <button class="btn btn-success me-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
         <i class="fa-solid fa-arrow-rotate-left"></i>
       </button>
-      <button class="btn btn-danger mr-2" :disabled="!selectedConf"
+      <button class="btn btn-danger me-2" :disabled="!selectedConf"
         @click="deleteOldConfig(selectedConf.id)">
         <i class="fa-solid fa-xmark"></i>
       </button>
-      <button type="submit" class="btn btn-success ml-auto" :disabled="!hasUpdateValues || v$.$invalid"
+      <button type="submit" class="btn btn-success ms-auto" :disabled="!hasUpdateValues || v$.$invalid"
         @click.prevent="confirmConfig">
         Apply
       </button>
@@ -130,17 +130,17 @@
             </template>
           </table>
           <div v-if="!modalRevertConfig" class="form-group">
-            <label for="commit_message" class="font-weight-bold mb-2">Commit Comment</label>
+            <label for="commit_message" class="fw-bold mb-2">Commit Comment</label>
             <input v-model="commitComment" id="commit_message" class="form-control"
               placeholder="Short description of your changes(optional)" />
           </div>
         </div>
         <div class="modal-footer">
-          <button v-if="!modalRevertConfig" id="config_modal_button" type="button" class="btn btn-primary mr-2"
+          <button v-if="!modalRevertConfig" id="config_modal_button" type="button" class="btn btn-primary me-2"
             data-bs-dismiss="modal" @click="saveConfiguration">
             Save configuration
           </button>
-          <button v-else id="config_modal_button" type="button" class="btn btn-primary mr-2" data-bs-dismiss="modal"
+          <button v-else id="config_modal_button" type="button" class="btn btn-primary me-2" data-bs-dismiss="modal"
             @click="revertConfig" :disabled="!hasRevertValues">
             Revert configuration
           </button>

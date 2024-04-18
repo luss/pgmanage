@@ -30,12 +30,12 @@
         </Transition>
 
         <div v-if="!isTestWidget" class="form-inline mb-1">
-          <span data-testid="widget-title" class="mr-1">
+          <span data-testid="widget-title" class="me-1">
             {{ monitoringWidget.title }}
           </span>
           <button
             data-testid="widget-refresh-button"
-            class="btn btn-secondary btn-sm mr-1"
+            class="btn btn-secondary btn-sm me-1"
             title="Refresh"
             @click="refreshMonitoringWidget"
           >
@@ -45,7 +45,7 @@
           <button
             v-if="!isActive"
             data-testid="widget-play-button"
-            class="btn btn-secondary btn-sm my-2 mr-1"
+            class="btn btn-secondary btn-sm my-2 me-1"
             title="Play"
             @click="playMonitoringWidget"
           >
@@ -55,7 +55,7 @@
           <button
             v-else
             data-testid="widget-pause-button"
-            class="btn btn-secondary btn-sm my-2 mr-1"
+            class="btn btn-secondary btn-sm my-2 me-1"
             title="Pause"
             @click="pauseMonitoringWidget"
           >
@@ -69,7 +69,7 @@
               :class="[
                 'form-control',
                 'form-control-sm',
-                'mr-2',
+                'me-2',
                 { 'is-invalid': v$.widgetInterval.$invalid },
               ]"
               style="width: 60px"
@@ -83,7 +83,7 @@
             </div>
           </div>
 
-          <span v-if="isGrid" class="ml-2"> {{ gridRows }} rows </span>
+          <span v-if="isGrid" class="ms-2"> {{ gridRows }} rows </span>
         </div>
         <template v-else>
           <h2 class="text-center pb-1">Monitoring test widget</h2>

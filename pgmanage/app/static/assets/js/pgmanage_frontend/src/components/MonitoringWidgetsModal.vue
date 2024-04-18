@@ -9,7 +9,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
-          <h2 class="modal-title font-weight-bold">Monitoring Widgets</h2>
+          <h2 class="modal-title fw-bold">Monitoring Widgets</h2>
           <button
             type="button"
             class="close"
@@ -29,7 +29,7 @@
         <div class="modal-footer">
           <button
             @click="editMonitoringWidget()"
-            class="btn btn-primary btn-sm mr-3"
+            class="btn btn-primary btn-sm me-3"
           >
             New Widget
           </button>

@@ -182,7 +182,7 @@ function showToast(type, message) {
   let title = titleMap[type] || titleMap['default']
   let scrollableClass = type === 'error' ? 'v-toast-scrollable' : ''
   let html_msg = `<div class="v-toast__body p-0" >
-                    <h3 class="font-weight-bold">${title}</h3>
+                    <h3 class="fw-bold">${title}</h3>
                     <p class="${scrollableClass}">${message}</p>
                   </div>`
   const $toast = useToast()

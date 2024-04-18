@@ -4,22 +4,20 @@
     <div class="row">
       <div :class="(isNotServer) ? 'col-4':'col-12'" class="d-flex">
           <div class="card flex-grow-1">
-            <h4 class="card-header font-weight-bold px-3 py-2">General</h4>
+            <h4 class="card-header fw-bold px-3 py-2">General</h4>
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
-                <label for="restoreFileName" class="font-weight-bold mb-1">FileName</label>
+                <label for="restoreFileName" class="fw-bold mb-1">FileName</label>
                 <div class="input-group">
-                  <div class="input-group-prepend">
                     <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                       a file</div>
-                  </div>
                   <input type="text" class="form-control" :value="restoreOptions.fileName"
                     placeholder="Select file or folder" disabled>
                 </div>
               </div>
 
               <div  class="form-group mb-1">
-                <label for="restoreFormat" class="font-weight-bold mb-1">Format</label>
+                <label for="restoreFormat" class="fw-bold mb-1">Format</label>
                 <select id="restoreFormat" class="form-control" v-model="restoreOptions.format">
                   <option value="custom/tar">Custom or tar</option>
                   <option value="directory">Directory</option>
@@ -42,7 +40,7 @@
               </div>
 
               <div v-if="isNotServer" class="form-group mb-1">
-                <label for="restoreNumberOfJobs" class="font-weight-bold mb-1">Number of jobs</label>
+                <label for="restoreNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
                 <select id="restoreNumberOfJobs" class="form-control" v-model="restoreOptions.number_of_jobs">
                   <option value="" disabled>Select an item...</option>
                   <option v-for="number_of_jobs in numberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
@@ -50,7 +48,7 @@
               </div>
 
               <div v-if="isNotServer" class="form-group mb-1">
-                <label for="restoreRoleName" class="font-weight-bold mb-1">Restore as:</label>
+                <label for="restoreRoleName" class="fw-bold mb-1">Restore as:</label>
                 <select id="restoreRoleName" class="form-control" v-model="restoreOptions.role">
                   <option value="" disabled>Select an item...</option>
                   <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
@@ -67,7 +65,7 @@
               </div>
               
                 <div class="form-group" :class="(restoreOptions.pigz) ? 'collapse show':'collapse'">
-                  <label for="restorePigzNumberOfJobs" class="font-weight-bold mb-1">Number of jobs</label>
+                  <label for="restorePigzNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
                   <select id="restorePigzNumberOfJobs" class="form-control" v-model="restoreOptions.pigz_number_of_jobs">
                     <option v-for="number_of_jobs in pigzNumberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
                   </select>
@@ -79,10 +77,10 @@
 
       <div v-if="isNotServer" class="d-flex col-4">
         <div class="card flex-grow-1">
-          <h4 class="card-header font-weight-bold px-3 py-2">Data/Objects</h4>
+          <h4 class="card-header fw-bold px-3 py-2">Data/Objects</h4>
           <div class="card-body d-flex flex-column px-3 py-2">
             <div class="form-group mb-1">
-              <p class="font-weight-bold mb-1">Sections</p>
+              <p class="fw-bold mb-1">Sections</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsPreData"
                   v-model="restoreOptions.pre_data" :disabled="restoreOptions.only_data || restoreOptions.only_schema">
@@ -107,7 +105,7 @@
             </div>
 
             <div class="form-group mb-1">
-              <p class="font-weight-bold mb-1">Type of objects</p>
+              <p class="fw-bold mb-1">Type of objects</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsOnlyData"
                   v-model="restoreOptions.only_data"
@@ -128,7 +126,7 @@
             </div>
     
             <div class="form-group mb-1">
-              <p class="font-weight-bold mb-1">Do not save</p>
+              <p class="fw-bold mb-1">Do not save</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsOwner" v-model="restoreOptions.dns_owner">
                 <label class="custom-control-label" for="restoreOptionsOwner">
@@ -166,10 +164,10 @@
 
       <div v-if="isNotServer" class="d-flex col-4">
         <div class="card flex-grow-1">
-          <h4 class="card-header font-weight-bold px-3 py-2">Options</h4>
+          <h4 class="card-header fw-bold px-3 py-2">Options</h4>
           <div class="card-body d-flex flex-column px-3 py-2">
             <div class="form-group mb-1">
-              <p class="font-weight-bold mb-1">Queries</p>
+              <p class="fw-bold mb-1">Queries</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsIncludeCreateDatabase"
                   v-model="restoreOptions.include_create_database">
@@ -196,7 +194,7 @@
             </div>
 
             <div class="form-group mb-1">
-              <p class="font-weight-bold mb-1">Disable</p>
+              <p class="fw-bold mb-1">Disable</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsTrigger"
                   v-model="restoreOptions.disable_trigger">
@@ -215,7 +213,7 @@
             </div>
 
             <div class="form-group mb-1">
-              <p class="font-weight-bold mb-1">Miscellaneous</p>
+              <p class="fw-bold mb-1">Miscellaneous</p>
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="restoreOptionsVerboseMessages"
                   v-model="restoreOptions.verbose">

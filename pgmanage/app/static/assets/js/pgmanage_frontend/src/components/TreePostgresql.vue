@@ -2811,7 +2811,7 @@ export default {
             icon: "fas cm-all fa-key",
             onClick: () => {
               //FIXME: rewrite this properly
-              let html_text = `<div class="form-row">
+              let html_text = `<div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="change_pwd_role">Password</label>
                                 <input type="password" id="change_pwd_role" class="form-control" placeholder="password" />

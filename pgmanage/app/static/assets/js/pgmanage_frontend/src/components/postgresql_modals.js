@@ -22,8 +22,8 @@ function createExtensionModal(node, mode) {
     },
     mounted() {
       setTimeout(() => {
-        let extensionModalEl = document.getElementById("#postgresqlExtensionModal")
-        let messageModalEl = document.getElementById("#generic_modal_message")
+        let extensionModalEl = document.getElementById("postgresqlExtensionModal");
+        let messageModalEl = document.getElementById("generic_modal_message");
         extensionModalEl.addEventListener("hidden.bs.modal", () => {
           app.unmount();
         });

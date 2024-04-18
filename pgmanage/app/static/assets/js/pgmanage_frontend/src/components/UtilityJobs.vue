@@ -1,9 +1,9 @@
 <template>
-  <h2 class="font-weight-bold text-center mt-2 mb-3">Jobs</h2>
+  <h2 class="fw-bold text-center mt-2 mb-3">Jobs</h2>
   <div class="card">
     <div class="card-body p-0">
       <ul class="list-group list-group-flush form-group rounded-0">
-        <li class="list-group-item d-flex row no-gutters font-weight-bold">
+        <li class="list-group-item d-flex row g-0 fw-bold">
           <div class="col-1">PID</div>
           <div class="col-2">Type</div>
           <div class="col-2">Server</div>
@@ -14,7 +14,7 @@
           <div class="col-1">Actions</div>
         </li>
 
-        <li v-for="job in jobList" :key="job.id" class="list-group-item d-flex row no-gutters">
+        <li v-for="job in jobList" :key="job.id" class="list-group-item d-flex row g-0">
           <div class="col-1">{{ job.utility_pid }}</div>
           <div class="col-2">{{ job.details.type }}</div>
           <div class="col-2">{{ job.details.server }}</div>
@@ -191,10 +191,10 @@ export default {
     },
     createNotifyMessage(title, desc) {
       return `<div class="v-toast__body p-0">
-                  <h3 class="font-weight-bold">${title}</h3>
+                  <h3 class="fw-bold">${title}</h3>
                   <p>${desc}</p>
-                  <div class="text-right">
-                    <button class="btn v-toast__details font-weight-bold">View details</button>
+                  <div class="text-end">
+                    <button class="btn v-toast__details fw-bold">View details</button>
                   </div>
               </div>`;
     },

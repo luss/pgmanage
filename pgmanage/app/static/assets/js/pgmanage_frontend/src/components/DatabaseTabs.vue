@@ -79,14 +79,14 @@
 
         <div class="navigation-actions d-flex flex-nowrap">
           <button
-            class="btn btn-icon btn-icon-secondary mr-3"
+            class="btn btn-icon btn-icon-secondary me-3"
             :disabled="!canScrollLeft"
             @click="handleLeftScrollClick"
           >
             <i class="fas fa-lg fa-chevron-left"></i>
           </button>
           <button
-            class="btn btn-icon btn-icon-secondary mr-2"
+            class="btn btn-icon btn-icon-secondary me-2"
             :disabled="!canScrollRight"
             @click="handleRightScrollClick"
           >

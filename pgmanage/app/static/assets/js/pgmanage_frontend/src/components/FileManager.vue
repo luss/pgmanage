@@ -44,11 +44,11 @@
           <!-- Box format for files and folders -->
           <div v-if="isGrid" class="d-flex p-2 flex-wrap files-grid">
             <div v-for="file in files" :key="file.file_name"
-              :class="['files-grid__item', 'text-center', 'border-0', 'pt-3', 'mr-2', { 'active': file === selectedFile }]"
+              :class="['files-grid__item', 'text-center', 'border-0', 'pt-3', 'me-2', { 'active': file === selectedFile }]"
               @click="selectFileOrDir(file.file_name)"
               @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
               <div class="position-relative">
-                <i :class="['fas', 'fa-2xl', 'mr-2', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
+                <i :class="['fas', 'fa-2xl', 'me-2', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
                   :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
               </div>
               <p class="clipped-text mt-1">{{ file.file_name }}</p>
@@ -59,12 +59,12 @@
           <div v-else class="card file-table">
             <div class="card-body p-0">
               <ul class="list-group list-group-flush form-group rounded-0">
-                <li class="list-group-item d-flex row no-gutters font-weight-bold">
+                <li class="list-group-item d-flex row g-0 fw-bold">
                   <div class="col-7">Name</div>
                   <div class="col-2">Size</div>
                   <div class="col-3">Modified</div>
                 </li>
-                <li class="list-group-item d-flex row no-gutters"
+                <li class="list-group-item d-flex row g-0"
                     v-for="file in files" :key="file.file_name" @click="selectFileOrDir(file.file_name)"
                     @dblclick="file.file_type === 'dir' ? getDirContent(file.file_path) : confirmSelection()">
                     <div class="col-7">

@@ -59,7 +59,7 @@ function startTutorial(p_tutorial_name) {
   var v_button_inner_query =
   '<li class="mb-2">' +
     `<button id="connection_tab_tutorial" ` + v_button_inner_query_attr + ` type="button" class="btn btn-primary d-flex align-items-center">` +
-      '<i class="fas fa-list mr-2"></i>The Connection Tab' +
+      '<i class="fas fa-list me-2"></i>The Connection Tab' +
     '</button>' +
   '</li>';
   // Configuring the available tutorials.
@@ -85,10 +85,10 @@ function startTutorial(p_tutorial_name) {
         <p>Contains general settings and options:</p>
         <ul>
         <li>Username and versioning.</li>
-        <li><i class="fas fa-user omnidb__theme__text--primary mr-2"></i>User management.</li>
-        <li><i class="fas fa-cog omnidb__theme__text--primary mr-2"></i>UI settings (shortcuts, theme, fonts...).</li>
-        <li><i class="fas fa-info-circle omnidb__theme__text--primary mr-2"></i>About.</li>
-        <li><i class="fas fa-sign-out-alt omnidb__theme__text--primary mr-2"></i>Sign Out.</li>
+        <li><i class="fas fa-user omnidb__theme__text--primary me-2"></i>User management.</li>
+        <li><i class="fas fa-cog omnidb__theme__text--primary me-2"></i>UI settings (shortcuts, theme, fonts...).</li>
+        <li><i class="fas fa-info-circle omnidb__theme__text--primary me-2"></i>About.</li>
+        <li><i class="fas fa-sign-out-alt omnidb__theme__text--primary me-2"></i>Sign Out.</li>
         </ul>
         `,
         p_target: document.getElementsByClassName('omnidb__utilities-menu')[0],
@@ -111,7 +111,7 @@ function startTutorial(p_tutorial_name) {
         p_callback_start: function() { listUsers();},
         p_callback_after_update_start: function() {setTimeout(function(){
             if (v_omnis.omnis_ui_assistant.divClonedElement.children[0]) {
-              v_omnis.omnis_ui_assistant.divClonedElement.children[0].classList.remove('ml-2');
+              v_omnis.omnis_ui_assistant.divClonedElement.children[0].classList.remove('ms-2');
             }
           },50);
         },
@@ -128,9 +128,9 @@ function startTutorial(p_tutorial_name) {
         p_callback_start: function() { newUser() },
         p_message: `
         <ul>
-        <li><i class="fas fa-user omnidb__theme__text--primary mr-2"></i>PgManage login name.</li>
-        <li><i class="fas fa-key omnidb__theme__text--primary mr-2"></i>PgManage login password.</li>
-        <li><i class="fas fa-star omnidb__theme__text--primary mr-2"></i>Defines if the user can manage other PgManage users.</li>
+        <li><i class="fas fa-user omnidb__theme__text--primary me-2"></i>PgManage login name.</li>
+        <li><i class="fas fa-key omnidb__theme__text--primary me-2"></i>PgManage login password.</li>
+        <li><i class="fas fa-star omnidb__theme__text--primary me-2"></i>Defines if the user can manage other PgManage users.</li>
         </ul>
         <div class="alert alert-danger">The default <strong>admin user</strong> should be deleted once a new super user has been created.</div>
         `,
@@ -150,7 +150,7 @@ function startTutorial(p_tutorial_name) {
         <li>Welcome, tutorial and useful links.</li>
         <li>Snippets panel toggler.</li>
         </ul>
-        <p>Let's first <span class="badge badge-info">add a new connection</span>.</p>
+        <p>Let's first <span class="badge bg-info">add a new connection</span>.</p>
         <p>Please, click on the <i class="fas fa-bolt"></i> button.</p>
         `,
         p_target: document.querySelectorAll('.omnidb__tab-menu--primary .omnidb__tab-menu__link .omnidb__tab-menu__link-icon')[0],
@@ -532,33 +532,33 @@ function startTutorial(p_tutorial_name) {
   : `
   <li class="mb-2">
     <button id="utilities_menu_tutorial" type="button" class="btn btn-primary d-flex align-items-center">
-      <i class="fas fa-user-plus mr-2"></i>Create an pgmanage user
+      <i class="fas fa-user-plus me-2"></i>Create an pgmanage user
     </button>
   </li>`;
   v_tutorials.getting_started = [
     {
       p_message:
-      '<ol class="ml-2" style="padding-left: 1.5rem;">' +
+      '<ol class="ms-2" style="padding-left: 1.5rem;">' +
         v_tutorial_link_creating_user +
         `
         <li class="mb-2">
           <button id="connections_menu_tutorial" type="button" class="btn btn-primary d-flex align-items-center">
-            <i class="fas fa-plus mr-2"></i>Create a database connection
+            <i class="fas fa-plus me-2"></i>Create a database connection
           </button>
         </li>
         <li class="mb-2">
           <button id="terminal_connection_tutorial" type="button" class="btn btn-primary d-flex align-items-center">
-            <i class="fas fa-terminal mr-2"></i>Create a terminal connection
+            <i class="fas fa-terminal me-2"></i>Create a terminal connection
           </button>
         </li>
         <li class="mb-2">
           <button id="snippets_tutorial" type="button" class="btn btn-primary d-flex align-items-center">
-            <i class="fas fa-file-code mr-2"></i>Meet the snippets panel
+            <i class="fas fa-file-code me-2"></i>Meet the snippets panel
           </button>
         </li>
         <li class="mb-2">
           <button id="using_connection_tutorial" type="button" class="btn btn-primary d-flex align-items-center">
-            <i class="fas fa-plug mr-2"></i>Using a connection
+            <i class="fas fa-plug me-2"></i>Using a connection
           </button>
         </li>
         ` +

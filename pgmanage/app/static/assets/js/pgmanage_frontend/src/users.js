@@ -253,7 +253,7 @@ function getUsers(p_options = false) {
                             v_users_update_html +=
                             '<div class="card p-4 mx-auto">' +
                             '<div><h5>Edited Users:</h5></div>' +
-                            '<ul class="pl-4">';
+                            '<ul class="ps-4">';
                             for (let i = 0; i < p_options.users_update.edited.length; i++) {
                                 v_users_update_html += '<li class="mt-2"> - ' + p_options.users_update.edited[i][0] + '</li>';
                             }
@@ -265,7 +265,7 @@ function getUsers(p_options = false) {
                             v_users_update_html +=
                             '<div class="card p-4 mx-auto">' +
                             '<div><h5>New Users:</h5></div>' +
-                            '<ul class="pl-4">';
+                            '<ul class="ps-4">';
                             for (let i = 0; i < p_options.users_update.new.length; i++) {
                                 v_users_update_html += '<li class="mt-2"> - ' + p_options.users_update.new[i][0] + '</li>';
                             }
@@ -290,7 +290,7 @@ function getUsers(p_options = false) {
                     "<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-autofill-name' type='text' class='m-0 p-0' placeholder='Username' value=''>" +
                     "<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-password' type='password' class='m-0 p-0' placeholder='Password' value=''>" +
                     "<div class='form-inline mb-4'>" +
-                        "<h5 class='mr-2'>Select an user</h5>" +
+                        "<h5 class='me-2'>Select an user</h5>" +
                         "<select id='omnidb_user_select' class='form-control'>";
                         if (p_options.focus_last)
                             v_user_list_html += "<option value=''> </option>";
@@ -314,13 +314,13 @@ function getUsers(p_options = false) {
                         }
                         v_user_list_html +=
                         "</select>" +
-                        "<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ml-2'><i class='fas fa-user-plus'></i><span class='ml-2'>Add new user</span></button>" +
+                        "<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ms-2'><i class='fas fa-user-plus'></i><span class='ms-2'>Add new user</span></button>" +
                     "</div>" +
                     "<div id='omnidb_user_content' class='row'>" +
                         v_users_update_html +
                     "</div>" +
                     "<div class='text-center'>" +
-                        "<button type='button' id='div_save_users' class='btn btn-success ml-1 d-none' disabled>Save</button>" +
+                        "<button type='button' id='div_save_users' class='btn btn-success ms-1 d-none' disabled>Save</button>" +
                     "</div>" +
                     "<button type='submit' disabled style='display: none' aria-hidden='true'></button>" +
                 "</div>";
@@ -424,30 +424,26 @@ function renderSelectedUser(event) {
                 "<div id='omnidb_user_item_" + i + "' class='omnidb__user-list__item card'>" +
                 "<div class='d-flex align-items-center'>" +
                     "<div class='input-group mb-2'>" +
-                        "<div class='input-group-prepend'>" +
                             "<label for='user_item_username_" + i  + "' type='button' class='input-group-text'>" +
                                 "<i class='fas fa-user'></i>" +
                             "</label>" +
-                        "</div>" +
                         "<input autofill='false' autocomplete='disabled' name='notChromeUsername' id='user_item_username_" + i  + "' type='text' class='form-control my-0' placeholder='User name' value='" + v_user_item[0] + "' minlength='1'>" +
                     "</div>" +
-                    "<span class='ml-2'>Superuser?</span>" +
-                    "<div class='ml-2 mb-2'>" +
-                        "<div class='omnidb__switch mr-2' data-bs-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
+                    "<span class='ms-2'>Superuser?</span>" +
+                    "<div class='ms-2 mb-2'>" +
+                        "<div class='omnidb__switch me-2' data-bs-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
                             "<input type='checkbox' id='user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + ">" +
                             "<label for='user_item_superuser_" + i  + "' class='omnidb__switch--label'><span><i class='fas fa-star'></i></span></label>" +
                         "</div>" +
                     "</div>" +
                 "</div>" +
                 "<div class='d-flex mb-2'>" +
-                "<div class='input-group-prepend'>" +
                 "<label for='user_item_password_" + i  + "' type='button' class='input-group-text'>" +
                 "<i class='fas fa-key'></i>" +
                 "</label>" +
-                "</div>" +
                 "<input autofill='false' autocomplete='disabled' name='new-password' id='user_item_password_" + i  + "' type='password' class='form-control my-0' placeholder='New password' value='" + v_user_item[1] + "' minlength='8'>" +
                 "</div>" +
-                "<span class='mr-2 text-danger omnidb__user-list__close'>" +
+                "<span class='me-2 text-danger omnidb__user-list__close'>" +
                 "<i id='user_remove_" + i  + "' title='Remove User' class='fas fa-times action-grid action-close'></i>"
                 "</span>" +
                 "</div>" +
@@ -481,30 +477,26 @@ function renderSelectedUser(event) {
                 "<div id='omnidb_user_item_" + i + "' class='omnidb__user-list__item card'>" +
                 "<div class='d-flex align-items-center'>" +
                     "<div class='input-group mb-2'>" +
-                        "<div class='input-group-prepend'>" +
                             "<label for='new_user_item_username_" + i  + "' type='button' class='input-group-text'>" +
                                 "<i class='fas fa-user'></i>" +
                             "</label>" +
-                        "</div>" +
                         "<input autofill='false' autocomplete='off' name='off' id='new_user_item_username_" + i  + "' type='text' class='form-control my-0' placeholder='User name' value='" + v_user_item[0] + "' required minlength='1'>" +
                     "</div>" +
-                    "<span class='ml-2'>Superuser?</span>" +
-                    "<div class='ml-2 mb-2'>" +
-                        "<div class='omnidb__switch mr-2' data-bs-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
+                    "<span class='ms-2'>Superuser?</span>" +
+                    "<div class='ms-2 mb-2'>" +
+                        "<div class='omnidb__switch me-2' data-bs-toggle='tooltip' data-placement='bottom' data-html='true' title='<h5>Toggle superuser status. To enable again, simply turn the switch on.</h5>'>" +
                             "<input type='checkbox' id='new_user_item_superuser_" + i  + "' class='omnidb__switch--input' " + v_superuser_checked + ">" +
                             "<label for='new_user_item_superuser_" + i  + "' class='omnidb__switch--label'><span><i class='fas fa-star'></i></span></label>" +
                         "</div>" +
                     "</div>" +
                 "</div>" +
                 "<div class='d-flex mb-2'>" +
-                "<div class='input-group-prepend'>" +
                 "<label for='new_user_item_password_" + i  + "' type='button' class='input-group-text'>" +
                 "<i class='fas fa-key'></i>" +
                 "</label>" +
-                "</div>" +
                 "<input autofill='false' autocomplete='off' name='off' id='new_user_item_password_" + i  + "' type='password' class='form-control my-0' placeholder='New password' value='" + v_user_item[1] + "' required minlength='8'>" +
                 "</div>" +
-                "<span class='mr-2 text-danger omnidb__user-list__close'>" +
+                "<span class='me-2 text-danger omnidb__user-list__close'>" +
                     "<i id='new_user_remove_" + i  + "'  title='Remove User' class='fas fa-times action-grid action-close text-danger'></i>" +
                 "</span>" +
                 "</div>" +

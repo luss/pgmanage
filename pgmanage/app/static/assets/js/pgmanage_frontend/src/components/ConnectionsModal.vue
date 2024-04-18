@@ -3,13 +3,13 @@
     <div class="modal-dialog modal-xl modal-connections__dialog">
       <div class="modal-content modal-connections__content h-100">
         <div class="modal-header align-items-center">
-          <h2 class="modal-title font-weight-bold">Manage connections</h2>
+          <h2 class="modal-title fw-bold">Manage connections</h2>
           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
         <div class="modal-body modal-connections__body p-0">
-          <div class="row no-gutters h-100">
+          <div class="row g-0 h-100">
             <div class="col-3">
               <div class="modal-connections__panel">
                 <div class="modal-connections__panel_add add-connection d-flex justify-content-between align-items-center">

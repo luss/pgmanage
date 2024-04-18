@@ -112,7 +112,7 @@ function showMenuNewTabOuter(e) {
     let tooltip_name = "";
     let name = "";
     if (conn.public) {
-      conn_name += '<i class="fas fa-users mr-3" style="color:#c57dd2;"></i>';
+      conn_name += '<i class="fas fa-users me-3" style="color:#c57dd2;"></i>';
     }
     if (conn.alias) {
       name = conn.alias;

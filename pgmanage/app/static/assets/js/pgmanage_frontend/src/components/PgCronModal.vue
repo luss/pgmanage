@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
-          <h2 class="modal-title font-weight-bold">{{ modalTitle }}</h2>
+          <h2 class="modal-title fw-bold">{{ modalTitle }}</h2>
           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
@@ -25,9 +25,9 @@
             <!-- Job main tab -->
             <div class="tab-pane fade show active" id="job_schedule" role="tabpanel"
                 aria-labelledby="job_schedule-tab">
-              <div class="form-row">
+              <div class="row">
                 <div class="form-group col-6 mb-2">
-                  <label for="job_name" class="font-weight-bold mb-2">Job Name</label>
+                  <label for="job_name" class="fw-bold mb-2">Job Name</label>
                   <input
                     v-model="jobName" id="job_name" type="text" :disabled="jobId"
                     :class="['form-control', { 'is-invalid': v$.jobName.$invalid }]">
@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="form-group col-6 mb-2">
-                  <label for="in_database" class="font-weight-bold mb-2">Run In Database</label>
+                  <label for="in_database" class="fw-bold mb-2">Run In Database</label>
                   <select v-model="inDatabase" :disabled="jobId" id="in_database" class="form-control">
                       <option value=""></option>
                       <option v-for="(database, index) in databases"
@@ -52,7 +52,7 @@
               </div>
 
               <div class="form-group mb-2">
-                <label class="font-weight-bold mb-2">Run At</label>
+                <label class="fw-bold mb-2">Run At</label>
                 <div
                   @click.capture="clickProxy"
                   :class="[{ 'vcron-disabled': manualInput }]">
@@ -60,9 +60,9 @@
                 </div>
               </div>
 
-              <div class="form-row">
+              <div class="row">
                 <div class="form-group col-4">
-                  <label for="schedule_override" class="font-weight-bold mb-2">Cron Expression</label>
+                  <label for="schedule_override" class="fw-bold mb-2">Cron Expression</label>
                   <input
                     v-model="scheduleOverride" id="schedule_override" type="text" :disabled="!manualInput"
                     :class="['form-control', { 'is-invalid': scheduleError }]">
@@ -75,13 +75,13 @@
                 <div class="form-group col-4 d-flex align-items-end">
                   <div class="custom-control custom-switch mb-2">
                     <input v-model="manualInput" id="manual_switch" type="checkbox" class="custom-control-input" >
-                    <label class="custom-control-label font-weight-bold" for="manual_switch">Define Manually</label>
+                    <label class="custom-control-label fw-bold" for="manual_switch">Define Manually</label>
                   </div>
                 </div>
               </div>
 
               <div class="form-group mb-2">
-                <p class="font-weight-bold mb-2">Command to Run</p>
+                <p class="fw-bold mb-2">Command to Run</p>
                 <div id="job_command" style="height: 20vh">
                 </div>
                 <div :class="[{ 'is-invalid': v$.command.$invalid }]"></div>
@@ -112,7 +112,7 @@
 
         <div class="modal-footer mt-auto justify-content-between">
           <ConfirmableButton v-if="mode==='Edit'" :callbackFunc="deleteJob" class="btn btn-danger m-0" />
-          <button type="button" class="btn btn-primary m-0 ml-auto"
+          <button type="button" class="btn btn-primary m-0 ms-auto"
             @click="saveJob">
             Save
           </button>
@@ -244,7 +244,7 @@ export default {
     this.getDatabases()
     if (this.mode === 'Edit') {
         this.getJobDetails()
-        let tabEl = document.getElementById('#job_statistics-tab')
+        let tabEl = document.getElementById('job_statistics-tab')
         tabEl.addEventListener('shown.bs.tab', this.setupJobStatisticsTab)
     }
     this.setupEditor()

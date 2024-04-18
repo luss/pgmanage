@@ -68,7 +68,7 @@ export default {
   emits: ["settingChange"],
   data() {
     return {
-      tooltipTitle: `<table class="text-left">
+      tooltipTitle: `<table class="text-start">
               <tr>
                 <td>Type:</td>
                 <td><b>${this.initialSetting.vartype}</b></td>

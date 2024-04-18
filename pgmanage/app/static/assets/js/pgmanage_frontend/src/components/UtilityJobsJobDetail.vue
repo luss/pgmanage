@@ -10,22 +10,22 @@
         </div>
         <div class="modal-body">
           <p class="mb">{{ selectedJob?.description }}</p>
-          <p class="font-weight-bold mb-2">Command:</p>
+          <p class="fw-bold mb-2">Command:</p>
           <p class="p-2 border border-radius text-break">
             {{ selectedJob?.details?.cmd }}
           </p>
           <div class="d-flex justify-content-between mt-3 mb-2">
             <span>
-              <span class="font-weight-bold">Start time:</span>
+              <span class="fw-bold">Start time:</span>
               {{ selectedJob?.start_time }}
             </span>
             <span>
-              <span class="font-weight-bold">Duration:</span>
+              <span class="fw-bold">Duration:</span>
               {{ selectedJob?.duration }}
             </span>
           </div>
           <div class="d-flex justify-content-between mt-3 mb-2">
-            <span class="font-weight-bold">Output:</span>
+            <span class="fw-bold">Output:</span>
             <div class="custom-control custom-switch">
               <input class="custom-control-input" type="checkbox" id="jobDetailAutoscroll" v-model="autoScroll" />
               <label class="custom-control-label" for="jobDetailAutoscroll">

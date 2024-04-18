@@ -18,7 +18,7 @@
     <button
       data-testid="tree-tabs-toggler"
       type="button"
-      class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler mr-2"
+      class="btn btn-icon btn-icon-secondary omnidb__tree-tabs__toggler me-2"
       @click="$emit('toggleTreeTabs')"
     >
       <i class="fas fa-arrows-alt-v"></i>
