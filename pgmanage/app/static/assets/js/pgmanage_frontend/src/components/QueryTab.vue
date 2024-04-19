@@ -375,14 +375,17 @@ export default {
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");
       } else {
-        let should_prepend =
-          command.trim().split(" ")[0].toUpperCase() !== "EXPLAIN";
-        if (should_prepend) {
-          if (explainMode === 0) {
-            command = "explain " + command;
-          } else if (explainMode === 1) {
-            command = "explain (analyze, buffers) " + command;
-          }
+        let explainRegex =
+          /^(EXPLAIN ANALYZE|EXPLAIN)\s*(\([^\)\(]+\))?\s+(.+)/is;
+        let queryMatch = command.match(explainRegex);
+        if (queryMatch) {
+          command = queryMatch[3] ?? command;
+        }
+
+        if (explainMode === 0) {
+          command = "explain " + command;
+        } else if (explainMode === 1) {
+          command = "explain (analyze, buffers) " + command;
         }
 
         this.querySQL(
