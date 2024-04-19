@@ -8,7 +8,7 @@ import { snippetsStore, settingsStore } from "../stores/stores_initializer";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 import { emitter } from "../emitter";
 import { format } from "sql-formatter";
-import { setupAceDragDrop } from "../file_drop";
+import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
 import { dbMetadataStore } from "../stores/stores_initializer";
@@ -148,6 +148,7 @@ export default {
       this.editor.resize();
 
       setupAceDragDrop(this.editor);
+      setupAceSelectionHighlight(this.editor);
     },
     setupCompleter() {
       // TODO:

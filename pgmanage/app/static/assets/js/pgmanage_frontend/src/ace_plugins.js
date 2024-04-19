@@ -101,4 +101,23 @@ function setupAceDragDrop(editor, isSnippetTab = false) {
   });
 }
 
-export { setupAceDragDrop };
+function setupAceSelectionHighlight(editor) {
+    editor.selection.on("changeSelection", () => {
+      // Get the selected text
+      let selectedText = editor.getSelectedText();
+  
+      // Clear existing highlights
+      editor.getSession().clearAnnotations();
+  
+      if (selectedText.length > 0) {
+        // Find other occurrences of the selected text
+        let pattern = new RegExp(selectedText, "g");
+  
+        editor.getSession().highlight(pattern);
+        editor.getSession().$searchHighlight.clazz = "ace_selection";
+      }
+    });
+  }
+  
+
+export { setupAceDragDrop, setupAceSelectionHighlight };
