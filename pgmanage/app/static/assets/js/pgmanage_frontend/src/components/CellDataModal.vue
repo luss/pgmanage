@@ -27,7 +27,7 @@ import { settingsStore } from "../stores/stores_initializer";
 export default {
   name: "CellDataModal",
   props: {
-    cellContent: String,
+    cellContent: [String, Number],
     showModal: Boolean,
   },
   emits: ["modalHide"],
@@ -55,7 +55,9 @@ export default {
     },
     showCellDataModal() {
       this.setupEdidor();
-      this.editor.setValue(this.cellContent);
+      let cellContent = this.cellContent;
+      if (cellContent) cellContent = this.cellContent.toString();
+      this.editor.setValue(cellContent);
       this.editor.clearSelection();
       $(this.$refs.cellDataModal).modal({
         backdrop: "static",
