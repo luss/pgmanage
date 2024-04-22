@@ -75,6 +75,9 @@ export default {
   mounted() {
     this.startWorker();
   },
+  unmounted() {
+    clearInterval(this.workerId);
+  },
   methods: {
     getJobList() {
       axios
