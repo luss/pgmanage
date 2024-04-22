@@ -362,7 +362,7 @@ export default {
   },
   watch: {
     fontSize(newValue, oldValue) {
-      if (!this.hidden)
+      if (!this.hidden && !this.fallbackFontSize)
         this.fallbackFontSize = oldValue
       this.changeInterfaceFontSize()
     },
@@ -370,7 +370,7 @@ export default {
       this.v$.csvDelimiter.$validate()
     },
     theme(newValue, oldValue) {
-      if (!this.hidden)
+      if (!this.hidden && !this.fallbackTheme)
         this.fallbackTheme = oldValue
       this.applyThemes();
     },
