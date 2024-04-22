@@ -322,7 +322,6 @@ export default {
     setupTabulator() {
       this.table = new Tabulator(`#${this.tabId}_commands_history_table`, {
         placeholder: "No Data Available",
-        selectableRows: true,
         layout: "fitDataStretch",
         width: '100%',
         clipboard: "copy",
