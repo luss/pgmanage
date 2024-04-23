@@ -3,7 +3,7 @@ from typing import Any, Callable, Optional
 
 from app.client_manager import client_manager
 from app.utils.response_helpers import error_response
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 
 def user_authenticated(function):
@@ -12,7 +12,7 @@ def user_authenticated(function):
         # User not authenticated
         if request.user.is_authenticated:
             return function(request, *args, **kwargs)
-        return error_response(message="", error_id=1)
+        return HttpResponse(status=401)
 
     return wrap
 

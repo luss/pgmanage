@@ -114,9 +114,7 @@ class LoginNoSession(TestCase):
             follow=True
         )
 
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode())
-        self.assertEqual(data['v_error'], True)
+        self.assertEqual(response.status_code, 401)
 
     def test_sign_in_no_user_password(self):
         """Test if sign in fails with invalid user and valid password.
@@ -147,8 +145,8 @@ class LoginNoSession(TestCase):
             reverse('sign_in'),
             build_client_ajax_request(
                 p_data={
-                    'p_username': self.user['user'],
-                    'p_pwd': '{p_password}kkk'.format(p_password=self.user['password'])
+                    'username': self.user['user'],
+                    'password': '{p_password}kkk'.format(p_password=self.user['password'])
                 }
             )
         )
@@ -168,8 +166,8 @@ class LoginNoSession(TestCase):
             reverse('sign_in'),
             build_client_ajax_request(
                 p_data={
-                    'p_username': self.user['user'],
-                    'p_pwd': self.user['password']
+                    'username': self.user['user'],
+                    'password': self.user['password']
                 }
             )
         )
@@ -306,8 +304,8 @@ class LoginSession(TestCase):
             reverse('sign_in'),
             build_client_ajax_request(
                 p_data={
-                    'p_username': self.user['user'],
-                    'p_pwd': '{p_password}kkk'.format(p_password=self.user['password'])
+                    'username': self.user['user'],
+                    'password': '{p_password}kkk'.format(p_password=self.user['password'])
                 }
             )
         )
@@ -326,8 +324,8 @@ class LoginSession(TestCase):
             reverse('sign_in'),
             build_client_ajax_request(
                 p_data={
-                    'p_username': self.user['user'],
-                    'p_pwd': self.user['password']
+                    'username': self.user['user'],
+                    'password': self.user['password']
                 }
             )
         )
