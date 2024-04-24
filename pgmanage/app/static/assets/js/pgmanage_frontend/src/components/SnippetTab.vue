@@ -55,7 +55,7 @@ import {
   tabsStore,
 } from "../stores/stores_initializer";
 import FileManager from "./FileManager.vue";
-import { setupAceDragDrop } from "../file_drop";
+import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
 import { createMessageModal, showToast } from "../notification_control";
@@ -143,6 +143,7 @@ export default {
 
       this.editor.focus();
       setupAceDragDrop(this.editor, true);
+      setupAceSelectionHighlight(this.editor);
     },
     setupEvents() {
       emitter.on(`${this.tabId}_editor_focus`, () => {
