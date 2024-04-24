@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <div class="tab-content">
+      <div ref="tabContent" class="tab-content">
         <div class="tab-pane active pt-2" :id="`nav_data_${tabId}`" role="tabpanel"
           :aria-labelledby="`nav_data_tab_${tabId}`">
           <div class="result-div">
@@ -367,7 +367,7 @@ export default {
       if (this.$refs === null) return;
 
       this.heightSubtract =
-        this.$refs.resultDiv.getBoundingClientRect().top + 25;
+        this.$refs.tabContent.getBoundingClientRect().top;
     },
   },
 };
