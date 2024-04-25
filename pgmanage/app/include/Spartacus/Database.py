@@ -811,7 +811,7 @@ class SQLite(Generic):
             self.v_port = None
             self.v_service = p_service
             self.v_user = None
-            self.v_password = None
+            self.v_password = ''
             self.v_con = None
             self.v_cur = None
             self.v_foreignkeys = p_foreignkeys
@@ -1023,6 +1023,8 @@ class SQLite(Generic):
                             v_row = self.v_cur.fetchone()
                 if self.v_start:
                     self.v_start = False
+                if len(v_table.Rows) < p_blocksize:
+                    self.v_start = True
                 return v_table
         except Spartacus.Database.Exception as exc:
             raise exc
@@ -2162,6 +2164,8 @@ class MySQL(Generic):
                             v_row = self.v_cur.fetchone()
                 if self.v_start:
                     self.v_start = False
+                if len(v_table.Rows) < p_blocksize:
+                    self.v_start = True
                 return v_table
         except Spartacus.Database.Exception as exc:
             raise exc
@@ -2548,6 +2552,8 @@ class MariaDB(Generic):
                             v_row = self.v_cur.fetchone()
                 if self.v_start:
                     self.v_start = False
+                if len(v_table.Rows) < p_blocksize:
+                    self.v_start = True
                 return v_table
         except Spartacus.Database.Exception as exc:
             raise exc
@@ -3169,6 +3175,8 @@ class Oracle(Generic):
                             v_row = self.v_cur.fetchone()
                 if self.v_start:
                     self.v_start = False
+                if len(v_table.Rows) < p_blocksize:
+                    self.v_start = True
                 return v_table
         except Spartacus.Database.Exception as exc:
             raise exc
