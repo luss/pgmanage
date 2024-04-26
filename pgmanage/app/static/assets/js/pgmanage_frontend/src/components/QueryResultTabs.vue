@@ -94,8 +94,7 @@ export default {
     resizeDiv(newValue, oldValue) {
       if (newValue) {
         this.handleResize();
-        if (this.table)
-          this.table.redraw();
+        if (this.table) this.table.redraw();
         this.$emit("resized");
       }
     },
@@ -118,6 +117,7 @@ export default {
         columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
+          maxInitialWidth: 200,
         },
         clipboard: "copy",
         clipboardCopyRowRange: "selected",
@@ -178,8 +178,8 @@ export default {
 
     let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
     table.on("tableBuilt", () => {
-      this.table = table
-    })
+      this.table = table;
+    });
     settingsStore.$onAction((action) => {
       if (action.name === "setFontSize") {
         if (
@@ -319,6 +319,18 @@ export default {
           field: idx.toString(),
           resizable: "header",
           contextMenu: cellContextMenu,
+          headerDblClick: (e, column) => {
+            if (
+              column.getWidth() >
+              this.tableSettings.columnDefaults.maxInitialWidth
+            ) {
+              column.setWidth(
+                this.tableSettings.columnDefaults.maxInitialWidth
+              );
+            } else {
+              column.setWidth(true);
+            }
+          },
         };
       });
 
@@ -366,8 +378,7 @@ export default {
     handleResize() {
       if (this.$refs === null) return;
 
-      this.heightSubtract =
-        this.$refs.tabContent.getBoundingClientRect().top;
+      this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },
   },
 };
