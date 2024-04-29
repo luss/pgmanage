@@ -80,7 +80,8 @@ export default {
       rowLimit: 10,
       dataLoaded: false,
       heightSubtract: 200, //default safe value, recalculated in handleResize
-      tabulator: null
+      tabulator: null,
+      maxInitialWidth: 200,
     };
   },
   computed: {
@@ -111,6 +112,7 @@ export default {
       columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
+          maxInitialWidth: this.maxInitialWidth,
         },
       selectableRows: false,
       rowFormatter: this.rowFormatter
@@ -222,7 +224,14 @@ export default {
               editable: false,
               cellDblClick: function (e, cell) {
                 cell.edit(true);
-              }
+              },
+              headerDblClick: (e, column) => {
+                if (column.getWidth() > this.maxInitialWidth) {
+                  column.setWidth(this.maxInitialWidth);
+                } else {
+                  column.setWidth(true);
+                }
+              },
             }
           })
           columns.unshift(actionsCol)
