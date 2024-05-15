@@ -223,7 +223,7 @@
     <ConfirmableButton v-if="connectionLocal.id" :callbackFunc="deleteConnection" class="btn btn-danger" />
     <button type="button"
       @click="trySave()"
-      :disabled="connectionLocal.locked"
+      :disabled="connectionLocal.locked || v$.$invalid || !isChanged"
       class="btn btn-primary ml-auto">Save changes</button>
   </div>
 </div>
@@ -238,6 +238,7 @@ import { connectionsStore } from '../stores/stores_initializer'
 
 import ConfirmableButton from './ConfirmableButton.vue'
 import { createMessageModal } from '../notification_control'
+import { isEqual } from 'lodash';
 
   export default {
     name: 'ConnectionsModalConnectionForm',
@@ -453,6 +454,9 @@ import { createMessageModal } from '../notification_control'
       },
       sshPassLabel() {
         return this.connectionLocal.tunnel.key_set ? 'SSH Key Passphrase' : 'SSH Password'
+      },
+      isChanged() {
+        return !isEqual(this.connectionLocal, this.initialConnection)
       }
     },
     methods: {
