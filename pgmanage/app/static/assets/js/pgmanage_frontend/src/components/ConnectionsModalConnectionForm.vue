@@ -95,7 +95,7 @@
               <input v-model="connectionLocal.service" type="text" class="form-control" id="connectionDatabase"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.service.$invalid }]"
                 :placeholder="placeholder.service"
-                :disabled="connectionLocal.technology==='terminal' || !!connectionLocal.conn_string.length">
+                :disabled="connectionLocal.technology==='terminal' || !!connectionLocal?.conn_string?.length">
                 <div class="invalid-feedback">
                   <span v-for="error of v$.connectionLocal.service.$errors" :key="error.$uid">
                     {{ error.$message }}
@@ -197,7 +197,7 @@
                     <input v-model="connectionLocal.tunnel.password"
                       :placeholder="this.connectionLocal.tunnel.password_set ? '••••••••' : ''" type="password" class="form-control"
                       id="sshPassphrase">
-                    <a v-if="this.connectionLocal.tunnel.password_set || this.connectionLocal.tunnel.password.length > 0"
+                    <a v-if="this.connectionLocal.tunnel.password_set || this.connectionLocal?.tunnel?.password?.length > 0"
                     @click="this.connectionLocal.tunnel.password_set = false; this.connectionLocal.tunnel.password = ''"
                   class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></a>
                 </div>
@@ -223,7 +223,7 @@
     <ConfirmableButton v-if="connectionLocal.id" :callbackFunc="deleteConnection" class="btn btn-danger" />
     <button type="button"
       @click="trySave()"
-      :disabled="connectionLocal.locked"
+      :disabled="connectionLocal.locked || v$.$invalid || (!isChanged && !!connectionLocal.id)"
       class="btn btn-primary ml-auto">Save changes</button>
   </div>
 </div>
@@ -238,6 +238,7 @@ import { connectionsStore } from '../stores/stores_initializer'
 
 import ConfirmableButton from './ConfirmableButton.vue'
 import { createMessageModal } from '../notification_control'
+import { isEqual } from 'lodash';
 
   export default {
     name: 'ConnectionsModalConnectionForm',
@@ -428,7 +429,7 @@ import { createMessageModal } from '../notification_control'
         return placeholderMap[current_db]
       },
       dbFormDisabled() {
-        return ['sqlite', 'terminal'].includes(this.connectionLocal.technology) || !!this.connectionLocal.conn_string.length
+        return ['sqlite', 'terminal'].includes(this.connectionLocal.technology) || !!this.connectionLocal?.conn_string?.length
       },
       connStringDisabled() {
         return (!!this.connectionLocal.server ||
@@ -453,6 +454,9 @@ import { createMessageModal } from '../notification_control'
       },
       sshPassLabel() {
         return this.connectionLocal.tunnel.key_set ? 'SSH Key Passphrase' : 'SSH Password'
+      },
+      isChanged() {
+        return !isEqual(this.connectionLocal, this.initialConnection)
       }
     },
     methods: {

@@ -19,8 +19,8 @@
                       <i class="fa-solid fa-circle-plus"></i> Add
                     </button>
                     <div class="dropdown-menu dropdown-menu-sm" id="add_connection_dropdown_menu">
-                      <a class="dropdown-item" @click="newConnection" href="#" id="add_connection_dropdown_item">Connection</a>
-                      <a class="dropdown-item" @click="newGroup" href="#">Group</a>
+                      <a class="dropdown-item" @click="showForm('connection')" href="#" id="add_connection_dropdown_item">Connection</a>
+                      <a class="dropdown-item" @click="showForm('group')" href="#">Group</a>
                     </div>
                   </div>
                 </div>
@@ -29,7 +29,7 @@
                   <div class="accordion">
                       <!-- GROUP ITEM -->
                     <div v-for="(group, index) in groupedConnections" :key=index class="card">
-                      <div @click="showForm('group', group)" class="card-header d-flex justify-content-between align-items-center collapsed" v-bind:id="'group-header-' + group.id" v-bind:data-target="'#collapse-group-' + group.id" data-toggle="collapse">
+                      <div @click.prevent.stop="showForm('group', group)" class="card-header d-flex justify-content-between align-items-center collapsed" v-bind:id="'group-header-' + group.id" v-bind:data-target="'#collapse-group-' + group.id" data-toggle="collapse">
                         <h4 class="clipped-text mb-0">
                           {{ group.name }}
                         </h4>
@@ -114,7 +114,7 @@ export default {
         technologies: [],
         selectedConnection: {},
         selectedGroup: undefined,
-        activeForm: 'group'
+        activeForm: undefined
       }
   },
   components: {
@@ -189,14 +189,19 @@ export default {
     loadData(init) {
       this.getGroups();
       this.getConnections(init);
-      this.activeForm = undefined
     },
 
     saveConnection(connection) {
       axios.post('/save_connection/', connection)
       .then((response) => {
+        let unsubscribe = connectionsStore.$subscribe((mutation, state) => {
+          if (mutation.type === 'patch object' && mutation.payload.connections) {
+            this.selectedConnection = state.connections.find((conn) => 
+            conn.id === connection.id || conn.alias === connection.alias) ?? {}
+            unsubscribe()
+          }
+        });
         this.loadData()
-        this.selectedConnection = {}
       })
       .catch((error) => {
         console.log(error)
@@ -222,6 +227,8 @@ export default {
       axios.post('/delete_connection/', connection)
       .then((response) => {
         this.loadData()
+        this.selectedConnection = {}
+        this.activeForm = undefined
       })
       .catch((error) => {
         console.log(error)
@@ -230,10 +237,14 @@ export default {
     saveGroup(group) {
       axios.post('/save_group/', group)
       .then((response) => {
+        let unsubscribe = connectionsStore.$subscribe((mutation, state) => {
+          if (mutation.type === 'patch object' && mutation.payload.groups) {
+            this.selectedGroup = this.groupedConnections.find((groupedConn) => 
+            groupedConn.id === group.id || groupedConn.name === group.name) ?? {}
+            unsubscribe()
+          }
+        });
         this.loadData()
-        // set selected group to something so that if "new group"
-        // is clicked again the watcher in group form will fire
-        this.selectedGroup = {}
       })
       .catch((error) => {
         console.log(error)
@@ -243,6 +254,8 @@ export default {
       axios.post('/delete_group/', group)
       .then((response) => {
         this.loadData()
+        this.selectedGroup = {}
+        this.activeForm = undefined
       })
       .catch((error) => {
         console.log(error)
@@ -266,34 +279,33 @@ export default {
       if(connection.technology === 'terminal') return `${techname} - ${connection.tunnel.server}:${connection.tunnel.port}`
       return `${techname} - ${connection.server}:${connection.port}`
     },
-    showForm(form_type, object) {
+    showForm(form_type, object = undefined) {
       if (this.v$.$anyDirty) {
         createMessageModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.v$.$reset()
-            this.showForm(form_type, object)
+            this.v$.$reset();
+            this.showForm(form_type, object);
           },
           null
         );
       } else {
         if (form_type === 'group') {
-          this.activeForm = 'group'
-          this.selectedGroup = object
+          this.activeForm = 'group';
+          this.selectedConnection = {};
+          if (object) {
+            $(`#collapse-group-${object.id}`).collapse('toggle');
+            this.selectedGroup = object;
+          } else {
+            this.selectedGroup = undefined;
+          }
         }
         if (form_type === 'connection') {
-          this.activeForm = 'connection'
-          this.selectedConnection = object
+          this.selectedGroup = {};
+          this.activeForm = 'connection';
+          this.selectedConnection = object ? object : undefined;
         }
       }
-    },
-    newConnection() {
-      this.activeForm = 'connection'
-      this.selectedConnection = undefined
-    },
-    newGroup() {
-      this.activeForm = 'group'
-      this.selectedGroup = undefined
     },
     getExistingTabs() {
       axios
