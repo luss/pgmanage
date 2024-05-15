@@ -114,7 +114,7 @@ export default {
         technologies: [],
         selectedConnection: {},
         selectedGroup: undefined,
-        activeForm: 'group'
+        activeForm: undefined
       }
   },
   components: {
@@ -189,14 +189,19 @@ export default {
     loadData(init) {
       this.getGroups();
       this.getConnections(init);
-      this.activeForm = undefined
     },
 
     saveConnection(connection) {
       axios.post('/save_connection/', connection)
       .then((response) => {
+        let unsubscribe = connectionsStore.$subscribe((mutation, state) => {
+          if (mutation.type === 'patch object' && mutation.payload.connections) {
+            this.selectedConnection = state.connections.find((conn) => 
+            conn.id === connection.id || conn.alias === connection.alias) ?? {}
+            unsubscribe()
+          }
+        });
         this.loadData()
-        this.selectedConnection = {}
       })
       .catch((error) => {
         console.log(error)
@@ -223,6 +228,7 @@ export default {
       .then((response) => {
         this.loadData()
         this.selectedConnection = {}
+        this.activeForm = undefined
       })
       .catch((error) => {
         console.log(error)
@@ -231,10 +237,14 @@ export default {
     saveGroup(group) {
       axios.post('/save_group/', group)
       .then((response) => {
+        let unsubscribe = connectionsStore.$subscribe((mutation, state) => {
+          if (mutation.type === 'patch object' && mutation.payload.groups) {
+            this.selectedGroup = this.groupedConnections.find((groupedConn) => 
+            groupedConn.id === group.id || groupedConn.name === group.name) ?? {}
+            unsubscribe()
+          }
+        });
         this.loadData()
-        // set selected group to something so that if "new group"
-        // is clicked again the watcher in group form will fire
-        this.selectedGroup = {}
       })
       .catch((error) => {
         console.log(error)
@@ -245,6 +255,7 @@ export default {
       .then((response) => {
         this.loadData()
         this.selectedGroup = {}
+        this.activeForm = undefined
       })
       .catch((error) => {
         console.log(error)

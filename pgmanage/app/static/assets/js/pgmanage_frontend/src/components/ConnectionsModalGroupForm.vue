@@ -42,7 +42,7 @@
     <button type="button" 
       @click="trySave()" 
       class="btn btn-primary ml-auto"
-      :disabled="v$.$invalid || !isChanged"
+      :disabled="v$.$invalid || (!isChanged && !!this.groupLocal.id)"
       >Save changes</button>
   </div>
 </div>
