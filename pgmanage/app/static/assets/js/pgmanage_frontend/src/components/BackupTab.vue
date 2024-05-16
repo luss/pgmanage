@@ -7,13 +7,13 @@
             <h4 class="card-header font-weight-bold px-3 py-2">General</h4>
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
-                <label for="backupFileName" class="font-weight-bold mb-1">FileName</label>
+                <label :for="`${backupTabId}_backupFileName`" class="font-weight-bold mb-1">FileName</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                         a file</div>
                     </div>
-                    <input type="text" class="form-control" :value="backupOptions.fileName"
+                    <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
                       placeholder="Select file or folder" disabled>
                   </div>
               </div>

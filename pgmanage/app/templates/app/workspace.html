@@ -30,10 +30,6 @@
   <!-- .IF CHROME -->
 
 
-  <div id="connections-modal-wrap">
-    <connections-modal></connections-modal>
-  </div>
-
   <div id="extension-modal-wrap">
   </div>
 
@@ -105,49 +101,6 @@
         </div>
         <div>
           <button id="bt_cancel_ajax" style='display: none; margin-top: 10px;' class='btn btn-light' onclick="cancelAjax()">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Modal Query History -->
-    <div class="modal fade" id="modal_query_history" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button class="btn btn-danger">Delete History</button>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-
-              <div class="form-row">
-                <div class="col-md-3 mb-3">
-                  <label for="query_history_from">From</label>
-                  <input type="text" class="form-control" id="query_history_from" placeholder="From Date">
-                </div>
-                <div class="col-md-3 mb-3">
-                  <label for="query_history_to">To</label>
-                  <input type="text" class="form-control" id="query_history_to" placeholder="To Date">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="query_history_contains">Query Contains</label>
-                  <input type="text" class="form-control" id="query_history_contains" placeholder="Filter">
-                </div>
-              </div>
-
-              <div class="text-center">
-                <button class="btn btn-secondary btn-sm mr-1">First</button>
-                <button class="btn btn-secondary btn-sm mr-1">Previous</button>
-                <span class="mr-1"> 1 / 217 </span>
-                <button class="btn btn-secondary btn-sm mr-1">Next</button>
-                <button class="btn btn-secondary btn-sm mr-1">Last</button>
-              </div>
-
-              <div id="query_history_grid" style="width: 100%; height: 300px; overflow: hidden;"></div>
-
-          </div>
         </div>
       </div>
     </div>
@@ -229,7 +182,7 @@
     </div>
 
     <!-- Modal Plugins -->
-    <div class="modal fade" id="modal_plugins" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- <div class="modal fade" id="modal_plugins" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
           <div class="modal-header align-items-center">
@@ -240,7 +193,7 @@
           </div>
           <div class="modal-body">
             <div class="custom-file mb-3">
-              <!-- <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required> -->
+              <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required>
               <label class="custom-file-label" for="plugin_file_selector">Select plugin package to be installed...</label>
             </div>
 
@@ -248,7 +201,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Modal Generic Message -->
     <div class="modal show" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
