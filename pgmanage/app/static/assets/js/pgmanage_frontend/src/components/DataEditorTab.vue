@@ -3,17 +3,17 @@
   <div ref="topToolbar" class="form-row">
     <div class="form-group col-9">
       <form class="form" @submit.prevent>
-        <label class="mb-2" for="selectServer">
+        <label class="mb-2" :for="`${tabId}_queryFilter`">
           <span class="font-weight-bold">Filter</span> <span class='text-info'> select</span> * <span class='text-info'>from</span> {{this.schema ? `${this.schema}.${this.table}` : `${this.table}`}}
         </label>
-        <input v-model.trim="queryFilter" class="form-control" name="filter"
+        <input :id="`${tabId}_queryFilter`" v-model.trim="queryFilter" class="form-control" name="filter"
            placeholder="extra filter criteria" />
       </form>
     </div>
     <div class="form-group col-2">
       <form class="form" @submit.prevent>
-        <label class="font-weight-bold mb-2" for="selectServer">Limit</label>
-        <select v-model="rowLimit" class="form-control">
+        <label class="font-weight-bold mb-2" :for="`${tabId}_rowLimit`">Limit</label>
+        <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-control">
             <option v-for="(option, index) in [10, 100, 1000]"
               :key=index
               :value="option">

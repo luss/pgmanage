@@ -122,7 +122,7 @@
                   <label for="binary_path" class="font-weight-bold mb-2">PostgreSQL Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
-                      <input type="text" class="form-control" v-model="binaryPath"
+                      <input id="binary_path" type="text" class="form-control" v-model="binaryPath"
                         :placeholder="`${action} binary path..`">
                       <div v-if="desktopMode" class="input-group-append">
                         <label class="btn btn-outline-secondary mb-0" type="button">
@@ -143,7 +143,7 @@
                   <label for="pigz_path" class="font-weight-bold mb-2">Pigz Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
-                      <input type="text" class="form-control" v-model="pigzPath"
+                      <input id="pigz_path" type="text" class="form-control" v-model="pigzPath"
                         :placeholder="`${action} binary path..`">
                       <div v-if="desktopMode" class="input-group-append">
                         <label class="btn btn-outline-secondary mb-0" type="button">
