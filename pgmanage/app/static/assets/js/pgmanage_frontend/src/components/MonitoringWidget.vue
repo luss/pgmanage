@@ -269,6 +269,7 @@ export default {
         let tabulator = new Tabulator(this.$refs.gridContent, {
           data: data.data,
           height: "100%",
+          autoResize: false,
           layout: "fitDataStretch",
           selectableRows: true,
           clipboard: "copy",

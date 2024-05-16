@@ -188,7 +188,7 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 	v_editor.session.setMode("ace/mode/sql");
 	v_editor.$blockScrolling = Infinity;
 
-	v_editor.setFontSize(Number(v_font_size));
+	v_editor.setFontSize(settingsStore.fontSize);
 
 	v_editor.setOptions({enableBasicAutocompletion: true});
 
