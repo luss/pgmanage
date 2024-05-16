@@ -11,10 +11,10 @@
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
-                      a file</div>
+                    </div>
                   </div>
                   <input :id="`${restoreTabId}_restoreFileName`" type="text" class="form-control" :value="restoreOptions.fileName"
-                    placeholder="Select file or folder" disabled>
+                    placeholder="backup file" disabled>
                 </div>
               </div>
 

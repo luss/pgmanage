@@ -11,10 +11,10 @@
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
-                        a file</div>
+                      </div>
                     </div>
                     <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
-                      placeholder="Select file or folder" disabled>
+                      placeholder="backup file" disabled>
                   </div>
               </div>
               <div v-if="isObjectsType" class="form-group mb-1">
