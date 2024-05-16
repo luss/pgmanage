@@ -38,7 +38,7 @@
     </div>
   </div>
   <div class="modal-footer mt-auto justify-content-between w-100">
-    <button v-if="groupLocal.id" type="button" @click="$emit('group:delete', this.groupLocal)" class="btn btn-danger">Delete</button>
+    <ConfirmableButton v-if="groupLocal.id" :callbackFunc="() => $emit('group:delete', groupLocal)" class="btn btn-danger" />
     <button type="button" 
       @click="trySave()" 
       class="btn btn-primary ml-auto"
@@ -52,8 +52,12 @@
   import { useVuelidate } from '@vuelidate/core'
   import { required, maxLength } from '@vuelidate/validators'
   import { isEqual } from 'lodash'
+  import ConfirmableButton from './ConfirmableButton.vue'
   export default {
     name: 'ConnectionsModalGroupForm',
+    components: {
+      ConfirmableButton
+    },
     data() {
       return {
         groupLocal: {
