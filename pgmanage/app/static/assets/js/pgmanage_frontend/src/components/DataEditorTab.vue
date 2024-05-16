@@ -108,6 +108,7 @@ export default {
     let table = new Tabulator(this.$refs.tabulator, {
       layout: 'fitDataStretch',
       data: [],
+      autoResize: false,
       columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
