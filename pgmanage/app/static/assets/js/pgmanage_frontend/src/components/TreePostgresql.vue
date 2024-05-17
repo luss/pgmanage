@@ -94,7 +94,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/managing-databases.html`
+                )}/managing-databases.html`
               );
             },
           },
@@ -173,7 +173,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-schemas.html`
+                )}/ddl-schemas.html`
               );
             },
           },
@@ -250,7 +250,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-basics.html`
+                )}/ddl-basics.html`
               );
             },
           },
@@ -261,7 +261,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-constraints.html`
+                )}/ddl-constraints.html`
               );
             },
           },
@@ -272,7 +272,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-alter.html`
+                )}/ddl-alter.html`
               );
             },
           },
@@ -738,7 +738,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/indexes.html`
+                )}/indexes.html`
               );
             },
           },
@@ -815,7 +815,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/rules.html`
+                )}/rules.html`
               );
             },
           },
@@ -893,7 +893,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/trigger-definition.html`
+                )}/trigger-definition.html`
               );
             },
           },
@@ -1048,7 +1048,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-partitioning.html`
+                )}/ddl-partitioning.html`
               );
             },
           },
@@ -1107,7 +1107,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-partitioning.html`
+                )}/ddl-partitioning.html`
               );
             },
           },
@@ -1169,7 +1169,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/planner-stats.html`
+                )}/planner-stats.html`
               );
             },
           },
@@ -1219,7 +1219,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-partitioning.html`
+                )}/ddl-partitioning.html`
               );
             },
           },
@@ -1234,7 +1234,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/tutorial-inheritance.html`
+                )}/tutorial-inheritance.html`
               );
             },
           },
@@ -1442,7 +1442,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createsequence.html`
+                )}/sql-createsequence.html`
               );
             },
           },
@@ -1504,7 +1504,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createview.html`
+                )}/sql-createview.html`
               );
             },
           },
@@ -1586,7 +1586,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/trigger-definition.html`
+                )}/trigger-definition.html`
               );
             },
           },
@@ -1613,7 +1613,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-creatematerializedview.html`
+                )}/sql-creatematerializedview.html`
               );
             },
           },
@@ -1720,7 +1720,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createfunction.html`
+                )}/sql-createfunction.html`
               );
             },
           },
@@ -1808,7 +1808,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/plpgsql-trigger.html`
+                )}/plpgsql-trigger.html`
               );
             },
           },
@@ -1877,7 +1877,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/functions-event-triggers.html`
+                )}/functions-event-triggers.html`
               );
             },
           },
@@ -1948,7 +1948,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createprocedure.html`
+                )}/sql-createprocedure.html`
               );
             },
           },
@@ -2029,7 +2029,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createaggregate.html`
+                )}/sql-createaggregate.html`
               );
             },
           },
@@ -2092,7 +2092,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createtype.html`
+                )}/sql-createtype.html`
               );
             },
           },
@@ -2154,7 +2154,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createdomain.html`
+                )}/sql-createdomain.html`
               );
             },
           },
@@ -2220,7 +2220,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/extend-extensions.html`
+                )}/extend-extensions.html`
               );
             },
           },
@@ -2293,7 +2293,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/postgres-fdw.html`
+                )}/postgres-fdw.html`
               );
             },
           },
@@ -2464,7 +2464,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/event-triggers.html`
+                )}/event-triggers.html`
               );
             },
           },
@@ -2593,7 +2593,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/logical-replication-publication.html`
+                )}/logical-replication-publication.html`
               );
             },
           },
@@ -2685,7 +2685,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/logical-replication-subscription.html`
+                )}/logical-replication-subscription.html`
               );
             },
           },
@@ -2744,7 +2744,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/manage-ag-tablespaces.html`
+                )}/manage-ag-tablespaces.html`
               );
             },
           },
@@ -2800,7 +2800,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/user-manag.html`
+                )}/user-manag.html`
               );
             },
           },
@@ -2906,7 +2906,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/warm-standby.html#streaming-replication-slots`
+                )}/warm-standby.html#streaming-replication-slots`
               );
             },
           },
@@ -2945,7 +2945,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/logicaldecoding-explanation.html#logicaldecoding-replication-slots`
+                )}/logicaldecoding-explanation.html#logicaldecoding-replication-slots`
               );
             },
           },
@@ -3416,7 +3416,7 @@ export default {
                 this.openWebSite(
                   `https://www.postgresql.org/docs/${this.getMajorVersion(
                     this.templates.version
-                  )}/static/`
+                  )}/`
                 );
               },
             },
@@ -3427,7 +3427,7 @@ export default {
                 this.openWebSite(
                   `https://www.postgresql.org/docs/${this.getMajorVersion(
                     this.templates.version
-                  )}/static/sql.html`
+                  )}/sql.html`
                 );
               },
             },
@@ -3438,7 +3438,7 @@ export default {
                 this.openWebSite(
                   `https://www.postgresql.org/docs/${this.getMajorVersion(
                     this.templates.version
-                  )}/static/sql-commands.html`
+                  )}/sql-commands.html`
                 );
               },
             }
