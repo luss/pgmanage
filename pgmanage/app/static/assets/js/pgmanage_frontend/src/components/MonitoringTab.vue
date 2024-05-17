@@ -18,9 +18,9 @@
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { cellDataModal } from "../header_actions";
 import axios from "axios";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
-import { settingsStore } from "../stores/stores_initializer";
+import { messageModalStore, settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: "MonitoringTab",
@@ -215,7 +215,7 @@ export default {
           break;
       }
       if (!!pid) {
-        createMessageModal(
+        messageModalStore.showModal(
           `Are you sure you want to terminate backend ${pid}?`,
           () => {
             this.terminateBackendConfirm(pid);

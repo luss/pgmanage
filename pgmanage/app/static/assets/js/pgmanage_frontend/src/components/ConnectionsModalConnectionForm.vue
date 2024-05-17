@@ -234,10 +234,9 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, between, maxLength, helpers } from '@vuelidate/validators'
 
-import { connectionsStore } from '../stores/stores_initializer'
+import { connectionsStore, messageModalStore } from '../stores/stores_initializer';
 
 import ConfirmableButton from './ConfirmableButton.vue'
-import { createMessageModal } from '../notification_control'
 import { isEqual } from 'lodash';
 
   export default {
@@ -479,7 +478,7 @@ import { isEqual } from 'lodash';
       },
       selectConnection(connection) {
         if (this.v$.$anyDirty) {
-          createMessageModal(
+          messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset()

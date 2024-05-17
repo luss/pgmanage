@@ -35,9 +35,8 @@ import {
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
-import { createMessageModal } from "../notification_control";
 import { showConfirm, showToast } from "../notification_control";
-import { connectionsStore, tabsStore } from "../stores/stores_initializer";
+import { connectionsStore, messageModalStore, tabsStore } from "../stores/stores_initializer";
 import ContextMenu from "@imengyu/vue3-context-menu";
 
 
@@ -2987,7 +2986,7 @@ export default {
             label: "Delete",
             icon: "fas cm-all fa-xmark",
             onClick: () => {
-              createMessageModal(
+              messageModalStore.showModal(
                 `Are you sure you want to delete job "${this.selectedNode.title}"`,
                 () => {
                   this.deleteJobPostgresql(this.selectedNode);

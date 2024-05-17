@@ -53,12 +53,13 @@ import {
   snippetsStore,
   settingsStore,
   tabsStore,
+  messageModalStore,
 } from "../stores/stores_initializer";
 import FileManager from "./FileManager.vue";
 import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 
 export default {
   name: "SnippetTab",
@@ -240,7 +241,7 @@ export default {
     openFileManagerModal() {
       const editorContent = this.editor.getValue();
       if (!!editorContent) {
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.$refs.fileManager.show(true, this.handleFileInputChange);
