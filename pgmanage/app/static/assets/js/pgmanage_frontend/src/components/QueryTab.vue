@@ -137,7 +137,7 @@
 
 <script>
 import { Splitpanes, Pane } from "splitpanes";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
 import { queryModes, requestState, tabStatusMap, queryRequestCodes } from "../constants";
@@ -149,7 +149,7 @@ import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
 import FileManager from "./FileManager.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
-import { tabsStore, connectionsStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore, messageModalStore } from "../stores/stores_initializer";
 
 export default {
   name: "QueryTab",
@@ -506,7 +506,7 @@ export default {
     },
     openFileManagerModal() {
       if (!!this.editorContent) {
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.$refs.fileManager.show(true, this.handleFileInputChange);

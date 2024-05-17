@@ -91,11 +91,11 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
-import { showToast, createMessageModal } from "../notification_control";
+import { showToast } from "../notification_control";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { settingsStore, tabsStore, connectionsStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore, connectionsStore, messageModalStore } from "../stores/stores_initializer";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
@@ -367,7 +367,7 @@ export default {
     },
     openFileManagerModal() {
       if (!!this.editorContent) {
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.$refs.fileManager.show(true, this.handleFileInputChange);

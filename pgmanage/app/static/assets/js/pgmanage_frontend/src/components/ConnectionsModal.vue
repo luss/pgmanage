@@ -96,9 +96,9 @@ import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
-import { showToast, createMessageModal } from '../notification_control'
+import { showToast } from '../notification_control';
 import { emitter } from '../emitter'
-import { tabsStore } from '../stores/stores_initializer'
+import { messageModalStore, tabsStore } from '../stores/stores_initializer';
 import { settingsStore, connectionsStore } from "../stores/stores_initializer";
 import { useVuelidate } from '@vuelidate/core'
 
@@ -281,7 +281,7 @@ export default {
     },
     showForm(form_type, object = undefined) {
       if (this.v$.$anyDirty) {
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset();
@@ -376,7 +376,7 @@ export default {
     $('#connections-modal').on("hide.bs.modal", (event) => {
       if (this.v$.$anyDirty) {
         event.preventDefault()
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset()
