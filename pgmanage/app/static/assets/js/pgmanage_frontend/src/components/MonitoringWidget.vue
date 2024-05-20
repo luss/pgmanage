@@ -107,30 +107,21 @@
       </div>
     </div>
   </div>
-  <CellDataModal
-    :cell-content="cellContent"
-    :show-modal="cellModalVisible"
-    @modal-hide="cellModalVisible = false"
-  />
 </template>
 
 <script>
 import axios from "axios";
-import CellDataModal from "./CellDataModal.vue";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { emitter } from "../emitter";
 import { showToast } from "../notification_control";
 import Chart from "chart.js/auto";
 import { useVuelidate } from "@vuelidate/core";
 import { minValue, required } from "@vuelidate/validators";
-import { settingsStore } from "../stores/stores_initializer";
+import { settingsStore, cellDataModalStore } from "../stores/stores_initializer";
 import { markRaw } from "vue";
 
 export default {
   name: "MonitoringWidget",
-  components: {
-    CellDataModal,
-  },
   setup() {
     return {
       v$: useVuelidate({ $lazy: true }),
@@ -161,8 +152,6 @@ export default {
       timeoutObject: null,
       widgetInterval: this.monitoringWidget.interval,
       widgetData: null,
-      cellContent: "",
-      cellModalVisible: false,
     };
   },
   computed: {
@@ -260,8 +249,7 @@ export default {
             label:
               '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
             action: (e, cell) => {
-              this.cellContent = cell.getValue();
-              this.cellModalVisible = true;
+              cellDataModalStore.showModal(cell.getValue())
             },
           },
         ];
