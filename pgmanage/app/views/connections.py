@@ -7,7 +7,7 @@ from app.utils.crypto import decrypt, encrypt
 from app.utils.decorators import session_required, user_authenticated
 from app.utils.key_manager import key_manager
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from sshtunnel import SSHTunnelForwarder
 
 
@@ -194,8 +194,6 @@ def save_group(request):
 @user_authenticated
 @session_required(include_session=False)
 def test_connection(request):
-    response_data = {'data': '', 'status': 'success'}
-
     conn_object = request.data
     conn_id = conn_object['id']
     conn_type = conn_object['technology']
@@ -228,20 +226,17 @@ def test_connection(request):
                 key = paramiko.RSAKey.from_private_key(io.StringIO(ssh_key), password=ssh_password)
                 client.connect(hostname=conn_object['tunnel']['server'], username=conn_object['tunnel']['user'],
                                pkey=key, passphrase=ssh_password,
-                               port=int(conn_object['tunnel']['port']))
+                               port=int(conn_object['tunnel']['port']), timeout=5)
             else:
                 client.connect(hostname=conn_object['tunnel']['server'], username=conn_object['tunnel']['user'],
-                               password=ssh_password, port=int(conn_object['tunnel']['port']))
+                               password=ssh_password, port=int(conn_object['tunnel']['port']), timeout=5)
 
             client.close()
-            response_data['data'] = 'Connection successful.'
         except Exception as exc:
             msg = str(exc)
             if "checkints" in msg:
                 msg = "Unable to decrypt SSH Key. Wrong passphrase?"
-            response_data['data'] = msg
-            response_data['status'] = 'failed'
-            return JsonResponse(response_data, status=400)
+            return JsonResponse({"data": msg}, status=400)
     else:
 
         database = OmniDatabase.Generic.InstantiateDatabase(
@@ -270,7 +265,8 @@ def test_connection(request):
                         ssh_private_key_password=ssh_password,
                         ssh_pkey=key,
                         remote_bind_address=(database.v_active_server, int(database.v_active_port)),
-                        logger=None
+                        logger=None,
+                        set_keepalive=120,
                     )
                 else:
                     server = SSHTunnelForwarder(
@@ -278,9 +274,9 @@ def test_connection(request):
                         ssh_username=conn_object['tunnel']['user'],
                         ssh_password=ssh_password,
                         remote_bind_address=(database.v_active_server, int(database.v_active_port)),
-                        logger=None
+                        logger=None,
+                        set_keepalive=120
                     )
-                server.set_keepalive = 120
                 server.start()
 
                 database.v_connection.v_host = '127.0.0.1'
@@ -288,25 +284,21 @@ def test_connection(request):
 
                 message = database.TestConnection()
                 server.close()
-                response_data['data'] = message
                 if message != 'Connection successful.':
-                    response_data['status'] = 'failed'
+                    return JsonResponse({"data": message}, status=400)
 
             except Exception as exc:
                 msg = str(exc)
                 if "checkints" in msg:
                     msg = "Unable to decrypt SSH Key. Wrong passphrase?"
-                response_data['data'] = msg
-                response_data['status'] = 'failed'
-                return JsonResponse(response_data, status=400)
+                return JsonResponse({"data": msg}, status=400)
 
         else:
             message = database.TestConnection()
-            response_data['data'] = message
             if message != 'Connection successful.':
-                response_data['status'] = 'failed'
+                return JsonResponse({"data": message}, status=400)
 
-    return JsonResponse(response_data)
+    return HttpResponse(status=200)
 
 
 @user_authenticated

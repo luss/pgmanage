@@ -8,6 +8,7 @@
     <ConnectionsModal />
   </template>
   <GenericMessageModal />
+  <CellDataModal />
   <FileManager />
 </template>
 
@@ -19,6 +20,7 @@ import MasterPasswordModal from "./components/MasterPasswordModal.vue";
 import UtilityJobsJobDetail from "./components/UtilityJobsJobDetail.vue";
 import ConnectionsModal from "./components/ConnectionsModal.vue";
 import GenericMessageModal from "./components/GenericMessageModal.vue";
+import CellDataModal from "./components/CellDataModal.vue";
 import FileManager from "./components/FileManager.vue";
 import { emitter } from "./emitter";
 import { startTutorial } from "./tutorial";
@@ -33,6 +35,7 @@ export default {
     UtilityJobsJobDetail,
     ConnectionsModal,
     GenericMessageModal,
+    CellDataModal,
     FileManager,
   },
   data() {
