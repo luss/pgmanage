@@ -6,7 +6,13 @@
         <!-- TODO: integrate with active connection list -->
         <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
           <div>
-            <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary mr-2" id="connectionTestButton">Test</button>
+            <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary mr-2" id="connectionTestButton" :disabled="testIsRunning">
+              <template v-if="testIsRunning">
+                <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                <span>Testing...</span>
+                </template>
+              <span v-else>Test</span>
+            </button>
             <button v-if="this.connectionLocal.id" @click="selectConnection(this.connectionLocal)" class="btn btn-success">Connect</button>
           </div>
         </div>
@@ -238,6 +244,7 @@ import { connectionsStore, messageModalStore } from '../stores/stores_initialize
 
 import ConfirmableButton from './ConfirmableButton.vue'
 import { isEqual } from 'lodash';
+import { showToast } from '../notification_control';
 
   export default {
     name: 'ConnectionsModalConnectionForm',
@@ -256,7 +263,8 @@ import { isEqual } from 'lodash';
           { text: 'verify certificate', value: "ssl_verify_cert" },
           { text: 'verify server identity', value: "ssl_verify_identity" }],
         oracle_modes: ['tcp', 'tcps'],
-        tempMode: "ssl"
+        tempMode: "ssl",
+        testIsRunning: false,
       }
     },
     validations() {
@@ -501,7 +509,16 @@ import { isEqual } from 'lodash';
       testConnection(connection) {
         this.v$.connectionLocal.$validate()
         if(!this.v$.$invalid) {
-          this.$emit('connection:test', this.connectionLocal)
+          this.testIsRunning = true
+          connectionsStore.testConnection(connection)
+          .then(() => {
+            showToast("success", "Connection successful.")
+            this.testIsRunning = false;
+          })
+          .catch((error) => {
+            this.testIsRunning = false;
+            showToast("error", error.response.data.data);
+          })
         }
       },
       updateConnectionKey(event) {

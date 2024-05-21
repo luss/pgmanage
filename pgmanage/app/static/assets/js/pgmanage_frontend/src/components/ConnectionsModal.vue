@@ -78,7 +78,6 @@
                 <ConnectionsModalConnectionForm
                   @connection:save="saveConnection"
                   @connection:delete="deleteConnection"
-                  @connection:test="testConnection"
                   :initialConnection="selectedConnection"
                   :technologies="technologies"
                   :visible="activeForm == 'connection'"
@@ -96,7 +95,6 @@ import ConnectionsModalConnectionForm from './ConnectionsModalConnectionForm.vue
 import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
-import { showToast } from '../notification_control';
 import { emitter } from '../emitter'
 import { messageModalStore, tabsStore } from '../stores/stores_initializer';
 import { settingsStore, connectionsStore } from "../stores/stores_initializer";
@@ -204,22 +202,6 @@ export default {
         this.loadData()
       })
       .catch((error) => {
-        console.log(error)
-      })
-    },
-    testConnection(connection) {
-      axios.post('/test_connection/', connection)
-      .then((response) => {
-        if(response.data.status !== 'success') {
-            showToast("error", response.data.data)
-        } else {
-            showToast("success", response.data.data)
-        }
-      })
-      .catch((error) => {
-        if(error.response && error.response?.data) {
-          showToast("error", error.response.data.data)
-        }
         console.log(error)
       })
     },
