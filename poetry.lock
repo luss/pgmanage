@@ -623,17 +623,17 @@ files = [
 
 [[package]]
 name = "sshtunnel"
-version = "0.1.5"
+version = "0.4.0"
 description = "Pure python SSH tunnels"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sshtunnel-0.1.5-py2.py3-none-any.whl", hash = "sha256:5eee2e414c3fd9e9ef5d058bebece272a6aae928849ef7f2d9561b7fffab7aea"},
-    {file = "sshtunnel-0.1.5.tar.gz", hash = "sha256:c813fdcda8e81c3936ffeac47cb69cfb2d1f5e77ad0de656c6dab56aeebd9249"},
+    {file = "sshtunnel-0.4.0-py2.py3-none-any.whl", hash = "sha256:98e54c26f726ab8bd42b47a3a21fca5c3e60f58956f0f70de2fb8ab0046d0606"},
+    {file = "sshtunnel-0.4.0.tar.gz", hash = "sha256:e7cb0ea774db81bf91844db22de72a40aae8f7b0f9bb9ba0f666d474ef6bf9fc"},
 ]
 
 [package.dependencies]
-paramiko = ">=1.15.2"
+paramiko = ">=2.7.2"
 
 [package.extras]
 build-sphinx = ["sphinx", "sphinxcontrib-napoleon"]
@@ -679,4 +679,4 @@ test = ["zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.9.13"
-content-hash = "c206eee49a973d7f3b44701f613918bf86a20543fdb7d3d4ddb9c0d9224c3fb7"
+content-hash = "5742669fd4111c6c9dd857f5934db250034dacaccb4865ceb4f0e6b3e842fd70"
