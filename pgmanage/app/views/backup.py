@@ -202,7 +202,7 @@ def get_args_params_values(data, conn, backup_obj_type, backup_file):
 
     if backup_obj_type != "objects":
         args.append("--database")
-        args.append(conn.v_service)
+        args.append(conn.v_active_service)
 
     set_param("verbose", "--verbose")
     set_param("dqoute", "--quote-all-identifiers")

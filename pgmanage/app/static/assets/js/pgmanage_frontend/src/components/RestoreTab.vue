@@ -256,22 +256,19 @@
     </div>
   </form>
   <UtilityJobs ref="jobs" />
-  <FileManager ref="fileManager" @change-file="changeFilePath" />
 </div>
 </template>
 
 <script>
 import UtilityJobs from './UtilityJobs.vue';
-import FileManager from './FileManager.vue';
 import axios from 'axios'
 import { showAlert, showToast } from '../notification_control';
-import { settingsStore } from '../stores/stores_initializer';
+import { settingsStore, fileManagerStore, tabsStore } from '../stores/stores_initializer';
 
 export default {
   name: "RestoreTab",
   components: {
-    FileManager,
-    UtilityJobs
+    UtilityJobs,
   },
   props: {
     connId: String,
@@ -317,7 +314,6 @@ export default {
         pigz_number_of_jobs: 'auto',
       },
       restoreOptions: {},
-      desktopMode: settingsStore.desktopMode,
       restoreTabId: this.tabId
     }
   },
@@ -365,6 +361,14 @@ export default {
       this.restoreOptions = { ...this.restoreOptionsDefault }
       this.getRoleNames()
     })
+
+    fileManagerStore.$onAction(({name, store, after}) => {
+      if (name === "changeFile" && this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id) {
+        after(() => {
+          this.changeFilePath(store.filePath)
+        })
+      }
+    })
   },
   methods: {
     getRoleNames() {
@@ -396,11 +400,11 @@ export default {
       const [file] = e.target.files
       this.restoreOptions.fileName = file?.path
     },
-    changeFilePath(event) {
-      this.restoreOptions.fileName = event.filePath
+    changeFilePath(filePath) {
+      this.restoreOptions.fileName = filePath;
     },
     openFileManagerModal() {
-      this.$refs.fileManager.show(this.desktopMode, this.onFile, this.dialogType)
+      fileManagerStore.showModal(settingsStore.desktopMode, this.onFile, this.dialogType);
     },
     resetToDefault() {
       this.restoreOptions = { ...this.restoreOptionsDefault }
