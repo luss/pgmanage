@@ -65,7 +65,6 @@
       </div>
     </div>
   </div>
-  <CellDataModal :cell-content="cellContent" :show-modal="cellModalVisible" @modal-hide="cellModalVisible = false" />
 </template>
 
 <script>
@@ -73,14 +72,12 @@ import ExplainTabContent from "./ExplainTabContent.vue";
 import { queryModes, tabStatusMap } from "../constants";
 import { emitter } from "../emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import CellDataModal from "./CellDataModal.vue";
-import { settingsStore, tabsStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore, cellDataModalStore } from "../stores/stores_initializer";
 import { showToast } from "../notification_control";
 
 export default {
   components: {
     ExplainTabContent,
-    CellDataModal,
   },
   props: {
     tabId: String,
@@ -128,8 +125,6 @@ export default {
       query: "",
       plan: "",
       table: null,
-      cellContent: "",
-      cellModalVisible: false,
       heightSubtract: 200,
     };
   },
@@ -307,8 +302,7 @@ export default {
           label:
             '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
           action: (e, cell) => {
-            this.cellContent = cell.getValue();
-            this.cellModalVisible = true;
+            cellDataModalStore.showModal(cell.getValue())
           },
         },
       ];
@@ -354,9 +348,8 @@ export default {
       this.table.on(
         "cellDblClick",
         function (e, cell) {
-          this.cellContent = cell.getValue();
-          if (this.cellContent) this.cellModalVisible = true;
-        }.bind(this)
+          if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+        }
       );
     },
     fetchData(data) {
