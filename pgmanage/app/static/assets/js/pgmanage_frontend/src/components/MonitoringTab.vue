@@ -10,7 +10,7 @@
       </button>
       <span class="query_info"> Number of records: {{ dataLength }} </span>
     </div>
-    <div refgi="tabulator" class="tabulator-custom grid-height pb-3"></div>
+    <div ref="tabulator" class="tabulator-custom grid-height pb-3"></div>
   </div>
 </template>
 
