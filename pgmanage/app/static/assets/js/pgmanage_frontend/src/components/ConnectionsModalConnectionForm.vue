@@ -243,7 +243,7 @@ import { required, between, maxLength, helpers } from '@vuelidate/validators'
 import { connectionsStore, messageModalStore } from '../stores/stores_initializer';
 
 import ConfirmableButton from './ConfirmableButton.vue'
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { showToast } from '../notification_control';
 
   export default {

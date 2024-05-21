@@ -45,7 +45,8 @@
 <script>
 import axios from 'axios'
 import Knex from 'knex'
-import { isEqual, zipObject } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import zipObject from 'lodash/zipObject';
 import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'

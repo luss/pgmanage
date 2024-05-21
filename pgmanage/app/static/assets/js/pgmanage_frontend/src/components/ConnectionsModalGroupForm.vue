@@ -51,7 +51,7 @@
 <script>
   import { useVuelidate } from '@vuelidate/core'
   import { required, maxLength } from '@vuelidate/validators'
-  import { isEqual } from 'lodash'
+  import isEqual from 'lodash/isEqual';
   import ConfirmableButton from './ConfirmableButton.vue'
   export default {
     name: 'ConnectionsModalGroupForm',
