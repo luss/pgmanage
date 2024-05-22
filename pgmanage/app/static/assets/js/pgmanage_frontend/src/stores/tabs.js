@@ -325,7 +325,7 @@ const useTabsStore = defineStore("tabs", {
             imgName = `${v_conn.technology}2`;
           }
 
-          let icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
+          let icon = `<img src="${app_base_path}${imgPath}${imgName}.svg"/>`;
 
           const connTab = this.addTab({
             name: connName,
