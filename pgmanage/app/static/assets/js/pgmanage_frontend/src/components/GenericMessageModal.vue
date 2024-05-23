@@ -60,3 +60,9 @@ export default {
   },
 };
 </script>
+
+<style>
+#generic_modal_message {
+  z-index: 9999;
+}
+</style>
