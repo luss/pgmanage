@@ -110,6 +110,7 @@ class BackupMessage(IJobDesc):
         self.database = kwargs["database"] if "database" in kwargs else None
         self.cmd = ""
         self.args_str = "{0} ({1}:{2})"
+        self._connection_name = self.get_connection_name()
 
         # check to we need this?
         def cmd_arg(x):
@@ -145,16 +146,14 @@ class BackupMessage(IJobDesc):
 
     @property
     def message(self):
-        connection_name = self.get_connection_name()
-        return self.backup_type.get_message(connection_name, self.database)
+        return self.backup_type.get_message(self._connection_name, self.database)
 
     def details(self, cmd):
-        server_name = self.get_connection_name()
         backup_type = self.backup_type.backup_type
         return {
             "message": self.message,
             "cmd": cmd + self.cmd,
-            "server": server_name,
+            "server": self._connection_name,
             "object": self.database,
             "type": backup_type,
         }
