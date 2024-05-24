@@ -131,6 +131,7 @@ export default {
       openedTransaction: false, //TODO: implement commit/rollback functionality
       data: "",
       context: "",
+      tempData: [],
       tabStatus: tabStatusMap.NOT_CONNECTED,
       queryDuration: "",
       queryStartTime: "",
@@ -238,6 +239,7 @@ export default {
             this.queryDuration = "";
             this.cancelled = false;
             this.longQuery = false;
+            this.tempData = [];
             emitter.emit(`${this.tabId}_copy_to_editor`, "");
             this.lastCommand = command;
 
@@ -293,11 +295,26 @@ export default {
       }
     },
     consoleReturn(data, context) {
-      if (!this.idleState) {
+      clearInterval(this.queryInterval);
+      this.queryInterval = null;
+      
+      if (!data.v_error) {
+        this.tempData = this.tempData.concat(data.v_data.v_data);
+      }
+
+      if (!this.idleState && (data.v_data.v_last_block || data.v_error)) {
+        data.v_data.v_data = this.tempData;
+        this.readOnlyEditor = false;
+        this.tabStatus = data.v_data.v_con_status;
         if (
           this.connId === tabsStore.selectedPrimaryTab.id &&
           this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
+          this.context = "";
+          this.data = "";
+          this.consoleState = requestState.Idle;
+          context.tab.metaData.isLoading = false;
+          context.tab.metaData.isReady = false;
           this.consoleReturnRender(data, context);
         } else {
           this.consoleState = requestState.Ready;
@@ -310,22 +327,13 @@ export default {
       }
     },
     consoleReturnRender(data, context) {
-      clearInterval(this.queryInterval)
-      this.queryInterval = null;
-
-      this.consoleState = requestState.Idle;
-      this.tabStatus = data.v_data.v_con_status;
-      this.readOnlyEditor = false;
-
-      this.terminal.write(data.v_data.v_data);
-
-      context.tab.metaData.isLoading = false
-      context.tab.metaData.isReady = false
-
+      data.v_data.v_data.forEach((chunk) => {
+        this.terminal.write(chunk);
+      })
       this.fetchMoreData = data.v_data.v_show_fetch_button;
       this.queryDuration = data.v_data.v_duration;
 
-      if (!data.v_error) {
+      if (!data.v_error && !!data?.v_data?.status && isNaN(data.v_data.status)) {
         let mode = ["CREATE", "DROP", "ALTER"];
         let status = data.v_data.v_status.split(" ");
 

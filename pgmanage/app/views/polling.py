@@ -1072,6 +1072,7 @@ def thread_console(self,args):
 
         log_start_time = datetime.now(timezone.utc)
         log_status = 'success'
+        v_show_fetch_button = False
 
         try:
             list_sql = sqlparse.split(v_sql)
@@ -1086,7 +1087,7 @@ def thread_console(self,args):
                 else:
                     v_database.v_connection.v_start=True
 
-            if v_mode == 1 or v_mode ==2:
+            if v_mode == 1:
                 v_table = v_database.v_connection.QueryBlock('', 50, True, True)
                 #need to stop again
                 if not v_database.v_connection.v_start or len(v_table.Rows)>=50:
@@ -1097,6 +1098,24 @@ def thread_console(self,args):
                     v_data_return += '\n' + v_table.Pretty(v_database.v_connection.v_expanded) + '\n' + v_database.v_connection.GetStatus()
                     run_command_list = True
                     list_sql = v_tab_object['remaining_commands']
+            elif v_mode == 2:
+                has_more_records = True
+                run_command_list = False
+                while has_more_records:
+
+                    data = v_database.v_connection.QueryBlock('', 10000, True, True)
+                    v_data_return += '\n' + data.Pretty(v_database.v_connection.v_expanded) + '\n' + v_database.v_connection.GetStatus()
+
+                    if v_database.v_connection.v_start:
+                        has_more_records = False
+                    elif len(data.Rows) > 0:
+                        has_more_records = True
+                    else:
+                        has_more_records = False
+
+
+                    if self.cancel:
+                            break
 
             if v_mode == 3:
                 run_command_list = True
@@ -1158,26 +1177,51 @@ def thread_console(self,args):
             #send data in chunks to avoid blocking the websocket server
             chunks = [v_data_return[x:x+10000] for x in range(0, len(v_data_return), 10000)]
             if len(chunks)>0:
-                for count in range(0,len(chunks)):
+                for idx, chunk in enumerate(chunks, 1):
                     if self.cancel:
                         break
-                    if not count==len(chunks)-1:
-                        v_response['v_data'] = {
-                            'v_data' : chunks[count],
-                            'v_last_block': False,
-                            'v_duration': v_duration,
-                            'v_show_fetch_button': v_show_fetch_button,
-                            'v_con_status': '',
+                    if idx != len(chunks):
+                        v_response = {
+                            'v_code': response.ConsoleResult,
+                            'v_context_code': args['v_context_code'],
+                            'v_error': False,
+                            'v_data': {
+                                'v_data' : chunk,
+                                'v_last_block': False,
+                                'v_duration': v_duration,
+                                'v_show_fetch_button': v_show_fetch_button,
+                                'v_con_status': '',
+                            }
                         }
+                        # v_response['v_data'] = {
+                        #     'v_data' : chunk,
+                        #     'v_last_block': False,
+                        #     'v_duration': v_duration,
+                        #     'v_show_fetch_button': v_show_fetch_button,
+                        #     'v_con_status': '',
+                        # }
                     else:
-                        v_response['v_data'] = {
-                            'v_data' : chunks[count],
-                            'v_last_block': True,
-                            'v_duration': v_duration,
-                            'v_show_fetch_button': v_show_fetch_button,
-                            'v_con_status': v_database.v_connection.GetConStatus(),
-                            'v_status': v_database.v_connection.GetStatus(),
+                        v_response = {
+                            'v_code': response.ConsoleResult,
+                            'v_context_code': args['v_context_code'],
+                            'v_error': False,
+                            'v_data': {
+                                 'v_data' : chunk,
+                                'v_last_block': True,
+                                'v_duration': v_duration,
+                                'v_show_fetch_button': v_show_fetch_button,
+                                'v_con_status': v_database.v_connection.GetConStatus(),
+                                'v_status': v_database.v_connection.GetStatus(),
+                            }
                         }
+                        # v_response['v_data'] = {
+                        #     'v_data' : chunk,
+                        #     'v_last_block': True,
+                        #     'v_duration': v_duration,
+                        #     'v_show_fetch_button': v_show_fetch_button,
+                        #     'v_con_status': v_database.v_connection.GetConStatus(),
+                        #     'v_status': v_database.v_connection.GetStatus(),
+                        # }
                     if not self.cancel:
                         queue_response(v_client_object,v_response)
             else:
