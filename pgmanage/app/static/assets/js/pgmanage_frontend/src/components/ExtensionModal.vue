@@ -5,9 +5,7 @@
 
         <div class="modal-header align-items-center">
           <h2 class="modal-title fw-bold">{{ modalTitle }}</h2>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">

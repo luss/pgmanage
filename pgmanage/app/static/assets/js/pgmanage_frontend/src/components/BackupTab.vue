@@ -53,9 +53,9 @@
                 </select>
               </div>
               <div v-if="!isWindowsOS" class="form-group mb-1">
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsPigz`" v-model="backupOptions.pigz" :disabled="isDirectoryFormat || isTarFormat">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsPigz`">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPigz`" v-model="backupOptions.pigz" :disabled="isDirectoryFormat || isTarFormat">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsPigz`">
                     Compress with Pigz
                   </label>
                 </div>
@@ -90,24 +90,24 @@
             <div class="card-body px-3 py-2">
               <div v-if="isObjectsType" class="form-group mb-1">
                 <p class="fw-bold mb-2">Sections</p>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsPreData`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPreData`"
                     v-model="backupOptions.pre_data" :disabled="isOnlyDataOrSchemaSelected">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsPreData`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsPreData`">
                     Pre-data
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsData`" v-model="backupOptions.data"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsData`" v-model="backupOptions.data"
                     :disabled="isOnlyDataOrSchemaSelected">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsData`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsData`">
                     Data
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsPostData`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPostData`"
                     v-model="backupOptions.post_data" :disabled="isOnlyDataOrSchemaSelected">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsPostData`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsPostData`">
                     Post-data
                   </label>
                 </div>
@@ -115,49 +115,49 @@
 
               <div class="form-group mb-1">
                 <p class="fw-bold mb-1">Type of objects</p>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyData`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyData`"
                     v-model="backupOptions.only_data"
                     :disabled="backupOptions.pre_data || backupOptions.data || backupOptions.post_data || backupOptions.include_drop_commands">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsOnlyData`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsOnlyData`">
                     Only data
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlySchema`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlySchema`"
                     v-model="backupOptions.only_schema"
                     :disabled="backupOptions.pre_data || backupOptions.data || backupOptions.post_data">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsOnlySchema`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsOnlySchema`">
                     Only schema
                   </label>
                 </div>
-                <div v-if="isObjectsType" class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsBlobs`" v-model="backupOptions.blobs">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsBlobs`">
+                <div v-if="isObjectsType" class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsBlobs`" v-model="backupOptions.blobs">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsBlobs`">
                     Blobs
                   </label>
                 </div>
-                <div v-if="isServerType" class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyRoles`"
+                <div v-if="isServerType" class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyRoles`"
                     v-model="backupOptions.only_roles" 
                     :disabled="backupOptions.only_tablespaces || backupOptions.only_globals">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsOnlyRoles`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsOnlyRoles`">
                     Only roles
                   </label>
                 </div>
-                <div v-if="isServerType" class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyTablespaces`"
+                <div v-if="isServerType" class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyTablespaces`"
                     v-model="backupOptions.only_tablespaces"
                     :disabled="backupOptions.only_roles || backupOptions.only_globals">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsOnlyTablespaces`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsOnlyTablespaces`">
                     Only tablespaces
                   </label>
                 </div>
-                <div v-if="isServerType" class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyGlobals`"
+                <div v-if="isServerType" class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsOnlyGlobals`"
                   v-model="backupOptions.only_globals"
                   :disabled="backupOptions.only_roles || backupOptions.only_tablespaces">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsOnlyGlobals`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsOnlyGlobals`">
                   Only global objects
                 </label>
               </div>
@@ -165,37 +165,37 @@
 
               <div class="form-group mb-0">
                 <p class="fw-bold mb-2">Do not save</p>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsOwner`" v-model="backupOptions.owner">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsOwner`">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsOwner`" v-model="backupOptions.owner">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsOwner`">
                     Owner
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsPrivilege`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPrivilege`"
                     v-model="backupOptions.privilege">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsPrivilege`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsPrivilege`">
                     Privilege
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsTablespace`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsTablespace`"
                     v-model="backupOptions.tablespace">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsTablespace`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsTablespace`">
                     Tablespace
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsUnloggedTableData`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsUnloggedTableData`"
                     v-model="backupOptions.unlogged_tbl_data">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsUnloggedTableData`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsUnloggedTableData`">
                     Unlogged table data
                   </label>
                 </div>
-                <div class="custom-control custom-switch">
-                  <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsComments`"
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsComments`"
                     v-model="backupOptions.comments">
-                  <label class="custom-control-label" :for="`${backupTabId}_backupOptionsComments`">
+                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsComments`">
                     Comments
                   </label>
                 </div>
@@ -210,38 +210,38 @@
             <div class="card-body px-2 px-3 py-2">
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Queries</p>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsColumnInserts`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsColumnInserts`"
                   v-model="backupOptions.use_column_inserts">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsColumnInserts`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsColumnInserts`">
                   Use Column Inserts
                 </label>
               </div>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsInsertCommands`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsInsertCommands`"
                   v-model="backupOptions.use_insert_commands">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsInsertCommands`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsInsertCommands`">
                   Use Insert Commands
                 </label>
               </div>
-              <div v-if="isObjectsType" class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsCreateDbStatement`"
+              <div v-if="isObjectsType" class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsCreateDbStatement`"
                   v-model="backupOptions.include_create_database">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsCreateDbStatement`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsCreateDbStatement`">
                   Include CREATE DATABASE statement
                 </label>
               </div>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsDropCommands`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsDropCommands`"
                   v-model="backupOptions.include_drop_commands" :disabled="backupOptions.only_data">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsDropCommands`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsDropCommands`">
                   Include DROP commands
                 </label>
               </div>
-              <div v-if="isObjectsType" class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsPartitionRoot`"
+              <div v-if="isObjectsType" class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPartitionRoot`"
                   v-model="backupOptions.load_via_partition_root">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsPartitionRoot`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsPartitionRoot`">
                   Load Via Partition Root
                 </label>
               </div>
@@ -249,18 +249,18 @@
 
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Disable</p>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsTrigger`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsTrigger`"
                   title="disabled on object backup" v-model="backupOptions.disable_trigger"
                   :disabled="!backupOptions.only_data">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsTrigger`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsTrigger`">
                   Trigger
                 </label>
               </div>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsQuoting`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsQuoting`"
                   v-model="backupOptions.disable_quoting">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsQuoting`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsQuoting`">
                   $ quoting
                 </label>
               </div>
@@ -268,24 +268,24 @@
             
             <div class="form-group mb-0">
               <p class="fw-bold mb-1">Miscellaneous</p>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsVerboseMessages`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsVerboseMessages`"
                   v-model="backupOptions.verbose">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsVerboseMessages`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsVerboseMessages`">
                   Verbose messages
                 </label>
               </div>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsDoubleQuote`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsDoubleQuote`"
                   v-model="backupOptions.dqoute">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsDoubleQuote`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsDoubleQuote`">
                   Force double quote on identifiers
                 </label>
               </div>
-              <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" :id="`${backupTabId}_backupOptionsSetSeessionAuthorization`"
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsSetSeessionAuthorization`"
                   v-model="backupOptions.use_set_session_auth">
-                <label class="custom-control-label" :for="`${backupTabId}_backupOptionsSetSeessionAuthorization`">
+                <label class="form-check-label" :for="`${backupTabId}_backupOptionsSetSeessionAuthorization`">
                   Use SET SESSION AUTHORIZATION
                 </label>
               </div>

@@ -5,11 +5,9 @@
         <button
           v-if="!isTestWidget"
           data-testid="widget-close-button"
-          class="close"
+          class="btn-close"
           @click="closeMonitoringWidget"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
+        ></button>
 
         <Transition :duration="100">
           <div

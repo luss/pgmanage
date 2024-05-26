@@ -1,10 +1,10 @@
 <template>
   <div class="col-7">
     <div ref="settingInput">
-      <div class="custom-control custom-switch" v-if="setting.vartype === 'bool'">
-        <input class="custom-control-input" type="checkbox" :id="`switch-${inputId}`" v-model="setting.setting" true-value="on" false-value="off"
+      <div class="form-check form-switch" v-if="setting.vartype === 'bool'">
+        <input class="form-check-input" type="checkbox" :id="`switch-${inputId}`" v-model="setting.setting" true-value="on" false-value="off"
           @change="changeSetting" :disabled="isReadOnly" />
-        <label class="custom-control-label" :for="`switch-${inputId}`"></label>
+        <label class="form-check-label" :for="`switch-${inputId}`"></label>
       </div>
 
       <select v-else-if="setting.vartype === 'enum'" class="form-control form-control-sm" :name="setting.name"

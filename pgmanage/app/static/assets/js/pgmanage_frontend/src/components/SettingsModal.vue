@@ -4,9 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title fw-bold">Settings</h2>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" @click="resetUnsavedSettings">
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="resetUnsavedSettings"></button>
         </div>
         <div class="modal-body">
           <ul class="nav nav-tabs" role="tablist">
@@ -33,7 +31,7 @@
 
               <div v-for="(shortcut, idx) in shortcuts" :key="idx" class="row">
                 <label :for="idx" class="col-sm-6 col-form-label">{{ shortcutLabel(shortcut) }}</label>
-                <div class="col-sm-6">
+                <div class="form-group col-6">
                   <div class="d-grid">
                     <button :id="idx" class='btn btn-secondary btn-sm' @click="startSetShortcut">{{
                       buildButtonText(shortcut)
@@ -89,16 +87,16 @@
 
               <div class="row">
                 <div class="col-6">
-                  <div class="custom-control custom-switch">
-                    <input v-model="restoreTabs" id="restore_tabs" type="checkbox" class="custom-control-input" >
-                    <label for="restore_tabs" class="custom-control-label fw-bold mb-2">Restore Tabs on Start</label>
+                  <div class="form-check form-switch">
+                    <input v-model="restoreTabs" id="restore_tabs" type="checkbox" class="form-check-input" >
+                    <label for="restore_tabs" class="form-check-label fw-bold mb-2">Restore Tabs on Start</label>
                   </div>
                 </div>
 
                 <div class="col-6">
-                  <div class="custom-control custom-switch">
-                    <input v-model="scrollTree" id="scroll_tree" type="checkbox" class="custom-control-input" >
-                    <label for="scroll_tree" title="Scroll datatase tree node into view when opened" class="custom-control-label fw-bold mb-2">Database Tree Autoscroll</label>
+                  <div class="form-check form-switch">
+                    <input v-model="scrollTree" id="scroll_tree" type="checkbox" class="form-check-input" >
+                    <label for="scroll_tree" title="Scroll datatase tree node into view when opened" class="form-check-label fw-bold mb-2">Database Tree Autoscroll</label>
                   </div>
                 </div>
               </div>
@@ -120,7 +118,7 @@
               </div>
 
               <div class="row">
-                <div class="col-12">
+                <div class="form-group col-12">
                   <label for="binary_path" class="fw-bold mb-2">PostgreSQL Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
@@ -139,7 +137,7 @@
               </div>
 
               <div v-if="!isWindowsOS" class="row">
-                <div class="col-12">
+                <div class="form-group col-12">
                   <label for="pigz_path" class="fw-bold mb-2">Pigz Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
@@ -164,7 +162,7 @@
 
             <div class="tab-pane fade" id="settings_password" role="tabpanel" aria-labelledby="settings_password-tab">
               <div class="row">
-                <div class="col-6">
+                <div class="form-group col-6">
                   <label for="txt_new_pwd" class="fw-bold mb-2">New Password</label>
                   <input v-model="password" id="txt_new_pwd" type="password" class="form-control" @input="checkPassword"
                     minlength="8" required>

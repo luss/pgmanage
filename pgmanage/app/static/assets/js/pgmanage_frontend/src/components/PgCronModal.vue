@@ -4,9 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h2 class="modal-title fw-bold">{{ modalTitle }}</h2>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -73,9 +71,9 @@
                   </div>
                 </div>
                 <div class="form-group col-4 d-flex align-items-end">
-                  <div class="custom-control custom-switch mb-2">
-                    <input v-model="manualInput" id="manual_switch" type="checkbox" class="custom-control-input" >
-                    <label class="custom-control-label fw-bold" for="manual_switch">Define Manually</label>
+                  <div class="form-check form-switch mb-2">
+                    <input v-model="manualInput" id="manual_switch" type="checkbox" class="form-check-input" >
+                    <label class="form-check-label fw-bold" for="manual_switch">Define Manually</label>
                   </div>
                 </div>
               </div>

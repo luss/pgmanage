@@ -1,16 +1,14 @@
 <template>
-  <div class="modal modal-blurr modal-connections" id="connections-modal" ref="connmodal" tabindex="-1">
+  <div class="modal modal-connections" id="connections-modal" ref="connmodal" tabindex="-1">
     <div class="modal-dialog modal-xl modal-connections__dialog">
       <div class="modal-content modal-connections__content h-100">
         <div class="modal-header align-items-center">
           <h2 class="modal-title fw-bold">Manage connections</h2>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-          </button>
+          <button type="btn" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body modal-connections__body p-0">
           <div class="row g-0 h-100">
-            <div class="col-3">
+            <div class="col-3 position-relative">
               <div class="modal-connections__panel">
                 <div class="modal-connections__panel_add add-connection d-flex justify-content-between align-items-center">
                   <p class="add-connection__title p-0 m-0"><span>{{ this.connections.length }}</span> connections</p>

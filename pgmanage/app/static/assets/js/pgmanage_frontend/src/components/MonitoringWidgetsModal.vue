@@ -12,11 +12,10 @@
           <h2 class="modal-title fw-bold">Monitoring Widgets</h2>
           <button
             type="button"
-            class="close"
+            class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
           >
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
         <div class="modal-body">
@@ -29,7 +28,7 @@
         <div class="modal-footer">
           <button
             @click="editMonitoringWidget()"
-            class="btn btn-primary btn-sm me-3"
+            class="btn btn-primary btn-sm"
           >
             New Widget
           </button>

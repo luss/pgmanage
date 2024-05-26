@@ -100,9 +100,7 @@
         <div class="modal-header align-items-center">
           <h2 v-if="!modalRevertConfig" class="modal-title">Config Management</h2>
           <h2 v-else class="modal-title">Revert Configuration</h2>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <p v-if="modalRevertConfig && !hasRevertValues" class="text-center">No changes to revert to.</p>

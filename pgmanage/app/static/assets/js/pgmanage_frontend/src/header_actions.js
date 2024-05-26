@@ -142,9 +142,7 @@ function cellDataModal(p_ht, p_row, p_col, p_content, p_can_alter) {
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="mb-0">${v_canEditContent ? 'Edit Data' : 'Show Data'}</h4>
-				<button id="modal_message_close_icon" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
+				<button id="modal_message_close_icon" type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div id="modal_message_content" class="modal-body" style="white-space: pre-line;">
 				<div id="txt_edit_content" style="width: 100%; height: 70vh; font-size: 12px; border: 1px solid rgb(195, 195, 195);">
