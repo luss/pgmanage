@@ -142,3 +142,8 @@ input[type='checkbox'].custom-checkbox {
     top: 50%;
     transform: translateY(-50%);
 }
+
+.form-check-input:checked {
+    background-color: $primaryBlue;
+    border-color: $primaryBlue;
+}

@@ -140,7 +140,7 @@ $connectorLine: 2px solid darken($lineColor, 10%);
     //'Settings' btn
     .btn.border-left {
       color: $primaryBlue !important;
-      border: 0 !important;
+      border: 0 !important; 
 
       &:focus, &:active {
         outline: none;
