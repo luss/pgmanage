@@ -21,7 +21,7 @@
           <pane size="20">
             <div class="omnidb__snippets__div-left col h-100">
               <div class="row h-100">
-                <div class="omnidb__snippets__content-left border-right">
+                <div class="omnidb__snippets__content-left border-end">
                   <div class="snippets-tree">
                     <TreeSnippets
                       :tab-id="tabId"

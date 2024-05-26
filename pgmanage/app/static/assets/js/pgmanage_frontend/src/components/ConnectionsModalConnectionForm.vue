@@ -1,5 +1,5 @@
 <template>
-<div v-if="visible" class="col-9 d-flex ms-auto">
+<div v-if="visible" class="col-9 d-flex ms-auto position-relative">
   <div class="modal-connections__forms position-absolute w-100">
     <div class="modal-connections__forms_connection connection-form position-absolute">
         <div class="connection-form__header d-flex justify-content-between align-items-center pb-3">
@@ -13,7 +13,7 @@
 
         <form>
           <div class="row mt-3">
-            <div class="form-group col-6">
+            <div class="form-group col-6 position-relative">
               <label for="connectionName" class="fw-bold mb-2">Name</label>
               <input v-model="connectionLocal.alias" type="text"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.alias.$invalid }]" id="connectionName" placeholder="Connection name">
@@ -23,7 +23,7 @@
                 </span>
               </div>
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col-3 position-relative">
               <label for="connectionType" class="fw-bold mb-2">Type</label>
               <select v-model="connectionLocal.technology" @change="handleTypeChange" id="connectionType" class="form-control" placeholder="Connection type">
                   <option disabled>Choose...</option>
@@ -34,7 +34,7 @@
                   </option>
               </select>
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col-3 position-relative">
               <label for="connectionGroup" class="fw-bold mb-2">Group</label>
               <select v-model="connectionLocal.group" id="connectionGroup" class="form-control" placeholder="Connection group">
                   <option value=""></option>
@@ -48,7 +48,7 @@
           </div>
 
           <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col-6 position-relative">
               <label for="connectionName" class="fw-bold mb-2">Server</label>
               <input v-model="connectionLocal.server" type="text" class="form-control" id="connectionServer"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.server.$invalid }]"
@@ -146,9 +146,9 @@
               </div>
           </div>
 
-          <div class="custom-control custom-switch mb-3">
-            <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="custom-control-input" id="sshTunel" data-bs-toggle="collapse" data-target="#sshSettings" :disabled="connectionLocal.technology==='terminal'">
-            <label class="custom-control-label fw-bold" for="sshTunel">Use SSH tunnel</label>
+          <div class="form-check form-switch mb-3">
+            <input v-model="connectionLocal.tunnel.enabled" @change="scrollToTunnel" type="checkbox" class="form-check-input" id="sshTunel" data-bs-toggle="collapse" data-target="#sshSettings" :disabled="connectionLocal.technology==='terminal'">
+            <label class="form-check-label fw-bold" for="sshTunel">Use SSH tunnel</label>
           </div>
 
           <div id="sshSettings" :class="(connectionLocal.tunnel.enabled) ? 'collapse show':'collapse'">

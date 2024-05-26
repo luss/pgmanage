@@ -1,14 +1,14 @@
 <template>
-  <div class="container-fluid position-relative">
-    <div class="row">
+  <div class="container-fluid position-relative g-0">
+    <div class="row g-0">
       <splitpanes class="default-theme">
         <pane size="18">
           <div
             :id="`${connTabId}_div_left`"
             class="omnidb__workspace__div-left col"
           >
-            <div class="row">
-              <div class="omnidb__workspace__content-left border-right">
+            <div class="row g-0">
+              <div class="omnidb__workspace__content-left border-end">
                 <div class="omnidb__workspace__connection-details">
                   <i class="fas fa-server me-1"></i>selected DB:
                   <b>{{ databaseName }}</b>

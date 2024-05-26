@@ -1,5 +1,5 @@
 <template>
-<div v-if="visible" class="col-9 d-flex ms-auto">
+<div v-if="visible" class="col-9 d-flex ms-auto position-relative">
   <div class="modal-connections__forms position-absolute w-100">
     <div class="modal-connections__forms_group group-edit-form position-absolute">
       <div class="form-group mb-3">

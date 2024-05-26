@@ -26,9 +26,9 @@
           </div>
           <div class="d-flex justify-content-between mt-3 mb-2">
             <span class="fw-bold">Output:</span>
-            <div class="custom-control custom-switch">
-              <input class="custom-control-input" type="checkbox" id="jobDetailAutoscroll" v-model="autoScroll" />
-              <label class="custom-control-label" for="jobDetailAutoscroll">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="jobDetailAutoscroll" v-model="autoScroll" />
+              <label class="form-check-label" for="jobDetailAutoscroll">
                 Autoscroll
               </label>
             </div>
