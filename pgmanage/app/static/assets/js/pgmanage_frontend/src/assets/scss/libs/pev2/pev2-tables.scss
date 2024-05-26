@@ -3,19 +3,33 @@
   .table {
     border-radius: $borderRadius;
     overflow: hidden;
+    
+    & > :not(caption) > * > * {
+      background-color: $bgLightTertiary !important;
+    }
 
     &.table-nonfluid {
       width: auto !important;
     }
   
-    &.table-sm-bordered {
+    &.table-bordered {
       border: none !important;
+      border-width: 0 !important;
+      
+      & > :not(caption) > * {
+        border-width: 0 !important;
+      }
   
       td,
       th {
         border: none !important;
       }
     }
+    
+    // inside 'Grid' tab
+   &.table-sm.table-hover {
+    margin-top: 0.5rem;
+   }
   }
 
   //tables inside plan-node-body
@@ -62,23 +76,25 @@
           }
         }
 
-        &.thead-dark th {
+        &.table-secondary th {
           @include themify() {
             color: themed($color) !important;
             background-color: themed($pev2StatsTableTheadDark) !important;
             border-bottom: themed($border);
           }
-          .text-white {
-            @include themify() {
-              color: themed($color) !important;
-            }
+        }
+        
+        a {
+          @include themify() {
+            color: themed($color) !important;
           }
         }
       }
-  
-      a {
-        color: map-get($severity-colors, 3);
-        font-weight: 600;
+      tbody {
+        a {
+          color: map-get($severity-colors, 3);
+          font-weight: 600;
+        }
       }
     }
   }
