@@ -40,7 +40,6 @@
         </button>
       </div>
     </div>
-    <FileManager ref="fileManager" />
   </div>
 </template>
 
@@ -55,17 +54,14 @@ import {
   tabsStore,
   messageModalStore,
 } from "../stores/stores_initializer";
-import FileManager from "./FileManager.vue";
 import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
+import { fileManagerStore } from "../stores/stores_initializer";
 
 export default {
   name: "SnippetTab",
-  components: {
-    FileManager,
-  },
   mixins: [FileInputChangeMixin],
   props: {
     tabId: String,
@@ -244,12 +240,12 @@ export default {
         messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.$refs.fileManager.show(true, this.handleFileInputChange);
+            fileManagerStore.showModal(true, this.handleFileInputChange);
           },
           null
         );
       } else {
-        this.$refs.fileManager.show(true, this.handleFileInputChange);
+        fileManagerStore.showModal(true, this.handleFileInputChange);
       }
     },
     async saveFile() {

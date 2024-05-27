@@ -82,7 +82,6 @@
   </splitpanes>
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Console" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
-  <FileManager ref="fileManager"/>
 </div>
 </template>
 
@@ -95,12 +94,11 @@ import { showToast } from "../notification_control";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { settingsStore, tabsStore, connectionsStore, messageModalStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore, connectionsStore, messageModalStore, fileManagerStore } from "../stores/stores_initializer";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
 import { tabStatusMap, requestState, queryRequestCodes, consoleModes } from "../constants";
-import FileManager from "./FileManager.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
 
 export default {
@@ -112,7 +110,6 @@ export default {
     TabStatusIndicator,
     QueryEditor,
     CancelButton,
-    FileManager
   },
   mixins: [FileInputChangeMixin],
   props: {
@@ -381,12 +378,12 @@ export default {
         messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.$refs.fileManager.show(true, this.handleFileInputChange);
+            fileManagerStore.showModal(true, this.handleFileInputChange);
           },
           null
         );
       } else {
-        this.$refs.fileManager.show(true, this.handleFileInputChange);
+        fileManagerStore.showModal(true, this.handleFileInputChange);
       }
     },
   },
