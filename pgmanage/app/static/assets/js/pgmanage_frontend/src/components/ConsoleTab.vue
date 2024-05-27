@@ -37,17 +37,17 @@
         </template>
 
         <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch More"
-          @click="consoleSQL(false, 1)">
+          @click="consoleSQL(false, consoleModes.FETCH_MORE)">
           Fetch more
         </button>
 
         <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch All"
-          @click="consoleSQL(false, 2)">
+          @click="consoleSQL(false, consoleModes.FETCH_ALL)">
           Fetch all
         </button>
 
         <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Skip Fetch"
-          @click="consoleSQL(false, 3)">
+          @click="consoleSQL(false, consoleModes.SKIP_FETCH)">
           Skip Fetch
         </button>
 
@@ -98,7 +98,7 @@ import { settingsStore, tabsStore, connectionsStore, messageModalStore, fileMana
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
-import { tabStatusMap, requestState, queryRequestCodes } from "../constants";
+import { tabStatusMap, requestState, queryRequestCodes, consoleModes } from "../constants";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
 
 export default {
@@ -128,6 +128,7 @@ export default {
       openedTransaction: false, //TODO: implement commit/rollback functionality
       data: "",
       context: "",
+      tempData: [],
       tabStatus: tabStatusMap.NOT_CONNECTED,
       queryDuration: "",
       queryStartTime: "",
@@ -152,7 +153,10 @@ export default {
     },
     autocomplete() {
       return connectionsStore.getConnection(this.databaseIndex).autocomplete
-    }
+    },
+    consoleModes() {
+      return consoleModes;
+    },
   },
   updated() { 
     if (!this.terminal) {
@@ -204,7 +208,10 @@ export default {
 
       emitter.on(`${this.tabId}_check_console_status`, () => {
         if (this.consoleState === requestState.Ready) {
-          this.consoleReturnRender(this.data, this.context);
+          this.context.tab.metaData.isReady = false;
+          this.context.tab.metaData.isLoading = false;
+          this.consoleState = requestState.Idle;
+          this.consoleReturnRender(this.data);
         }
       });
 
@@ -221,30 +228,30 @@ export default {
       if (this.fitAddon)
         this.fitAddon.fit();
     },
-    consoleSQL(check_command = true, mode = 0) {
+    consoleSQL(check_command = true, mode = consoleModes.DATA_OPERATION) {
       const command = this.editorContent.trim();
       if (!check_command || command[0] === "\\") {
         if (!this.idleState) {
           showToast("info", "Tab with activity in progres.");
         } else {
-          // FIXME: add enum to mode values
-          if (command === "" && mode === 0) {
+          if (command === "" && mode === consoleModes.DATA_OPERATION) {
             showToast("info", "Please provide a string.");
           } else {
             let tab = tabsStore.getSelectedSecondaryTab(this.connId)
             this.queryDuration = "";
             this.cancelled = false;
             this.longQuery = false;
+            this.tempData = [];
             emitter.emit(`${this.tabId}_copy_to_editor`, "");
             this.lastCommand = command;
 
             let message_data = {
-              v_sql_cmd: command,
-              v_mode: mode,
+              sql_cmd: command,
+              mode: mode,
               v_db_index: this.databaseIndex,
               v_conn_tab_id: this.connId,
               v_tab_id: this.tabId,
-              v_autocommit: this.autocommit,
+              autocommit: this.autocommit,
             };
 
             this.readOnlyEditor = true;
@@ -290,12 +297,25 @@ export default {
       }
     },
     consoleReturn(data, context) {
-      if (!this.idleState) {
+      clearInterval(this.queryInterval);
+      this.queryInterval = null;
+
+      this.tempData = this.tempData.concat(data.v_data.data);
+
+      if (!this.idleState && (data.v_data.last_block || data.v_error)) {
+        data.v_data.data = this.tempData;
+        this.readOnlyEditor = false;
+        this.tabStatus = data.v_data.con_status;
         if (
           this.connId === tabsStore.selectedPrimaryTab.id &&
           this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
-          this.consoleReturnRender(data, context);
+          this.context = "";
+          this.data = "";
+          this.consoleState = requestState.Idle;
+          context.tab.metaData.isLoading = false;
+          context.tab.metaData.isReady = false;
+          this.consoleReturnRender(data);
         } else {
           this.consoleState = requestState.Ready;
           this.data = data;
@@ -306,25 +326,16 @@ export default {
         }
       }
     },
-    consoleReturnRender(data, context) {
-      clearInterval(this.queryInterval)
-      this.queryInterval = null;
+    consoleReturnRender(data) {
+      data.v_data.data.forEach((chunk) => {
+        this.terminal.write(chunk);
+      })
+      this.fetchMoreData = data.v_data.show_fetch_button;
+      this.queryDuration = data.v_data.duration;
 
-      this.consoleState = requestState.Idle;
-      this.tabStatus = data.v_data.v_con_status;
-      this.readOnlyEditor = false;
-
-      this.terminal.write(data.v_data.v_data);
-
-      context.tab.metaData.isLoading = false
-      context.tab.metaData.isReady = false
-
-      this.fetchMoreData = data.v_data.v_show_fetch_button;
-      this.queryDuration = data.v_data.v_duration;
-
-      if (!data.v_error) {
+      if (!data.v_error && !!data?.v_data?.status && isNaN(data.v_data.status)) {
         let mode = ["CREATE", "DROP", "ALTER"];
-        let status = data.v_data.v_status.split(" ");
+        let status = data.v_data.status.split(" ");
 
         if (mode.includes(status[0])) {
           let node_type = status[1] ? `${status[1].toLowerCase()}_list` : null;
