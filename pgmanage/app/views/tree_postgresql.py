@@ -613,8 +613,7 @@ def get_partitions(request, database):
     try:
         partitions = database.QueryTablesPartitions(table, False, schema)
         list_partitions = [
-            f'{partition["child_schema"]}.{partition["child_table"]}'
-            for partition in partitions.Rows
+            partition["child_table"] for partition in partitions.Rows
         ]
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=400)
@@ -1508,7 +1507,7 @@ def get_partitions_parents(request, database):
         tables = database.QueryTablesPartitionsParents(False, schema)
         for table in tables.Rows:
             table_data = {
-                "name": f'{table["table_schema"]}.{table["table_name"]}',
+                "name": table["table_name"],
                 "name_raw": f'{table["table_schema_raw"]}.{table["name_raw"]}',
             }
             list_tables.append(table_data)

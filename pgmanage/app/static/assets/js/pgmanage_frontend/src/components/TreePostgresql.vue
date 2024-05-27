@@ -4403,7 +4403,7 @@ export default {
             title: `Partitions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el,
@@ -4416,7 +4416,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4498,6 +4498,7 @@ export default {
               schema: node.data.schema,
               schema_raw: node.data.schema_raw,
               raw_value: el.name_raw,
+              name: el.name,
             });
           });
         })
@@ -4513,12 +4514,11 @@ export default {
         })
         .then((resp) => {
           this.removeChildNodes(node);
-
           this.$refs.tree.updateNode(node.path, {
-            title: `${node.title} (${resp.data.length})`,
+            title: `${node.data.name} (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-table node-ptable",
               type: "table",
@@ -4528,7 +4528,7 @@ export default {
               oid: el.oid,
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4546,7 +4546,7 @@ export default {
             title: `Inheritance Tables (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-layer-group node-itable",
               type: "inherited_parent",
@@ -4554,8 +4554,9 @@ export default {
               schema: node.data.schema,
               schema_raw: node.data.schema_raw,
               raw_value: el.name_raw,
+              name: el.name,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4571,7 +4572,7 @@ export default {
           this.removeChildNodes(node);
 
           this.$refs.tree.updateNode(node.path, {
-            title: `${node.title} (${resp.data.length})`,
+            title: `${node.data.name} (${resp.data.length})`,
           });
 
           resp.data.forEach((el) => {
@@ -4602,7 +4603,7 @@ export default {
             title: `Foreign Tables (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-table node-ftable",
               type: "foreign_table",
@@ -4612,7 +4613,7 @@ export default {
               oid: el.oid,
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4751,7 +4752,7 @@ export default {
             title: `Sequences (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.sequence_name,
@@ -4766,7 +4767,7 @@ export default {
               },
               true
             );
-          });
+          })
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4784,7 +4785,7 @@ export default {
             title: `Views (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+        resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-eye node-view",
               type: "view",
@@ -4794,7 +4795,7 @@ export default {
               oid: el.oid,
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4889,7 +4890,7 @@ export default {
             title: `Materialized Views (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-eye node-mview",
               type: "mview",
@@ -5094,7 +5095,7 @@ export default {
             title: `Trigger Functions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5109,7 +5110,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5139,7 +5140,7 @@ export default {
             title: `Event Trigger Functions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5154,7 +5155,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5184,7 +5185,7 @@ export default {
             title: `Procedures (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-cog node-procedure",
               type: "procedure",
@@ -5194,7 +5195,7 @@ export default {
               id: el.id,
               function_oid: el.function_oid,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5274,7 +5275,7 @@ export default {
             title: `Aggregates (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-cog node-aggregate",
               type: "aggregate",
@@ -5284,7 +5285,7 @@ export default {
               id: el.id,
               oid: el.oid,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5302,7 +5303,7 @@ export default {
             title: `Types (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.type_name,
@@ -5317,7 +5318,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5335,7 +5336,7 @@ export default {
             title: `Domains (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.domain_name,
@@ -5350,7 +5351,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5366,7 +5367,7 @@ export default {
             title: `Extensions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5379,7 +5380,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5395,7 +5396,7 @@ export default {
             title: `Foreign Data Wrappers (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-cube node-fdw",
               type: "foreign_data_wrapper",
@@ -5410,7 +5411,7 @@ export default {
               type: "foreign_server_list",
               contextMenu: "cm_foreign_servers",
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5789,7 +5790,7 @@ export default {
             title: `Tablespaces (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5802,7 +5803,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
