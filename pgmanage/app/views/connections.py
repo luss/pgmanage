@@ -6,7 +6,7 @@ from app.models import Connection, Group, GroupConnection, Tab, Technology
 from app.utils.crypto import decrypt, encrypt
 from app.utils.decorators import session_required, user_authenticated
 from app.utils.key_manager import key_manager
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.http import HttpResponse, JsonResponse
 from sshtunnel import SSHTunnelForwarder
 
@@ -21,20 +21,21 @@ def get_connections(request, session):
     tech_list = [tech.name for tech in Technology.objects.all()] #convert to values_list
 
     connection_list = []
-    connections = Connection.objects.filter(Q(user=request.user) | Q(public=True))
+    connections = Connection.objects.filter(
+        Q(user=request.user) | Q(public=True)
+    ).select_related('user', 'technology').prefetch_related(
+        Prefetch('groupconnection_set', queryset=GroupConnection.objects.select_related('group'))
+    )
 
     if connections and key_manager.get(request.user):
         for conn in connections:
-            # FIXME: refactor this into a proper join
-            gc = GroupConnection.objects.filter(connection=conn).select_related().first()
-
             conn_object = {
                 'id': conn.id,
                 'locked': conn.id in active_connection_ids,
                 'public': conn.public,
                 'is_mine': conn.user.id == request.user.id,
                 'technology': conn.technology.name,
-                'group': gc.group.id if gc else None,
+                'group': conn.groupconnection_set.first().group.id if conn.groupconnection_set.exists() else None,
                 'alias': conn.alias,
                 'conn_string': '',
                 'server': '',
@@ -123,7 +124,7 @@ def delete_group(request):
     group_id = request.data['id']
 
     try:
-        group = Group.objects.get(id=group_id)
+        group = Group.objects.filter(id=group_id).select_related("user").first()
 
         if group.user.id != request.user.id:
             response_data['data'] = 'This group does not belong to you.'
@@ -161,7 +162,7 @@ def save_group(request):
             group.save()
         # update
         else:
-            group = Group.objects.get(id=group_id)
+            group = Group.objects.filter(id=group_id).select_related("user").first()
 
             if group.user.id != request.user.id:
                 response_data['data'] = 'This group does not belong to you.'
@@ -344,7 +345,7 @@ def save_connection(request, session):
             conn.save()
         # update
         else:
-            conn = Connection.objects.get(id=conn_id)
+            conn = Connection.objects.filter(id=conn_id).select_related('user').first()
 
             if conn.user.id != request.user.id:
                 response_data['data'] = 'This connection does not belong to you.'
