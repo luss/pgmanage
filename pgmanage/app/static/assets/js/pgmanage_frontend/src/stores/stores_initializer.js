@@ -6,6 +6,7 @@ import { useUtilityJobsStore } from "./utility_jobs";
 import { useDbMetadataStore } from "./db_metadata";
 import { useMessageModalStore } from "./message_modal";
 import { useCellDataModalStore } from "./celldata_modal";
+import { useFileManagerStore } from "./file_manager";
 import { createPinia, setActivePinia } from "pinia";
 
 const pinia = createPinia();
@@ -27,6 +28,8 @@ const messageModalStore = useMessageModalStore();
 
 const cellDataModalStore = useCellDataModalStore();
 
+const fileManagerStore = useFileManagerStore();
+
 export {
   snippetsStore,
   settingsStore,
@@ -36,4 +39,5 @@ export {
   dbMetadataStore,
   messageModalStore,
   cellDataModalStore,
+  fileManagerStore,
 };

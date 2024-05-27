@@ -310,21 +310,18 @@
   </form>
   <UtilityJobs ref="jobs" />
 
-  <FileManager ref="fileManager" @change-file="changeFilePath" />
 </div>
 </template>
 <script>
 import UtilityJobs from "./UtilityJobs.vue";
-import FileManager from "./FileManager.vue";
 import axios from 'axios'
 import { showAlert, showToast } from "../notification_control";
-import { settingsStore } from "../stores/stores_initializer";
+import { fileManagerStore, tabsStore, settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: "BackupTab",
   components: {
     UtilityJobs,
-    FileManager
   },
   props: {
     connId: String,
@@ -389,7 +386,6 @@ export default {
         pigz_compression_ratio: "6"
       },
       backupOptions: {},
-      desktopMode: settingsStore.desktopMode,
       backupTabId: this.tabId
     }
   },
@@ -441,6 +437,14 @@ export default {
       this.backupOptions = { ...this.backupOptionsDefault }
       this.getRoleNames()
     })
+
+    fileManagerStore.$onAction(({name, store, after}) => {
+      if (name === "changeFile" && this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id) {
+        after(() => {
+          this.changeFilePath(store.filePath)
+        })
+      }
+    })
   },
   watch: {
     'backupOptions.format'(newValue){
@@ -480,11 +484,11 @@ export default {
       const [file] = e.target.files
       this.backupOptions.fileName = file?.path
     },
-    changeFilePath(event) {
-      this.backupOptions.fileName = event.filePath
+    changeFilePath(filePath) {
+      this.backupOptions.fileName = filePath;
     },
     openFileManagerModal() {
-      this.$refs.fileManager.show(this.desktopMode, this.onFile, this.dialogType)
+      fileManagerStore.showModal(settingsStore.desktopMode, this.onFile, this.dialogType);
     },
     resetToDefault() {
       this.backupOptions = { ...this.backupOptionsDefault }

@@ -131,7 +131,6 @@
   </splitpanes>
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
-  <FileManager ref="fileManager"/>
 </div>
 </template>
 
@@ -147,9 +146,8 @@ import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
-import FileManager from "./FileManager.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
-import { tabsStore, connectionsStore, messageModalStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore, messageModalStore, fileManagerStore } from "../stores/stores_initializer";
 
 export default {
   name: "QueryTab",
@@ -161,7 +159,6 @@ export default {
     CommandsHistoryModal,
     TabStatusIndicator,
     QueryResultTabs,
-    FileManager
   },
   mixins: [FileInputChangeMixin],
   props: {
@@ -509,12 +506,12 @@ export default {
         messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.$refs.fileManager.show(true, this.handleFileInputChange);
+            fileManagerStore.showModal(true, this.handleFileInputChange);
           },
           null
         );
       } else {
-        this.$refs.fileManager.show(true, this.handleFileInputChange);
+        fileManagerStore.showModal(true, this.handleFileInputChange);
       }
     },
     async saveFile() {
