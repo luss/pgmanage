@@ -290,7 +290,7 @@ function getUsers(p_options = false) {
                     "<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-autofill-name' type='text' class='m-0 p-0' placeholder='Username' value=''>" +
                     "<input tabIndex='-1' style='opacity:0;height:0px;overflow:hidden;pointer-events:none;' autofill='false' autocomplete='disabled' name='no-autofill' id='no-autofill-password' type='password' class='m-0 p-0' placeholder='Password' value=''>" +
                     "<div class='form-inline mb-4'>" +
-                        "<h5 class='me-2'>Select an user</h5>" +
+                        "<h3 class='me-2'>Select an user</h3>" +
                         "<select id='omnidb_user_select' class='form-control'>";
                         if (p_options.focus_last)
                             v_user_list_html += "<option value=''> </option>";
@@ -314,7 +314,7 @@ function getUsers(p_options = false) {
                         }
                         v_user_list_html +=
                         "</select>" +
-                        "<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary ms-2'><i class='fas fa-user-plus'></i><span class='ms-2'>Add new user</span></button>" +
+                        "<button id='omnidb_utilities_menu_btn_new_user' type='button' class='btn btn-primary mt-3'><i class='fas fa-user-plus'></i><span class='ms-2'>Add new user</span></button>" +
                     "</div>" +
                     "<div id='omnidb_user_content' class='row'>" +
                         v_users_update_html +
