@@ -2,7 +2,7 @@
   <h2 class="fw-bold text-center mt-2 mb-3">Jobs</h2>
   <div class="card">
     <div class="card-body p-0">
-      <ul class="list-group list-group-flush form-group rounded-0">
+      <ul class="list-group list-group-flush rounded-0">
         <li class="list-group-item d-flex row g-0 fw-bold">
           <div class="col-1">PID</div>
           <div class="col-2">Type</div>

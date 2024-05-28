@@ -26,7 +26,7 @@
                 <div class="modal-connections__list position-absolute w-100" id="connectionsList">
                   <div class="accordion">
                       <!-- GROUP ITEM -->
-                    <div v-for="(group, index) in groupedConnections" :key=index class="card">
+                    <div v-for="(group, index) in groupedConnections" :key=index class="card rounded-0 border-0">
                       <div @click="showForm('group', group)" class="card-header d-flex justify-content-between align-items-center collapsed" v-bind:id="'group-header-' + group.id" v-bind:data-target="'#collapse-group-' + group.id" data-bs-toggle="collapse">
                         <h4 class="clipped-text mb-0">
                           {{ group.name }}

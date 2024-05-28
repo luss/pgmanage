@@ -5,8 +5,8 @@
     </div>
     <div class="card-body p-0">
       <form role="form">
-        <ul class="list-group list-group-flush form-group rounded-0">
-          <li v-for="(setting, index) in settingGroup.rows" :key="setting.name" class="list-group-item d-flex ps-0">
+        <ul class="list-group list-group-flush rounded-0">
+          <li v-for="(setting, index) in settingGroup.rows" :key="setting.name" class="list-group-item d-flex">
             <div :class="[{ 'border-top-0': !index }, 'col-7']">
               <span class="fw-semibold">
                 {{ setting.name }}

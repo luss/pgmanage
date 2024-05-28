@@ -103,12 +103,12 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p v-if="modalRevertConfig && !hasRevertValues" class="text-center">No changes to revert to.</p>
-          <p v-else class="text-center">The following changes will be applied:</p>
-          <table v-if="(modalRevertConfig && hasRevertValues) || !modalRevertConfig" class="table table-sm">
+          <p v-if="modalRevertConfig && !hasRevertValues">No changes to revert to.</p>
+          <p v-else class="pb-2">The following changes will be applied:</p>
+          <table v-if="(modalRevertConfig && hasRevertValues) || !modalRevertConfig" class="table table-sm table-bordered">
             <tr>
-              <th width="50%" class="border-top-0">Name</th>
-              <th width="50%" class="border-top-0">New value</th>
+              <th width="50%" class="border-top-0 pb-1">Name</th>
+              <th width="50%" class="border-top-0 pb-1">New value</th>
             </tr>
             <template v-if="!modalRevertConfig">
               <tr v-for="(setting_value, setting_name) in updateSettings" :key="setting_value">
