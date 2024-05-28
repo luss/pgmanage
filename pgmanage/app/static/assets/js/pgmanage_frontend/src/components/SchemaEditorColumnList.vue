@@ -82,7 +82,7 @@
             </button>
           </div>
     </div>
-    <div class="d-flex row g-0 fw-bold mt-2">
+    <div class="d-flex g-0 fw-bold mt-2">
       <button @click='addColumn' class="btn btn-outline-success ms-auto">
         Add Column
       </button>

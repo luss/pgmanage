@@ -18,12 +18,11 @@
             </h2>
             <button
               type="button"
-              class="close"
+              class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
               @click="closeModal"
             >
-              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
             </button>
           </div>
 

@@ -2,88 +2,88 @@
   <div class="backup-tab-scrollable p-2">
   <form>
       <div class="row">
-        <div :class="'col-4'" class="d-flex">
+        <div class="col-4 d-flex">
           <div class="card flex-grow-1">
             <h4 class="card-header fw-bold px-3 py-2">General</h4>
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
                 <label :for="`${backupTabId}_backupFileName`" class="fw-bold mb-1">FileName</label>
                   <div class="input-group">
-                      <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
-                        a file</div>
+                      <button class="btn btn-secondary" @click="openFileManagerModal">Select
+                        a file</button>
+                        <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
+                          placeholder="backup file" disabled>
                     </div>
-                    <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
-                      placeholder="backup file" disabled>
                   </div>
-              </div>
-              <div v-if="isObjectsType" class="form-group mb-1">
-                <label for="backupFormat" class="fw-bold mb-1">Format</label>
-                <select id="backupFormat" class="form-control" v-model="backupOptions.format">
-                  <option v-for="(value, key) in formats" :value="key" :key="key">{{ value }}</option>
-                </select>
-              </div>
-              <div v-if="isObjectsType" class="row mt-1">
-                <div class="form-group col-6 d-flex flex-column justify-content-end">
-                  <label for="backupCompressionRatio" class="fw-bold mb-1">Compression ratio</label>
-                  <select id="backupCompressionRatio" class="form-control" v-model="backupOptions.compression_ratio" :disabled="isTarFormat">
-                    <option value="" disabled>Select an item...</option>
-                    <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
-                  </select>
+                  <div v-if="isObjectsType" class="form-group mb-1">
+                    <label for="backupFormat" class="fw-bold mb-1">Format</label>
+                    <select id="backupFormat" class="form-control" v-model="backupOptions.format">
+                      <option v-for="(value, key) in formats" :value="key" :key="key">{{ value }}</option>
+                    </select>
+                  </div>
+                  <div v-if="isObjectsType" class="row mt-1">
+                    <div class="form-group col-6 d-flex flex-column justify-content-end">
+                      <label for="backupCompressionRatio" class="fw-bold mb-1">Compression ratio</label>
+                      <select id="backupCompressionRatio" class="form-control" v-model="backupOptions.compression_ratio" :disabled="isTarFormat">
+                        <option value="" disabled>Select an item...</option>
+                        <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
+                      </select>
+                    </div>
+                    <div class="form-group col-6 d-flex flex-column justify-content-end">
+                      <label for="backupNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
+                      <select id="backupNumberOfJobs" class="form-control" v-model="backupOptions.number_of_jobs" :disabled="!isDirectoryFormat">
+                        <option value="" disabled>Select an item...</option>
+                        <option v-for="number_of_jobs in numberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
+                      </select>
+                    </div>
+    
+                  </div>
+                  <div class="form-group mb-1">
+                    <label for="backupEncoding" class="fw-bold mb-1">Encoding</label>
+                    <select id="backupEncoding" class="form-control" v-model="backupOptions.encoding">
+                      <option value="">Use database encoding</option>
+                      <option v-for="encoding in encodingList" :key="encoding" :value="encoding">{{ encoding }}</option>
+                    </select>
+                  </div>
+                  <div class="form-group mb-1">
+                    <label for="backupRoleName" class="fw-bold mb-1">Backup as:</label>
+                    <select id="backupRoleName" class="form-control" v-model="backupOptions.role">
+                      <option value="" disabled>Select an item...</option>
+                      <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
+                    </select>
+                  </div>
+                  <div v-if="!isWindowsOS" class="form-group mb-1">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPigz`" v-model="backupOptions.pigz" :disabled="isDirectoryFormat || isTarFormat">
+                      <label class="form-check-label" :for="`${backupTabId}_backupOptionsPigz`">
+                        Compress with Pigz
+                      </label>
+                    </div>
+                  </div>
+    
+                  <div class="row mt-1" :class="(backupOptions.pigz) ? 'collapse show':'collapse'">
+                    <div class="form-group col-6 d-flex flex-column justify-content-end">
+                      <label for="backupPigzCompressionRatio" class="fw-bold mb-1">Compression ratio</label>
+                      <select id="backupPigzCompressionRatio" class="form-control" v-model="backupOptions.pigz_compression_ratio">
+                        <option value="" disabled>Select an item...</option>
+                        <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
+                      </select>
+                    </div>
+                    <div class="form-group col-6 d-flex flex-column justify-content-end">
+                      <label for="backupPigzNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
+                      <select id="backupPigzNumberOfJobs" class="form-control" v-model="backupOptions.pigz_number_of_jobs">
+                        <option v-for="number_of_jobs in pigzNumberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
+                      </select>
+                    </div>
                 </div>
-                <div class="form-group col-6 d-flex flex-column justify-content-end">
-                  <label for="backupNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
-                  <select id="backupNumberOfJobs" class="form-control" v-model="backupOptions.number_of_jobs" :disabled="!isDirectoryFormat">
-                    <option value="" disabled>Select an item...</option>
-                    <option v-for="number_of_jobs in numberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
-                  </select>
-                </div>
-
-              </div>
-              <div class="form-group mb-1">
-                <label for="backupEncoding" class="fw-bold mb-1">Encoding</label>
-                <select id="backupEncoding" class="form-control" v-model="backupOptions.encoding">
-                  <option value="">Use database encoding</option>
-                  <option v-for="encoding in encodingList" :key="encoding" :value="encoding">{{ encoding }}</option>
-                </select>
-              </div>
-              <div class="form-group mb-1">
-                <label for="backupRoleName" class="fw-bold mb-1">Backup as:</label>
-                <select id="backupRoleName" class="form-control" v-model="backupOptions.role">
-                  <option value="" disabled>Select an item...</option>
-                  <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
-                </select>
-              </div>
-              <div v-if="!isWindowsOS" class="form-group mb-1">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" :id="`${backupTabId}_backupOptionsPigz`" v-model="backupOptions.pigz" :disabled="isDirectoryFormat || isTarFormat">
-                  <label class="form-check-label" :for="`${backupTabId}_backupOptionsPigz`">
-                    Compress with Pigz
-                  </label>
-                </div>
-              </div>
-
-              <div class="row mt-1" :class="(backupOptions.pigz) ? 'collapse show':'collapse'">
-                <div class="form-group col-6 d-flex flex-column justify-content-end">
-                  <label for="backupPigzCompressionRatio" class="fw-bold mb-1">Compression ratio</label>
-                  <select id="backupPigzCompressionRatio" class="form-control" v-model="backupOptions.pigz_compression_ratio">
-                    <option value="" disabled>Select an item...</option>
-                    <option v-for="compress_ratio in compressionRatioValues" :value="compress_ratio" :key="compress_ratio">{{ compress_ratio }}</option>
-                  </select>
-                </div>
-                <div class="form-group col-6 d-flex flex-column justify-content-end">
-                  <label for="backupPigzNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
-                  <select id="backupPigzNumberOfJobs" class="form-control" v-model="backupOptions.pigz_number_of_jobs">
-                    <option v-for="number_of_jobs in pigzNumberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
-                  </select>
-                </div>
-            </div>
-              <div v-if="isServerType" class="d-flex fst-italic mt-auto muted-text">
-                <i class="fa-solid fa-circle-info me-1"></i>
-                <p>The backup will be in PLAIN format.</p>
-              </div>
+                  <div v-if="isServerType" class="d-flex fst-italic mt-auto muted-text">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    <p>The backup will be in PLAIN format.</p>
+                  </div>
             </div>
           </div>
         </div>
+
 
         <div class="col-4 d-flex">
           <div class="card flex-grow-1">

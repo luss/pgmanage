@@ -4,9 +4,7 @@
       <div class="modal-content">
         <div class="modal-header align-items-center">
           <h3 class="modal-title">{{ selectedJob?.type_desc }}</h3>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <p class="mb">{{ selectedJob?.description }}</p>
