@@ -275,7 +275,7 @@ export default {
           this.activeForm = 'group';
           this.selectedConnection = {};
           if (object) {
-            $(`#collapse-group-${object.id}`).collapse('toggle');
+            // $(`#collapse-group-${object.id}`).collapse('toggle');
             this.selectedGroup = object;
           } else {
             this.selectedGroup = undefined;

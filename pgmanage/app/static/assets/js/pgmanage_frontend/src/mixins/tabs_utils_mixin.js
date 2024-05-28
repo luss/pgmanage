@@ -13,7 +13,7 @@ export default {
         action.after((result) => {
           if (!result.tooltip) return;
           this.$nextTick(() => {
-            const tooltipEl = document.getElementById(`${result.id}_tooltip`);
+            const tooltipEl = document.getElementById(`${result.id}`);
             if (tooltipEl) {
               new Tooltip(tooltipEl, {
                 placement: "right",
@@ -45,7 +45,7 @@ export default {
 
       if (tab.tooltip) {
         const tooltipTriggerList =
-          document.querySelectorAll('[id*="_tooltip"]');
+          document.querySelectorAll('[data-bs-toggle="tooltip"]');
         const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) =>
           Tooltip.getInstance(tooltipTriggerEl).hide()
         );
@@ -59,7 +59,7 @@ export default {
       }
       if (tab.tooltip) {
         const tooltipTriggerList =
-          document.querySelectorAll('[id*="_tooltip"]');
+          document.querySelectorAll('[data-bs-toggle="tooltip"]');
         const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) =>
           Tooltip.getInstance(tooltipTriggerEl).hide()
         );

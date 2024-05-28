@@ -12,12 +12,11 @@
           <h2 class="modal-title font-weight-bold">Show Data</h2>
           <button
             type="button"
-            class="close"
+            class="btn-close"
             data-dismiss="modal"
             aria-label="Close"
             @click="store.hideModal()"
           >
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
           </button>
         </div>
         <div class="modal-body">

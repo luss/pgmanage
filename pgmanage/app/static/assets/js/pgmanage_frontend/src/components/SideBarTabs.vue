@@ -9,6 +9,7 @@
         <div class="nav nav-tabs">
           <a
             :id="tab.id"
+            data-bs-toggle="tooltip"
             :class="[
               'omnidb__tab-menu__link',
               'nav-item',
@@ -26,7 +27,7 @@
             @contextmenu="contextMenuHandler($event, tab)"
             v-for="tab in tabs"
           >
-            <span :id="`${tab.id}_tooltip`" class="omnidb__tab-menu__link-content">
+            <span class="omnidb__tab-menu__link-content">
               <span
                 v-if="tab.icon"
                 class="omnidb__menu__btn omnidb__tab-menu__link-icon"
