@@ -40,7 +40,6 @@
         </button>
       </div>
     </div>
-    <FileManager ref="fileManager" />
   </div>
 </template>
 
@@ -53,18 +52,16 @@ import {
   snippetsStore,
   settingsStore,
   tabsStore,
+  messageModalStore,
 } from "../stores/stores_initializer";
-import FileManager from "./FileManager.vue";
-import { setupAceDragDrop } from "../file_drop";
+import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
+import { fileManagerStore } from "../stores/stores_initializer";
 
 export default {
   name: "SnippetTab",
-  components: {
-    FileManager,
-  },
   mixins: [FileInputChangeMixin],
   props: {
     tabId: String,
@@ -143,6 +140,7 @@ export default {
 
       this.editor.focus();
       setupAceDragDrop(this.editor, true);
+      setupAceSelectionHighlight(this.editor);
     },
     setupEvents() {
       emitter.on(`${this.tabId}_editor_focus`, () => {
@@ -239,15 +237,15 @@ export default {
     openFileManagerModal() {
       const editorContent = this.editor.getValue();
       if (!!editorContent) {
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.$refs.fileManager.show(true, this.handleFileInputChange);
+            fileManagerStore.showModal(true, this.handleFileInputChange);
           },
           null
         );
       } else {
-        this.$refs.fileManager.show(true, this.handleFileInputChange);
+        fileManagerStore.showModal(true, this.handleFileInputChange);
       }
     },
     async saveFile() {

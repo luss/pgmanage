@@ -7,12 +7,12 @@
             <h4 class="card-header fw-bold px-3 py-2">General</h4>
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
-                <label for="restoreFileName" class="fw-bold mb-1">FileName</label>
+                <label :for="`${restoreTabId}_restoreFileName`" class="fw-bold mb-1">FileName</label>
                 <div class="input-group">
                     <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
-                      a file</div>
-                  <input type="text" class="form-control" :value="restoreOptions.fileName"
-                    placeholder="Select file or folder" disabled>
+                    </div>
+                  <input :id="`${restoreTabId}_restoreFileName`" type="text" class="form-control" :value="restoreOptions.fileName"
+                    placeholder="backup file" disabled>
                 </div>
               </div>
 
@@ -26,16 +26,16 @@
 
               <div v-if="!isNotServer" class="form-group mb-1 mt-2">
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="restoreOptionsEchoQueries"
+                  <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsEchoQueries`"
                     v-model="restoreOptions.echo_queries">
-                  <label class="form-check-label" for="restoreOptionsEchoQueries">
+                  <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsEchoQueries`">
                     Echo all queries
                   </label>
                 </div>
 
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="restoreOptionsQuiet" v-model="restoreOptions.quiet">
-                  <label class="form-check-label" for="restoreOptionsQuiet">Quiet mode</label>
+                  <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsQuiet`" v-model="restoreOptions.quiet">
+                  <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsQuiet`">Quiet mode</label>
                 </div>
               </div>
 
@@ -82,23 +82,23 @@
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Sections</p>
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsPreData"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsPreData`"
                   v-model="restoreOptions.pre_data" :disabled="restoreOptions.only_data || restoreOptions.only_schema">
-                <label class="form-check-label" for="restoreOptionsPreData">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsPreData`">
                   Pre-data
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsData" v-model="restoreOptions.data"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsData`" v-model="restoreOptions.data"
                   :disabled="restoreOptions.only_data || restoreOptions.only_schema">
-                <label class="form-check-label" for="restoreOptionsData">Data</label>
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsData`">Data</label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsPostData"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsPostData`"
                   v-model="restoreOptions.post_data" :disabled="restoreOptions.only_data || restoreOptions.only_schema">
-                <label class="form-check-label" for="restoreOptionsPostData">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsPostData`">
                   Post-data
                 </label>
               </div>
@@ -107,19 +107,19 @@
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Type of objects</p>
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsOnlyData"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsOnlyData`"
                   v-model="restoreOptions.only_data"
                   :disabled="restoreOptions.pre_data || restoreOptions.data || restoreOptions.post_data">
-                <label class="form-check-label" for="restoreOptionsOnlyData">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsOnlyData`">
                   Only data
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsOnlySchema"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsOnlySchema`"
                   v-model="restoreOptions.only_schema"
                   :disabled="restoreOptions.pre_data || restoreOptions.data || restoreOptions.post_data">
-                <label class="form-check-label" for="restoreOptionsOnlySchema">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsOnlySchema`">
                   Only schema
                 </label>
               </div>
@@ -128,32 +128,32 @@
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Do not save</p>
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsOwner" v-model="restoreOptions.dns_owner">
-                <label class="form-check-label" for="restoreOptionsOwner">
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsOwner`" v-model="restoreOptions.dns_owner">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsOwner`">
                   Owner
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsPrivilege"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsPrivilege`"
                   v-model="restoreOptions.dns_privilege">
-                <label class="form-check-label" for="restoreOptionsPrivilege">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsPrivilege`">
                   Privilege
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsTablespace"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsTablespace`"
                   v-model="restoreOptions.dns_tablespace">
-                <label class="form-check-label" for="restoreOptionsTablespace">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsTablespace`">
                   Tablespace
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsComments"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsComments`"
                   v-model="restoreOptions.no_comments">
-                <label class="form-check-label" for="restoreOptionsComments">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsComments`">
                   Comments
                 </label>
               </div>
@@ -169,24 +169,24 @@
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Queries</p>
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsIncludeCreateDatabase"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsIncludeCreateDatabase`"
                   v-model="restoreOptions.include_create_database">
-                <label class="form-check-label" for="restoreOptionsIncludeCreateDatabase">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsIncludeCreateDatabase`">
                   Include 'Create Database' statement
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsClean" v-model="restoreOptions.clean">
-                <label class="form-check-label" for="restoreOptionsClean">
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsClean`" v-model="restoreOptions.clean">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsClean`">
                   Clean before restore
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsSingleTransaction"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsSingleTransaction`"
                   v-model="restoreOptions.single_transaction">
-                <label class="form-check-label" for="restoreOptionsSingleTransaction">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsSingleTransaction`">
                   Single transaction
                 </label>
               </div>
@@ -196,17 +196,17 @@
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Disable</p>
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsTrigger"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsTrigger`"
                   v-model="restoreOptions.disable_trigger">
-                <label class="form-check-label" for="restoreOptionsTrigger">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsTrigger`">
                   Trigger
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsNoDataTableFail"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsNoDataTableFail`"
                   v-model="restoreOptions.no_data_fail_table">
-                <label class="form-check-label" for="restoreOptionsNoDataTableFail">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsNoDataTableFail`">
                   No data for failed tables
                 </label>
               </div>
@@ -215,25 +215,25 @@
             <div class="form-group mb-1">
               <p class="fw-bold mb-1">Miscellaneous</p>
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsVerboseMessages"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsVerboseMessages`"
                   v-model="restoreOptions.verbose">
-                <label class="form-check-label" for="restoreOptionsVerboseMessages">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsVerboseMessages`">
                   Verbose messages
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsSetSeessionAuthorization"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsSetSeessionAuthorization`"
                   v-model="restoreOptions.use_set_session_auth">
-                <label class="form-check-label" for="restoreOptionsSetSeessionAuthorization">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsSetSeessionAuthorization`">
                   Use SET SESSION AUTHORIZATION
                 </label>
               </div>
 
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="restoreOptionsExitOnError"
+                <input class="form-check-input" type="checkbox" :id="`${restoreTabId}_restoreOptionsExitOnError`"
                   v-model="restoreOptions.exit_on_error">
-                <label class="form-check-label" for="restoreOptionsExitOnError">
+                <label class="form-check-label" :for="`${restoreTabId}_restoreOptionsExitOnError`">
                   Exit on error
                 </label>
               </div>
@@ -254,22 +254,19 @@
     </div>
   </form>
   <UtilityJobs ref="jobs" />
-  <FileManager ref="fileManager" @change-file="changeFilePath" />
 </div>
 </template>
 
 <script>
 import UtilityJobs from './UtilityJobs.vue';
-import FileManager from './FileManager.vue';
 import axios from 'axios'
 import { showAlert, showToast } from '../notification_control';
-import { settingsStore } from '../stores/stores_initializer';
+import { settingsStore, fileManagerStore, tabsStore } from '../stores/stores_initializer';
 
 export default {
   name: "RestoreTab",
   components: {
-    FileManager,
-    UtilityJobs
+    UtilityJobs,
   },
   props: {
     connId: String,
@@ -315,7 +312,6 @@ export default {
         pigz_number_of_jobs: 'auto',
       },
       restoreOptions: {},
-      desktopMode: settingsStore.desktopMode,
       restoreTabId: this.tabId
     }
   },
@@ -363,6 +359,14 @@ export default {
       this.restoreOptions = { ...this.restoreOptionsDefault }
       this.getRoleNames()
     })
+
+    fileManagerStore.$onAction(({name, store, after}) => {
+      if (name === "changeFile" && this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id) {
+        after(() => {
+          this.changeFilePath(store.filePath)
+        })
+      }
+    })
   },
   methods: {
     getRoleNames() {
@@ -394,11 +398,11 @@ export default {
       const [file] = e.target.files
       this.restoreOptions.fileName = file?.path
     },
-    changeFilePath(event) {
-      this.restoreOptions.fileName = event.filePath
+    changeFilePath(filePath) {
+      this.restoreOptions.fileName = filePath;
     },
     openFileManagerModal() {
-      this.$refs.fileManager.show(this.desktopMode, this.onFile, this.dialogType)
+      fileManagerStore.showModal(settingsStore.desktopMode, this.onFile, this.dialogType);
     },
     resetToDefault() {
       this.restoreOptions = { ...this.restoreOptionsDefault }

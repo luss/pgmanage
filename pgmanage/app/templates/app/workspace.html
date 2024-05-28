@@ -7,17 +7,17 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="shortcut icon" type="image/x-icon" href="{{url_folder}}/static/assets/images/favicon.ico"/>
+    <link rel="shortcut icon" type="image/x-icon" href="{{base_path}}/static/assets/images/favicon.ico"/>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" type="text/css" href="{{url_folder}}/static/assets/lib/handsontable/handsontable.full.css?v{{pgmanage_short_version}}">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/fa/css/all.css?v{{pgmanage_short_version}}">
+    <link rel="stylesheet" type="text/css" href="{{base_path}}/static/assets/lib/handsontable/handsontable.full.css?v{{pgmanage_short_version}}">
+    <link rel="stylesheet" href="{{base_path}}/static/assets/lib/fa/css/all.css?v{{pgmanage_short_version}}">
 
     <link id="ss_theme" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/lib/Passtrength/css/passtrength.css">
+    <link rel="stylesheet" href="{{base_path}}/static/assets/lib/Passtrength/css/passtrength.css">
 
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
-    <link rel="stylesheet" href="{{url_folder}}/static/assets/css/font-ubuntu-mono.css?{{pgmanage_short_version}}">
+    <link rel="stylesheet" href="{{base_path}}/static/assets/css/font-poppins.css?{{pgmanage_short_version}}">
+    <link rel="stylesheet" href="{{base_path}}/static/assets/css/font-ubuntu-mono.css?{{pgmanage_short_version}}">
     <title>PgManage</title>
   </head>
   <body>
@@ -29,10 +29,8 @@
   </form>
   <!-- .IF CHROME -->
 
-  <div id="extension-modal-wrap">
-  </div>
 
-  <div id="generic-message-modal-wrap">
+  <div id="extension-modal-wrap">
   </div>
 
   <div id="pgcron-modal-wrap">
@@ -104,49 +102,6 @@
       </div>
     </div>
 
-
-    <!-- Modal Query History -->
-    <div class="modal fade" id="modal_query_history" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button class="btn btn-danger">Delete History</button>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-
-              <div class="form-row">
-                <div class="col-md-3 mb-3">
-                  <label for="query_history_from">From</label>
-                  <input type="text" class="form-control" id="query_history_from" placeholder="From Date">
-                </div>
-                <div class="col-md-3 mb-3">
-                  <label for="query_history_to">To</label>
-                  <input type="text" class="form-control" id="query_history_to" placeholder="To Date">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="query_history_contains">Query Contains</label>
-                  <input type="text" class="form-control" id="query_history_contains" placeholder="Filter">
-                </div>
-              </div>
-
-              <div class="text-center">
-                <button class="btn btn-secondary btn-sm mr-1">First</button>
-                <button class="btn btn-secondary btn-sm mr-1">Previous</button>
-                <span class="mr-1"> 1 / 217 </span>
-                <button class="btn btn-secondary btn-sm mr-1">Next</button>
-                <button class="btn btn-secondary btn-sm mr-1">Last</button>
-              </div>
-
-              <div id="query_history_grid" style="width: 100%; height: 300px; overflow: hidden;"></div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Modal About -->
     <div class="modal fade" id="modal_about" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -170,11 +125,11 @@
               </div>
 
               <div class="col-7 modal-about__db d-flex justify-content-between align-items-center">
-                <img src="{{url_folder}}/static/assets/images/postgresql_large.png" title="PostgreSQL"/>
-                <img src="{{url_folder}}/static/assets/images/oracle_large.png" title="Oracle"/>
-                <img src="{{url_folder}}/static/assets/images/mysql_large.png" title="MySQL"/>
-                <img src="{{url_folder}}/static/assets/images/sqlite_large.png" title="SQLite"/>
-                <img src="{{url_folder}}/static/assets/images/mariadb_large.png" title="MariaDB"/>
+                <img src="{{base_path}}/static/assets/images/postgresql_large.png" title="PostgreSQL"/>
+                <img src="{{base_path}}/static/assets/images/oracle_large.png" title="Oracle"/>
+                <img src="{{base_path}}/static/assets/images/mysql_large.png" title="MySQL"/>
+                <img src="{{base_path}}/static/assets/images/sqlite_large.png" title="SQLite"/>
+                <img src="{{base_path}}/static/assets/images/mariadb_large.png" title="MariaDB"/>
               </div>
             </div>
 
@@ -220,7 +175,7 @@
     </div>
 
     <!-- Modal Plugins -->
-    <div class="modal fade" id="modal_plugins" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- <div class="modal fade" id="modal_plugins" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
           <div class="modal-header align-items-center">
@@ -231,7 +186,7 @@
           </div>
           <div class="modal-body">
             <div class="custom-file mb-3">
-              <!-- <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required> -->
+              <input type="file" class="custom-file-input" id="plugin_file_selector" onchange="upload(this)" required>
               <label class="custom-file-label" for="plugin_file_selector">Select plugin package to be installed...</label>
             </div>
 
@@ -239,7 +194,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Modal Generic Message -->
     <div class="modal fade" id="modal_message" tabindex="-1" role="dialog" aria-hidden="true">
@@ -261,7 +216,7 @@
     </div>
 
     {% vite_asset 'src/main.js' %}
-    <script src="{{url_folder}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
+    <script src="{{base_path}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
 
     <script type="text/javascript">
   	//Global variables
@@ -273,8 +228,7 @@
     var v_user_login = v_user_name;
     var v_version = '{{ pgmanage_version }}';
     var v_short_version = '{{ pgmanage_short_version }}';
-    var v_url_folder = '{{ url_folder }}'; //left for compatibility reasons, use app_base_path instead
-    var app_base_path = '{{ url_folder }}'
+    var app_base_path = '{{ base_path }}'
   	var gv_desktopMode = ('{{ desktop_mode }}' === 'True');
     var v_omnis = createOmnis();
     var v_explain_control = {context: 'default'};
@@ -286,6 +240,6 @@
     var v_super_user = {{ super_user|lower }};
     var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
     </script>
-    <script type="text/javascript" src="{{url_folder}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js" defer></script>
+    <script type="text/javascript" src="{{base_path}}/static/assets/lib/Passtrength/lib/jquery.passtrength.min.js" defer></script>
   </body>
 </html>

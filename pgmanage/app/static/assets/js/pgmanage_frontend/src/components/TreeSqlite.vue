@@ -245,6 +245,21 @@ export default {
         ],
         cm_trigger: [
           {
+            label: "Alter Trigger",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              tabSQLTemplate(
+                "Alter Trigger",
+                this.templates.alter_trigger
+                  .replace("#trigger_name#", this.selectedNode.title)
+                  .replace(
+                    "#table_name#",
+                    this.getParentNodeDeep(this.selectedNode, 2).title
+                  )
+              );
+            },
+          },
+          {
             label: "Drop Trigger",
             icon: "fas cm-all fa-times",
             onClick: () => {
@@ -275,6 +290,13 @@ export default {
             icon: "fas cm-all fa-search",
             onClick: () => {
               TemplateSelectSqlite(this.selectedNode.title, "v");
+            },
+          },
+          {
+            label: "Edit View",
+            icon: "fas cm-all fa-edit",
+            onClick: () => {
+              this.getViewDefinition(this.selectedNode);
             },
           },
           {
@@ -348,9 +370,10 @@ export default {
       let table;
       switch (node.data.type) {
         case "table_field":
-          table = this.getParentNodeDeep(node, 2).title;
         case "unique":
+        case "trigger":
           table = this.getParentNodeDeep(node, 2).title;
+          break;
         default:
           table = null;
       }
@@ -775,6 +798,22 @@ export default {
               true
             );
           }, null);
+        })
+        .catch((error) => {
+          this.nodeOpenError(error, node);
+        });
+    },
+    getViewDefinition(node) {
+      this.api
+        .post("/get_view_definition_sqlite/", {
+          view: node.title,
+        })
+        .then((resp) => {
+          let editTemplate = `${this.templates.drop_view.replace(
+                  "#view_name#",
+                  node.title
+                )};\n${resp.data.data}`
+          tabsStore.createQueryTab(this.selectedNode.title, null, null, editTemplate)
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

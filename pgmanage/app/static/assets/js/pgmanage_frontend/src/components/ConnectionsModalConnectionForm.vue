@@ -6,7 +6,13 @@
         <!-- TODO: integrate with active connection list -->
         <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
           <div>
-            <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary me-2" id="connectionTestButton">Test</button>
+            <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary me-2" id="connectionTestButton" :disabled="testIsRunning">
+              <template v-if="testIsRunning">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Testing...</span>
+                </template>
+              <span v-else>Test</span>
+            </button>
             <button v-if="this.connectionLocal.id" @click="selectConnection(this.connectionLocal)" class="btn btn-success">Connect</button>
           </div>
         </div>
@@ -95,7 +101,7 @@
               <input v-model="connectionLocal.service" type="text" class="form-control" id="connectionDatabase"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.service.$invalid }]"
                 :placeholder="placeholder.service"
-                :disabled="connectionLocal.technology==='terminal' || !!connectionLocal.conn_string.length">
+                :disabled="connectionLocal.technology==='terminal' || !!connectionLocal?.conn_string?.length">
                 <div class="invalid-feedback">
                   <span v-for="error of v$.connectionLocal.service.$errors" :key="error.$uid">
                     {{ error.$message }}
@@ -197,7 +203,7 @@
                     <input v-model="connectionLocal.tunnel.password"
                       :placeholder="this.connectionLocal.tunnel.password_set ? '••••••••' : ''" type="password" class="form-control"
                       id="sshPassphrase">
-                    <a v-if="this.connectionLocal.tunnel.password_set || this.connectionLocal.tunnel.password.length > 0"
+                    <a v-if="this.connectionLocal.tunnel.password_set || this.connectionLocal?.tunnel?.password?.length > 0"
                     @click="this.connectionLocal.tunnel.password_set = false; this.connectionLocal.tunnel.password = ''"
                   class="btn btn-icon btn-icon-danger position-absolute input-clear-btn"><i class="fas fa-circle-xmark"></i></a>
                 </div>
@@ -223,7 +229,7 @@
     <ConfirmableButton v-if="connectionLocal.id" :callbackFunc="deleteConnection" class="btn btn-danger" />
     <button type="button"
       @click="trySave()"
-      :disabled="connectionLocal.locked"
+      :disabled="connectionLocal.locked || v$.$invalid || (!isChanged && !!connectionLocal.id)"
       class="btn btn-primary ms-auto">Save changes</button>
   </div>
 </div>
@@ -234,11 +240,12 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, between, maxLength, helpers } from '@vuelidate/validators'
 
-import { connectionsStore } from '../stores/stores_initializer'
+import { connectionsStore, messageModalStore } from '../stores/stores_initializer';
 
 import ConfirmableButton from './ConfirmableButton.vue'
-import { createMessageModal } from '../notification_control'
-import { Modal } from 'bootstrap'
+import isEqual from 'lodash/isEqual';
+import { showToast } from '../notification_control';
+import { Modal } from 'bootstrap';
 
   export default {
     name: 'ConnectionsModalConnectionForm',
@@ -257,7 +264,8 @@ import { Modal } from 'bootstrap'
           { text: 'verify certificate', value: "ssl_verify_cert" },
           { text: 'verify server identity', value: "ssl_verify_identity" }],
         oracle_modes: ['tcp', 'tcps'],
-        tempMode: "ssl"
+        tempMode: "ssl",
+        testIsRunning: false,
       }
     },
     validations() {
@@ -429,7 +437,7 @@ import { Modal } from 'bootstrap'
         return placeholderMap[current_db]
       },
       dbFormDisabled() {
-        return ['sqlite', 'terminal'].includes(this.connectionLocal.technology) || !!this.connectionLocal.conn_string.length
+        return ['sqlite', 'terminal'].includes(this.connectionLocal.technology) || !!this.connectionLocal?.conn_string?.length
       },
       connStringDisabled() {
         return (!!this.connectionLocal.server ||
@@ -454,6 +462,9 @@ import { Modal } from 'bootstrap'
       },
       sshPassLabel() {
         return this.connectionLocal.tunnel.key_set ? 'SSH Key Passphrase' : 'SSH Password'
+      },
+      isChanged() {
+        return !isEqual(this.connectionLocal, this.initialConnection)
       }
     },
     methods: {
@@ -476,7 +487,7 @@ import { Modal } from 'bootstrap'
       },
       selectConnection(connection) {
         if (this.v$.$anyDirty) {
-          createMessageModal(
+          messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset()
@@ -499,7 +510,16 @@ import { Modal } from 'bootstrap'
       testConnection(connection) {
         this.v$.connectionLocal.$validate()
         if(!this.v$.$invalid) {
-          this.$emit('connection:test', this.connectionLocal)
+          this.testIsRunning = true
+          connectionsStore.testConnection(connection)
+          .then(() => {
+            showToast("success", "Connection successful.")
+            this.testIsRunning = false;
+          })
+          .catch((error) => {
+            this.testIsRunning = false;
+            showToast("error", error.response.data.data);
+          })
         }
       },
       updateConnectionKey(event) {

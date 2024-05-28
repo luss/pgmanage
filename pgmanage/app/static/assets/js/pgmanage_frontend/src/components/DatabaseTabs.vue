@@ -276,6 +276,7 @@ export default {
         ConfigTab: {
           databaseIndex: tab?.metaData?.databaseIndex,
           connId: tab.parentId,
+          tabId: tab.id,
         },
       };
       return componentsProps[tab.component];

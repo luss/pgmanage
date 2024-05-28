@@ -92,7 +92,7 @@
 
 <script>
   import SearchableDropdown from "./SearchableDropdown.vue";
-  import _ from 'lodash';
+  import isEqual from 'lodash/isEqual';
 
   export default {
     name: 'SchemaEditorColumnList',
@@ -189,7 +189,7 @@
             });
           }
 
-          if (!_.isEqual(newVal, this.initialColumns)) {
+          if (!isEqual(newVal, this.initialColumns)) {
             this.$emit("columns:changed", newVal);
           }
         },

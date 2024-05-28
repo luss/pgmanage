@@ -131,13 +131,12 @@
   </splitpanes>
 
   <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
-  <FileManager ref="fileManager"/>
 </div>
 </template>
 
 <script>
 import { Splitpanes, Pane } from "splitpanes";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 import moment from "moment";
 import { createRequest } from "../long_polling";
 import { queryModes, requestState, tabStatusMap, queryRequestCodes } from "../constants";
@@ -147,9 +146,8 @@ import { emitter } from "../emitter";
 import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
-import FileManager from "./FileManager.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
-import { tabsStore, connectionsStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore, messageModalStore, fileManagerStore } from "../stores/stores_initializer";
 
 export default {
   name: "QueryTab",
@@ -161,7 +159,6 @@ export default {
     CommandsHistoryModal,
     TabStatusIndicator,
     QueryResultTabs,
-    FileManager
   },
   mixins: [FileInputChangeMixin],
   props: {
@@ -375,14 +372,17 @@ export default {
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");
       } else {
-        let should_prepend =
-          command.trim().split(" ")[0].toUpperCase() !== "EXPLAIN";
-        if (should_prepend) {
-          if (explainMode === 0) {
-            command = "explain " + command;
-          } else if (explainMode === 1) {
-            command = "explain (analyze, buffers) " + command;
-          }
+        let explainRegex =
+          /^(EXPLAIN ANALYZE|EXPLAIN)\s*(\([^\)\(]+\))?\s+(.+)/is;
+        let queryMatch = command.match(explainRegex);
+        if (queryMatch) {
+          command = queryMatch[3] ?? command;
+        }
+
+        if (explainMode === 0) {
+          command = "explain " + command;
+        } else if (explainMode === 1) {
+          command = "explain (analyze, buffers) " + command;
         }
 
         this.querySQL(
@@ -503,15 +503,15 @@ export default {
     },
     openFileManagerModal() {
       if (!!this.editorContent) {
-        createMessageModal(
+        messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.$refs.fileManager.show(true, this.handleFileInputChange);
+            fileManagerStore.showModal(true, this.handleFileInputChange);
           },
           null
         );
       } else {
-        this.$refs.fileManager.show(true, this.handleFileInputChange);
+        fileManagerStore.showModal(true, this.handleFileInputChange);
       }
     },
     async saveFile() {

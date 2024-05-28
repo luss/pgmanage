@@ -2,13 +2,13 @@
   <div class="schema-editor-scrollable px-2 pt-3">
     <div class="row">
       <div class="form-group col-2">
-          <label class="fw-bold mb-2" for="tableNameInput">Table Name</label>
-          <input v-model.trim="localTable.tableName" class="form-control" id="tableNameInput" name="tableName" placeholder="table name..." />
+          <label class="fw-bold mb-2" :for="`${tabId}_tableNameInput`">Table Name</label>
+          <input v-model.trim="localTable.tableName" class="form-control" :id="`${tabId}_tableNameInput`" name="tableName" placeholder="table name..." />
       </div>
 
       <div v-if="showSchema" class="form-group col-3">
-        <label class="fw-bold mb-2" for="selectSchema">Schema</label>
-        <select class="form-control text-truncate pe-4" id="selectSchema" v-model="localTable.schema">
+        <label class="fw-bold mb-2" :for="`${tabId}_selectSchema`">Schema</label>
+        <select class="form-control text-truncate pe-4" :id="`${tabId}_selectSchema`" v-model="localTable.schema">
           <option v-for="(schema, index) in schemas" :value="schema" :key="index">
             {{ schema }}
           </option>

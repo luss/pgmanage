@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'django_vite',
 ]
 
-if DEBUG:
-    INSTALLED_APPS += ['django_sass']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

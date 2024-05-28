@@ -36,7 +36,6 @@ base_urlpatterns = [
 
     #USERS
     re_path(r'^get_users/$', views.users.get_users, name='get_users'),
-    re_path(r'^new_user/$', views.users.new_user, name='new_user'),
     re_path(r'^remove_user/$', views.users.remove_user, name='remove_user'),
     re_path(r'^save_users/$', views.users.save_users, name='save_users'),
 
@@ -46,11 +45,8 @@ base_urlpatterns = [
     re_path(r'^master_password/', views.workspace.master_password, name='master_password'),
     re_path(r'^reset_master_password/', views.workspace.reset_master_password, name='reset_master_password'),
     re_path(r'^draw_graph/', views.workspace.draw_graph, name='draw_graph'),
-    re_path(r'^start_edit_data/', views.workspace.start_edit_data, name='start_edit_data'),
     re_path(r'^get_table_columns/', views.workspace.get_table_columns, name='get_table_columns'),
-    re_path(r'^get_completions_table/', views.workspace.get_completions_table, name='get_completions_table'),
     re_path(r'^refresh_monitoring/', views.workspace.refresh_monitoring, name='refresh_monitoring'),
-    re_path(r'^get_autocomplete_results/', views.workspace.get_autocomplete_results, name='get_autocomplete_results'),
     re_path(r'^delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
     re_path(r'^get_database_meta/', views.workspace.get_database_meta, name='get_database_meta'),
 
@@ -291,6 +287,7 @@ base_urlpatterns = [
     re_path(r'^get_triggers_sqlite/', views.tree_sqlite.get_triggers, name='get_triggers'),
     re_path(r'^get_views_sqlite/', views.tree_sqlite.get_views, name='get_views'),
     re_path(r'^get_views_columns_sqlite/', views.tree_sqlite.get_views_columns, name='get_views_columns'),
+    re_path(r'^get_view_definition_sqlite/', views.tree_sqlite.get_view_definition, name='get_view_definition'),
     re_path(r'^get_properties_sqlite/', views.tree_sqlite.get_properties, name='get_properties'),
     re_path(r'^template_select_sqlite/', views.tree_sqlite.template_select, name='template_select'),
     re_path(r'^template_insert_sqlite/', views.tree_sqlite.template_insert, name='template_insert'),

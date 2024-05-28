@@ -123,7 +123,7 @@ import { required, minLength, sameAs, helpers } from "@vuelidate/validators";
 import axios from "axios";
 import { showToast } from "../notification_control.js";
 import { emitter } from "../emitter";
-import { createMessageModal } from "../notification_control.js";
+import { messageModalStore } from "../stores/stores_initializer.js";
 import { Modal } from "bootstrap";
 
 export default {
@@ -217,7 +217,7 @@ export default {
         });
     },
     resetPassword() {
-      createMessageModal(
+      messageModalStore.showModal(
         `Are you sure you want to reset you master password?
                                You will lose your saved connection passwords.`,
         () => {

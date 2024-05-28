@@ -122,7 +122,7 @@
                   <label for="binary_path" class="fw-bold mb-2">PostgreSQL Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
-                      <input type="text" class="form-control" v-model="binaryPath"
+                      <input id="binary_path" type="text" class="form-control" v-model="binaryPath"
                         :placeholder="`${action} binary path..`">
                       <label v-if="desktopMode" class="btn btn-outline-secondary mb-0" type="button">
                         Select
@@ -141,7 +141,7 @@
                   <label for="pigz_path" class="fw-bold mb-2">Pigz Binary Path</label>
                   <div class="d-flex">
                     <div class="input-group">
-                      <input type="text" class="form-control" v-model="pigzPath"
+                      <input id="pigz_path" type="text" class="form-control" v-model="pigzPath"
                         :placeholder="`${action} binary path..`">
                       <label v-if="desktopMode" class="btn btn-outline-secondary mb-0" type="button">
                         Select
@@ -359,7 +359,7 @@ export default {
   },
   watch: {
     fontSize(newValue, oldValue) {
-      if (!this.hidden)
+      if (!this.hidden && !this.fallbackFontSize)
         this.fallbackFontSize = oldValue
       this.changeInterfaceFontSize()
     },
@@ -367,7 +367,7 @@ export default {
       this.v$.csvDelimiter.$validate()
     },
     theme(newValue, oldValue) {
-      if (!this.hidden)
+      if (!this.hidden && !this.fallbackTheme)
         this.fallbackTheme = oldValue
       this.applyThemes();
     },

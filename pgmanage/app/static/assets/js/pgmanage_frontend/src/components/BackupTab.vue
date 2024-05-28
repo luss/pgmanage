@@ -7,12 +7,13 @@
             <h4 class="card-header fw-bold px-3 py-2">General</h4>
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
-                <label for="backupFileName" class="fw-bold mb-1">FileName</label>
+                <label :for="`${backupTabId}_backupFileName`" class="fw-bold mb-1">FileName</label>
                   <div class="input-group">
                       <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                         a file</div>
-                    <input type="text" class="form-control" :value="backupOptions.fileName"
-                      placeholder="Select file or folder" disabled>
+                    </div>
+                    <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
+                      placeholder="backup file" disabled>
                   </div>
               </div>
               <div v-if="isObjectsType" class="form-group mb-1">
@@ -308,21 +309,18 @@
   </form>
   <UtilityJobs ref="jobs" />
 
-  <FileManager ref="fileManager" @change-file="changeFilePath" />
 </div>
 </template>
 <script>
 import UtilityJobs from "./UtilityJobs.vue";
-import FileManager from "./FileManager.vue";
 import axios from 'axios'
 import { showAlert, showToast } from "../notification_control";
-import { settingsStore } from "../stores/stores_initializer";
+import { fileManagerStore, tabsStore, settingsStore } from "../stores/stores_initializer";
 
 export default {
   name: "BackupTab",
   components: {
     UtilityJobs,
-    FileManager
   },
   props: {
     connId: String,
@@ -387,7 +385,6 @@ export default {
         pigz_compression_ratio: "6"
       },
       backupOptions: {},
-      desktopMode: settingsStore.desktopMode,
       backupTabId: this.tabId
     }
   },
@@ -439,6 +436,14 @@ export default {
       this.backupOptions = { ...this.backupOptionsDefault }
       this.getRoleNames()
     })
+
+    fileManagerStore.$onAction(({name, store, after}) => {
+      if (name === "changeFile" && this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id) {
+        after(() => {
+          this.changeFilePath(store.filePath)
+        })
+      }
+    })
   },
   watch: {
     'backupOptions.format'(newValue){
@@ -478,11 +483,11 @@ export default {
       const [file] = e.target.files
       this.backupOptions.fileName = file?.path
     },
-    changeFilePath(event) {
-      this.backupOptions.fileName = event.filePath
+    changeFilePath(filePath) {
+      this.backupOptions.fileName = filePath;
     },
     openFileManagerModal() {
-      this.$refs.fileManager.show(this.desktopMode, this.onFile, this.dialogType)
+      fileManagerStore.showModal(settingsStore.desktopMode, this.onFile, this.dialogType);
     },
     resetToDefault() {
       this.backupOptions = { ...this.backupOptionsDefault }

@@ -49,8 +49,9 @@
 <script>
 import axios from "axios";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 import MonitoringWidgetEditModal from "./MonitoringWidgetEditModal.vue";
+import { messageModalStore } from "../stores/stores_initializer";
 import { Modal } from "bootstrap";
 
 export default {
@@ -167,7 +168,7 @@ export default {
       return input;
     },
     deleteMonitorWidget(widgetId) {
-      createMessageModal(
+      messageModalStore.showModal(
         "Are you sure you want to delete this monitor widget?",
         () => {
           let widget = this.widgets.find((widget) => widget.id === widgetId);

@@ -10,17 +10,16 @@
       </button>
       <span class="query_info"> Number of records: {{ dataLength }} </span>
     </div>
-    <div ref="tabulator" class="tabulator-custom grid-height"></div>
+    <div ref="tabulator" class="tabulator-custom grid-height pb-3"></div>
   </div>
 </template>
 
 <script>
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import { cellDataModal } from "../header_actions";
 import axios from "axios";
-import { createMessageModal, showToast } from "../notification_control";
+import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
-import { settingsStore } from "../stores/stores_initializer";
+import { messageModalStore, settingsStore, cellDataModalStore } from "../stores/stores_initializer";
 
 export default {
   name: "MonitoringTab",
@@ -77,7 +76,7 @@ export default {
           label:
             '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
           action: (e, cell) => {
-            cellDataModal(null, null, null, cell.getValue(), false);
+            cellDataModalStore.showModal(cell.getValue())
           },
         },
       ];
@@ -85,6 +84,7 @@ export default {
       this.table = new Tabulator(this.$refs.tabulator, {
         autoColumns: true,
         layout: "fitDataStretch",
+        autoResize: false,
         columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
@@ -214,7 +214,7 @@ export default {
           break;
       }
       if (!!pid) {
-        createMessageModal(
+        messageModalStore.showModal(
           `Are you sure you want to terminate backend ${pid}?`,
           () => {
             this.terminateBackendConfirm(pid);

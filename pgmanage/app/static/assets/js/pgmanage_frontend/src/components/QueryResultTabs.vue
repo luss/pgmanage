@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <div class="tab-content">
+      <div ref="tabContent" class="tab-content pb-3">
         <div class="tab-pane active pt-2" :id="`nav_data_${tabId}`" role="tabpanel"
           :aria-labelledby="`nav_data_tab_${tabId}`">
           <div class="result-div">
@@ -65,7 +65,6 @@
       </div>
     </div>
   </div>
-  <CellDataModal :cell-content="cellContent" :show-modal="cellModalVisible" @modal-hide="cellModalVisible = false" />
 </template>
 
 <script>
@@ -73,15 +72,13 @@ import ExplainTabContent from "./ExplainTabContent.vue";
 import { queryModes, tabStatusMap } from "../constants";
 import { emitter } from "../emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import CellDataModal from "./CellDataModal.vue";
-import { settingsStore, tabsStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore, cellDataModalStore } from "../stores/stores_initializer";
 import { showToast } from "../notification_control";
 import { Tab } from "bootstrap";
 
 export default {
   components: {
     ExplainTabContent,
-    CellDataModal,
   },
   props: {
     tabId: String,
@@ -95,8 +92,7 @@ export default {
     resizeDiv(newValue, oldValue) {
       if (newValue) {
         this.handleResize();
-        if (this.table)
-          this.table.redraw();
+        if (this.table) this.table.redraw();
         this.$emit("resized");
       }
     },
@@ -119,6 +115,7 @@ export default {
         columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
+          maxInitialWidth: 200,
         },
         clipboard: "copy",
         clipboardCopyRowRange: "selected",
@@ -129,8 +126,6 @@ export default {
       query: "",
       plan: "",
       table: null,
-      cellContent: "",
-      cellModalVisible: false,
       heightSubtract: 200,
     };
   },
@@ -180,8 +175,8 @@ export default {
 
     let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
     table.on("tableBuilt", () => {
-      this.table = table
-    })
+      this.table = table;
+    });
     settingsStore.$onAction((action) => {
       if (action.name === "setFontSize") {
         if (
@@ -309,8 +304,7 @@ export default {
           label:
             '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
           action: (e, cell) => {
-            this.cellContent = cell.getValue();
-            this.cellModalVisible = true;
+            cellDataModalStore.showModal(cell.getValue())
           },
         },
       ];
@@ -321,6 +315,18 @@ export default {
           field: idx.toString(),
           resizable: "header",
           contextMenu: cellContextMenu,
+          headerDblClick: (e, column) => {
+            if (
+              column.getWidth() >
+              this.tableSettings.columnDefaults.maxInitialWidth
+            ) {
+              column.setWidth(
+                this.tableSettings.columnDefaults.maxInitialWidth
+              );
+            } else {
+              column.setWidth(true);
+            }
+          },
         };
       });
 
@@ -344,9 +350,8 @@ export default {
       this.table.on(
         "cellDblClick",
         function (e, cell) {
-          this.cellContent = cell.getValue();
-          if (this.cellContent) this.cellModalVisible = true;
-        }.bind(this)
+          if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+        }
       );
     },
     fetchData(data) {
@@ -368,8 +373,7 @@ export default {
     handleResize() {
       if (this.$refs === null) return;
 
-      this.heightSubtract =
-        this.$refs.resultDiv.getBoundingClientRect().top + 25;
+      this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },
   },
 };

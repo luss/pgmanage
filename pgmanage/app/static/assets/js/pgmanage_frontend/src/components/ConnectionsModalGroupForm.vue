@@ -4,7 +4,7 @@
     <div class="modal-connections__forms_group group-edit-form position-absolute">
       <div class="form-group mb-3">
         <label for="groupName" class="fw-bold mb-2">Group Name</label>
-        <input v-model="groupLocal.name" type="text"
+        <input v-model="v$.groupLocal.name.$model" type="text"
           :class="['form-control', { 'is-invalid': v$.groupLocal.name.$invalid }]" id="groupName" placeholder="Group name">
         <div class="invalid-feedback">
           <span v-for="error of v$.groupLocal.name.$errors" :key="error.$uid">
@@ -38,8 +38,12 @@
     </div>
   </div>
   <div class="modal-footer mt-auto justify-content-between w-100">
-    <button v-if="groupLocal.id" type="button" @click="$emit('group:delete', this.groupLocal)" class="btn btn-danger">Delete</button>
-    <button type="button" @click="trySave()" class="btn btn-primary ms-auto">Save changes</button>
+    <ConfirmableButton v-if="groupLocal.id" :callbackFunc="() => $emit('group:delete', groupLocal)" class="btn btn-danger" />
+    <button type="button" 
+      @click="trySave()" 
+      class="btn btn-primary ms-auto"
+      :disabled="v$.$invalid || (!isChanged && !!this.groupLocal.id)"
+      >Save changes</button>
   </div>
 </div>
 </template>
@@ -47,8 +51,13 @@
 <script>
   import { useVuelidate } from '@vuelidate/core'
   import { required, maxLength } from '@vuelidate/validators'
+  import isEqual from 'lodash/isEqual';
+  import ConfirmableButton from './ConfirmableButton.vue'
   export default {
     name: 'ConnectionsModalGroupForm',
+    components: {
+      ConfirmableButton
+    },
     data() {
       return {
         groupLocal: {
@@ -93,6 +102,13 @@
       candidateConnections() {
         return [...this.ungroupedConnections, ...this.initialGroup.connections]
           .sort((a, b) => (a.alias > b.alias) ? 1 : -1)
+      },
+      isChanged() {
+        this.initialGroup.connections.sort()
+        this.initialGroup.conn_list.sort()
+        this.groupLocal.connections.sort()
+        this.groupLocal.conn_list.sort()
+        return !isEqual(this.initialGroup, this.groupLocal)
       }
     },
     methods: {
@@ -106,6 +122,7 @@
     watch: {
       initialGroup(newVal, oldVal) {
         this.groupLocal = {...newVal}
+        this.v$.groupLocal.$reset()
       }
     }
   }

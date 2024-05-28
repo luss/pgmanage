@@ -152,25 +152,19 @@ const useTabsStore = defineStore("tabs", {
       let allNodes = Array.from(el.parentNode.children);
       let oldIndex = allNodes.indexOf(el);
 
-      // Filter out non-draggable siblings
-      let siblings = allNodes.filter((node) => node !== el && !!node.draggable);
-
-      // Find the new index based on drop position
-      let newIndex = siblings.findIndex((sibling) => {
-        let rect = sibling.getBoundingClientRect();
+      let newIndex = allNodes.findIndex((node) => {
+        let rect = node.getBoundingClientRect();
         return (
           drop_pos_x >= rect.left &&
           drop_pos_x <= rect.right &&
           drop_pos_y >= rect.top &&
-          drop_pos_y <= rect.bottom
+          drop_pos_y <= rect.bottom &&
+          !!node.draggable
         );
       });
 
-      // Handle case where newIndex is -1 (drop position not found among siblings)
       if (newIndex === -1) {
-        newIndex = siblings.length;
-      } else if (newIndex === oldIndex) {
-        newIndex++;
+        newIndex = oldIndex;
       }
 
       // Reorder the tabs based on the new index
@@ -332,7 +326,7 @@ const useTabsStore = defineStore("tabs", {
             imgName = `${v_conn.technology}2`;
           }
 
-          let icon = `<img src="${v_url_folder}${imgPath}${imgName}.svg"/>`;
+          let icon = `<img src="${app_base_path}${imgPath}${imgName}.svg"/>`;
 
           const connTab = this.addTab({
             name: connName,

@@ -3,17 +3,17 @@
   <div ref="topToolbar" class="row">
     <div class="form-group col-9">
       <form class="form" @submit.prevent>
-        <label class="mb-2" for="selectServer">
+        <label class="mb-2" :for="`${tabId}_queryFilter`">
           <span class="fw-bold">Filter</span> <span class='text-info'> select</span> * <span class='text-info'>from</span> {{this.schema ? `${this.schema}.${this.table}` : `${this.table}`}}
         </label>
-        <input v-model.trim="queryFilter" class="form-control" name="filter"
+        <input :id="`${tabId}_queryFilter`" v-model.trim="queryFilter" class="form-control" name="filter"
            placeholder="extra filter criteria" />
       </form>
     </div>
     <div class="form-group col-2">
       <form class="form" @submit.prevent>
-        <label class="fw-bold mb-2" for="selectServer">Limit</label>
-        <select v-model="rowLimit" class="form-control">
+        <label class="fw-bold mb-2" :for="`${tabId}_rowLimit`">Limit</label>
+        <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-control">
             <option v-for="(option, index) in [10, 100, 1000]"
               :key=index
               :value="option">
@@ -45,7 +45,8 @@
 <script>
 import axios from 'axios'
 import Knex from 'knex'
-import { isEqual, zipObject } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import zipObject from 'lodash/zipObject';
 import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
@@ -80,7 +81,8 @@ export default {
       rowLimit: 10,
       dataLoaded: false,
       heightSubtract: 200, //default safe value, recalculated in handleResize
-      tabulator: null
+      tabulator: null,
+      maxInitialWidth: 200,
     };
   },
   computed: {
@@ -108,9 +110,11 @@ export default {
     let table = new Tabulator(this.$refs.tabulator, {
       layout: 'fitDataStretch',
       data: [],
+      autoResize: false,
       columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
+          maxInitialWidth: this.maxInitialWidth,
         },
       selectableRows: false,
       rowFormatter: this.rowFormatter
@@ -222,7 +226,14 @@ export default {
               editable: false,
               cellDblClick: function (e, cell) {
                 cell.edit(true);
-              }
+              },
+              headerDblClick: (e, column) => {
+                if (column.getWidth() > this.maxInitialWidth) {
+                  column.setWidth(this.maxInitialWidth);
+                } else {
+                  column.setWidth(true);
+                }
+              },
             }
           })
           columns.unshift(actionsCol)

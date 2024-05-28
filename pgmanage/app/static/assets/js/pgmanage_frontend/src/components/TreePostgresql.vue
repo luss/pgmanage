@@ -35,9 +35,8 @@ import {
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
 import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
-import { createMessageModal } from "../notification_control";
 import { showConfirm, showToast } from "../notification_control";
-import { connectionsStore, tabsStore } from "../stores/stores_initializer";
+import { connectionsStore, messageModalStore, tabsStore } from "../stores/stores_initializer";
 import ContextMenu from "@imengyu/vue3-context-menu";
 
 
@@ -94,7 +93,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/managing-databases.html`
+                )}/managing-databases.html`
               );
             },
           },
@@ -173,7 +172,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-schemas.html`
+                )}/ddl-schemas.html`
               );
             },
           },
@@ -250,7 +249,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-basics.html`
+                )}/ddl-basics.html`
               );
             },
           },
@@ -261,7 +260,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-constraints.html`
+                )}/ddl-constraints.html`
               );
             },
           },
@@ -272,7 +271,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-alter.html`
+                )}/ddl-alter.html`
               );
             },
           },
@@ -738,7 +737,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/indexes.html`
+                )}/indexes.html`
               );
             },
           },
@@ -815,7 +814,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/rules.html`
+                )}/rules.html`
               );
             },
           },
@@ -893,7 +892,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/trigger-definition.html`
+                )}/trigger-definition.html`
               );
             },
           },
@@ -1048,7 +1047,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-partitioning.html`
+                )}/ddl-partitioning.html`
               );
             },
           },
@@ -1107,7 +1106,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-partitioning.html`
+                )}/ddl-partitioning.html`
               );
             },
           },
@@ -1169,7 +1168,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/planner-stats.html`
+                )}/planner-stats.html`
               );
             },
           },
@@ -1219,7 +1218,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/ddl-partitioning.html`
+                )}/ddl-partitioning.html`
               );
             },
           },
@@ -1234,7 +1233,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/tutorial-inheritance.html`
+                )}/tutorial-inheritance.html`
               );
             },
           },
@@ -1442,7 +1441,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createsequence.html`
+                )}/sql-createsequence.html`
               );
             },
           },
@@ -1504,7 +1503,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createview.html`
+                )}/sql-createview.html`
               );
             },
           },
@@ -1586,7 +1585,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/trigger-definition.html`
+                )}/trigger-definition.html`
               );
             },
           },
@@ -1613,7 +1612,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-creatematerializedview.html`
+                )}/sql-creatematerializedview.html`
               );
             },
           },
@@ -1720,7 +1719,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createfunction.html`
+                )}/sql-createfunction.html`
               );
             },
           },
@@ -1808,7 +1807,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/plpgsql-trigger.html`
+                )}/plpgsql-trigger.html`
               );
             },
           },
@@ -1877,7 +1876,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/functions-event-triggers.html`
+                )}/functions-event-triggers.html`
               );
             },
           },
@@ -1948,7 +1947,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createprocedure.html`
+                )}/sql-createprocedure.html`
               );
             },
           },
@@ -2029,7 +2028,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createaggregate.html`
+                )}/sql-createaggregate.html`
               );
             },
           },
@@ -2092,7 +2091,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createtype.html`
+                )}/sql-createtype.html`
               );
             },
           },
@@ -2154,7 +2153,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/sql-createdomain.html`
+                )}/sql-createdomain.html`
               );
             },
           },
@@ -2220,7 +2219,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/extend-extensions.html`
+                )}/extend-extensions.html`
               );
             },
           },
@@ -2293,7 +2292,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/postgres-fdw.html`
+                )}/postgres-fdw.html`
               );
             },
           },
@@ -2464,7 +2463,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/event-triggers.html`
+                )}/event-triggers.html`
               );
             },
           },
@@ -2593,7 +2592,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/logical-replication-publication.html`
+                )}/logical-replication-publication.html`
               );
             },
           },
@@ -2685,7 +2684,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/logical-replication-subscription.html`
+                )}/logical-replication-subscription.html`
               );
             },
           },
@@ -2744,7 +2743,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/manage-ag-tablespaces.html`
+                )}/manage-ag-tablespaces.html`
               );
             },
           },
@@ -2800,7 +2799,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/user-manag.html`
+                )}/user-manag.html`
               );
             },
           },
@@ -2906,7 +2905,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/warm-standby.html#streaming-replication-slots`
+                )}/warm-standby.html#streaming-replication-slots`
               );
             },
           },
@@ -2945,7 +2944,7 @@ export default {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
                   this.templates.version
-                )}/static/logicaldecoding-explanation.html#logicaldecoding-replication-slots`
+                )}/logicaldecoding-explanation.html#logicaldecoding-replication-slots`
               );
             },
           },
@@ -2987,7 +2986,7 @@ export default {
             label: "Delete",
             icon: "fas cm-all fa-xmark",
             onClick: () => {
-              createMessageModal(
+              messageModalStore.showModal(
                 `Are you sure you want to delete job "${this.selectedNode.title}"`,
                 () => {
                   this.deleteJobPostgresql(this.selectedNode);
@@ -3416,7 +3415,7 @@ export default {
                 this.openWebSite(
                   `https://www.postgresql.org/docs/${this.getMajorVersion(
                     this.templates.version
-                  )}/static/`
+                  )}/`
                 );
               },
             },
@@ -3427,7 +3426,7 @@ export default {
                 this.openWebSite(
                   `https://www.postgresql.org/docs/${this.getMajorVersion(
                     this.templates.version
-                  )}/static/sql.html`
+                  )}/sql.html`
                 );
               },
             },
@@ -3438,7 +3437,7 @@ export default {
                 this.openWebSite(
                   `https://www.postgresql.org/docs/${this.getMajorVersion(
                     this.templates.version
-                  )}/static/sql-commands.html`
+                  )}/sql-commands.html`
                 );
               },
             }
@@ -4404,7 +4403,7 @@ export default {
             title: `Partitions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el,
@@ -4417,7 +4416,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4499,6 +4498,7 @@ export default {
               schema: node.data.schema,
               schema_raw: node.data.schema_raw,
               raw_value: el.name_raw,
+              name: el.name,
             });
           });
         })
@@ -4514,12 +4514,11 @@ export default {
         })
         .then((resp) => {
           this.removeChildNodes(node);
-
           this.$refs.tree.updateNode(node.path, {
-            title: `${node.title} (${resp.data.length})`,
+            title: `${node.data.name} (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-table node-ptable",
               type: "table",
@@ -4529,7 +4528,7 @@ export default {
               oid: el.oid,
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4547,7 +4546,7 @@ export default {
             title: `Inheritance Tables (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-layer-group node-itable",
               type: "inherited_parent",
@@ -4555,8 +4554,9 @@ export default {
               schema: node.data.schema,
               schema_raw: node.data.schema_raw,
               raw_value: el.name_raw,
+              name: el.name,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4572,7 +4572,7 @@ export default {
           this.removeChildNodes(node);
 
           this.$refs.tree.updateNode(node.path, {
-            title: `${node.title} (${resp.data.length})`,
+            title: `${node.data.name} (${resp.data.length})`,
           });
 
           resp.data.forEach((el) => {
@@ -4603,7 +4603,7 @@ export default {
             title: `Foreign Tables (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-table node-ftable",
               type: "foreign_table",
@@ -4613,7 +4613,7 @@ export default {
               oid: el.oid,
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4752,7 +4752,7 @@ export default {
             title: `Sequences (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.sequence_name,
@@ -4767,7 +4767,7 @@ export default {
               },
               true
             );
-          });
+          })
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4785,7 +4785,7 @@ export default {
             title: `Views (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+        resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-eye node-view",
               type: "view",
@@ -4795,7 +4795,7 @@ export default {
               oid: el.oid,
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -4890,7 +4890,7 @@ export default {
             title: `Materialized Views (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-eye node-mview",
               type: "mview",
@@ -5095,7 +5095,7 @@ export default {
             title: `Trigger Functions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5110,7 +5110,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5140,7 +5140,7 @@ export default {
             title: `Event Trigger Functions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5155,7 +5155,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5185,7 +5185,7 @@ export default {
             title: `Procedures (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-cog node-procedure",
               type: "procedure",
@@ -5195,7 +5195,7 @@ export default {
               id: el.id,
               function_oid: el.function_oid,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5275,7 +5275,7 @@ export default {
             title: `Aggregates (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-cog node-aggregate",
               type: "aggregate",
@@ -5285,7 +5285,7 @@ export default {
               id: el.id,
               oid: el.oid,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5303,7 +5303,7 @@ export default {
             title: `Types (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.type_name,
@@ -5318,7 +5318,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5336,7 +5336,7 @@ export default {
             title: `Domains (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.domain_name,
@@ -5351,7 +5351,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5367,7 +5367,7 @@ export default {
             title: `Extensions (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5380,7 +5380,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5396,7 +5396,7 @@ export default {
             title: `Foreign Data Wrappers (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-cube node-fdw",
               type: "foreign_data_wrapper",
@@ -5411,7 +5411,7 @@ export default {
               type: "foreign_server_list",
               contextMenu: "cm_foreign_servers",
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -5790,7 +5790,7 @@ export default {
             title: `Tablespaces (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(
               node,
               el.name,
@@ -5803,7 +5803,7 @@ export default {
               },
               true
             );
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);

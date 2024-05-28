@@ -169,6 +169,7 @@
               Done
             </button>
             <button
+              v-if="!showTestWidget"
               data-testid="widget-edit-save-button"
               class="btn btn-primary"
               @click="saveMonitoringWidget"
