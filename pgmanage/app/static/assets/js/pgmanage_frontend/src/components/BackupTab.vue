@@ -1,16 +1,15 @@
 <template>
   <div class="backup-tab-scrollable p-2">
-  <form>
+  <form @submit.prevent>
       <div class="row">
         <div class="col-4 d-flex">
           <div class="card flex-grow-1">
             <h4 class="card-header fw-bold px-3 py-2">General</h4>
             <div class="card-body d-flex flex-column px-3 py-2">
               <div class="form-group mb-1">
-                <label :for="`${backupTabId}_backupFileName`" class="fw-bold mb-1">FileName</label>
+                <label :for="`${backupTabId}_backupFileName`" class="fw-bold mb-1">File name</label>
                   <div class="input-group">
-                      <button class="btn btn-secondary" @click="openFileManagerModal">Select
-                        a file</button>
+                      <button class="btn btn-secondary" @click="openFileManagerModal">Select</button>
                         <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
                           placeholder="backup file" disabled>
                     </div>
