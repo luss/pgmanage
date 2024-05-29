@@ -100,10 +100,19 @@ export default {
         dbMetadataStore.fetchDbMeta(this.databaseIndex, this.tabId, this.databaseName)
     },
     setupEditor() {
+      const EDITOR_MODEMAP = {
+        'postgresql': 'pgsql',
+        'mysql': 'mysql',
+        'mariadb': 'mysql',
+        'oracle': 'plsql'
+      }
+
+      let editor_mode = EDITOR_MODEMAP[this.dialect] || 'sql'
+
       this.editor = ace.edit(this.$refs.editor);
       this.editor.$blockScrolling = Infinity;
       this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
-      this.editor.session.setMode("ace/mode/sql");
+      this.editor.session.setMode(`ace/mode/${editor_mode}`);
       this.editor.setFontSize(settingsStore.fontSize);
       this.editor.setShowPrintMargin(false);
 
