@@ -1,5 +1,5 @@
 <template>
-  <div ref="fileManagerActionsModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div id="file_manager_actions_modal" ref="fileManagerActionsModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header text-center pt-2">

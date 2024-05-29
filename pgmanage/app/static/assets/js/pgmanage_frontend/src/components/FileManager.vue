@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div id="file_manager" ref="fileManagerModal" class="modal" tabindex="-1">
+    <div id="file_manager" ref="fileManagerModal" class="modal fade" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-xl modal-file-manager">
         <div class="modal-content">
           <div class="modal-header align-items-center">

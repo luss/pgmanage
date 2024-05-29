@@ -1,5 +1,5 @@
 <template>
-  <div class="modal modal-connections" id="connections-modal" ref="connmodal" tabindex="-1">
+  <div class="modal modal-connections fade" id="connections-modal" ref="connmodal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-connections__dialog">
       <div class="modal-content modal-connections__content h-100">
         <div class="modal-header align-items-center">

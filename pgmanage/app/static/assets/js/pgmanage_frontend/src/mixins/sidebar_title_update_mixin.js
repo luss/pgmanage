@@ -32,7 +32,7 @@ export default {
         }
         tab.tooltip = tooltipName;
         tab.name = databaseConnection.alias;
-        const tooltipEl = document.getElementById(`${tabId}_tooltip`);
+        const tooltipEl = document.getElementById(`${tabId}`);
         Tooltip.getInstance(tooltipEl).dispose();
         new Tooltip(tooltipEl, {
           placement: "right",

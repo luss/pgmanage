@@ -339,7 +339,7 @@ const useTabsStore = defineStore("tabs", {
               this.checkTabStatus();
             },
             closeFunction: (e, primaryTab) => {
-              const tooltipEl = document.getElementById(`${primaryTab.id}_tooltip`);
+              const tooltipEl = document.getElementById(`${primaryTab.id}`);
               Tooltip.getInstance(tooltipEl).hide();
               this.beforeCloseTab(e, () => {
                 var v_tabs_to_remove = [];

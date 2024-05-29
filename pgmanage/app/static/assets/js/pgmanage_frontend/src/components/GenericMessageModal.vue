@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      class="modal show"
+      class="modal fade"
       id="generic_modal_message"
       tabindex="-1"
       role="dialog"

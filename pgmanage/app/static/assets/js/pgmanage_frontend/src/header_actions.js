@@ -31,17 +31,6 @@ import { showConfirm } from './notification_control';
 import { settingsStore } from './stores/stores_initializer';
 import { Modal } from 'bootstrap';
 
-/*
-var v_light_terminal_theme = {
-	background: '#f4f4f4',
-	brightBlue: '#006de2',
-	brightGreen: '#4b9800',
-	foreground: '#353535',
-	cursor: '#353535',
-	cursorAccent: '#353535',
-	selection: '#00000030'
-}
-*/
 
 /// <summary>
 /// Startup function.
@@ -64,14 +53,6 @@ $(function() {
 	let link_toggle = document.getElementById('omnidb__utilities-menu__link-toggle')
 	link_toggle.onclick = function() { toggleUtilitiesMenu() }
 
-
-	// var v_fileref = document.getElementById("ss_theme");
-  // v_fileref.setAttribute("href", v_url_folder + '/static/OmniDB_app/new/css/themes/' + v_theme + '.css');
-
-
-	//var v_configTabControl = createTabControl('config_tabs',0,null);
-	//v_configTabControl.selectTabIndex(0);
-
 });
 
 
@@ -85,19 +66,6 @@ function showConfigUser() {
 	$('#txt_new_pwd').passtrength({passwordToggle: false});
 }
 
-/// <summary>
-/// Go to connections.
-/// </summary>
-function goToConnections() {
-
-	showConfirm('You will lose existing changes. Would you like to continue?',
-		function() {
-
-			window.open("../connections","_self");
-
-		});
-
-}
 
 /// <summary>
 /// Go to connections.
@@ -113,37 +81,6 @@ function confirmSignout() {
 
 }
 
-function saveEditContent() {
-	Modal.getInstance(document.getElementById("div_edit_content")).hide();
-
-	if (v_canEditContent) {
-		v_editContentObject.ht.setDataAtCell(v_editContentObject.row, v_editContentObject.col, v_editContentObject.editor.getValue());
-	}
-	else {
-		alert('No permissions.');
-	}
-
-	v_editContentObject.editor.setValue('');
-}
-
-function cancelEditContent() {
-	Modal.getInstance(document.getElementById("div_edit_content")).hide();
-	v_editContentObject.editor.setValue('');
-}
-
-/// <summary>
-/// Hides edit cell window.
-/// </summary>
-function hideEditContent() {
-
-	Modal.getInstance(document.getElementById("div_edit_content")).hide();
-
-	if (v_canEditContent)
-		v_editContentObject.ht.setDataAtCell(v_editContentObject.row, v_editContentObject.col, v_editContentObject.editor.getValue());
-
-	v_editContentObject.editor.setValue('');
-
-}
 
 function toggleUtilitiesMenu() {
 	let target_element = $('div.omnidb__utilities-menu.omnidb__theme-bg--menu-utilities.omnidb__rounded--lg')

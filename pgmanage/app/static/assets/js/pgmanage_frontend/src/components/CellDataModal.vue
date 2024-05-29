@@ -1,7 +1,8 @@
 <template>
   <div
+    id="cell_data_modal"
     ref="cellDataModal"
-    class="modal show"
+    class="modal fade"
     aria-hidden="true"
     role="dialog"
     tabindex="-1"
