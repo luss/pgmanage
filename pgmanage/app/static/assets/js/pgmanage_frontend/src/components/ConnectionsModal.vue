@@ -34,7 +34,7 @@
                         <i class="fa-solid fa-chevron-down"></i>
                       </div>
 
-                      <div v-bind:id="'collapse-group-' + group.id" class="collapse" data-parent="#connectionsList">
+                      <div v-bind:id="'collapse-group-' + group.id" class="collapse" data-bs-parent="#connectionsList">
                         <div class="card-body p-0">
                           <ul class="list-group">
                             <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index
@@ -97,7 +97,7 @@ import { emitter } from '../emitter'
 import { messageModalStore, tabsStore } from '../stores/stores_initializer';
 import { settingsStore, connectionsStore } from "../stores/stores_initializer";
 import { useVuelidate } from '@vuelidate/core'
-import { Modal } from 'bootstrap'
+import { Modal, Collapse } from 'bootstrap'
 
 export default {
   name: 'ConnectionsModal',
@@ -275,7 +275,7 @@ export default {
           this.activeForm = 'group';
           this.selectedConnection = {};
           if (object) {
-            // $(`#collapse-group-${object.id}`).collapse('toggle');
+            Collapse.getOrCreateInstance(`#collapse-group-${object.id}`).toggle()
             this.selectedGroup = object;
           } else {
             this.selectedGroup = undefined;
