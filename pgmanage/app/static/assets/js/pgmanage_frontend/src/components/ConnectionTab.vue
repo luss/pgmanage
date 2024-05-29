@@ -13,12 +13,12 @@
                   <i class="fas fa-server me-1"></i>selected DB:
                   <b>{{ databaseName }}</b>
                   <div
+                    :id="`${connTabId}_switch`"
                     class="omnidb__switch omnidb__switch--sm float-end"
                     data-bs-toggle="tooltip"
-                    data-placement="bottom"
-                    data-html="true"
-                    title=""
-                    data-original-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>"
+                    data-bs-placement="bottom"
+                    data-bs-html="true"
+                    data-bs-title="<h5>Toggle autocomplete.</h5><div>Switch OFF <b>disables the autocomplete</b> on the inner tabs for this connection.</div>"
                   >
                     <input
                       type="checkbox"
@@ -104,6 +104,7 @@ import { Splitpanes, Pane } from "splitpanes";
 import TreePropertiesDDL from "./TreePropertiesDDL.vue";
 import { showToast } from "../notification_control";
 import TabTitleUpdateMixin from "../mixins/sidebar_title_update_mixin";
+import { Tooltip } from "bootstrap";
 
 export default {
   name: "ConnectionTab",
@@ -183,6 +184,10 @@ export default {
         tabsStore.createConsoleTab();
         tabsStore.createQueryTab(name);
       }
+    });
+
+    new Tooltip(`#${this.connTabId}_switch`, {
+      boundary: "window",
     });
   },
   methods: {
