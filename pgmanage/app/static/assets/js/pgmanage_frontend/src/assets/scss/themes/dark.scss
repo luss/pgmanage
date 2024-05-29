@@ -816,21 +816,6 @@ SOFTWARE.
     color: #ffffff;
   }
 
-  /*
-  .div_alert_buttons button {
-    background: #17171f;
-    background-image: -webkit-linear-gradient(top, #0b394e, #17171f);
-    background-image: -moz-linear-gradient(top, #0b394e, #17171f);
-    background-image: -ms-linear-gradient(top, #0b394e, #17171f);
-    background-image: -o-linear-gradient(top, #0b394e, #17171f);
-    background-image: linear-gradient(to bottom, #0b394e, #17171f);
-    border: solid #0e678f 1px;
-    color: #d7d7d7;
-  }
-  .div_alert_buttons button:hover {
-    color: #f8f8f8;
-    background: #1E90FF;
-  }*/
   a.modal-closer {
       color: #ffffff !important;
       border: 1px solid #1E90FF !important;
@@ -841,17 +826,7 @@ SOFTWARE.
       color: #ffffff !important;
       border: 1px solid #6d6d6d !important;
   }
-  /*
-  button {
-    background: #25282c;
-    border: solid #484a55 1px;
-    color: #ffffff;
-  }
-  button:hover {
-    color: #fff !important;
-    background: #1E90FF !important;
-  }
-  */
+
   #plugin_file_label {
     background: #25282c;
     border: solid #484a55 1px;
@@ -861,7 +836,8 @@ SOFTWARE.
     color: #fff !important;
     background: #1E90FF !important;
   }
-  input,
+  input[type="text"],
+  input[type="password"],
   textarea  {
     background-color: #1A2234 !important;
     border-color: #243049 !important;

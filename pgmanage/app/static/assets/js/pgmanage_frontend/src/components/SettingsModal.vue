@@ -629,14 +629,14 @@ export default {
 
         document.body.classList.remove('pgmanage-theme--light', 'omnidb--theme-light');
 		    document.body.classList.add('pgmanage-theme--dark', 'omnidb--theme-dark');
-
       } else {
         settingsStore.setEditorTheme('omnidb')
         settingsStore.setTerminalTheme(light_terminal_theme)
-
         document.body.classList.remove('pgmanage-theme--dark', 'omnidb--theme-dark',);
 		    document.body.classList.add('pgmanage-theme--light', 'omnidb--theme-light');
       }
+
+      document.body.setAttribute('data-bs-theme', this.theme);
     },
     buildButtonText(shortcut_object, button = null) {
       let text = '';
