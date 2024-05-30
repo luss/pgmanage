@@ -5,7 +5,18 @@
     overflow: hidden;
     
     & > :not(caption) > * > * {
-      background-color: $bgLightTertiary !important;
+      @include themify() {
+        color: themed($color) !important;
+        background-color: themed($pev2StatsTableBg) !important;
+      }
+    }
+
+    thead {
+      &:first-of-type {
+        @include themify() {
+          border-bottom: themed($border);
+        }
+      }
     }
 
     &.table-nonfluid {
@@ -95,6 +106,15 @@
           color: map-get($severity-colors, 3);
           font-weight: 600;
         }
+      }
+    }
+  }
+
+  // table inside 'Grid' tab
+  .plan-grid {
+    .table {
+      .node {
+        cursor: pointer;
       }
     }
   }
