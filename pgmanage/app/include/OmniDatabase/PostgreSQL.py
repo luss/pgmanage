@@ -10361,7 +10361,6 @@ FROM #table_name#
                    LEFT JOIN pg_constraint cc ON cc.oid = d.refobjid
                   WHERE c.relkind in ('r','p','m') AND i.relkind in ('i'::"char", 'I'::"char")
                     AND coalesce(c.oid = '{0}.{1}'::regclass,true)
-                    AND NOT x.indisunique
                     AND NOT x.indisprimary
                     AND NOT x.indisexclusion
                 ),
