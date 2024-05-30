@@ -2199,16 +2199,6 @@ export default {
             label: "Create Extension",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              tabSQLTemplate(
-                "Create Extension",
-                this.templates.create_extension
-              );
-            },
-          },
-          {
-            label: "Create Extension UI",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
               createExtensionModal(this.selectedNode, "Create");
             },
           },
@@ -2226,23 +2216,10 @@ export default {
         ],
         cm_extension: [
           {
-            label: "Alter Extension UI",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              createExtensionModal(this.selectedNode, "Alter");
-            },
-          },
-          {
             label: "Alter Extension",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              tabSQLTemplate(
-                "Alter Extension",
-                this.templates.alter_extension.replace(
-                  "#extension_name#",
-                  this.selectedNode.data.raw_value
-                )
-              );
+              createExtensionModal(this.selectedNode, "Alter");
             },
           },
           {
@@ -2253,23 +2230,10 @@ export default {
             },
           },
           {
-            label: "Drop Extension UI",
-            icon: "fas cm-all fa-times",
-            onClick: () => {
-              createExtensionModal(this.selectedNode, "Drop");
-            },
-          },
-          {
             label: "Drop Extension",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              tabSQLTemplate(
-                "Drop Extension",
-                this.templates.drop_extension.replace(
-                  "#extension_name#",
-                  this.selectedNode.data.raw_value
-                )
-              );
+              createExtensionModal(this.selectedNode, "Drop");
             },
           },
         ],
