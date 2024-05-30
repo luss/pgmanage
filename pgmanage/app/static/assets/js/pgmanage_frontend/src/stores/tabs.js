@@ -558,7 +558,7 @@ const useTabsStore = defineStore("tabs", {
         closeFunction: (e, tab) => {
           if (tab.metaData.hasUnsavedChanges) {
             messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved configuration current changes?",
+              "Are you sure you wish to discard unsaved configuration changes?",
               () => {
                 this.closeTab(tab);
               },
