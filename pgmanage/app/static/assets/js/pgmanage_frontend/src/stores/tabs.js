@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import ShortUniqueId from "short-unique-id";
-import { connectionsStore } from "./stores_initializer";
+import { connectionsStore, messageModalStore } from "./stores_initializer";
 import { showToast, showConfirm } from "../notification_control";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { createRequest } from "../long_polling";
@@ -185,6 +185,15 @@ const useTabsStore = defineStore("tabs", {
     },
     getPrimaryTabById(tabId) {
       return this.tabs.find((tab) => tab.id === tabId);
+    },
+    getSecondaryTabById(tabId, parentId) {
+      const primaryTab = this.tabs.find((tab) => tab.id === parentId);
+      if (primaryTab) {
+        const secondaryTab = primaryTab.metaData.secondaryTabs.find(
+          (tab) => tab.id === tabId
+        );
+        return secondaryTab;
+      }
     },
     beforeCloseTab(e, confirmFunction) {
       if (e) {
@@ -547,9 +556,17 @@ const useTabsStore = defineStore("tabs", {
         component: "ConfigTab",
         mode: "configuration",
         closeFunction: (e, tab) => {
-          this.beforeCloseTab(e, () => {
+          if (tab.metaData.hasUnsavedChanges) {
+            messageModalStore.showModal(
+              "Are you sure you wish to discard unsaved configuration current changes?",
+              () => {
+                this.closeTab(tab);
+              },
+              null
+            );
+          } else {
             this.closeTab(tab);
-          });
+          }
         },
       });
 
