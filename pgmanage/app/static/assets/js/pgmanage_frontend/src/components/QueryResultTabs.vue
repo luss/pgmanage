@@ -74,6 +74,8 @@ import { emitter } from "../emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { settingsStore, tabsStore, cellDataModalStore } from "../stores/stores_initializer";
 import { showToast } from "../notification_control";
+import isNil from 'lodash/isNil';
+import isEmpty from 'lodash/isEmpty';
 
 export default {
   components: {
@@ -200,6 +202,19 @@ export default {
     this.handleResize();
   },
   methods: {
+    cellFormatter(cell, params, onRendered) {
+      let cellVal = cell.getValue()
+      if (isNil(cellVal)) {
+        return '<span class="text-muted">[null]</span>'
+      }
+
+      if(isEmpty(cellVal)) {
+        return '<span class="text-muted">[empty]</span>'
+      }
+
+      let filtered = cellVal.toString().replace(/\n/g, ' ↲ ');
+      return `${filtered}`
+    },
     renderResult(data, context) {
       this.clearData();
       if (data.v_error && context.cmd_type !== "explain") {
@@ -312,6 +327,7 @@ export default {
           title: col,
           field: idx.toString(),
           resizable: "header",
+          formatter: this.cellFormatter,
           contextMenu: cellContextMenu,
           headerDblClick: (e, column) => {
             if (
