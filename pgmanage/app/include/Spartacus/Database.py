@@ -1754,8 +1754,7 @@ class PostgreSQL(Generic):
                             for j in range(0, len(v_table.Columns)):
                                 if v_table.Rows[i][j] != None:
                                     v_table.Rows[i][j] = self.String(v_table.Rows[i][j])
-                                else:
-                                    v_table.Rows[i][j] = ''
+
                 if self.v_start:
                     self.v_start = False
                 if len(v_table.Rows) < p_blocksize:
