@@ -10,6 +10,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 import inject from "@rollup/plugin-inject";
 
 const outDir = path.join("..", "dist");
+const isDebugBuild = process.env.DEBUG === 'true'
 
 export default defineConfig({
   plugins: [
@@ -17,7 +18,7 @@ export default defineConfig({
       $: "jquery",
       jQuery: "jquery",
       include: '**/*.js',
-      sourceMap: false
+      sourceMap: isDebugBuild
     },),
     vue(),
     Components({
@@ -40,6 +41,7 @@ export default defineConfig({
   },
   build: {
     manifest: true,
+    minify: !isDebugBuild,
     rollupOptions: {
       input: ["./src/main.js", "./src/login.js"],
       output: {
