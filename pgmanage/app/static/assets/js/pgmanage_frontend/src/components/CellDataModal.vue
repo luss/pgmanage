@@ -71,6 +71,8 @@ export default {
 
       if (action.name === "hideModal") {
         this.editor.destroy();
+        // erase leftover css classes left after editor destruction
+        this.$refs.editor.classList.remove('ace-omnidb', 'ace-omnidb_dark')
         $(this.$refs.cellDataModal).modal("hide");
       }
     });
