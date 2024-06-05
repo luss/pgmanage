@@ -111,7 +111,6 @@ export default {
 
 .ace-editor {
   height: 70vh;
-  border: 1px solid rgb(195, 195, 195);
 }
 
 .modal-body {
