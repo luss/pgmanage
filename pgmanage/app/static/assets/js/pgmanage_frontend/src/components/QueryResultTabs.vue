@@ -140,9 +140,7 @@ export default {
     },
     showTable() {
       return !(
-        (!!this.exportFileName && !!this.exportDownloadName) ||
-        !!this.errorMessage ||
-        !!this.queryInfoText
+        (!!this.exportFileName && !!this.exportDownloadName) || !!this.errorMessage 
       );
     },
     resultTabHeight() {
@@ -282,12 +280,9 @@ export default {
       if (data.data.length === 0) {
         if (data.col_names.length === 0) {
           this.queryInfoText = data.status ? data.status : "Done";
-        } else {
-          this.queryInfoText = "No results";
         }
-      } else {
-        this.updateTableData(data);
       }
+      this.updateTableData(data);
     },
     updateTableData(data) {
       let cellContextMenu = [
