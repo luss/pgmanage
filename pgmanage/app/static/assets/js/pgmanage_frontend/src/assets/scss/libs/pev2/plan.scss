@@ -49,6 +49,12 @@ $connectorLine: 2px solid darken($lineColor, 10%);
     &:active {
       cursor: grabbing;
     }
+
+    & > .position-absolute {
+      top: 0 !important;
+      bottom: unset !important;
+      background: transparent !important;
+    }
   }
 
   .text-muted {
@@ -211,5 +217,3 @@ a[href="https://github.com/dalibo/pev2"]{
     }
   }
 }
-
-

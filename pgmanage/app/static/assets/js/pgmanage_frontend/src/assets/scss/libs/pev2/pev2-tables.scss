@@ -36,11 +36,6 @@
         border: none !important;
       }
     }
-    
-    // inside 'Grid' tab
-   &.table-sm.table-hover {
-    margin-top: 0.5rem;
-   }
   }
 
   //tables inside plan-node-body
@@ -91,7 +86,6 @@
           @include themify() {
             color: themed($color) !important;
             background-color: themed($pev2StatsTableTheadDark) !important;
-            border-bottom: themed($border);
           }
         }
         
@@ -110,11 +104,37 @@
     }
   }
 
-  // table inside 'Grid' tab
+  // table inside "Grid" tab
   .plan-grid {
     .table {
+      margin-top: 1rem;
+
+      & > :not(caption) > * > * {
+        background-color: transparent !important;
+      }
+
+      thead {
+        &:first-of-type {
+          @include themify() {
+            background-color: themed($surfaceBgSecondary);
+          }
+        }
+      }
+
+      tbody > tr:hover > * {
+        @include themify() {
+          background-color: themed($surfaceBgSecondary) !important;
+        } 
+      }
+
       .node {
         cursor: pointer;
+        background-color: transparent !important;
+
+        .grid-progress-cell .grid-progress > .bg-secondary {
+          background-color: $primaryBlue !important;
+          opacity: 0.5 !important;
+        }
       }
     }
   }
