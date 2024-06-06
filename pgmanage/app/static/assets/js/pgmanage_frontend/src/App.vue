@@ -10,6 +10,10 @@
   <GenericMessageModal />
   <CellDataModal />
   <FileManager />
+  <template v-for="extraComp in enterpriseComps">
+    <component :is="extraComp">
+    </component>
+  </template>
 </template>
 
 <script>
@@ -41,6 +45,7 @@ export default {
   data() {
     return {
       initialized: false,
+      enterpriseComps: []
     };
   },
   mounted() {
@@ -58,6 +63,8 @@ export default {
     initialSetup() {
       this.initialized = true;
       v_omnis.div.style.opacity = 1;
+
+      this.enterpriseComps = this?.enterpriseComponents ?? []
     },
     createOmnisAssistant() {
       v_omnis.root = document.getElementById("app");
