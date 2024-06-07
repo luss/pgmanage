@@ -11,10 +11,10 @@
         :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
     </pane>
 
-    <pane size="70" class="px-2 border-top">
+    <pane size="70" class="border-top">
       <!-- ACTION BUTTONS-->
       <div class="py-2 pe-1 d-flex align-items-center">
-        <div class="tab-actions d-flex w-100">
+        <div class="tab-actions d-flex w-100 px-2">
           <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
             <i class="fas fa-play fa-light"></i>
           </button>

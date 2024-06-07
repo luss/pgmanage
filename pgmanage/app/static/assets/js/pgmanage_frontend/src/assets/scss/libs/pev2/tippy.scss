@@ -24,6 +24,12 @@
     position: relative;
     z-index: 1;
     font-size: 0.75rem;
+
+    .table > :not(caption) > * > * {
+      @include themify() {
+        color: themed($color);
+      }
+    }
   }
 
   & > .tippy-arrow {

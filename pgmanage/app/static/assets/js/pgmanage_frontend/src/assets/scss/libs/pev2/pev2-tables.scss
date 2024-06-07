@@ -107,7 +107,7 @@
   // table inside "Grid" tab
   .plan-grid {
     .table {
-      margin-top: 1rem;
+      border-radius: 0;
 
       & > :not(caption) > * > * {
         background-color: transparent !important;
@@ -124,6 +124,8 @@
       tbody > tr:hover > * {
         @include themify() {
           background-color: themed($surfaceBgSecondary) !important;
+          box-shadow: none;
+          transition: all 0.15s ease-in;
         } 
       }
 
@@ -131,9 +133,45 @@
         cursor: pointer;
         background-color: transparent !important;
 
-        .grid-progress-cell .grid-progress > .bg-secondary {
-          background-color: $primaryBlue !important;
-          opacity: 0.5 !important;
+        & > .node-index {
+          .font-weight-normal.small {
+            font-weight: bold;
+          }
+        }
+
+        .grid-progress-cell {
+          .grid-progress > .bg-secondary {
+            background-color: $primaryBlue !important;
+            opacity: 0.5 !important;
+          }
+
+          .small.text-body-secondary {
+            line-height: 1.4;
+            margin-top: 0.4rem;
+          }
+        }
+
+        .plan-node.detailed {
+          .nav-tabs {
+            border-bottom: 1px solid rgba($primaryMutedColor, 0.3);
+
+            .nav-link{
+              &.active {
+                @include themify {
+                  border-color: rgba($primaryMutedColor, 0.3);
+                  border-bottom-color: themed($surfaceBg);
+                  background: themed($surfaceBg);
+                }
+              }
+            }
+          }
+
+          .tab-pane.border {
+            border-color: rgba($primaryMutedColor, 0.3) !important;
+            @include themify {
+              background: themed($surfaceBg);
+            }
+          }
         }
       }
     }
