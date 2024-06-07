@@ -88,6 +88,7 @@ import { settingsStore } from "../stores/stores_initializer";
 export default {
   props: {
     connId: String,
+    databaseTechnology: String,
     ddlData: String,
     propertiesData: Array,
     showLoading: {
@@ -164,10 +165,20 @@ export default {
       });
     },
     setupEditor() {
+      // TODO: DRY editor initialization. possibly move common setup stuff into a mixin
+      const EDITOR_MODEMAP = {
+        'postgresql': 'pgsql',
+        'mysql': 'mysql',
+        'mariadb': 'mysql',
+        'oracle': 'plsql'
+      }
+
+      let editor_mode = EDITOR_MODEMAP[this.databaseTechnology] || 'sql'
+
       this.editor = ace.edit(this.$refs.editor);
       this.editor.$blockScrolling = Infinity;
       this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
-      this.editor.session.setMode("ace/mode/sql");
+      this.editor.session.setMode(`ace/mode/${editor_mode}`);
 
       this.editor.setFontSize(Number(settingsStore.fontSize));
 

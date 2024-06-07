@@ -33,11 +33,10 @@
       <button class="btn btn-success me-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
         <i class="fa-solid fa-arrow-rotate-left"></i>
       </button>
-      <button class="btn btn-danger me-2" :disabled="!selectedConf"
-        @click="deleteOldConfig(selectedConf.id)">
+      <ConfirmableButton class="btn btn-danger mr-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
         <i class="fa-solid fa-xmark"></i>
-      </button>
-      <button type="submit" class="btn btn-success ms-auto" :disabled="!hasUpdateValues || v$.$invalid"
+      </ConfirmableButton>
+      <button type="submit" class="btn btn-success ml-auto" :disabled="!hasUpdateValues || v$.$invalid"
         @click.prevent="confirmConfig">
         Apply
       </button>
@@ -157,11 +156,14 @@ import { showToast } from "../notification_control";
 import distance from 'jaro-winkler'
 import moment from 'moment'
 import { Modal } from "bootstrap";
+import { tabsStore } from "../stores/stores_initializer";
+import ConfirmableButton from "./ConfirmableButton.vue";
 
 export default {
   name: "Config",
   components: {
     ConfigTabGroup,
+    ConfirmableButton,
   },
   setup() {
     return {
@@ -233,6 +235,14 @@ export default {
     hasRevertValues() {
       return !!Object.keys(this.configDiffData).length;
     }
+  },
+  watch: {
+    hasUpdateValues() {
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId)
+      if (tab) {
+        tab.metaData.hasUnsavedChanges = this.hasUpdateValues
+      }
+    },
   },
   mounted() {
     this.getCategories();

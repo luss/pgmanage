@@ -75,6 +75,8 @@ export default {
       if (action.name === "hideModal") {
         this.editor.destroy();
         this.modalInstance.hide();
+        // erase leftover css classes left after editor destruction
+        this.$refs.editor.classList.remove('ace-omnidb', 'ace-omnidb_dark')
       }
     });
   },

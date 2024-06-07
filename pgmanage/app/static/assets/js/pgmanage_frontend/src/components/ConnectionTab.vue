@@ -61,6 +61,7 @@
                   >
                     <TreePropertiesDDL
                       :conn-id="connTabId"
+                      :database-technology="databaseTechnology"
                       :ddl-data="ddlData"
                       :properties-data="propertiesData"
                       :show-loading="showTreeTabsLoading"

@@ -90,7 +90,6 @@
 <script>
 import moment from 'moment'
 import { connectionsStore, settingsStore } from '../stores/stores_initializer'
-import { showConfigUser } from '../header_actions'
 import { startTutorial } from '../tutorial'
 import { endLoading } from "../ajax_control";
 import { default_shortcuts } from '../shortcuts'
@@ -189,7 +188,7 @@ export default {
       return LABEL_MAP[shortcut.shortcut_code] || 'unknown'
     },
     showSettings() {
-      showConfigUser()
+      settingsStore.showModal()
     },
     showTutorial() {
       startTutorial('getting_started')
