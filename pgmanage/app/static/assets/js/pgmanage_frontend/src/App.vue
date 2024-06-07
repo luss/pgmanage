@@ -10,6 +10,7 @@
   <GenericMessageModal />
   <CellDataModal />
   <FileManager />
+  <UtilitiesMenu />
   <template v-for="extraComp in enterpriseComps">
     <component :is="extraComp">
     </component>
@@ -26,6 +27,7 @@ import ConnectionsModal from "./components/ConnectionsModal.vue";
 import GenericMessageModal from "./components/GenericMessageModal.vue";
 import CellDataModal from "./components/CellDataModal.vue";
 import FileManager from "./components/FileManager.vue";
+import UtilitiesMenu from "./components/UtilitiesMenu.vue";
 import { emitter } from "./emitter";
 import { startTutorial } from "./tutorial";
 
@@ -41,6 +43,7 @@ export default {
     GenericMessageModal,
     CellDataModal,
     FileManager,
+    UtilitiesMenu,
   },
   data() {
     return {

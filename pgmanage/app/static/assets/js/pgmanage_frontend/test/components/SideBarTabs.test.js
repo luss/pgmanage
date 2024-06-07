@@ -20,21 +20,6 @@ import { emitter } from "../../src/emitter";
 import { useTabsStore } from "../../src/stores/tabs";
 import { useConnectionsStore } from "../../src/stores/connections";
 
-vi.mock("@/workspace.js", () => {
-  const showMenuNewTabOuter = vi.fn();
-
-  return { showMenuNewTabOuter };
-});
-
-vi.mock("@/header_actions.js", () => {
-  const showConfigUser = vi.fn;
-  return { showConfigUser };
-});
-
-vi.mock("xterm", () => {
-  const Terminal = vi.fn();
-  return { Terminal };
-});
 
 const connectionMock = {
   id: 1,
