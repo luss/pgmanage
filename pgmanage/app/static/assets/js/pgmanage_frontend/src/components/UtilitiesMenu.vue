@@ -48,9 +48,9 @@
           ></a>
           <a
             id="omnidb__utilities-menu__link-about"
+            data-bs-toggle="modal" data-bs-target="#modal_about"
             class="omnidb__menu__btn nav-item nav-link"
             href="#"
-            @click="showAbout"
             ><i class="fas fa-info-circle" title="About"></i
           ></a>
           <a
@@ -115,9 +115,6 @@ export default {
   methods: {
     toggleUtilitiesMenu() {
       this.menuExpanded = !this.menuExpanded;
-    },
-    showAbout() {
-      $("#modal_about").modal();
     },
     showSettings() {
       settingsStore.showModal();

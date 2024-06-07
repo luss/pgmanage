@@ -119,8 +119,6 @@ const useSettingsStore = defineStore("settings", {
       this.scrollTree = value;
     },
     showModal() {
-      // $("#modal_settings").modal({ backdrop: "static", keyboard: false });
-      // $("#txt_new_pwd").passtrength({ passwordToggle: false });
       Modal.getOrCreateInstance('#modal_settings', {
         backdrop: 'static', keyboard: false
       }).show()
