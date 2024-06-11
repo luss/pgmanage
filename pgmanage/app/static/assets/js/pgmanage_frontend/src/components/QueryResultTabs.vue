@@ -74,6 +74,7 @@ import { emitter } from "../emitter";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { settingsStore, tabsStore, cellDataModalStore } from "../stores/stores_initializer";
 import { showToast } from "../notification_control";
+import escape from 'lodash/escape';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import { Tab } from "bootstrap";
@@ -213,8 +214,8 @@ export default {
         return '<span class="text-muted">[empty]</span>'
       }
 
-      let filtered = cellVal.toString().replace(/\n/g, ' ↲ ');
-      return `${filtered}`
+      let filtered = escape(cellVal.toString().replace(/\n/g, ' ↲ '))
+      return filtered
     },
     renderResult(data, context) {
       this.clearData();
