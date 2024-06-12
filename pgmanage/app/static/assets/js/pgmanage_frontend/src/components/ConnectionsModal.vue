@@ -76,6 +76,7 @@
                 <ConnectionsModalConnectionForm
                   @connection:save="saveConnection"
                   @connection:delete="deleteConnection"
+                  @connection:clone="cloneConnection"
                   :initialConnection="selectedConnection"
                   :technologies="technologies"
                   :visible="activeForm == 'connection'"
@@ -214,6 +215,16 @@ export default {
       .catch((error) => {
         console.log(error)
       })
+    },
+    cloneConnection(connection) {
+      let clone = {...connection}
+      clone.id = null
+      clone.password_set = false
+      clone.tunnel.password_set = false
+      clone.tunnel.key_set = false
+      clone.alias = `${clone.alias} - clone`
+      this.selectedConnection = {}
+      this.showForm('connection', clone)
     },
     saveGroup(group) {
       axios.post('/save_group/', group)

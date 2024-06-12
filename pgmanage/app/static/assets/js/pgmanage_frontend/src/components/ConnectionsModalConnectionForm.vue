@@ -217,7 +217,7 @@
                 <button
                   v-if="this.connectionLocal.tunnel.key_set || this.connectionLocal.tunnel.key != ''"
                   @click="this.connectionLocal.tunnel.key_set = false; this.connectionLocal.tunnel.key = ''; this.$refs.keyFile.value = ''"
-                  class="btn btn-outline-danger ms-2 mb-2">Clear
+                  class="btn btn-outline-danger ms-2">Clear
                 </button>
               </div>
             </div>
@@ -226,7 +226,11 @@
     </div>
   </div>
   <div class="modal-footer mt-auto justify-content-between w-100">
-    <ConfirmableButton v-if="connectionLocal.id" :callbackFunc="deleteConnection" class="btn btn-danger" />
+    <ConfirmableButton v-if="connectionLocal.id" :callbackFunc="deleteConnection" class="btn btn-outline-danger" />
+    <button v-if="connectionLocal.id"
+      type="button"
+      @click="$emit('connection:clone', this.connectionLocal)"
+      class="btn btn-link">Clone</button>
     <button type="button"
       @click="trySave()"
       :disabled="connectionLocal.locked || v$.$invalid || (!isChanged && !!connectionLocal.id)"
