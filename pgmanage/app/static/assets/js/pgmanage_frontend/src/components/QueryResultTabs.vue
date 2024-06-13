@@ -77,6 +77,7 @@ import { showToast } from "../notification_control";
 import escape from 'lodash/escape';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
+import mean from 'lodash/mean';
 import { Tab } from "bootstrap";
 
 export default {
@@ -118,7 +119,6 @@ export default {
         columnDefaults: {
           headerHozAlign: "left",
           headerSort: false,
-          headerTooltip: 'double-click to maximize/minimize',
           maxInitialWidth: 200,
         },
         clipboard: "copy",
@@ -345,14 +345,49 @@ export default {
               column.setWidth(true);
             }
           },
+          headerTooltip: 'double-click to maximize/minimize',
         };
       });
+
+      let headerMenu = [
+        {
+          label:"Adaptive",
+          action: () => {
+            this.customLayout = 'adaptive'
+            this.applyLayout()
+          }
+        },
+        {
+          label:"Compact",
+          action: () => {
+            this.customLayout = 'compact'
+            this.applyLayout()
+          }
+        },{
+          label:"Fit Content",
+          action:() => {
+            this.customLayout = 'fitcontent'
+            this.applyLayout()
+          }
+        },{
+          label:"Reset Layout",
+          action:() => {
+            this.customLayout = undefined
+            this.table.blockRedraw();
+            this.table.setColumns(columns);
+            this.table.restoreRedraw();
+          }
+        },
+      ]
 
       columns.unshift({
         formatter: "rownum",
         hozAlign: "center",
         minWidth: 55,
         frozen: true,
+        headerMenu: headerMenu,
+        headerMenuIcon:'<i class="actions-menu fa-solid fa-ellipsis-vertical p-2"></i>',
+        headerTooltip: 'Layout'
       });
       this.table.setColumns(columns);
 
@@ -360,6 +395,7 @@ export default {
         .setData(data.data)
         .then(() => {
           this.table.redraw(true);
+          this.applyLayout();
         })
         .catch((error) => {
           this.errorMessage = error;
@@ -371,6 +407,31 @@ export default {
           if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
         }
       );
+    },
+    applyLayout() {
+      if(this.customLayout === undefined)
+        return
+
+      this.table.blockRedraw();
+
+      this.table.getColumns().forEach((col, idx) => {
+        if(idx > 0) {
+          if(this.customLayout == 'adaptive') {
+            let widths = col.getCells().map((cell) => {return cell.getElement().scrollWidth})
+            col.setWidth(mean(widths))
+          }
+
+          if(this.customLayout == 'compact') {
+            col.setWidth(100);
+          }
+
+          if(this.customLayout == 'fitcontent') {
+            col.setWidth(true);
+          }
+        }
+      });
+
+      this.table.restoreRedraw();
     },
     fetchData(data) {
       let initialData = this.table.getData();
