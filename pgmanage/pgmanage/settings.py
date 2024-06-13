@@ -3,7 +3,7 @@ import random
 import string
 from pathlib import Path
 
-ENTERPRISE_EDITION = True
+ENTERPRISE_EDITION = False
 # Development Mode
 APP_TOKEN = None
 DEBUG = True
