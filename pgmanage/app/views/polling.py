@@ -798,6 +798,7 @@ def thread_query(self, args):
         tab_title: str = args.get('tab_title')
         autocommit: bool = args.get('autocommit')
         client_object: Client = args.get('client_object') or args.get('v_client_object')
+        block_size: int = args.get("block_size", 50)
 
         session: Session = args.get('session')
         database = args.get('database') or args.get('v_database')
@@ -847,7 +848,8 @@ def thread_query(self, args):
                     database.v_connection.v_start = True
 
             if mode in (queryModes.DATA_OPERATION, queryModes.FETCH_MORE) and not all_data:
-                data = database.v_connection.QueryBlock(sql_cmd, 50, True, True)
+                block_size = block_size if mode == queryModes.FETCH_MORE else 50
+                data = database.v_connection.QueryBlock(sql_cmd, block_size, True, True)
 
                 notices = database.v_connection.GetNotices()[:]
 
@@ -1068,6 +1070,7 @@ def thread_console(self, args):
         autocommit: bool = args.get('autocommit')
         mode: consoleModes = args.get('mode')
         client_object: Client  = args.get('client_object') or args.get('v_client_object')
+        block_size: int = args.get("block_size", 50)
 
         session: Session = args.get('session')
         database = args.get('database') or args.get('v_database')
@@ -1093,9 +1096,9 @@ def thread_console(self, args):
                     database.v_connection.v_start=True
 
             if mode == consoleModes.FETCH_MORE:
-                v_table = database.v_connection.QueryBlock('', 50, True, True)
+                v_table = database.v_connection.QueryBlock('', block_size, True, True)
                 #need to stop again
-                if not database.v_connection.v_start or len(v_table.Rows)>=50:
+                if not database.v_connection.v_start or len(v_table.Rows) >= block_size:
                     data_return += '\n' + v_table.Pretty(database.v_connection.v_expanded) + '\n' + database.v_connection.GetStatus()
                     run_command_list = False
                     show_fetch_button = True

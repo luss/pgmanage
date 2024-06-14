@@ -91,6 +91,7 @@ export default {
     dialect: String,
     tabStatus: Number,
     resizeDiv: Boolean,
+    blockSize: Number,
   },
   watch: {
     resizeDiv(newValue, oldValue) {
@@ -274,10 +275,9 @@ export default {
         this.notices = data.notices;
       }
 
-      //Show fetch buttons if data has 50 rows
       if (
-        data.data.length >= 50 &&
-        context.mode !== this.queryModes.FETCH_ALL
+        data.data.length >= 50 && context.mode === this.queryModes.DATA_OPERATION ||
+        data.data.length >= this.blockSize && context.mode === this.queryModes.FETCH_MORE
       ) {
         this.$emit("showFetchButtons", true);
       } else {
