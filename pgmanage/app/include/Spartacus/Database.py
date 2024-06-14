@@ -1725,8 +1725,11 @@ class PostgreSQL(Generic):
             self.v_cursor = None
             return p_sql
     def ResolveType(self, type_code):
-        res = self.Query('select format_type({0}, NULL)'.format(type_code))
-        return res.Rows[0][0]
+        try:
+            res = self.Query('select format_type({0}, NULL)'.format(type_code))
+            return res.Rows[0][0]
+        except:
+            return '???'
 
     def QueryBlock(self, p_sql, p_blocksize, p_alltypesstr=False, p_simple=False):
         try:
