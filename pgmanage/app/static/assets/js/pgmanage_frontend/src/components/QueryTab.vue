@@ -433,6 +433,9 @@ export default {
       );
     },
     cancelSQLTab() {
+      clearInterval(this.queryInterval);
+      this.queryInterval = null;
+
       this.readOnlyEditor = false;
 
       this.queryState = requestState.Idle;

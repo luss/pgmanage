@@ -359,6 +359,9 @@ export default {
       emitter.emit(`${this.tabId}_indent_sql`);
     },
     cancelConsoleTab() {
+      clearInterval(this.queryInterval);
+      this.queryInterval = null;
+      
       this.readOnlyEditor = false;
 
       this.consoleState = requestState.Idle;
