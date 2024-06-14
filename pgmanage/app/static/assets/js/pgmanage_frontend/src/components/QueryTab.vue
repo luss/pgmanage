@@ -71,10 +71,13 @@
           </template>
 
           <!-- Query ACTIONS BUTTONS-->
-          <button :id="`bt_fetch_more_${tabId}`" class="btn btn-sm btn-secondary" title="Run" v-if="showFetchButtons"
-            @click="querySQL(queryModes.FETCH_MORE)">
-            Fetch More
-          </button>
+          <template v-if="showFetchButtons">
+            <button :id="`bt_fetch_more_${tabId}`" class="btn btn-sm btn-secondary" title="Run"
+              @click="querySQL(queryModes.FETCH_MORE)">
+              Fetch More
+            </button>
+            <BlockSizeSelector v-model="blockSize"/>
+          </template>
 
           <button :id="`bt_fetch_all_${tabId}`" class="btn btn-sm btn-secondary" title="Run" v-if="showFetchButtons"
             @click="querySQL(queryModes.FETCH_ALL)">
@@ -124,7 +127,7 @@
           </div>
         </div>
       </div>
-      <QueryResultTabs ref="queryResults" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"
+      <QueryResultTabs ref="queryResults" :block-size="blockSize" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"
         :dialect="dialect" :tab-status="tabStatus" :resize-div="resizeResultDiv" @enable-explain-buttons="toggleExplainButtons"
         @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" @resized="resizeResultDiv = false"/>
     </pane>
@@ -148,6 +151,7 @@ import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
 import { tabsStore, connectionsStore, messageModalStore, fileManagerStore } from "../stores/stores_initializer";
+import BlockSizeSelector from './BlockSizeSelector.vue';
 
 export default {
   name: "QueryTab",
@@ -159,6 +163,7 @@ export default {
     CommandsHistoryModal,
     TabStatusIndicator,
     QueryResultTabs,
+    BlockSizeSelector
   },
   mixins: [FileInputChangeMixin],
   props: {
@@ -198,6 +203,7 @@ export default {
       lastQuery: null,
       queryInterval: null,
       resizeResultDiv: false,
+      blockSize: 50,
     };
   },
   computed: {
@@ -282,6 +288,7 @@ export default {
             all_data: all_data,
             log_query: log_query,
             tab_title: tab.name,
+            block_size: this.blockSize
           };
 
           this.readOnlyEditor = true;

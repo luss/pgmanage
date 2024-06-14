@@ -36,10 +36,13 @@
           <TabStatusIndicator :tab-status="tabStatus" />
         </template>
 
-        <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch More"
-          @click="consoleSQL(false, consoleModes.FETCH_MORE)">
-          Fetch more
-        </button>
+        <template v-if="fetchMoreData && idleState">
+          <button class="btn btn-sm btn-secondary" title="Fetch More"
+            @click="consoleSQL(false, consoleModes.FETCH_MORE)">
+            Fetch more
+          </button>
+          <BlockSizeSelector v-model="blockSize"/>
+        </template>
 
         <button v-if="fetchMoreData && idleState" class="btn btn-sm btn-secondary" title="Fetch All"
           @click="consoleSQL(false, consoleModes.FETCH_ALL)">
@@ -100,6 +103,7 @@ import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
 import { tabStatusMap, requestState, queryRequestCodes, consoleModes } from "../constants";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
+import BlockSizeSelector from "./BlockSizeSelector.vue";
 
 export default {
   name: "ConsoleTab",
@@ -110,6 +114,7 @@ export default {
     TabStatusIndicator,
     QueryEditor,
     CancelButton,
+    BlockSizeSelector
   },
   mixins: [FileInputChangeMixin],
   props: {
@@ -139,6 +144,7 @@ export default {
       commandsModalVisible: false,
       terminal: null,
       fitAddon: null,
+      blockSize: 50,
     };
   },
   computed: {
@@ -252,6 +258,7 @@ export default {
               v_conn_tab_id: this.connId,
               v_tab_id: this.tabId,
               autocommit: this.autocommit,
+              block_size: this.blockSize
             };
 
             this.readOnlyEditor = true;
@@ -265,7 +272,6 @@ export default {
               last_command: this.lastCommand,
               check_command: check_command,
               mode: mode,
-              new: true,
               callback: this.consoleReturn.bind(this),
               passwordSuccessCallback: this.passwordSuccessCallback.bind(this),
               passwordFailCalback: () => {
