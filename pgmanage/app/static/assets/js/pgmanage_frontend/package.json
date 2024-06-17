@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "dev:enterprise": "vite --mode enterprise",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build --base=/static/assets/js/dist/",
-    "build:enterprise": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build --base=/static/assets/js/dist/ --mode enterprise",
+    "build:enterprise": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build --base=/static/assets/js/dist/ --mode enterprise",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build --base=/static/assets/js/dist/",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
