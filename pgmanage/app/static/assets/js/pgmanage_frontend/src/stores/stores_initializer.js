@@ -44,4 +44,5 @@ export {
   cellDataModalStore,
   fileManagerStore,
   utilitiesMenuStore,
+  pinia
 };
