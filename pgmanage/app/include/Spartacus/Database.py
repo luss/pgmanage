@@ -874,7 +874,18 @@ class SQLite(Generic):
                 v_keep = False
             else:
                 v_keep = True
-            self.v_cur.execute(p_sql)
+
+            if len(p_sql.split(";\n")) >= 2:
+                try:
+                    self.v_cur.execute("BEGIN")
+                    for sql in p_sql.split(";\n"):
+                        self.v_cur.execute(sql)
+                    self.v_con.commit()
+                except sqlite3.Error as exc:
+                    self.v_con.rollback()
+                    raise Spartacus.Database.Exception(str(exc))
+            else:
+                self.v_cur.execute(p_sql)
         except Spartacus.Database.Exception as exc:
             raise exc
         except sqlite3.Error as exc:
