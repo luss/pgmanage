@@ -417,7 +417,7 @@ export default {
       this.table.getColumns().forEach((col, idx) => {
         if(idx > 0) {
           if(this.customLayout == 'adaptive') {
-            let widths = col.getCells().map((cell) => {return cell.getElement().scrollWidth})
+            let widths = col.getCells().map((cell) => {return cell.getElement().scrollWidth}).filter((el) => el > 0)
             col.setWidth(mean(widths))
           }
 
