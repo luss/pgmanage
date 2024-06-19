@@ -29,7 +29,7 @@ import App from './App.vue'
 import { createApp } from 'vue';
 import ToastPlugin from 'vue-toast-notification';
 import { setupLogger } from './logging/logger_setup.js';
-import { settingsStore } from './stores/stores_initializer.js';
+import { settingsStore, pinia } from './stores/stores_initializer.js';
 
 window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
@@ -46,12 +46,14 @@ settingsStore.getSettings().then(() => {
       app.use(ToastPlugin, {
         duration: 0,
       });
+      app.use(pinia);
       app.mount("#app");
     });
   } else {
     app.use(ToastPlugin, {
       duration: 0,
     });
+    app.use(pinia);
     app.mount("#app");
   }
 });
