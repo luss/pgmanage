@@ -34,6 +34,7 @@ import {
 import { emitter } from "../emitter";
 import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 import { checkBeforeChangeDatabase } from "../workspace";
+import ContextMenu from "@imengyu/vue3-context-menu";
 
 export default {
   name: "TreeMySQL",
@@ -612,6 +613,22 @@ export default {
     })
   },
   methods: {
+    onContextMenu(node, e) {
+      this.$refs.tree.select(node.path);
+      e.preventDefault();
+      if (!!node.data.contextMenu) {
+        this.checkCurrentDatabase(node, true, () => {
+          ContextMenu.showContextMenu({
+            theme: "pgmanage",
+            x: e.x,
+            y: e.y,
+            zIndex: 1000,
+            minWidth: 230,
+            items: this.contextMenu[node.data.contextMenu],
+          });
+        });
+      }
+    },
     checkCurrentDatabase(
       node,
       complete_check,
