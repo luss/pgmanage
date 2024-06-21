@@ -67,6 +67,7 @@ export default defineConfig(({ command, mode }) => {
         "~bootstrap": path.resolve(__dirname, "node_modules/bootstrap"),
         moment: path.resolve(__dirname, "node_modules/moment/moment.js"),
       },
+      preserveSymlinks: true,
     },
     test: {
       environment: "happy-dom",
