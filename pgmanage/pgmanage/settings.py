@@ -225,5 +225,5 @@ STATICFILES_DIRS = [
 ]
 
 if ENTERPRISE_EDITION:
-    from pgmanage.settings_enterprise import update_settings
+    from enterprise.settings_enterprise import update_settings
     update_settings()

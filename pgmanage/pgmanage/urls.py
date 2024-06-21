@@ -23,5 +23,5 @@ urlpatterns = [
 ]
 
 if ENTERPRISE_EDITION:
-    from .urls_enterprise import urlpatterns as enterprise_urls
+    from enterprise.urls_enterprise import urlpatterns as enterprise_urls
     urlpatterns += enterprise_urls
