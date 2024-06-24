@@ -85,6 +85,7 @@
                 :id="`${connTabId}`"
                 class="w-100"
                 :tab-id="connTabId"
+                :color-label-class='connectionTab.metaData?.colorLabelClass'
               />
             </div>
           </div>

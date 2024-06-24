@@ -16,13 +16,15 @@
               <div class="recent-conections">
                 <h2 class="mb-3">Recent Connections</h2>
                 <div class="recent-conections__list d-flex flex-column">
-                  <div v-for="(connection, idx) in recentConnections" :key="idx" @click="selectConnection(connection)" class="recent-conections__item">
+                  <div v-for="(connection, idx) in recentConnections" :key="idx" @click="selectConnection(connection)"
+                    :class="colorLabelMap[connection.color_label].class || ''"
+                    class="recent-conections__item">
                     <div class="recent-conections__item_wrap d-flex align-items-center m-0">
                         <div class="recent-conections__item_logo me-3">
                             <div :class="['icon', 'icon-' + connection.technology]"></div>
                         </div>
                         <div class="recent-conections__item_text d-flex flex-column">
-                            <p class="recent-conections__item_title">{{ connection.alias }}</p>
+                            <p class="recent-conections__item_title d-flex align-items-center">{{ connection.alias }}</p>
                             <span class="recent-conections__item_subtitle muted-text clipped-text">{{connectionSubtitle(connection)}}</span>
                             <span class="muted-text">{{ ago(connection.last_access_date) }}</span>
                         </div>
@@ -90,6 +92,7 @@
 <script>
 import moment from 'moment'
 import { connectionsStore, settingsStore } from '../stores/stores_initializer'
+import { colorLabelMap } from "../constants";
 import { startTutorial } from '../tutorial'
 import { endLoading } from "../ajax_control";
 import { default_shortcuts } from '../shortcuts'
@@ -126,6 +129,9 @@ export default {
         gearsUrl: gearsUrl,
         logoUrl: logoUrl
     };
+  },
+  created() {
+    this.colorLabelMap = colorLabelMap;
   },
   mounted() {
     this.loadShortcuts()

@@ -4,7 +4,27 @@
     <div class="modal-connections__forms_connection connection-form position-absolute">
         <div class="connection-form__header d-flex justify-content-between align-items-center pb-3">
         <!-- TODO: integrate with active connection list -->
-        <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
+        <div class="d-flex align-items-center">
+          <h3 class="connection-form__header_title mb-0">{{initialConnection.alias}} {{connectionLocal.locked ? "(Active/Read Only)": ""}}</h3>
+          <button type="button"
+            class="btn dropdown-toggle ms-3 color-picker__btn"
+            :class='colorLabelPickerClass'
+            title="Color Label"
+            data-bs-toggle="dropdown"></button>
+          <div class="dropdown-menu dropdown-menu-sm color-picker__dropdown">
+            <a v-for="(label, index) in colorLabelMap"
+              class="dropdown-item"
+              @click="setColorLabel(index)"
+              :class="label.class"
+              :key=index
+              :value="index">
+                <p class="d-flex align-items-center">
+                  <span class="d-inline-block me-2"></span>
+                  {{label.name}}
+                </p>
+            </a>
+          </div>
+        </div>
           <div>
             <button @click="testConnection(this.connectionLocal)" class="btn btn-outline-primary me-2" id="connectionTestButton" :disabled="testIsRunning">
               <template v-if="testIsRunning">
@@ -243,9 +263,8 @@
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { required, between, maxLength, helpers } from '@vuelidate/validators'
-
 import { connectionsStore, messageModalStore } from '../stores/stores_initializer';
-
+import { colorLabelMap } from '../constants'
 import ConfirmableButton from './ConfirmableButton.vue'
 import isEqual from 'lodash/isEqual';
 import { showToast } from '../notification_control';
@@ -259,7 +278,8 @@ import { Modal } from 'bootstrap';
     data() {
       return {
         connectionLocal: {
-          alias: ''
+          alias: '',
+          color_label: 0
         },
         postgresql_ssl_modes: ["allow", "prefer", "require", "disable", "verify-full", "verify-ca"],
         mysql_mariadb_modes: [
@@ -271,6 +291,9 @@ import { Modal } from 'bootstrap';
         tempMode: "ssl",
         testIsRunning: false,
       }
+    },
+    created() {
+      this.colorLabelMap = colorLabelMap
     },
     validations() {
       const needsServer = !['terminal', 'sqlite'].includes(this.connectionLocal.technology)
@@ -386,12 +409,16 @@ import { Modal } from 'bootstrap';
           },
           connection_params: {
             sslmode: "prefer"
-          }
+          },
+          color_label: 0
         }
       },
       technologies: Array,
     },
     computed: {
+      colorLabelPickerClass() {
+        return colorLabelMap[this.connectionLocal.color_label || 0].class
+      },
       placeholder() {
         const placeholderMap = {
           'postgresql': {
@@ -504,6 +531,10 @@ import { Modal } from 'bootstrap';
           Modal.getOrCreateInstance('#connections-modal').hide()
           connectionsStore.selectConnection(connection)
         }
+      },
+      setColorLabel(val) {
+        // without timeout bootstrap dropdown fails to close
+        setTimeout(() => {this.connectionLocal.color_label = val}, 100)
       },
       trySave() {
         this.v$.connectionLocal.$validate()

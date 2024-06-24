@@ -1,6 +1,7 @@
 <template>
   <div
     class="omnidb__tab-menu--container omnidb__tab-menu--container--secondary omnidb__tab-menu--container--menu-shown"
+    :class='colorLabelClass'
   >
     <div
       class="omnidb__tab-menu border-bottom omnidb__tab-menu--secondary omnidb__theme-bg--menu-secondary"
@@ -144,6 +145,10 @@ export default {
       type: String,
       required: true,
     },
+    colorLabelClass: {
+      type: String,
+      required: true,
+    }
   },
   data() {
     return {

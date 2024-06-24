@@ -6,7 +6,7 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { createRequest } from "../long_polling";
 import moment from "moment";
 import { emitter } from "../emitter";
-import { queryRequestCodes } from "../constants";
+import { queryRequestCodes, colorLabelMap } from "../constants";
 import { showMenuNewTabOuter, renameTab } from "../workspace";
 import { h } from "vue";
 import { Tooltip } from "bootstrap";
@@ -395,6 +395,7 @@ const useTabsStore = defineStore("tabs", {
           connTab.metaData.selectedDatabase =
             v_conn.last_used_database || v_conn.service;
           connTab.metaData.createInitialTabs = createInitialTabs;
+          connTab.metaData.colorLabelClass = colorLabelMap[v_conn.color_label].class || ''
 
           this.selectTab(connTab);
           resolve(connTab);
@@ -487,7 +488,6 @@ const useTabsStore = defineStore("tabs", {
       tab.metaData.initialQuery = initialQuery;
       tab.metaData.databaseIndex = primaryTab.metaData?.selectedDatabaseIndex;
       tab.metaData.dialect = primaryTab.metaData?.selectedDBMS;
-
       this.selectTab(tab);
     },
     createSnippetTab(tabId, snippet) {
@@ -547,6 +547,8 @@ const useTabsStore = defineStore("tabs", {
         },
         dblClickFunction: renameTab,
       });
+      const primaryTab = this.selectedPrimaryTab;
+      
       tab.metaData.databaseIndex =
         this.selectedPrimaryTab?.metaData?.selectedDatabaseIndex;
       this.selectTab(tab);
