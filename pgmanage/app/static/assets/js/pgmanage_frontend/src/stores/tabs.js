@@ -395,7 +395,6 @@ const useTabsStore = defineStore("tabs", {
           connTab.metaData.selectedDatabase =
             v_conn.last_used_database || v_conn.service;
           connTab.metaData.createInitialTabs = createInitialTabs;
-          connTab.metaData.colorLabelClass = colorLabelMap[v_conn.color_label].class || ''
 
           this.selectTab(connTab);
           resolve(connTab);
