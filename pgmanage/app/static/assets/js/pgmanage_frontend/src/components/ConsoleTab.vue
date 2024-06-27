@@ -89,8 +89,9 @@
 </template>
 
 <script>
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import { CanvasAddon } from '@xterm/addon-canvas';
 import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
 import { showToast } from "../notification_control";
@@ -197,10 +198,10 @@ export default {
         fontSize: settingsStore.fontSize,
         theme: settingsStore.terminalTheme,
         fontFamily: "'Ubuntu Mono', monospace",
-        rendererType: "dom", //FIXME: investigate in detail, for no use dom renderer because in nwjs we had some text rendering bugs on light theme
       });
 
       this.terminal.open(this.$refs.console);
+      this.terminal.loadAddon(new CanvasAddon());
       this.terminal.write(this.consoleHelp);
 
       this.fitAddon = new FitAddon();

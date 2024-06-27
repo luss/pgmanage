@@ -11,9 +11,10 @@
 </template>
 
 <script>
-import { Terminal } from "xterm";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import { CanvasAddon } from '@xterm/addon-canvas';
 import { settingsStore } from "../stores/stores_initializer";
-import { FitAddon } from "xterm-addon-fit";
 import { createRequest } from "../long_polling";
 import { queryRequestCodes, requestState } from "../constants";
 import { tabsStore } from "../stores/stores_initializer";
@@ -55,12 +56,12 @@ export default {
     setupTerminal() {
       this.term = new Terminal({
         fontSize: settingsStore.fontSize,
-        fontFamily: "Monospace",
+        fontFamily: "'Ubuntu Mono', monospace",
         theme: settingsStore.terminalTheme,
-        rendererType: "dom", //FIXME: investigate in detail, for no use dom renderer because in nwjs we had some text rendering bugs on light theme
       });
 
       this.term.open(this.$refs.console);
+      this.terminal.loadAddon(new CanvasAddon());
       this.term.onData((data) => {
         this.terminalRun(false, data);
       });
