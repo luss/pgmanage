@@ -15,7 +15,7 @@ import './ace_themes/theme-omnidb_dark.js';
 import './workspace'
 import './components/postgresql_modals'
 import 'vue-toast-notification/dist/theme-sugar.css';
-import 'xterm/css/xterm.css'
+import '@xterm/xterm/css/xterm.css'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import './assets/scss/omnidb.scss'
 import './assets/scss/pgmanage.scss'

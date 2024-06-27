@@ -61,7 +61,8 @@
     "tabulator-tables": "6.2",
     "vue": "^3.3.11",
     "vue-toast-notification": "^3.1.2",
-    "xterm": "^5.2.1",
-    "xterm-addon-fit": "^0.7.0"
+    "@xterm/xterm": "5.5.0",
+    "@xterm/addon-fit": "0.10.0",
+    "@xterm/addon-canvas": "^0.7.0"
   }
 }

@@ -207,12 +207,12 @@ const light_terminal_theme = {
       foreground: '#454545',
       cursor: '#454545',
       cursorAccent: '#454545',
-      selection: '#00000030'
+      selectionBackground: '#1560AD15'
     }
 
 const dark_terminal_theme = {
       background: '#16171E',
-      selection: '#1560AD',
+      selectionBackground: '#1560AD30',
       foreground: '#F8FAFD',
     }
 
