@@ -61,7 +61,7 @@ export default {
       });
 
       this.term.open(this.$refs.console);
-      this.terminal.loadAddon(new CanvasAddon());
+      this.term.loadAddon(new CanvasAddon());
       this.term.onData((data) => {
         this.terminalRun(false, data);
       });
