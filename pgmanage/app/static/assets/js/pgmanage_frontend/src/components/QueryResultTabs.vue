@@ -132,6 +132,7 @@ export default {
       plan: "",
       table: null,
       heightSubtract: 200,
+      colWidthArray: [],
     };
   },
   computed: {
@@ -195,10 +196,6 @@ export default {
           });
         });
       }
-    });
-
-    this.$refs.dataTab.addEventListener("shown.bs.tab", (event) => {
-      this.table.redraw();
     });
   },
   updated() {
@@ -303,7 +300,7 @@ export default {
       }
       this.updateTableData(data);
     },
-    updateTableData(data) {
+    prepareColumns(colNames, colTypes) {
       let cellContextMenu = [
         {
           label:
@@ -320,11 +317,11 @@ export default {
           },
         },
       ];
-      let columns = data.col_names.map((col, idx) => {
+      let columns = colNames.map((col, idx) => {
         let formatTitle = function(col, idx) {
-          if(data.col_types?.length === 0 )
+          if(colTypes?.length === 0 )
             return col
-          return `${col}<br><span class='subscript'>${data.col_types[idx]}</span>`
+          return `${col}<br><span class='subscript'>${colTypes[idx]}</span>`
         }
 
         return {
@@ -389,17 +386,33 @@ export default {
         headerMenuIcon:'<i class="actions-menu fa-solid fa-ellipsis-vertical p-2"></i>',
         headerTooltip: 'Layout'
       });
-      this.table.setColumns(columns);
-
-      this.table
-        .setData(data.data)
-        .then(() => {
-          this.table.redraw(true);
-          this.applyLayout();
-        })
-        .catch((error) => {
-          this.errorMessage = error;
+      return columns
+    },
+    updateTableData(data) {
+      const columns = this.prepareColumns(data.col_names, data.col_types)
+      this.table.destroy()
+      this.tableSettings.data = data.data
+      this.tableSettings.columns = columns
+      let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+      table.on("renderStarted", () => {
+        if (this.customLayout === undefined || this.colWidthArray.length === 0) return
+        this.table.getColumns().forEach((col, idx) => {
+          if(idx > 0) {
+            col.setWidth(this.colWidthArray[idx-1])
+          }
         });
+      })
+      table.on("tableBuilt", () => {
+        this.table = table;
+        if (this.customLayout !== undefined && this.colWidthArray.length !== 0) {
+          
+          this.table.getColumns().forEach((col, idx) => {
+            if(idx > 0) {
+              col.setWidth(this.colWidthArray[idx-1])
+            }
+          });
+        }
+      });
 
       this.table.on(
         "cellDblClick",
@@ -408,7 +421,8 @@ export default {
         }
       );
     },
-    applyLayout() {
+     applyLayout() {
+      this.colWidthArray = []
       if(this.customLayout === undefined)
         return
 
@@ -419,14 +433,17 @@ export default {
           if(this.customLayout == 'adaptive') {
             let widths = col.getCells().map((cell) => {return cell.getElement().scrollWidth}).filter((el) => el > 0)
             col.setWidth(mean(widths))
+            this.colWidthArray.push(mean(widths))
           }
 
           if(this.customLayout == 'compact') {
             col.setWidth(100);
+            this.colWidthArray.push(100)
           }
 
           if(this.customLayout == 'fitcontent') {
             col.setWidth(true);
+            this.colWidthArray.push(true)
           }
         }
       });
@@ -435,8 +452,22 @@ export default {
     },
     fetchData(data) {
       let initialData = this.table.getData();
-      data.data.unshift(...initialData);
-      this.table.replaceData(data.data);
+      const allData = [...initialData, ...data.data]
+
+      const scrollTop = this.table.rowManager.scrollTop
+      const scrollLeft = this.table.rowManager.scrollLeft
+      this.table.destroy()
+
+      const columns = this.prepareColumns(data.col_names, data.col_types)
+      this.tableSettings.data = allData;
+      this.tableSettings.columns = columns;
+      let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+      table.on("tableBuilt", () => {
+        this.table = table;
+        this.applyLayout();
+        this.table.rowManager.element.scrollTop = scrollTop;
+        this.table.rowManager.scrollLeft = scrollLeft;
+      });
     },
     clearData() {
       this.notices = [];
