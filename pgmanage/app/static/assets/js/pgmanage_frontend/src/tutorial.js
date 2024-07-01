@@ -27,7 +27,6 @@ SOFTWARE.
 */
 
 import { emitter } from "./emitter";
-import { listUsers, newUser } from "./users";
 import { tabsStore } from "./stores/stores_initializer";
 import { Modal } from "bootstrap";
 
@@ -526,15 +525,15 @@ function startTutorial(p_tutorial_name) {
     ]
   }
   // Configuring tutorial getting started, changes based on gv_desktopMode
-
-  let v_tutorial_link_creating_user = (gv_desktopMode || !v_super_user)
-  ? ''
-  : `
+  
+  let v_tutorial_link_creating_user = !gv_desktopMode && v_super_user && __VITE_ENTERPRISE__
+  ? `
   <li class="mb-2">
     <button id="utilities_menu_tutorial" type="button" class="btn btn-primary d-flex align-items-center">
       <i class="fas fa-user-plus me-2"></i>Create an pgmanage user
     </button>
-  </li>`;
+  </li>`
+  : ''
   v_tutorials.getting_started = [
     {
       p_message:
