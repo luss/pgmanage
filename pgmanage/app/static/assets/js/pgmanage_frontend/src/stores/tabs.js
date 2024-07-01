@@ -418,12 +418,12 @@ const useTabsStore = defineStore("tabs", {
         component: "TerminalTab",
         icon: '<i class="fas fa-terminal"></i>',
         tooltip: tooltipName,
-        closable: false,
+        closable: true,
         mode: "outer_terminal",
         selectFunction: function () {
           emitter.emit(`${this.id}_resize`);
         },
-        rightClickFunction: (e, tab) => {
+        closeFunction: (e, tab) => {
           this.terminalContextMenu(e, tab);
         },
       });
@@ -755,31 +755,13 @@ const useTabsStore = defineStore("tabs", {
         },
         {
           label: h("p", {
-            class: "mb-0 text-danger",
+            class: "mb-0",
             innerHTML: "Close Terminal",
           }),
+          icon: "fas cm-all fa-plug-circle-xmark",
           onClick: () => {
             ContextMenu.closeContextMenu();
-            ContextMenu.showContextMenu({
-              theme: "pgmanage",
-              x: e.x,
-              y: e.y,
-              zIndex: 1000,
-              minWidth: 230,
-              items: [
-                {
-                  label: "Confirm",
-                  icon: "fas cm-all fa-check",
-                  onClick: () => {
-                    this.closeTab(tab);
-                  },
-                },
-                {
-                  label: "Cancel",
-                  icon: "fas cm-all fa-times",
-                },
-              ],
-            });
+            this.closeTab(tab);
           },
         },
       ];
