@@ -32,7 +32,7 @@ export default {
         }
         tab.tooltip = tooltipName;
         tab.name = databaseConnection.alias;
-        const tooltipEl = document.getElementById(`${tabId}`);
+        const tooltipEl = document.getElementById(`${tabId}`).querySelector("[data-bs-toggle='tooltip']")
         Tooltip.getInstance(tooltipEl).dispose();
         new Tooltip(tooltipEl, {
           placement: "right",
@@ -41,6 +41,7 @@ export default {
           title: tab.tooltip,
           html: true,
           delay: { show: 500, hide: 100 },
+          offset: [0, 10]
         });
       });
     },

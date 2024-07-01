@@ -348,7 +348,7 @@ const useTabsStore = defineStore("tabs", {
               this.checkTabStatus();
             },
             closeFunction: (e, primaryTab) => {
-              const tooltipEl = document.getElementById(`${primaryTab.id}`).querySelector("[data-toggle='tooltip']")
+              const tooltipEl = document.getElementById(`${primaryTab.id}`).querySelector("[data-bs-toggle='tooltip']")
               if(tooltipEl)
                 Tooltip.getInstance(tooltipEl).hide();
 

@@ -13,7 +13,7 @@ export default {
         action.after((result) => {
           if (!result.tooltip) return;
           this.$nextTick(() => {
-            const tooltipEl = document.getElementById(`${result.id}`).querySelector("[data-toggle='tooltip']");
+            const tooltipEl = document.getElementById(`${result.id}`).querySelector("[data-bs-toggle='tooltip']")
             if (tooltipEl) {
               new Tooltip(tooltipEl, {
                 placement: "right",
