@@ -13,7 +13,7 @@ export default {
         action.after((result) => {
           if (!result.tooltip) return;
           this.$nextTick(() => {
-            const tooltipEl = document.getElementById(`${result.id}`);
+            const tooltipEl = document.getElementById(`${result.id}`).querySelector("[data-toggle='tooltip']");
             if (tooltipEl) {
               new Tooltip(tooltipEl, {
                 placement: "right",
@@ -22,6 +22,7 @@ export default {
                 title: result.tooltip,
                 html: true,
                 delay: { show: 500, hide: 100 },
+                offset: [0, 10]
               });
             }
           });
