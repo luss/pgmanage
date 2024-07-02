@@ -133,6 +133,8 @@ export default {
       lastTreeTabsPaneSize: null,
       showTreeTabsLoading: false,
       clearTreeTabsData: false,
+      lastTreeTabsData: null,
+      lastTreeTabsView: null,
     };
   },
   computed: {
@@ -256,7 +258,11 @@ export default {
       emitter.emit("connection-save", connection);
     },
     getProperties({ view, data }) {
-      if (!this.isTreeTabsVisible) return;
+      if (!this.isTreeTabsVisible) {
+        this.lastTreeTabsData = data;
+        this.lastTreeTabsView = view;
+        return;
+      }
       this.showTreeTabsLoading = true;
       axios
         .post(view, {
@@ -287,6 +293,11 @@ export default {
     toggleTreeTabPane() {
       if (this.treeTabsPaneSize === 2) {
         this.treeTabsPaneSize = this.lastTreeTabsPaneSize || 40;
+        if (!!this.lastTreeTabsData && !!this.lastTreeTabsView)
+          this.getProperties({
+            data: this.lastTreeTabsData,
+            view: this.lastTreeTabsView,
+          });
       } else {
         this.lastTreeTabsPaneSize = this.treeTabsPaneSize;
         this.treeTabsPaneSize = 2;
