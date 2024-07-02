@@ -49,14 +49,14 @@
               <div class="row">
                 <div class="form-group col-6">
                   <label for="sel_theme" class="fw-bold mb-2">Theme</label>
-                  <select id="sel_theme" class="form-control" v-model="theme">
+                  <select id="sel_theme" class="form-select" v-model="theme">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                   </select>
                 </div>
                 <div class="form-group col-6">
                   <label for="sel_interface_font_size" class="fw-bold mb-2">Font Size</label>
-                  <select id="sel_interface_font_size" class="form-control" v-model="fontSize">
+                  <select id="sel_interface_font_size" class="form-select" v-model="fontSize">
                     <option v-for="font_size in fontSizeOptions" :key="font_size" :value="font_size">{{ font_size }}
                     </option>
                   </select>
@@ -66,7 +66,7 @@
               <div class="row">
                 <div class="form-group col-6">
                   <label for="sel_csv_encoding" class="fw-bold mb-2">CSV Encoding</label>
-                  <select id="sel_csv_encoding" class="form-control" v-model="csvEncoding">
+                  <select id="sel_csv_encoding" class="form-select" v-model="csvEncoding">
                     <option v-for="encoding in encodingValues" :key="encoding" :value="encoding">{{ encoding }}</option>
                   </select>
                 </div>
@@ -104,7 +104,7 @@
               <div class="row">
                 <div class="form-group col-6">
                   <label for="date_format" class="fw-bold mb-2">Date format</label>
-                  <select id="date_format" class="form-control" v-model="selectedDateFormat">
+                  <select id="date_format" class="form-select" v-model="selectedDateFormat">
                     <option v-for="dateFormat in dateFormats" :key="dateFormat" :value="dateFormat">{{ dateFormat }}
                     </option>
                   </select>

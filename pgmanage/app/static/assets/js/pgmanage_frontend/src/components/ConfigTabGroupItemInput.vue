@@ -7,7 +7,7 @@
         <label class="form-check-label" :for="`switch-${inputId}`"></label>
       </div>
 
-      <select v-else-if="setting.vartype === 'enum'" class="form-control form-control-sm" :name="setting.name"
+      <select v-else-if="setting.vartype === 'enum'" class="form-select form-select-sm" :name="setting.name"
         v-model="setting.setting" @change="changeSetting" :disabled="isReadOnly">
         <option v-for="v in setting.enumvals" :value="v">{{ v }}</option>
       </select>

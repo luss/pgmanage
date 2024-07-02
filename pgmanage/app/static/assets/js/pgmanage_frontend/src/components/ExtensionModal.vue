@@ -11,7 +11,7 @@
         <div class="modal-body">
           <div class="form-group mb-2">
             <label for="extensionName" class="fw-bold mb-1">Name</label>
-            <select id="extensionName" class="form-control" v-model="selectedExtension"
+            <select id="extensionName" class="form-select" v-model="selectedExtension"
               :disabled="mode === 'Alter'">
               <option value="" disabled>Select an item...</option>
               <option v-for="(extension, index) in availableExtensions" :value="extension" :key="index">{{ extension.name
@@ -27,7 +27,7 @@
 
           <div class="form-group mb-2">
             <label for="extensionSchema" class="fw-bold mb-1">Schema</label>
-            <select id="extensionSchema" class="form-control" v-model="selectedSchema"
+            <select id="extensionSchema" class="form-select" v-model="selectedSchema"
               :disabled="!!requiredSchema || !isRelocatable">
               <option value="" disabled="">Select an item...</option>
               <option v-for="(schema, index) in schemaList" :value="schema.name_raw" :key="index">{{ schema.name }}</option>
@@ -36,7 +36,7 @@
 
           <div class="form-group mb-2">
             <label for="extensionVersions" class="fw-bold mb-1">Version</label>
-            <select id="extensionVersions" class="form-control" v-model="selectedVersion">
+            <select id="extensionVersions" class="form-select" v-model="selectedVersion">
               <option value="" disabled>Select an item...</option>
               <option v-for="(version, index) in selectedExtension?.versions" :value="version" :key="index">{{ version }}
               </option>

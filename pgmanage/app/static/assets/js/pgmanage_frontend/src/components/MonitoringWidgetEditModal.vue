@@ -58,7 +58,7 @@
                 >
                 <select
                   id="widgetType"
-                  class="form-control"
+                  class="form-select"
                   placeholder="Widget type"
                   v-model="selectedType"
                   :disabled="showTestWidget"
@@ -107,7 +107,7 @@
                 <select
                   id="widgetTemplates"
                   data-testid="widget-edit-template-select"
-                  class="form-control"
+                  class="form-select"
                   v-model="selectedWidget"
                   @change="changeTemplate"
                   :disabled="showTestWidget"

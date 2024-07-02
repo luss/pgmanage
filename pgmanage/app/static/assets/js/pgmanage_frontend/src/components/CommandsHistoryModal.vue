@@ -25,7 +25,7 @@
 
               <div class="form-group col-lg-3 col-xl-2 col-sm-4">
                 <label class="fw-bold mb-2">Filter by database:</label>
-                <select v-model="databaseFilter" @change="getCommandsHistory(true)" class="form-control" placeholder="Filter database">
+                <select v-model="databaseFilter" @change="getCommandsHistory(true)" class="form-select" placeholder="Filter database">
                     <option value="" selected>All Databases</option>
                     <option v-for="(name, index) in databaseNames"
                       :key=index

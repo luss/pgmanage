@@ -119,7 +119,7 @@
           </button>
 
           <div class="form-group mb-0">
-            <select v-model="exportType" :id="`sel_export_type${tabId}`" class="form-control" style="width: 80px;">
+            <select v-model="exportType" :id="`sel_export_type${tabId}`" class="form-select" style="width: 80px;">
               <option v-for="(name, value) in exportTypes" :value="value">
                 {{ name }}
               </option>
