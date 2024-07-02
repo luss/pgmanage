@@ -197,6 +197,10 @@ export default {
         });
       }
     });
+
+    this.$refs.dataTab.addEventListener("shown.bs.tab", (event) => {
+      this.table.redraw();
+    });
   },
   updated() {
     this.handleResize();
