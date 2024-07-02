@@ -65,7 +65,7 @@
         <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
           @cancelled="cancelConsoleTab()" />
 
-        <div :id="`div_query_info_${tabId}`">
+        <div>
           <p class="m-0 h6" v-if="cancelled">
             <b>Cancelled</b>
           </p>
