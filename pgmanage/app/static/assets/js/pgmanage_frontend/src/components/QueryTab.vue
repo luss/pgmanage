@@ -72,25 +72,25 @@
 
           <!-- Query ACTIONS BUTTONS-->
           <template v-if="showFetchButtons">
-            <button :id="`bt_fetch_more_${tabId}`" class="btn btn-square btn-secondary" title="Run"
+            <button :id="`bt_fetch_more_${tabId}`" class="btn btn-sm btn-secondary" title="Run"
               @click="querySQL(queryModes.FETCH_MORE)">
               Fetch More
             </button>
             <BlockSizeSelector v-model="blockSize"/>
           </template>
 
-          <button :id="`bt_fetch_all_${tabId}`" class="btn btn-square btn-secondary" title="Run" v-if="showFetchButtons"
+          <button :id="`bt_fetch_all_${tabId}`" class="btn btn-sm btn-secondary" title="Run" v-if="showFetchButtons"
             @click="querySQL(queryModes.FETCH_ALL)">
             Fetch all
           </button>
 
           <template v-if="activeTransaction">
-            <button :id="`bt_commit_${tabId}`" class="btn btn-square btn-primary" title="Run"
+            <button :id="`bt_commit_${tabId}`" class="btn btn-sm btn-primary" title="Run"
               @click="querySQL(queryModes.COMMIT)">
               Commit
             </button>
 
-            <button :id="`bt_rollback_${tabId}`" class="btn btn-square btn-secondary" title="Run"
+            <button :id="`bt_rollback_${tabId}`" class="btn btn-sm btn-secondary" title="Run"
               @click="querySQL(queryModes.ROLLBACK)">
               Rollback
             </button>
