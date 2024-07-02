@@ -1,5 +1,5 @@
 <template>
-  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs">
+  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs pe-2">
     <button :id="`bt_fullscreen_${tabId}`" style="position: absolute; top: 0.25rem; right: 0.5rem" type="button"
       class="btn btn-sm btn-icon btn-icon-secondary" @click="toggleFullScreen()">
       <i class="fas fa-expand"></i>
