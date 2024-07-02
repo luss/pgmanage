@@ -499,7 +499,7 @@ export default {
       this.handleResize();
     },
     handleResize() {
-      if (this.$refs === null) return;
+      if (this.$refs?.tabContent === null) return;
 
       this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },
