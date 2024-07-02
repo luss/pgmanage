@@ -186,6 +186,12 @@
         flex-shrink: 0;
     }
 
+    &-square {
+        padding: 0.25rem 0.5rem;
+        width: 2rem;
+        height: 2rem;
+    }
+
     //color picker circle button
     &.color-picker__btn {
         width: 1.75rem;

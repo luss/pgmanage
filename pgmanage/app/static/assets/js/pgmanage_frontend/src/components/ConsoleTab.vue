@@ -28,7 +28,7 @@
         </button>
 
         <template v-if="postgresqlDialect">
-          <div class="omnidb__form-check form-check form-check-inline">
+          <div class="form-check form-check-inline mb-0">
             <input :id="`check_autocommit_${tabId}`" class="form-check-input" type="checkbox" v-model="autocommit" />
             <label class="form-check-label" :for="`check_autocommit_${tabId}`">Autocommit</label>
           </div>

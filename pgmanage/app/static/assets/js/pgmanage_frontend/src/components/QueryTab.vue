@@ -15,53 +15,53 @@
       <!-- ACTION BUTTONS-->
       <div class="py-2 pe-1 d-flex align-items-center">
         <div class="tab-actions d-flex w-100 px-2">
-          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
+          <button :id="`bt_start_${tabId}`" class="btn btn-square btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
             <i class="fas fa-play fa-light"></i>
           </button>
 
-          <button :id="`bt_start_${tabId}`" class="btn btn-sm btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
+          <button :id="`bt_start_${tabId}`" class="btn btn-square btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
             [
             <i class="fas fa-play fa-light"></i>
             ]
           </button>
 
-          <button :id="`bt_indent_${tabId}`" class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
+          <button :id="`bt_indent_${tabId}`" class="btn btn-square btn-secondary" title="Indent SQL" @click="indentSQL()">
             <i class="fas fa-indent fa-light"></i>
           </button>
 
-          <button :id="`bt_indent_${tabId}`" class="btn btn-sm btn-secondary" title="Find/Replace" @click="showFindReplace()">
+          <button :id="`bt_indent_${tabId}`" class="btn btn-square btn-secondary" title="Find/Replace" @click="showFindReplace()">
             <i class="fas fa-magnifying-glass fa-light"></i>
           </button>
 
-          <button :class="`bt_history_${tabId}`" class="btn btn-sm btn-secondary" title="Command History"
+          <button :class="`bt_history_${tabId}`" class="btn btn-square btn-secondary" title="Command History"
             @click="showCommandsHistory()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
 
-          <button :id="`bt_open_file_${tabId}`" class="btn btn-sm btn-secondary ms-2" title="Load from File" @click="openFileManagerModal">
+          <button :id="`bt_open_file_${tabId}`" class="btn btn-square btn-secondary ms-2" title="Load from File" @click="openFileManagerModal">
             <i class="fas fa-folder-open fa-light"></i>
           </button>
 
-          <button :disabled="fileSaveDisabled" :id="`bt_save_file_${tabId}`" class="btn btn-sm btn-secondary me-2 " title="Save to File" @click="saveFile">
+          <button :disabled="fileSaveDisabled" :id="`bt_save_file_${tabId}`" class="btn btn-square btn-secondary me-2 " title="Save to File" @click="saveFile">
             <i class="fas fa-download fa-light"></i>
           </button>
 
           <template v-if="postgresqlDialect">
             <!-- EXPLAIN ANALYZE BUTTONS-->
             <div class="btn-group ms-2 me-2">
-              <button :id="`bt_explain_${tabId}`" class="btn btn-sm btn-secondary" title="Explain" @click="runExplain(0)"
+              <button :id="`bt_explain_${tabId}`" class="btn btn-square btn-secondary" title="Explain" @click="runExplain(0)"
                 :disabled="!enableExplainButtons">
                 <i class="fas fa-chart-simple fa-light"></i>
               </button>
 
-              <button :id="`bt_analyze_${tabId}`" class="btn btn-sm btn-secondary" title="Explain Analyze"
+              <button :id="`bt_analyze_${tabId}`" class="btn btn-square btn-secondary" title="Explain Analyze"
                 @click="runExplain(1)" :disabled="!enableExplainButtons">
                 <i class="fas fa-magnifying-glass-chart fa-light"></i>
               </button>
             </div>
 
-            <!-- AUTOCOMMIt-->
-            <div class="omnidb__form-check form-check form-check-inline">
+            <!-- AUTOCOMMIT-->
+            <div class="form-check form-check-inline mb-0">
               <input :id="`check_autocommit_${tabId}`" class="form-check-input" type="checkbox" v-model="autocommit" />
               <label class="form-check-label custom-checkbox query_info"
                 :for="`check_autocommit_${tabId}`">Autocommit</label>
@@ -72,25 +72,25 @@
 
           <!-- Query ACTIONS BUTTONS-->
           <template v-if="showFetchButtons">
-            <button :id="`bt_fetch_more_${tabId}`" class="btn btn-sm btn-secondary" title="Run"
+            <button :id="`bt_fetch_more_${tabId}`" class="btn btn-square btn-secondary" title="Run"
               @click="querySQL(queryModes.FETCH_MORE)">
               Fetch More
             </button>
             <BlockSizeSelector v-model="blockSize"/>
           </template>
 
-          <button :id="`bt_fetch_all_${tabId}`" class="btn btn-sm btn-secondary" title="Run" v-if="showFetchButtons"
+          <button :id="`bt_fetch_all_${tabId}`" class="btn btn-square btn-secondary" title="Run" v-if="showFetchButtons"
             @click="querySQL(queryModes.FETCH_ALL)">
             Fetch all
           </button>
 
           <template v-if="activeTransaction">
-            <button :id="`bt_commit_${tabId}`" class="btn btn-sm btn-primary" title="Run"
+            <button :id="`bt_commit_${tabId}`" class="btn btn-square btn-primary" title="Run"
               @click="querySQL(queryModes.COMMIT)">
               Commit
             </button>
 
-            <button :id="`bt_rollback_${tabId}`" class="btn btn-sm btn-secondary" title="Run"
+            <button :id="`bt_rollback_${tabId}`" class="btn btn-square btn-secondary" title="Run"
               @click="querySQL(queryModes.ROLLBACK)">
               Rollback
             </button>
@@ -593,7 +593,6 @@ export default {
 .btn-run {
   padding-left: 2px;
   padding-right: 2px;
-  min-width: 2rem;
 }
 
 .btn-run i {
