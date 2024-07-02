@@ -7,23 +7,23 @@
 
     <pane size="20" class="ps-2 border-top">
       <div class="tab-actions py-2 d-flex align-items-center">
-        <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)" :disabled="executingState">
+        <button class="btn btn-square btn-primary" title="Run" @click="consoleSQL(false)" :disabled="executingState">
           <i class="fas fa-play fa-light"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Open File" @click="openFileManagerModal">
+        <button class="btn btn-square btn-secondary" title="Open File" @click="openFileManagerModal">
             <i class="fas fa-folder-open fa-light"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
+        <button class="btn btn-square btn-secondary" title="Indent SQL" @click="indentSQL()">
           <i class="fas fa-indent fa-ligth"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Clear Console" @click="clearConsole()">
+        <button class="btn btn-square btn-secondary" title="Clear Console" @click="clearConsole()">
           <i class="fas fa-broom fa-ligth"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Command History" @click="showCommandsHistory()">
+        <button class="btn btn-square btn-secondary me-2" title="Command History" @click="showCommandsHistory()">
           <i class="fas fa-clock-rotate-left fa-light"></i>
         </button>
 

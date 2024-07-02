@@ -33,7 +33,7 @@
             <i class="fas fa-magnifying-glass fa-light"></i>
           </button>
 
-          <button :class="`bt_history_${tabId}`" class="btn btn-square btn-secondary" title="Command History"
+          <button :class="`bt_history_${tabId}`" class="btn btn-square btn-secondary me-2" title="Command History"
             @click="showCommandsHistory()">
             <i class="fas fa-clock-rotate-left fa-light"></i>
           </button>
