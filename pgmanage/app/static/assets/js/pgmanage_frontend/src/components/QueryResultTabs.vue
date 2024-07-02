@@ -414,7 +414,7 @@ export default {
         }
       });
 
-      this.table.on(
+      table.on(
         "cellDblClick",
         function (e, cell) {
           if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
@@ -453,21 +453,35 @@ export default {
     fetchData(data) {
       let initialData = this.table.getData();
       const allData = [...initialData, ...data.data]
+      let rowsToAppend = data.data.length
 
-      const scrollTop = this.table.rowManager.scrollTop
-      const scrollLeft = this.table.rowManager.scrollLeft
-      this.table.destroy()
+      // destroy and recreate table instance if there is a lot of data to append
+      if(rowsToAppend > 1000) {
+        const scrollTop = this.table.rowManager.scrollTop
+        const scrollLeft = this.table.rowManager.scrollLeft
+        this.tableSettings.data = allData;
+        this.tableSettings.columns = this.prepareColumns(data.col_names, data.col_types)
 
-      const columns = this.prepareColumns(data.col_names, data.col_types)
-      this.tableSettings.data = allData;
-      this.tableSettings.columns = columns;
-      let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
-      table.on("tableBuilt", () => {
-        this.table = table;
-        this.applyLayout();
-        this.table.rowManager.element.scrollTop = scrollTop;
-        this.table.rowManager.scrollLeft = scrollLeft;
-      });
+        this.table.destroy()
+        let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+        table.on("tableBuilt", () => {
+          this.table = table;
+          this.applyLayout();
+          this.table.rowManager.element.scrollTop = scrollTop;
+          this.table.rowManager.scrollLeft = scrollLeft;
+        });
+
+        table.on(
+          "cellDblClick",
+          function (e, cell) {
+            if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+          }
+        );
+      } else {
+        this.table.addData(data.data);
+      }
+
+
     },
     clearData() {
       this.notices = [];
