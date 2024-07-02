@@ -168,9 +168,6 @@ function startTutorial(p_tutorial_name) {
             v_omnis.omnis_ui_assistant.divClonedElement.firstChild.style.transform = ''
           }, 100)
         },
-        p_callback_end: function() {
-          document.getElementById('add_connection_dropdown_item').click()
-        },
         p_message: `
         <p>Click on <strong> Connection <strong></p>
         `,
@@ -181,6 +178,9 @@ function startTutorial(p_tutorial_name) {
         p_next_button: false,
       },
       {
+        p_callback_start: function() {
+          document.getElementById('add_connection_dropdown_item').click()
+        },
         p_message: `
         <p>Select the proper DBMS technology.</p>
         `,
