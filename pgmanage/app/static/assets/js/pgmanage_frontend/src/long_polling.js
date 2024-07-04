@@ -40,7 +40,11 @@ function call_polling(startup) {
           console.log(err)
         }
       });
-      call_polling(false)
+      if (request_map.size !== 0) {
+        call_polling(false)
+      } else {
+        polling_busy = null
+      }
     })
     .catch((error) => {
       polling_busy = false
