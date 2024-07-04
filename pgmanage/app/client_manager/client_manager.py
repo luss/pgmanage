@@ -184,6 +184,7 @@ class Client:
 
         if tab["type"] in ["query", "console", "connection", "edit"]:
             try:
+                tab["thread"].stop()
                 tab["omnidatabase"].v_connection.Cancel(False)
             except Exception:
                 pass
@@ -577,6 +578,6 @@ def is_tab_expired(tab: Dict[str, Any], client_timeout_reached: bool) -> bool:
     )
 
 
-t = threading.Thread(target=cleanup_thread)
+t = threading.Thread(name="cleanup_thread", target=cleanup_thread)
 t.setDaemon(True)
 t.start()
