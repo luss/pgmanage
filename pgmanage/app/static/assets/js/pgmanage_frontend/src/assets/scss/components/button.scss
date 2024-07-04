@@ -188,8 +188,9 @@
 
     &-square {
         padding: 0.25rem 0.5rem;
-        width: 2rem;
-        height: 2rem;
+        width: 2.2rem;
+        height: 2.2rem;
+        flex-shrink: 0;
     }
 
     //color picker circle button

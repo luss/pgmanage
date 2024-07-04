@@ -114,7 +114,7 @@
           </div>
 
           <!-- EXPORT BUTTON with SELECT OPTIONS -->
-          <button class="btn btn-sm btn-primary ms-auto" title="Export Data" @click="exportData()">
+          <button class="btn btn-square btn-primary ms-auto" title="Export Data" @click="exportData()">
             <i class="fas fa-download fa-light"></i>
           </button>
 

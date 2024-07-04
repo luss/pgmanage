@@ -52,7 +52,7 @@
                 </div>
               </div>
 
-              <div class="form-group col-2">
+              <div class="form-group col-3">
                 <label for="widgetType" class="fw-bold mb-2"
                   >Type</label
                 >
@@ -73,7 +73,7 @@
                 </select>
               </div>
 
-              <div class="form-group col-2">
+              <div class="form-group col-3">
                 <label for="refreshInterval" class="fw-bold mb-2"
                   >Refresh Interval</label
                 >
@@ -100,7 +100,7 @@
                 </div>
               </div>
 
-              <div class="form-group col-5">
+              <div class="form-group col-3">
                 <label for="widgetTemplates" class="fw-bold mb-2"
                   >Template</label
                 >

@@ -1,6 +1,6 @@
 <template>
   <div class="col-7">
-    <div ref="settingInput">
+    <div ref="settingInput" class="form-group mb-0">
       <div class="form-check form-switch" v-if="setting.vartype === 'bool'">
         <input class="form-check-input" type="checkbox" :id="`switch-${inputId}`" v-model="setting.setting" true-value="on" false-value="off"
           @change="changeSetting" :disabled="isReadOnly" />

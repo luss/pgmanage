@@ -41,7 +41,7 @@
 
             &:not(:disabled) {
                 &:hover, &:focus {
-                    transition: all .3s ease-in-out;
+                    transition: $transition;
                     backdrop-filter: brightness(95%);
                 }
             }   
