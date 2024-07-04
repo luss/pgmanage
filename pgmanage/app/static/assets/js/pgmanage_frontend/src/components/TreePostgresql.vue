@@ -2951,7 +2951,7 @@ export default {
             icon: "fas cm-all fa-xmark",
             onClick: () => {
               messageModalStore.showModal(
-                `Are you sure you want to delete job "${this.selectedNode.title}"`,
+                `Are you sure you want to delete job "${this.selectedNode.title}"?`,
                 () => {
                   this.deleteJobPostgresql(this.selectedNode);
                 },
