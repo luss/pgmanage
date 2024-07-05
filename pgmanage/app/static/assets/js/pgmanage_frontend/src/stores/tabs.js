@@ -364,7 +364,7 @@ const useTabsStore = defineStore("tabs", {
                     tab.metaData.mode == "debug" ||
                     tab.metaData.mode == "console"
                   ) {
-                    if (tab.metaData.isLoading && tab.metaData.context) {
+                    if (tab.metaData?.context && tab.metaData?.context?.code) {
                       removeContext(tab.metaData.context.code);
                     }
                     var v_message_data = {
@@ -784,7 +784,8 @@ const useTabsStore = defineStore("tabs", {
           tab.metaData.mode
         )
       ) {
-        if (tab.metaData.isLoading && tab.metaData.context) {
+
+        if (tab.metaData?.context && tab.metaData?.context?.code) {
           removeContext(tab.metaData.context.code);
         }
         let messageData = {

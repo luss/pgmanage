@@ -95,7 +95,7 @@ class debugState(IntEnum):
 
 class StoppableThread(threading.Thread):
     def __init__(self,p1,p2):
-        super(StoppableThread, self).__init__(name=f"long-polling-{p1.__name__}", target=p1, args=(self,p2,))
+        super(StoppableThread, self).__init__(name=f"{p1.__name__}-{p2.get('v_tab_id')}", target=p1, args=(self,p2,))
         self.cancel = False
     def stop(self):
         self.cancel = True

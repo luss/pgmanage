@@ -100,7 +100,7 @@ function polling_response(message) {
           context.callback(message, context)
         }
         //Remove context
-        if (message.v_data.last_block || message.v_error) {
+        if (!message.v_data.chunks || message.v_data.last_block || message.v_error) {
           removeContext(context_code)
         }
 
