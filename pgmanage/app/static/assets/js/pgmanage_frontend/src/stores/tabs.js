@@ -558,6 +558,7 @@ const useTabsStore = defineStore("tabs", {
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: "Configuration",
+        icon: '<i class="fas cm-all fa-cog icon-tab-title"></i>',
         component: "ConfigTab",
         mode: "configuration",
         closeFunction: (e, tab) => {
@@ -586,10 +587,12 @@ const useTabsStore = defineStore("tabs", {
           : backupType;
       let tabName = `${utility} ${utilityTitle}`;
       let mode = utility.toLowerCase();
+      let icon = `<i class="fas ${mode === 'backup' ? 'fa-download' : 'fa-upload'} cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: tabName,
+        icon: icon,
         mode: mode,
         component: `${utility}Tab`,
         closeFunction: (e, tab) => {
@@ -675,10 +678,12 @@ const useTabsStore = defineStore("tabs", {
           : node.title.replace(/^"(.*)"$/, "$1");
 
       let tabTitle = mode === "alter" ? `Alter: ${tableName}` : "New Table";
+      let icon = `<i class="fas ${mode === 'create' ? 'fa-plus' : 'fa-edit'} cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: tabTitle,
+        icon: icon,
         component: "SchemaEditorTab",
         mode: "alter",
         closeFunction: (e, tab) => {
