@@ -329,7 +329,9 @@ export default {
         showToast("error", response.v_data)
       } else {
         showToast("success", 'data updated')
-        this.getTableData()
+        setTimeout(() => {
+          this.getTableData()
+        }, 100);
       }
     },
     addRow() {

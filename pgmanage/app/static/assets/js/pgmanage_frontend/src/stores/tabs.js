@@ -3,7 +3,7 @@ import ShortUniqueId from "short-unique-id";
 import { connectionsStore, messageModalStore } from "./stores_initializer";
 import { showToast, showConfirm } from "../notification_control";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { createRequest } from "../long_polling";
+import { createRequest, removeContext } from "../long_polling";
 import moment from "moment";
 import { emitter } from "../emitter";
 import { queryRequestCodes, colorLabelMap } from "../constants";
@@ -364,6 +364,9 @@ const useTabsStore = defineStore("tabs", {
                     tab.metaData.mode == "debug" ||
                     tab.metaData.mode == "console"
                   ) {
+                    if (tab.metaData?.context && tab.metaData?.context?.code) {
+                      removeContext(tab.metaData.context.code);
+                    }
                     var v_message_data = {
                       tab_id: tab.id,
                       tab_db_id: null,
@@ -781,6 +784,10 @@ const useTabsStore = defineStore("tabs", {
           tab.metaData.mode
         )
       ) {
+
+        if (tab.metaData?.context && tab.metaData?.context?.code) {
+          removeContext(tab.metaData.context.code);
+        }
         let messageData = {
           tab_id: tab.id,
           tab_db_id: null,

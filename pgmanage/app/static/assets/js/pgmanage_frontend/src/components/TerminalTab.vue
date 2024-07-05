@@ -15,7 +15,7 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { CanvasAddon } from '@xterm/addon-canvas';
 import { settingsStore } from "../stores/stores_initializer";
-import { createRequest } from "../long_polling";
+import { createRequest, createContext } from "../long_polling";
 import { queryRequestCodes, requestState } from "../constants";
 import { tabsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
@@ -35,6 +35,7 @@ export default {
       lastCommand: "",
       state: "",
       clearTerminal: true,
+      contextCode: undefined,
     };
   },
   mounted() {
@@ -73,6 +74,20 @@ export default {
       this.term.focus();
       this.term.write("Starting terminal...");
 
+      const tab = tabsStore.getPrimaryTabById(this.tabId);
+
+      let context = {
+        tab: tab,
+        callback: this.handleResponse.bind(this),
+      }
+
+      let ctx = {
+        context: context,
+      }
+      createContext(ctx);
+      this.contextCode = ctx.code;
+      tab.metaData.context = ctx;
+
       this.terminalRun(
         true,
         `stty rows ${this.term.rows} cols ${this.term.cols} \n`
@@ -107,11 +122,7 @@ export default {
         v_ssh_id: this.databaseIndex,
       };
 
-      let context = {
-        callback: this.handleResponse.bind(this),
-      };
-
-      createRequest(queryRequestCodes.Terminal, messageData, context);
+      createRequest(queryRequestCodes.Terminal, messageData, this.contextCode);
 
       this.state = requestState.Executing;
     },
