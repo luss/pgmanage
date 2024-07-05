@@ -281,16 +281,11 @@ const useTabsStore = defineStore("tabs", {
           showToast("error", "Create connections first.");
           reject("No connections available.");
         } else {
-          let v_conn = connectionsStore.connections[0];
-          for (let i = 0; i < connectionsStore.connections.length; i++) {
-            if (connectionsStore.connections[i].id === index) {
-              // patch the connection last used date when connecting
-              // to refresh last-used labels on the welcome screen
-              connectionsStore.connections[i].last_access_date = moment.now();
-              v_conn = connectionsStore.connections[i];
-            }
-          }
+          let v_conn = connectionsStore.getConnection(index)
 
+          // patch the connection last used date when connecting
+          // to refresh last-used labels on the welcome screen
+          connectionsStore.updateConnection(index, {'last_access_date': moment.now()})
           let connName = "";
           if (name) {
             connName = name;
@@ -415,6 +410,8 @@ const useTabsStore = defineStore("tabs", {
       if (details) {
         tooltipName += `<div class="mb-1">${details}</div>`;
       }
+
+      connectionsStore.updateConnection(index, {'last_access_date': moment.now()})
 
       const tab = this.addTab({
         name: alias,

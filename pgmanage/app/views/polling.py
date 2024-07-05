@@ -242,6 +242,10 @@ def create_request(request, session):
                 )
                 start_thread = True
 
+                conn = Connection.objects.get(id=v_data['v_ssh_id'])
+                conn.last_access_date = datetime.now(tz=timezone.utc)
+                conn.save()
+
                 try:
                     v_conn_object = session.v_databases[v_data['v_ssh_id']]
 
