@@ -7,7 +7,6 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="shortcut icon" type="image/x-icon" href="{{base_path}}/static/assets/images/favicon.ico"/>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="{{base_path}}/static/assets/lib/handsontable/handsontable.full.css?v{{pgmanage_short_version}}">
@@ -48,62 +47,6 @@
         </div>
         <div>
           <button id="bt_cancel_ajax" style='display: none; margin-top: 10px;' class='btn btn-light' onclick="cancelAjax()">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal About -->
-    <div class="modal fade" id="modal_about" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header align-items-center">
-            <h2 class="modal-title font-weight-bold">About</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-
-          <div class="modal-body">
-            <div class="row mb-3">
-              <div class="col-5">
-                <p class="font-weight-semibold">Version:</p>
-              </div>
-              <div class="col-7">{{ pgmanage_version }}</div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-5 d-flex align-items-center">
-                <p class="font-weight-semibold mb-0">Supported databases:</p>
-              </div>
-
-              <div class="col-7 modal-about__db d-flex justify-content-between align-items-center">
-                <img src="{{base_path}}/static/assets/images/postgresql_large.png" title="PostgreSQL"/>
-                <img src="{{base_path}}/static/assets/images/oracle_large.png" title="Oracle"/>
-                <img src="{{base_path}}/static/assets/images/mysql_large.png" title="MySQL"/>
-                <img src="{{base_path}}/static/assets/images/sqlite_large.png" title="SQLite"/>
-                <img src="{{base_path}}/static/assets/images/mariadb_large.png" title="MariaDB"/>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-5">
-                <p class="font-weight-semibold">Primary Supporter:</p>
-              </div>
-              <div class="col-7">
-                <a target="_blank" class="font-weight-bold" href="https://www.commandprompt.com/">
-                  Command Prompt Inc
-                  <!-- <img src="{{url_folder}}/static/OmniDB_app/images/supporters/command_prompt_inc.png" title="CommandPrompt Inc."/> -->
-                </a>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-5">
-                <p class="font-weight-semibold">Website:</p>
-              </div>
-              <div class="col-7">
-                <a class="font-weight-bold" target="_blank" href="https://github.com/commandprompt/pgmanage">PgManage</a>
-            </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -176,7 +119,7 @@
     var user_name = '{{ user_name }}';
     var v_session_key = v_user_key;
     var v_user_login = user_name;
-    var v_version = '{{ pgmanage_version }}';
+    var pgmanage_version = '{{ pgmanage_version }}';
     var short_version = '{{ pgmanage_short_version }}';
     var app_base_path = '{{ base_path }}'
   	var gv_desktopMode = ('{{ desktop_mode }}' === 'True');
