@@ -4,14 +4,13 @@
 </template>
 <script>
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { snippetsStore, settingsStore } from "../stores/stores_initializer";
+import { snippetsStore, settingsStore, dbMetadataStore  } from "../stores/stores_initializer";
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 import { emitter } from "../emitter";
 import { format } from "sql-formatter";
 import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
-import { dbMetadataStore } from "../stores/stores_initializer";
 import { SQLAutocomplete, SQLDialect } from 'sql-autocomplete';
 
 export default {

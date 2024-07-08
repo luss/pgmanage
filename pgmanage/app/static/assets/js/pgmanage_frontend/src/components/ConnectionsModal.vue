@@ -95,8 +95,7 @@ import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
 import { emitter } from '../emitter'
-import { messageModalStore, tabsStore } from '../stores/stores_initializer';
-import { settingsStore, connectionsStore } from "../stores/stores_initializer";
+import { messageModalStore, tabsStore, settingsStore, connectionsStore } from '../stores/stores_initializer';
 import { useVuelidate } from '@vuelidate/core'
 import { Modal, Collapse } from 'bootstrap'
 

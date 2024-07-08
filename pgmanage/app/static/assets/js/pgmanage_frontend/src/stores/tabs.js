@@ -6,7 +6,7 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { createRequest, removeContext } from "../long_polling";
 import moment from "moment";
 import { emitter } from "../emitter";
-import { queryRequestCodes, colorLabelMap } from "../constants";
+import { queryRequestCodes } from "../constants";
 import { showMenuNewTabOuter, renameTab } from "../workspace";
 import { h } from "vue";
 import { Tooltip } from "bootstrap";

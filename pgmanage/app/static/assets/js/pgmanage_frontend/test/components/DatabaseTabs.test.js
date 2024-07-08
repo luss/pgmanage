@@ -3,7 +3,6 @@ import { mount, enableAutoUnmount } from "@vue/test-utils";
 import DatabaseTabs from "@/components/DatabaseTabs.vue";
 import { useTabsStore } from "../../src/stores/tabs";
 import { nextTick } from "vue";
-import { emitter } from "../../src/emitter";
 
 describe("DatabaseTabs.vue", () => {
   let tabsStore, connTab, snippetTab;

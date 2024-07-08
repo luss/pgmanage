@@ -14,10 +14,9 @@
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { CanvasAddon } from '@xterm/addon-canvas';
-import { settingsStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore } from "../stores/stores_initializer";
 import { createRequest, createContext } from "../long_polling";
 import { queryRequestCodes, requestState } from "../constants";
-import { tabsStore } from "../stores/stores_initializer";
 import { emitter } from "../emitter";
 import TabTitleUpdateMixin from "../mixins/sidebar_title_update_mixin";
 

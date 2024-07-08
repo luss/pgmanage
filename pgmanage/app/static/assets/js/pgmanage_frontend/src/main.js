@@ -23,7 +23,6 @@ import omniURL from './ace_themes/theme-omnidb.js?url'
 import omniDarkURL from './ace_themes/theme-omnidb_dark.js?url'
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
-import { showAlert } from './notification_control.js';
 import "tabulator-tables/dist/css/tabulator.min.css"
 import App from './App.vue'
 import { createApp } from 'vue';

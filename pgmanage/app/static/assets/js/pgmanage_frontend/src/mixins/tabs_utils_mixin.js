@@ -1,8 +1,4 @@
 import { tabsStore } from "../stores/stores_initializer.js";
-import { createRequest } from "../long_polling.js";
-import { queryRequestCodes } from "../constants.js";
-import { showConfirm } from "../notification_control.js";
-import ContextMenu from "@imengyu/vue3-context-menu";
 import { emitter } from "../emitter.js";
 import { Tooltip } from "bootstrap";
 
