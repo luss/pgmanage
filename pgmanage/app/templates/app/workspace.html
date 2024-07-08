@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" type="text/css" href="{{base_path}}/static/assets/lib/handsontable/handsontable.full.css?v{{pgmanage_short_version}}">
     <link rel="stylesheet" href="{{base_path}}/static/assets/lib/fa/css/all.css?v{{pgmanage_short_version}}">
 
     <link id="ss_theme" rel="stylesheet" type="text/css">
@@ -109,7 +108,6 @@
     </div>
 
     {% vite_asset 'src/main.js' %}
-    <script src="{{base_path}}/static/assets/lib/omnis_ui_assistant/omnis-control.js?v{{pgmanage_short_version}}"></script>
 
     <script type="text/javascript">
   	//Global variables
@@ -123,7 +121,7 @@
     var short_version = '{{ pgmanage_short_version }}';
     var app_base_path = '{{ base_path }}'
   	var gv_desktopMode = ('{{ desktop_mode }}' === 'True');
-    var v_omnis = createOmnis();
+    var v_omnis = undefined ;
     var v_explain_control = {context: 'default'};
 
     var ht;

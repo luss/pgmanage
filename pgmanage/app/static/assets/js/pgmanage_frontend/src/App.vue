@@ -32,6 +32,7 @@ import UtilitiesMenu from "./components/UtilitiesMenu.vue";
 import AboutModal from './components/AboutModal.vue'
 import { emitter } from "./emitter";
 import { startTutorial } from "./tutorial";
+import { createOmnis } from "./omnis-control";
 
 export default {
   name: "PgManage",
@@ -73,6 +74,7 @@ export default {
       this.enterpriseComps = this?.enterpriseComponents ?? []
     },
     createOmnisAssistant() {
+      v_omnis = createOmnis();
       v_omnis.root = document.getElementById("app");
       v_omnis.div = document.createElement("div");
       v_omnis.div.setAttribute("id", "omnis");

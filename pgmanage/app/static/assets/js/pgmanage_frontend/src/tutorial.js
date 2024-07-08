@@ -30,6 +30,7 @@ import { emitter } from "./emitter";
 import { listUsers, newUser } from "./users";
 import { tabsStore } from "./stores/stores_initializer";
 import { Modal } from "bootstrap";
+import { createOmnisUiAssistant } from "./omnis-control";
 
 function startTutorial(p_tutorial_name) {
   if (v_omnis.omnis_ui_assistant) {
