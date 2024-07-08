@@ -245,6 +245,7 @@ export default {
       axios.post('/delete_group/', group)
       .then((response) => {
         this.loadData()
+        Collapse.getOrCreateInstance(`#collapse-group-${group.id}`).hide()
         this.selectedGroup = {}
         this.activeForm = undefined
       })
