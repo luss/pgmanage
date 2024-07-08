@@ -16,7 +16,6 @@ vi.hoisted(() => {
 import SideBarTabs from "../../src/components/SideBarTabs.vue";
 import "bootstrap";
 import { nextTick } from "vue";
-import { emitter } from "../../src/emitter";
 import { useTabsStore } from "../../src/stores/tabs";
 import { useConnectionsStore } from "../../src/stores/connections";
 

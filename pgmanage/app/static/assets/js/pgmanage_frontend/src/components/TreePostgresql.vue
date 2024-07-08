@@ -2951,7 +2951,7 @@ export default {
             icon: "fas cm-all fa-xmark",
             onClick: () => {
               messageModalStore.showModal(
-                `Are you sure you want to delete job "${this.selectedNode.title}"`,
+                `Are you sure you want to delete job "${this.selectedNode.title}"?`,
                 () => {
                   this.deleteJobPostgresql(this.selectedNode);
                 },
@@ -4701,7 +4701,7 @@ export default {
         this.$refs.tree.updateNode(node.path, {
           title: `Sequences (${response.data.length})`,
         });
-  
+
         response.data.reduceRight((_, el) => {
           this.insertNode(
             node,
@@ -4717,7 +4717,7 @@ export default {
             },
             true
           );
-        })
+        }, null)
       } catch(error) {
         throw error;
       }
@@ -4729,11 +4729,11 @@ export default {
         })
 
         this.removeChildNodes(node);
-  
+
         this.$refs.tree.updateNode(node.path, {
           title: `Views (${response.data.length})`,
         });
-  
+
         response.data.reduceRight((_, el) => {
           this.insertNode(node, el.name, {
             icon: "fas node-all fa-eye node-view",
@@ -4847,7 +4847,7 @@ export default {
             oid: el.oid,
             raw_value: el.name_raw,
           });
-        });
+        }, null);
       } catch(error) {
         throw error;
       }

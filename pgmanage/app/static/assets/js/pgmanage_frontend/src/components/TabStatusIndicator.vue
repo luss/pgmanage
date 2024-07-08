@@ -1,5 +1,5 @@
 <template>
-  <div class="omnidb__tab-status">
+  <div class="omnidb__tab-status form-check form-check-inline mb-0 ps-0">
     <i :title="statusText" :class="['fas fa-dot-circle tab-status', statusClass]">
       <div v-if="tabStatus === 1 || tabStatus === 2" class="tab-status-indicator">
         <span :class="circleWavesClass">
@@ -8,9 +8,9 @@
       </div>
     </i>
 
-    <span :title="statusText" class="mx-1">
+    <label :title="statusText" class="mx-1 form-check-label ps-1">
       {{ statusText }}
-    </span>
+    </label>
   </div>
 </template>
 

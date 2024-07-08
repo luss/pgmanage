@@ -27,7 +27,7 @@
                   <div class="accordion">
                       <!-- GROUP ITEM -->
                     <div v-for="(group, index) in groupedConnections" :key=index class="card rounded-0 border-0">
-                      <div @click.prevent.stop="showForm('group', group)" class="card-header d-flex justify-content-between align-items-center collapsed" v-bind:id="'group-header-' + group.id" v-bind:data-target="'#collapse-group-' + group.id" data-bs-toggle="collapse">
+                      <div @click.prevent.stop="showForm('group', group)" class="card-header d-flex justify-content-between align-items-center" v-bind:id="'group-header-' + group.id" v-bind:data-target="'#collapse-group-' + group.id" data-bs-toggle="collapse">
                         <h4 class="clipped-text mb-0">
                           {{ group.name }}
                         </h4>
@@ -38,7 +38,7 @@
                         <div class="card-body p-0">
                           <ul class="list-group">
                             <li @click="showForm('connection', connection)" v-for="(connection, index) in group.connections" :key=index
-                              :class="['connection', 'list-group-item', { 'active':connection===selectedConnection }]">
+                              :class="['connection', 'list-group-item', { 'active':connection?.id===selectedConnection?.id }]">
                               <p class="connection__name">{{ connection.alias }}</p>
                               <p class="connection__subtitle muted-text clipped-text">{{ connectionSubtitle(connection) }}</p>
                             </li>
@@ -95,8 +95,7 @@ import ConnectionsModalGroupForm from './ConnectionsModalGroupForm.vue'
 import { startLoading, endLoading } from '../ajax_control'
 import axios from 'axios'
 import { emitter } from '../emitter'
-import { messageModalStore, tabsStore } from '../stores/stores_initializer';
-import { settingsStore, connectionsStore } from "../stores/stores_initializer";
+import { messageModalStore, tabsStore, settingsStore, connectionsStore } from '../stores/stores_initializer';
 import { useVuelidate } from '@vuelidate/core'
 import { Modal, Collapse } from 'bootstrap'
 

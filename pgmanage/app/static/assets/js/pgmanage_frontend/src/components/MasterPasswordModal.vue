@@ -218,7 +218,7 @@ export default {
     },
     resetPassword() {
       messageModalStore.showModal(
-        `Are you sure you want to reset you master password?
+        `Are you sure you want to reset your master password?
                                You will lose your saved connection passwords.`,
         () => {
           axios.post("/reset_master_password/").then(() => {

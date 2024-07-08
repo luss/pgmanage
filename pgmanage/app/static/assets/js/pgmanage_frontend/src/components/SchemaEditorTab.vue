@@ -8,7 +8,7 @@
 
       <div v-if="showSchema" class="form-group col-3">
         <label class="fw-bold mb-2" :for="`${tabId}_selectSchema`">Schema</label>
-        <select class="form-control text-truncate pe-4" :id="`${tabId}_selectSchema`" v-model="localTable.schema">
+        <select class="form-select text-truncate pe-4" :id="`${tabId}_selectSchema`" v-model="localTable.schema">
           <option v-for="(schema, index) in schemas" :value="schema" :key="index">
             {{ schema }}
           </option>

@@ -3,10 +3,10 @@ import ShortUniqueId from "short-unique-id";
 import { connectionsStore, messageModalStore } from "./stores_initializer";
 import { showToast, showConfirm } from "../notification_control";
 import ContextMenu from "@imengyu/vue3-context-menu";
-import { createRequest } from "../long_polling";
+import { createRequest, removeContext } from "../long_polling";
 import moment from "moment";
 import { emitter } from "../emitter";
-import { queryRequestCodes, colorLabelMap } from "../constants";
+import { queryRequestCodes } from "../constants";
 import { showMenuNewTabOuter, renameTab } from "../workspace";
 import { h } from "vue";
 import { Tooltip } from "bootstrap";
@@ -281,41 +281,36 @@ const useTabsStore = defineStore("tabs", {
           showToast("error", "Create connections first.");
           reject("No connections available.");
         } else {
-          let v_conn = connectionsStore.connections[0];
-          for (let i = 0; i < connectionsStore.connections.length; i++) {
-            if (connectionsStore.connections[i].id === index) {
-              // patch the connection last used date when connecting
-              // to refresh last-used labels on the welcome screen
-              connectionsStore.connections[i].last_access_date = moment.now();
-              v_conn = connectionsStore.connections[i];
-            }
-          }
+          let connection = connectionsStore.getConnection(index)
 
+          // patch the connection last used date when connecting
+          // to refresh last-used labels on the welcome screen
+          connectionsStore.updateConnection(index, {'last_access_date': moment.now()})
           let connName = "";
           if (name) {
             connName = name;
           }
-          if (connName === "" && v_conn.alias && v_conn.alias !== "") {
-            connName = v_conn.alias;
+          if (connName === "" && connection.alias && connection.alias !== "") {
+            connName = connection.alias;
           }
 
           if (!tooltipName) {
             tooltipName = "";
 
-            if (v_conn.conn_string && v_conn.conn_string !== "") {
-              if (v_conn.alias) {
-                tooltipName += `<h5 class="my-1">${v_conn.alias}</h5>`;
+            if (connection.conn_string && connection.conn_string !== "") {
+              if (connection.alias) {
+                tooltipName += `<h5 class="my-1">${connection.alias}</h5>`;
               }
-              tooltipName += `<div class="mb-1">${v_conn.conn_string}</div>`;
+              tooltipName += `<div class="mb-1">${connection.conn_string}</div>`;
             } else {
-              if (v_conn.alias) {
-                tooltipName += `<h5 class="my-1">${v_conn.alias}</h5>`;
+              if (connection.alias) {
+                tooltipName += `<h5 class="my-1">${connection.alias}</h5>`;
               }
-              if (v_conn.details1) {
-                tooltipName += `<div class="mb-1">${v_conn.details1}</div>`;
+              if (connection.details1) {
+                tooltipName += `<div class="mb-1">${connection.details1}</div>`;
               }
-              if (v_conn.details2) {
-                tooltipName += `<div class="mb-1">${v_conn.details2}</div>`;
+              if (connection.details2) {
+                tooltipName += `<div class="mb-1">${connection.details2}</div>`;
               }
             }
           }
@@ -328,11 +323,11 @@ const useTabsStore = defineStore("tabs", {
           let imgName;
           if (
             import.meta.env.MODE === "development" ||
-            v_conn.technology === "sqlite"
+            connection.technology === "sqlite"
           ) {
-            imgName = v_conn.technology;
+            imgName = connection.technology;
           } else {
-            imgName = `${v_conn.technology}2`;
+            imgName = `${connection.technology}2`;
           }
 
           let icon = `<img src="${app_base_path}${imgPath}${imgName}.svg"/>`;
@@ -348,10 +343,12 @@ const useTabsStore = defineStore("tabs", {
               this.checkTabStatus();
             },
             closeFunction: (e, primaryTab) => {
-              const tooltipEl = document.getElementById(`${primaryTab.id}`);
-              Tooltip.getInstance(tooltipEl).hide();
+              const tooltipEl = document.getElementById(`${primaryTab.id}`).querySelector("[data-bs-toggle='tooltip']")
+              if(tooltipEl)
+                Tooltip.getInstance(tooltipEl).hide();
+
               this.beforeCloseTab(e, () => {
-                var v_tabs_to_remove = [];
+                let tabsToRemove = [];
 
                 let tabs = this.getSecondaryTabs(primaryTab.id);
 
@@ -362,38 +359,41 @@ const useTabsStore = defineStore("tabs", {
                     tab.metaData.mode == "debug" ||
                     tab.metaData.mode == "console"
                   ) {
-                    var v_message_data = {
+                    if (tab.metaData?.context && tab.metaData?.context?.code) {
+                      removeContext(tab.metaData.context.code);
+                    }
+                    let messageData = {
                       tab_id: tab.id,
                       tab_db_id: null,
                       conn_tab_id: primaryTab.id,
                     };
                     if (tab.metaData.mode == "query")
-                      v_message_data.tab_db_id = tab.metaData.initTabDatabaseId;
-                    v_tabs_to_remove.push(v_message_data);
+                      messageData.tab_db_id = tab.metaData.initTabDatabaseId;
+                    tabsToRemove.push(messageData);
                   }
 
                   if (tab.closeFunction) tab.closeFunction(e, tab);
                 });
 
-                var v_message_data = {
+                let messageData = {
                   conn_tab_id: primaryTab.id,
                   tab_db_id: null,
                   tab_id: null,
                 };
-                v_tabs_to_remove.push(v_message_data);
+                tabsToRemove.push(messageData);
 
-                if (v_tabs_to_remove.length > 0) {
-                  createRequest(queryRequestCodes.CloseTab, v_tabs_to_remove);
+                if (tabsToRemove.length > 0) {
+                  createRequest(queryRequestCodes.CloseTab, tabsToRemove);
                 }
                 this.removeTab(primaryTab);
               });
             },
           });
-          connTab.metaData.selectedDBMS = v_conn.technology;
-          connTab.metaData.consoleHelp = v_conn.console_help;
-          connTab.metaData.selectedDatabaseIndex = v_conn.id;
+          connTab.metaData.selectedDBMS = connection.technology;
+          connTab.metaData.consoleHelp = connection.console_help;
+          connTab.metaData.selectedDatabaseIndex = connection.id;
           connTab.metaData.selectedDatabase =
-            v_conn.last_used_database || v_conn.service;
+            connection.last_used_database || connection.service;
           connTab.metaData.createInitialTabs = createInitialTabs;
 
           this.selectTab(connTab);
@@ -411,17 +411,19 @@ const useTabsStore = defineStore("tabs", {
         tooltipName += `<div class="mb-1">${details}</div>`;
       }
 
+      connectionsStore.updateConnection(index, {'last_access_date': moment.now()})
+
       const tab = this.addTab({
         name: alias,
         component: "TerminalTab",
         icon: '<i class="fas fa-terminal"></i>',
         tooltip: tooltipName,
-        closable: false,
+        closable: true,
         mode: "outer_terminal",
         selectFunction: function () {
           emitter.emit(`${this.id}_resize`);
         },
-        rightClickFunction: (e, tab) => {
+        closeFunction: (e, tab) => {
           this.terminalContextMenu(e, tab);
         },
       });
@@ -556,6 +558,7 @@ const useTabsStore = defineStore("tabs", {
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: "Configuration",
+        icon: '<i class="fas cm-all fa-cog icon-tab-title"></i>',
         component: "ConfigTab",
         mode: "configuration",
         closeFunction: (e, tab) => {
@@ -584,10 +587,12 @@ const useTabsStore = defineStore("tabs", {
           : backupType;
       let tabName = `${utility} ${utilityTitle}`;
       let mode = utility.toLowerCase();
+      let icon = `<i class="fas ${mode === 'backup' ? 'fa-download' : 'fa-upload'} cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: tabName,
+        icon: icon,
         mode: mode,
         component: `${utility}Tab`,
         closeFunction: (e, tab) => {
@@ -673,10 +678,12 @@ const useTabsStore = defineStore("tabs", {
           : node.title.replace(/^"(.*)"$/, "$1");
 
       let tabTitle = mode === "alter" ? `Alter: ${tableName}` : "New Table";
+      let icon = `<i class="fas ${mode === 'create' ? 'fa-plus' : 'fa-edit'} cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: tabTitle,
+        icon: icon,
         component: "SchemaEditorTab",
         mode: "alter",
         closeFunction: (e, tab) => {
@@ -753,31 +760,13 @@ const useTabsStore = defineStore("tabs", {
         },
         {
           label: h("p", {
-            class: "mb-0 text-danger",
+            class: "mb-0",
             innerHTML: "Close Terminal",
           }),
+          icon: "fas cm-all fa-plug-circle-xmark",
           onClick: () => {
             ContextMenu.closeContextMenu();
-            ContextMenu.showContextMenu({
-              theme: "pgmanage",
-              x: e.x,
-              y: e.y,
-              zIndex: 1000,
-              minWidth: 230,
-              items: [
-                {
-                  label: "Confirm",
-                  icon: "fas cm-all fa-check",
-                  onClick: () => {
-                    this.closeTab(tab);
-                  },
-                },
-                {
-                  label: "Cancel",
-                  icon: "fas cm-all fa-times",
-                },
-              ],
-            });
+            this.closeTab(tab);
           },
         },
       ];
@@ -797,6 +786,10 @@ const useTabsStore = defineStore("tabs", {
           tab.metaData.mode
         )
       ) {
+
+        if (tab.metaData?.context && tab.metaData?.context?.code) {
+          removeContext(tab.metaData.context.code);
+        }
         let messageData = {
           tab_id: tab.id,
           tab_db_id: null,

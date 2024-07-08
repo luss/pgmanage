@@ -7,28 +7,28 @@
 
     <pane size="20" class="ps-2 border-top">
       <div class="tab-actions py-2 d-flex align-items-center">
-        <button class="btn btn-sm btn-primary" title="Run" @click="consoleSQL(false)" :disabled="executingState">
+        <button class="btn btn-square btn-primary" title="Run" @click="consoleSQL(false)" :disabled="executingState">
           <i class="fas fa-play fa-light"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Open File" @click="openFileManagerModal">
+        <button class="btn btn-square btn-secondary" title="Open File" @click="openFileManagerModal">
             <i class="fas fa-folder-open fa-light"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Indent SQL" @click="indentSQL()">
+        <button class="btn btn-square btn-secondary" title="Indent SQL" @click="indentSQL()">
           <i class="fas fa-indent fa-ligth"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Clear Console" @click="clearConsole()">
+        <button class="btn btn-square btn-secondary" title="Clear Console" @click="clearConsole()">
           <i class="fas fa-broom fa-ligth"></i>
         </button>
 
-        <button class="btn btn-sm btn-secondary" title="Command History" @click="showCommandsHistory()">
+        <button class="btn btn-square btn-secondary me-2" title="Command History" @click="showCommandsHistory()">
           <i class="fas fa-clock-rotate-left fa-light"></i>
         </button>
 
         <template v-if="postgresqlDialect">
-          <div class="omnidb__form-check form-check form-check-inline">
+          <div class="form-check form-check-inline mb-0">
             <input :id="`check_autocommit_${tabId}`" class="form-check-input" type="checkbox" v-model="autocommit" />
             <label class="form-check-label" :for="`check_autocommit_${tabId}`">Autocommit</label>
           </div>
@@ -65,7 +65,7 @@
         <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
           @cancelled="cancelConsoleTab()" />
 
-        <div :id="`div_query_info_${tabId}`">
+        <div>
           <p class="m-0 h6" v-if="cancelled">
             <b>Cancelled</b>
           </p>
@@ -304,13 +304,13 @@ export default {
       }
     },
     consoleReturn(data, context) {
-      clearInterval(this.queryInterval);
-      this.queryInterval = null;
-
-      this.tempData = this.tempData.concat(data.v_data.data);
-
+      this.tempData.push(data.v_data.data)
+      
       if (!this.idleState && (data.v_data.last_block || data.v_error)) {
+        clearInterval(this.queryInterval);
+        this.queryInterval = null;
         data.v_data.data = this.tempData;
+        this.tempData = []
         this.readOnlyEditor = false;
         this.tabStatus = data.v_data.con_status;
         if (
@@ -335,7 +335,7 @@ export default {
     },
     consoleReturnRender(data) {
       data.v_data.data.forEach((chunk) => {
-        this.terminal.write(chunk);
+        this.terminal.writeln(chunk);
       })
       this.fetchMoreData = data.v_data.show_fetch_button;
       this.queryDuration = data.v_data.duration;

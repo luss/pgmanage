@@ -33,7 +33,7 @@
           <button v-if="action === 'rename'" type="button" class="btn btn-primary" data-bs-dismiss="modal"
             @click="rename">Rename</button>
           <button v-else-if="action === 'delete'" type="button" class="btn btn-danger" data-bs-dismiss="modal"
-            @click="delete">Delete</button>
+            @click="deleteFile">Delete</button>
           <button v-else type="button" class="btn btn-primary" data-bs-dismiss="modal"
             @click="create($event, createdFileType)">Create</button>
         </div>
@@ -126,7 +126,7 @@ export default {
           showToast("error", error.response.data.data)
         })
     },
-    delete() {
+    deleteFile() {
       axios.post('/file_manager/delete/', {
         path: this.file?.file_path
       })

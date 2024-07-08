@@ -13,7 +13,7 @@
     <div class="form-group col-2">
       <form class="form" @submit.prevent>
         <label class="fw-bold mb-2" :for="`${tabId}_rowLimit`">Limit</label>
-        <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-control">
+        <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-select">
             <option v-for="(option, index) in [10, 100, 1000]"
               :key=index
               :value="option">
@@ -329,7 +329,9 @@ export default {
         showToast("error", response.v_data)
       } else {
         showToast("success", 'data updated')
-        this.getTableData()
+        setTimeout(() => {
+          this.getTableData()
+        }, 100);
       }
     },
     addRow() {

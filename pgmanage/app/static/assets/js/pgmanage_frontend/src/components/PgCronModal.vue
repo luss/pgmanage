@@ -38,7 +38,7 @@
 
                 <div class="form-group col-6 mb-2">
                   <label for="in_database" class="fw-bold mb-2">Run In Database</label>
-                  <select v-model="inDatabase" :disabled="jobId" id="in_database" class="form-control">
+                  <select v-model="inDatabase" :disabled="jobId" id="in_database" class="form-select">
                       <option value=""></option>
                       <option v-for="(database, index) in databases"
                         :key=index

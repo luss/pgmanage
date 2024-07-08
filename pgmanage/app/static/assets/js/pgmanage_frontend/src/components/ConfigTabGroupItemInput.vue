@@ -1,13 +1,13 @@
 <template>
   <div class="col-7">
-    <div ref="settingInput">
+    <div ref="settingInput" class="form-group mb-0">
       <div class="form-check form-switch" v-if="setting.vartype === 'bool'">
         <input class="form-check-input" type="checkbox" :id="`switch-${inputId}`" v-model="setting.setting" true-value="on" false-value="off"
           @change="changeSetting" :disabled="isReadOnly" />
         <label class="form-check-label" :for="`switch-${inputId}`"></label>
       </div>
 
-      <select v-else-if="setting.vartype === 'enum'" class="form-control form-control-sm" :name="setting.name"
+      <select v-else-if="setting.vartype === 'enum'" class="form-select form-select-sm" :name="setting.name"
         v-model="setting.setting" @change="changeSetting" :disabled="isReadOnly">
         <option v-for="v in setting.enumvals" :value="v">{{ v }}</option>
       </select>

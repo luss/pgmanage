@@ -53,12 +53,12 @@ import {
   settingsStore,
   tabsStore,
   messageModalStore,
+  fileManagerStore
 } from "../stores/stores_initializer";
 import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
 import FileInputChangeMixin from "../mixins/file_input_mixin";
 import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
-import { fileManagerStore } from "../stores/stores_initializer";
 
 export default {
   name: "SnippetTab",

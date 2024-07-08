@@ -1,8 +1,4 @@
 import { tabsStore } from "../stores/stores_initializer.js";
-import { createRequest } from "../long_polling.js";
-import { queryRequestCodes } from "../constants.js";
-import { showConfirm } from "../notification_control.js";
-import ContextMenu from "@imengyu/vue3-context-menu";
 import { emitter } from "../emitter.js";
 import { Tooltip } from "bootstrap";
 
@@ -13,7 +9,7 @@ export default {
         action.after((result) => {
           if (!result.tooltip) return;
           this.$nextTick(() => {
-            const tooltipEl = document.getElementById(`${result.id}`);
+            const tooltipEl = document.getElementById(`${result.id}`).querySelector("[data-bs-toggle='tooltip']")
             if (tooltipEl) {
               new Tooltip(tooltipEl, {
                 placement: "right",
@@ -22,6 +18,7 @@ export default {
                 title: result.tooltip,
                 html: true,
                 delay: { show: 500, hide: 100 },
+                offset: [0, 10]
               });
             }
           });

@@ -11,7 +11,7 @@
 
     <div class="form-group col-3">
       <label class="fw-bold mb-2" :for="`${tabId}_selectConf`">Category</label>
-      <select class="form-control text-truncate pe-4" :id="`${tabId}_selectConfCat`" :disabled="!!query_filter || v$.$invalid" v-model="selected">
+      <select class="form-select text-truncate pe-4" :id="`${tabId}_selectConfCat`" :disabled="!!query_filter || v$.$invalid" v-model="selected">
         <option v-for="(cat, index) in categories" :value="cat" :key="index">
           {{ cat }}
         </option>
@@ -20,7 +20,7 @@
 
     <div class="form-group col-3">
       <label class="fw-bold mb-2" :for="`${tabId}_selectConf`">Config History</label>
-      <select class="form-control text-truncate" :id="`${tabId}_selectConf`" v-model="selectedConf">
+      <select class="form-select text-truncate" :id="`${tabId}_selectConf`" v-model="selectedConf">
         <option disabled value="">Please select one</option>
         <option v-for="(config, index) in configHistory" :value="config" :key="index"
           :title="config.commit_comment">
@@ -30,10 +30,10 @@
     </div>
 
     <div class="form-group col-4 d-flex align-items-end ps-0">
-      <button class="btn btn-success me-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
+      <button class="btn btn-square btn-success me-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
         <i class="fa-solid fa-arrow-rotate-left"></i>
       </button>
-      <ConfirmableButton class="btn btn-danger mr-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
+      <ConfirmableButton class="btn btn-square btn-danger me-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
         <i class="fa-solid fa-xmark"></i>
       </ConfirmableButton>
       <button type="submit" class="btn btn-success ml-auto" :disabled="!hasUpdateValues || v$.$invalid"

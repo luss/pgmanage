@@ -167,9 +167,6 @@ function startTutorial(p_tutorial_name) {
             v_omnis.omnis_ui_assistant.divClonedElement.firstChild.style.transform = ''
           }, 100)
         },
-        p_callback_end: function() {
-          document.getElementById('add_connection_dropdown_item').click()
-        },
         p_message: `
         <p>Click on <strong> Connection <strong></p>
         `,
@@ -180,6 +177,9 @@ function startTutorial(p_tutorial_name) {
         p_next_button: false,
       },
       {
+        p_callback_start: function() {
+          document.getElementById('add_connection_dropdown_item').click()
+        },
         p_message: `
         <p>Select the proper DBMS technology.</p>
         `,
@@ -268,9 +268,6 @@ function startTutorial(p_tutorial_name) {
             v_omnis.omnis_ui_assistant.divClonedElement.firstChild.style.transform = ''
           }, 100)
         },
-        p_callback_end: function() {
-          document.getElementById('add_connection_dropdown_item').click()
-        },
         p_clone_target: true,
         p_message: `
         <p>Click on <strong> Connection <strong></p>
@@ -281,6 +278,9 @@ function startTutorial(p_tutorial_name) {
         p_update_delay: 1000
       },
       {
+        p_callback_start: function() {
+          document.getElementById('add_connection_dropdown_item').click()
+        },
         p_message: `
         <p>Select the Terminal technology.</p>
         `,
@@ -301,6 +301,9 @@ function startTutorial(p_tutorial_name) {
         p_title: 'Title'
       },
       {
+        p_callback_start: function() {
+          document.getElementById('sshSettings').scrollIntoView()
+        },
         p_message: `
         <p>The terminal utilizes SSH technology.</p>
         <p>As you can see, in this case SSH parameters are mandatory.</p>

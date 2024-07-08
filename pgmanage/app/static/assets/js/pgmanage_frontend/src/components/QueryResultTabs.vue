@@ -1,5 +1,5 @@
 <template>
-  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs">
+  <div ref="resultDiv" :id="`query_result_tabs_container_${tabId}`" class="omnidb__query-result-tabs pe-2">
     <button :id="`bt_fullscreen_${tabId}`" style="position: absolute; top: 0.25rem; right: 0.5rem" type="button"
       class="btn btn-sm btn-icon btn-icon-secondary" @click="toggleFullScreen()">
       <i class="fas fa-expand"></i>
@@ -132,6 +132,7 @@ export default {
       plan: "",
       table: null,
       heightSubtract: 200,
+      colWidthArray: [],
     };
   },
   computed: {
@@ -303,7 +304,7 @@ export default {
       }
       this.updateTableData(data);
     },
-    updateTableData(data) {
+    prepareColumns(colNames, colTypes) {
       let cellContextMenu = [
         {
           label:
@@ -320,11 +321,11 @@ export default {
           },
         },
       ];
-      let columns = data.col_names.map((col, idx) => {
+      let columns = colNames.map((col, idx) => {
         let formatTitle = function(col, idx) {
-          if(data.col_types?.length === 0 )
+          if(colTypes?.length === 0 )
             return col
-          return `${col}<br><span class='subscript'>${data.col_types[idx]}</span>`
+          return `${col}<br><span class='subscript'>${colTypes[idx]}</span>`
         }
 
         return {
@@ -389,26 +390,43 @@ export default {
         headerMenuIcon:'<i class="actions-menu fa-solid fa-ellipsis-vertical p-2"></i>',
         headerTooltip: 'Layout'
       });
-      this.table.setColumns(columns);
-
-      this.table
-        .setData(data.data)
-        .then(() => {
-          this.table.redraw(true);
-          this.applyLayout();
-        })
-        .catch((error) => {
-          this.errorMessage = error;
+      return columns
+    },
+    updateTableData(data) {
+      const columns = this.prepareColumns(data.col_names, data.col_types)
+      this.table.destroy()
+      this.tableSettings.data = data.data
+      this.tableSettings.columns = columns
+      let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+      table.on("renderStarted", () => {
+        if (this.customLayout === undefined || this.colWidthArray.length === 0) return
+        this.table.getColumns().forEach((col, idx) => {
+          if(idx > 0) {
+            col.setWidth(this.colWidthArray[idx-1])
+          }
         });
+      })
+      table.on("tableBuilt", () => {
+        this.table = table;
+        if (this.customLayout !== undefined && this.colWidthArray.length !== 0) {
+          
+          this.table.getColumns().forEach((col, idx) => {
+            if(idx > 0) {
+              col.setWidth(this.colWidthArray[idx-1])
+            }
+          });
+        }
+      });
 
-      this.table.on(
+      table.on(
         "cellDblClick",
         function (e, cell) {
           if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
         }
       );
     },
-    applyLayout() {
+     applyLayout() {
+      this.colWidthArray = []
       if(this.customLayout === undefined)
         return
 
@@ -419,14 +437,17 @@ export default {
           if(this.customLayout == 'adaptive') {
             let widths = col.getCells().map((cell) => {return cell.getElement().scrollWidth}).filter((el) => el > 0)
             col.setWidth(mean(widths))
+            this.colWidthArray.push(mean(widths))
           }
 
           if(this.customLayout == 'compact') {
             col.setWidth(100);
+            this.colWidthArray.push(100)
           }
 
           if(this.customLayout == 'fitcontent') {
             col.setWidth(true);
+            this.colWidthArray.push(true)
           }
         }
       });
@@ -435,8 +456,36 @@ export default {
     },
     fetchData(data) {
       let initialData = this.table.getData();
-      data.data.unshift(...initialData);
-      this.table.replaceData(data.data);
+      const allData = [...initialData, ...data.data]
+      let rowsToAppend = data.data.length
+
+      // destroy and recreate table instance if there is a lot of data to append
+      if(rowsToAppend > 1000) {
+        const scrollTop = this.table.rowManager.scrollTop
+        const scrollLeft = this.table.rowManager.scrollLeft
+        this.tableSettings.data = allData;
+        this.tableSettings.columns = this.prepareColumns(data.col_names, data.col_types)
+
+        this.table.destroy()
+        let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
+        table.on("tableBuilt", () => {
+          this.table = table;
+          this.applyLayout();
+          this.table.rowManager.element.scrollTop = scrollTop;
+          this.table.rowManager.scrollLeft = scrollLeft;
+        });
+
+        table.on(
+          "cellDblClick",
+          function (e, cell) {
+            if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+          }
+        );
+      } else {
+        this.table.addData(data.data);
+      }
+
+
     },
     clearData() {
       this.notices = [];
@@ -450,7 +499,7 @@ export default {
       this.handleResize();
     },
     handleResize() {
-      if (this.$refs === null) return;
+      if (this.$refs?.tabContent === null) return;
 
       this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },

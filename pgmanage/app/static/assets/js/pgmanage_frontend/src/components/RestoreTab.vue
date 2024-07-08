@@ -18,7 +18,7 @@
 
               <div  class="form-group mb-1">
                 <label for="restoreFormat" class="fw-bold mb-1">Format</label>
-                <select id="restoreFormat" class="form-control" v-model="restoreOptions.format">
+                <select id="restoreFormat" class="form-select" v-model="restoreOptions.format">
                   <option value="custom/tar">Custom or tar</option>
                   <option value="directory">Directory</option>
                 </select>
@@ -41,7 +41,7 @@
 
               <div v-if="isNotServer" class="form-group mb-1">
                 <label for="restoreNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
-                <select id="restoreNumberOfJobs" class="form-control" v-model="restoreOptions.number_of_jobs">
+                <select id="restoreNumberOfJobs" class="form-select" v-model="restoreOptions.number_of_jobs">
                   <option value="" disabled>Select an item...</option>
                   <option v-for="number_of_jobs in numberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
                 </select>
@@ -49,7 +49,7 @@
 
               <div v-if="isNotServer" class="form-group mb-1">
                 <label for="restoreRoleName" class="fw-bold mb-1">Restore as:</label>
-                <select id="restoreRoleName" class="form-control" v-model="restoreOptions.role">
+                <select id="restoreRoleName" class="form-select" v-model="restoreOptions.role">
                   <option value="" disabled>Select an item...</option>
                   <option v-for="name in roleNames" :value="name" :key="name">{{ name }}</option>
                 </select>
@@ -66,7 +66,7 @@
               
                 <div class="form-group" :class="(restoreOptions.pigz) ? 'collapse show':'collapse'">
                   <label for="restorePigzNumberOfJobs" class="fw-bold mb-1">Number of jobs</label>
-                  <select id="restorePigzNumberOfJobs" class="form-control" v-model="restoreOptions.pigz_number_of_jobs">
+                  <select id="restorePigzNumberOfJobs" class="form-select" v-model="restoreOptions.pigz_number_of_jobs">
                     <option v-for="number_of_jobs in pigzNumberOfJobs" :value="number_of_jobs" :key="number_of_jobs">{{ number_of_jobs }}</option>
                   </select>
                 </div>

@@ -51,7 +51,7 @@
             </div>
             <div class="form-group col-3 position-relative">
               <label for="connectionType" class="fw-bold mb-2">Type</label>
-              <select v-model="connectionLocal.technology" @change="handleTypeChange" id="connectionType" class="form-control" placeholder="Connection type">
+              <select v-model="connectionLocal.technology" @change="handleTypeChange" id="connectionType" class="form-select" placeholder="Connection type">
                   <option disabled>Choose...</option>
                   <option v-for="(technology, index) in technologies"
                     :key=index
@@ -62,7 +62,7 @@
             </div>
             <div class="form-group col-3 position-relative">
               <label for="connectionGroup" class="fw-bold mb-2">Group</label>
-              <select v-model="connectionLocal.group" id="connectionGroup" class="form-control" placeholder="Connection group">
+              <select v-model="connectionLocal.group" id="connectionGroup" class="form-select" placeholder="Connection group">
                   <option value=""></option>
                   <option v-for="(group, index) in connectionGroups"
                     :key=index
@@ -102,14 +102,14 @@
 
             <div class="form-group col-3">
               <label for="connectionSSL" class="fw-bold mb-2">SSL</label>
-                <select v-if="connectionLocal.technology === 'postgresql'" id="connectionSSL" class="form-control" v-model="connectionLocal.connection_params.sslmode" :disabled="dbFormDisabled">
+                <select v-if="connectionLocal.technology === 'postgresql'" id="connectionSSL" class="form-select" v-model="connectionLocal.connection_params.sslmode" :disabled="dbFormDisabled">
                     <option v-for="mode in sslModes" :key="mode" :value="mode">{{ mode }}</option>
                 </select>
-                <select v-else-if="connectionLocal.technology === 'oracle'" id="connectionSSL" class="form-control" v-model="connectionLocal.connection_params.protocol" :disabled="dbFormDisabled">
+                <select v-else-if="connectionLocal.technology === 'oracle'" id="connectionSSL" class="form-select" v-model="connectionLocal.connection_params.protocol" :disabled="dbFormDisabled">
                     <option v-for="mode in sslModes" :key="mode" :value="mode">{{ mode }}</option>
                 </select>
 
-                <select v-else id="connectionSSL" class="form-control" :value='tempMode' @change="changeSelect" :disabled="dbFormDisabled">
+                <select v-else id="connectionSSL" class="form-select" :value='tempMode' @change="changeSelect" :disabled="dbFormDisabled">
                     <option v-for="mode in sslModes" :key="mode.text" :value="mode.value">{{ mode.text }}</option>
                 </select>
             </div>

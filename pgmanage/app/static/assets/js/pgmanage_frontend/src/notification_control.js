@@ -1,4 +1,3 @@
-import { createApp } from "vue";
 import { useToast } from 'vue-toast-notification';
 import { Modal } from "bootstrap";
 
