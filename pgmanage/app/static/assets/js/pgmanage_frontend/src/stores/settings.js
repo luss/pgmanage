@@ -122,7 +122,6 @@ const useSettingsStore = defineStore("settings", {
       Modal.getOrCreateInstance('#modal_settings', {
         backdrop: 'static', keyboard: false
       }).show()
-      $('#txt_new_pwd').passtrength({passwordToggle: false});
     },
   },
 });
