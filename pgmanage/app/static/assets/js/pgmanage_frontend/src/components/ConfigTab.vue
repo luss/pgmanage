@@ -33,7 +33,7 @@
       <button class="btn btn-square btn-success me-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
         <i class="fa-solid fa-arrow-rotate-left"></i>
       </button>
-      <ConfirmableButton class="btn btn-square btn-danger me-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
+      <ConfirmableButton class="btn btn-danger me-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
         <i class="fa-solid fa-xmark"></i>
       </ConfirmableButton>
       <button type="submit" class="btn btn-success ml-auto" :disabled="!hasUpdateValues || v$.$invalid"
