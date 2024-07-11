@@ -1,4 +1,4 @@
-.border-end {
+.border {
     @include themify() {
         border: themed($border) !important;
     }
@@ -22,7 +22,7 @@
     }
 }
 
-.border-right {
+.border-end {
     @include themify() {
         border-right: themed($border) !important;
     }
