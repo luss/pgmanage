@@ -1,3 +1,4 @@
+from app.utils.crypto import pg_scram_sha256
 from app.utils.decorators import database_required, user_authenticated
 from django.http import HttpResponse, JsonResponse
 
@@ -1643,8 +1644,12 @@ def get_version(request, database):
 def change_role_password(request, database):
     data = request.data
 
+    password = data["password"]
+
+    hashed_password = pg_scram_sha256(password)
+
     try:
-        database.ChangeRolePassword(data["role"], data["password"])
+        database.ChangeRolePassword(data["role"], hashed_password)
     except Exception as exc:
         return JsonResponse(data={"data": str(exc)}, status=400)
 
