@@ -8,6 +8,7 @@ import { useMessageModalStore } from "./message_modal";
 import { useCellDataModalStore } from "./celldata_modal";
 import { useFileManagerStore } from "./file_manager";
 import { useUtilitiesMenuStore } from "./utilities_menu";
+import { useCommandsHistoryStore } from "./commands_history";
 import { createPinia, setActivePinia } from "pinia";
 
 const pinia = createPinia();
@@ -33,6 +34,8 @@ const fileManagerStore = useFileManagerStore();
 
 const utilitiesMenuStore = useUtilitiesMenuStore();
 
+const commandsHistoryStore = useCommandsHistoryStore();
+
 export {
   snippetsStore,
   settingsStore,
@@ -44,5 +47,6 @@ export {
   cellDataModalStore,
   fileManagerStore,
   utilitiesMenuStore,
-  pinia
+  commandsHistoryStore,
+  pinia,
 };

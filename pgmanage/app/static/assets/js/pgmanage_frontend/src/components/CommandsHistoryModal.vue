@@ -1,52 +1,96 @@
 <template>
-  <div class="modal fade" ref="historyModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div
+    id="commands-history-modal"
+    class="modal fade"
+    ref="historyModal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header align-items-center">
-          <h2 class="modal-title fw-bold">
-            {{ tabType }} commands history
-          </h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h2 class="modal-title fw-bold">{{ tabType }} commands history</h2>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
             <div class="row">
               <div class="form-group col-lg-3 col-xl-2 col-sm-4">
                 <p class="fw-bold mb-2">Select a daterange:</p>
-                <input v-model="startedFrom" type="text" class="form-control form-control-sm d-none"
-                  placeholder="Start Time" />
-                <input v-model="startedTo" type="text" class="form-control form-control-sm d-none"
-                  placeholder="End Time" />
-                <button ref="timeRange" type="button" class="btn btn-outline-primary">
+                <input
+                  v-model="startedFrom"
+                  type="text"
+                  class="form-control form-control-sm d-none"
+                  placeholder="Start Time"
+                />
+                <input
+                  v-model="startedTo"
+                  type="text"
+                  class="form-control form-control-sm d-none"
+                  placeholder="End Time"
+                />
+                <button
+                  ref="timeRange"
+                  type="button"
+                  class="btn btn-outline-primary"
+                >
                   <i class="far fa-calendar-alt"></i>
-                  <span class="mx-1">{{ timeRangeLabel }}</span><i class="fa fa-caret-down"></i>
+                  <span class="mx-1">{{ timeRangeLabel }}</span
+                  ><i class="fa fa-caret-down"></i>
                 </button>
               </div>
 
               <div class="form-group col-lg-3 col-xl-2 col-sm-4">
                 <label class="fw-bold mb-2">Filter by database:</label>
-                <select v-model="databaseFilter" @change="getCommandsHistory(true)" class="form-select" placeholder="Filter database">
-                    <option value="" selected>All Databases</option>
-                    <option v-for="(name, index) in databaseNames"
-                      :key=index
-                      :value="name">
-                        {{name}}
-                    </option>
+                <select
+                  v-model="databaseFilter"
+                  @change="getCommandsHistory(true)"
+                  class="form-select"
+                  placeholder="Filter database"
+                >
+                  <option value="" selected>All Databases</option>
+                  <option
+                    v-for="(name, index) in databaseNames"
+                    :key="index"
+                    :value="name"
+                  >
+                    {{ name }}
+                  </option>
                 </select>
               </div>
 
-              <div class="form-group col-lg-6 col-md-12 col-xl-8 d-flex justify-content-end align-items-end">
+              <div
+                class="form-group col-lg-6 col-md-12 col-xl-8 d-flex justify-content-end align-items-end"
+              >
                 <div>
                   <label class="fw-bold mb-2">Command contains:</label>
-                  <input v-model="commandContains" @change="getCommandsHistory(true)" type="text" class="form-control" />
+                  <input
+                    v-model="commandContains"
+                    @change="getCommandsHistory(true)"
+                    type="text"
+                    class="form-control"
+                  />
                 </div>
 
-                <button class="bt_execute btn btn-primary ms-1" title="Refresh" @click="getCommandsHistory(true)">
+                <button
+                  class="bt_execute btn btn-primary ms-1"
+                  title="Refresh"
+                  @click="getCommandsHistory(true)"
+                >
                   <i class="fas fa-sync-alt me-1"></i>
                   Refresh
                 </button>
-                <ConfirmableButton :confirm-text="`Confirm Clear?`" :callbackFunc="clearCommandsHistory"
-                  class="btn btn-danger ms-1">
+                <ConfirmableButton
+                  :confirm-text="`Confirm Clear?`"
+                  :callbackFunc="clearCommandsHistory"
+                  class="btn btn-danger ms-1"
+                >
                   <i class="fas fa-broom me-1"></i>
                   Clear List
                 </ConfirmableButton>
@@ -80,7 +124,11 @@
             </button>
           </div>
 
-          <div :id="`${tabId}_commands_history_table`" class="tabulator-custom" style="height: calc(100vh - 20rem)"></div>
+          <div
+            id="commands_history_table"
+            class="tabulator-custom"
+            style="height: calc(100vh - 20rem)"
+          ></div>
         </div>
       </div>
     </div>
@@ -94,7 +142,10 @@ import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { emitter } from "../emitter";
 import ConfirmableButton from "./ConfirmableButton.vue";
 import { showToast } from "../notification_control";
-import { cellDataModalStore } from "../stores/stores_initializer.js"
+import {
+  cellDataModalStore,
+  commandsHistoryStore,
+} from "../stores/stores_initializer.js";
 import { Modal } from "bootstrap";
 
 export default {
@@ -102,18 +153,6 @@ export default {
   components: {
     ConfirmableButton,
   },
-  props: {
-    tabId: String,
-    databaseIndex: Number,
-    tabType: {
-      type: String,
-      validator(value) {
-        return ["Query", "Console"].includes(value);
-      },
-    },
-    commandsModalVisible: Boolean,
-  },
-  emits: ["modalHide"],
   data() {
     return {
       currentPage: 1,
@@ -123,10 +162,21 @@ export default {
       commandContains: "",
       timeRangeLabel: "Last 6 Hours",
       databaseNames: [],
-      databaseFilter: ''
+      databaseFilter: "",
+      modalInstance: null,
+      table: null,
     };
   },
   computed: {
+    tabId() {
+      return commandsHistoryStore.tabId;
+    },
+    tabType() {
+      return commandsHistoryStore.tabType;
+    },
+    databaseIndex() {
+      return commandsHistoryStore.databaseIndex;
+    },
     defaultColumns() {
       if (this.tabType === "Query") {
         return [
@@ -164,14 +214,14 @@ export default {
             tooltip: "Double-click to copy this command to editor",
             cellDblClick: (e, cell) => {
               emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
-              this.modalInstance.hide()
+              this.modalInstance.hide();
             },
             contextMenu: [
               {
                 label: "Copy Content To Query Tab",
                 action: (e, cell) => {
                   emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
-                  this.modalInstance.hide()
+                  this.modalInstance.hide();
                 },
               },
             ],
@@ -204,7 +254,7 @@ export default {
                 '<div style="position: absolute;"><i class="fas fa-bolt cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy Content To Console Tab</div>',
               action: (e, cell) => {
                 emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
-                this.modalInstance.hide()
+                this.modalInstance.hide();
               },
             },
             {
@@ -219,27 +269,26 @@ export default {
       ];
     },
   },
-  watch: {
-    commandsModalVisible: function () {
-      if (this.commandsModalVisible) {
-        this.resetToDefault();
-        this.showCommandsModal();
-        setTimeout(() => {
-          this.getCommandsHistory(true);
-        }, 200);
-      }
-    },
-  },
   mounted() {
-    this.setupTabulator();
+    commandsHistoryStore.$onAction((action) => {
+      if (action.name === "showModal") {
+        action.after(() => {
+          if (this.table) this.table.destroy();
+          this.setupTabulator();
+          this.showCommandsModal();
+          this.getCommandsHistory(true);
+        });
+      }
+    });
 
     this.$refs.historyModal.addEventListener("shown.bs.modal", () => {
       this.setupDateRangePicker();
     });
 
     this.$refs.historyModal.addEventListener("hide.bs.modal", () => {
-      this.$emit("modalHide");
-      $(this.$refs.timeRange).data('daterangepicker').remove()
+      commandsHistoryStore.reset();
+      this.resetToDefault();
+      $(this.$refs.timeRange).data("daterangepicker").remove();
     });
   },
   methods: {
@@ -284,10 +333,7 @@ export default {
               moment().format(),
             ],
             "Last Month": [
-              moment()
-                .subtract(1, "month")
-                .startOf("month")
-                .format(),
+              moment().subtract(1, "month").startOf("month").format(),
               moment().subtract(1, "month").endOf("month").format(),
             ],
           },
@@ -318,10 +364,10 @@ export default {
       );
     },
     setupTabulator() {
-      this.table = new Tabulator(`#${this.tabId}_commands_history_table`, {
+      this.table = new Tabulator(`#commands_history_table`, {
         placeholder: "No Data Available",
         layout: "fitDataStretch",
-        width: '100%',
+        width: "100%",
         clipboard: "copy",
         clipboardCopyConfig: {
           columnHeaders: false, //do not include column headers in clipboard output
@@ -339,9 +385,8 @@ export default {
         columns: this.defaultColumns,
       });
     },
-    getCommandsHistory(resetCurrentPage=false) {
-      if(resetCurrentPage)
-        this.currentPage = 1
+    getCommandsHistory(resetCurrentPage = false) {
+      if (resetCurrentPage) this.currentPage = 1;
 
       axios
         .post("/get_commands_history/", {
@@ -411,8 +456,8 @@ export default {
       }
     },
     showCommandsModal() {
-      this.modalInstance = Modal.getOrCreateInstance(this.$refs.historyModal)
-      this.modalInstance.show()
+      this.modalInstance = Modal.getOrCreateInstance(this.$refs.historyModal);
+      this.modalInstance.show();
     },
     resetToDefault() {
       this.startedFrom = moment().subtract(6, "hour").toISOString();
