@@ -2,7 +2,7 @@
   <div class="container-fluid position-relative g-0">
     <div class="row g-0">
       <splitpanes class="default-theme">
-        <pane size="18">
+        <pane min-size="18" size="25">
           <div
             :id="`${connTabId}_div_left`"
             class="omnidb__workspace__div-left col"
@@ -78,7 +78,7 @@
             </div>
           </div>
         </pane>
-        <pane>
+        <pane min-size="2">
           <div
             :id="`${connTabId}_div_right`"
             class="omnidb__workspace__div-right col position-relative right-div-height"
