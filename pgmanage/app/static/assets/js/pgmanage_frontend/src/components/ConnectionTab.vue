@@ -9,12 +9,15 @@
           >
             <div class="row g-0">
               <div class="omnidb__workspace__content-left border-end">
-                <div class="omnidb__workspace__connection-details">
-                  <i class="fas fa-server me-1"></i>selected DB:
-                  <b>{{ databaseName }}</b>
+                <div class="omnidb__workspace__connection-details d-flex align-items-center flex-wrap-wrap justify-content-between">
+                  <p class="d-flex align-items-center flex-nowrap mb-0">
+                    <span class="text-nowrap">Selected DB:&nbsp;</span>
+                    <span class="text-info">{{ databaseName }}</span>
+                  </p>
+
                   <div
                     :id="`${connTabId}_switch`"
-                    class="omnidb__switch omnidb__switch--sm float-end"
+                    class="omnidb__switch omnidb__switch--sm"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     data-bs-html="true"
