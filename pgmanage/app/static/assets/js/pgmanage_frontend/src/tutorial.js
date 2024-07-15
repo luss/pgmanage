@@ -522,7 +522,7 @@ function startTutorial(p_tutorial_name) {
           if (!v_target) {
             v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .ace-editor`);
           }
-          return {x:v_target.getBoundingClientRect().x + 200,y:v_target.getBoundingClientRect().y + 40}},
+          return {x:v_target?.getBoundingClientRect()?.x + 200,y:v_target?.getBoundingClientRect()?.y + 40}},
         p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
         p_title: 'Query Result'
       }
