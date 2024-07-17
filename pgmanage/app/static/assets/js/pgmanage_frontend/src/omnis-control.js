@@ -474,3 +474,6 @@ function createOmnisUiAssistant({p_callback_end = false, p_omnis, p_steps = []})
   return v_omnisControl;
 
 }
+
+
+export { createOmnis, createOmnisUiAssistant}

@@ -1,5 +1,7 @@
 import 'vite/modulepreload-polyfill';
 import 'bootstrap/scss/bootstrap.scss'
+import './assets/css/font-poppins.css'
+import './assets/css/font-ubuntu-mono.css'
 import $ from 'jquery';
 import 'daterangepicker'
 import ace from 'ace-builds'

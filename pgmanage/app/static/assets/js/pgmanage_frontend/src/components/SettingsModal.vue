@@ -166,6 +166,7 @@
                   <label for="txt_new_pwd" class="fw-bold mb-2">New Password</label>
                   <input v-model="password" id="txt_new_pwd" type="password" class="form-control" @input="checkPassword"
                     minlength="8" required>
+                  <password-meter :password="password" />
                 </div>
                 <div class="col-6">
                   <label for="txt_confirm_new_pwd" class="fw-bold mb-2">Confirm</label>
@@ -199,6 +200,7 @@ import { settingsStore, tabsStore } from '../stores/stores_initializer'
 import { useVuelidate } from '@vuelidate/core'
 import { required, maxLength } from '@vuelidate/validators'
 import { Modal } from 'bootstrap'
+import PasswordMeter from 'vue-simple-password-meter';
 
 const light_terminal_theme = {
       background: '#FFFFFF',
@@ -218,6 +220,9 @@ const dark_terminal_theme = {
 
 export default {
   name: 'SettingsModal',
+  components: {
+    PasswordMeter
+  },
   data() {
     return {
       shortcutObject: {

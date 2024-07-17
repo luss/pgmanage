@@ -31,6 +31,9 @@ $theme-map: null; //important! do not delete this
 @import './libs/splitpanes';
 @import './libs/alert';
 @import './libs/color-labels';
+@import '@fortawesome/fontawesome-free/scss/fontawesome.scss';
+@import '@fortawesome/fontawesome-free/scss/solid.scss';
+@import '@fortawesome/fontawesome-free/scss/brands.scss';
 
 body {
     font-family: $fontFamily;
