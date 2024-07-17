@@ -11,8 +11,9 @@ git clone $REPO --depth 1 -b $BRANCH pgmanage
 
 # Installing dependencies
 cd pgmanage/
-pip3 install -r requirements.txt
-pip3 install pyinstaller==5.13.0
+mkdir -p /deploy/pip-cache
+pip3 install -r requirements.txt --cache-dir /deploy/pip-cache
+pip3 install pyinstaller==5.13.0  --cache-dir /deploy/pip-cache
 
 # if version is not provided, we use last tag from repository
 if [ -z "$VERSION" ]
@@ -25,7 +26,7 @@ then
 fi
 
 # if change nwjs and build options for debug
-if [ -z "$DEBUG" ]
+if [ "$DEBUG" == false ]
 then
     NWJS_URL='https://dl.nwjs.io/v0.69.1/nwjs-v0.69.1-linux-x64.tar.gz'
     NWJS_ARCHIVE='nwjs-v0.69.1-linux-x64.tar.gz'
@@ -34,6 +35,9 @@ else
     NWJS_URL='https://dl.nwjs.io/v0.69.1/nwjs-sdk-v0.69.1-linux-x64.tar.gz'
     NWJS_ARCHIVE='nwjs-sdk-v0.69.1-linux-x64.tar.gz'
     NWJS_DIR='nwjs-sdk-v0.69.1-linux-x64'
+    echo "*****************************************************"
+    echo "*********** BUILDING DEBUG CONFIGURATION ************"
+    echo "*****************************************************"
 fi
 
 # Building server

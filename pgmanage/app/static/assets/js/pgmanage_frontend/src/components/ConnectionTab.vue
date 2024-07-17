@@ -2,19 +2,22 @@
   <div class="container-fluid position-relative g-0">
     <div class="row g-0">
       <splitpanes class="default-theme">
-        <pane size="18">
+        <pane min-size="18" size="25">
           <div
             :id="`${connTabId}_div_left`"
             class="omnidb__workspace__div-left col"
           >
             <div class="row g-0">
               <div class="omnidb__workspace__content-left border-end">
-                <div class="omnidb__workspace__connection-details">
-                  <i class="fas fa-server me-1"></i>selected DB:
-                  <b>{{ databaseName }}</b>
+                <div class="omnidb__workspace__connection-details d-flex align-items-center flex-wrap-wrap justify-content-between">
+                  <p class="d-flex align-items-center flex-nowrap mb-0">
+                    <span class="text-nowrap">Selected DB:&nbsp;</span>
+                    <span class="text-info">{{ databaseName }}</span>
+                  </p>
+
                   <div
                     :id="`${connTabId}_switch`"
-                    class="omnidb__switch omnidb__switch--sm float-end"
+                    class="omnidb__switch omnidb__switch--sm"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     data-bs-html="true"
@@ -75,7 +78,7 @@
             </div>
           </div>
         </pane>
-        <pane>
+        <pane min-size="2">
           <div
             :id="`${connTabId}_div_right`"
             class="omnidb__workspace__div-right col position-relative right-div-height"

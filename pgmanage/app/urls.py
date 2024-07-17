@@ -10,7 +10,6 @@ base_urlpatterns = [
     path('', views.login.check_session, name='check_session'),
     path('pgmanage_login/', views.login.index, name='login'),
     path('logout/', views.login.logout, name='logout'),
-    path('check_session_message/', views.login.check_session_message, name='check_session_message'),
     path('sign_in/', views.login.sign_in, name='sign_in'),
 
     path('upload/', views.plugins.upload_view, name='sign_in'),

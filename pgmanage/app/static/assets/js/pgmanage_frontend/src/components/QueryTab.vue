@@ -132,8 +132,6 @@
         @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" @resized="resizeResultDiv = false"/>
     </pane>
   </splitpanes>
-
-  <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Query" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
 </div>
 </template>
 
@@ -146,11 +144,10 @@ import { queryModes, requestState, tabStatusMap, queryRequestCodes } from "../co
 import CancelButton from "./CancelSQLButton.vue";
 import QueryEditor from "./QueryEditor.vue";
 import { emitter } from "../emitter";
-import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryResultTabs from "./QueryResultTabs.vue";
 import FileInputChangeMixin from '../mixins/file_input_mixin'
-import { tabsStore, connectionsStore, messageModalStore, fileManagerStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore, messageModalStore, fileManagerStore, commandsHistoryStore } from "../stores/stores_initializer";
 import BlockSizeSelector from './BlockSizeSelector.vue';
 
 export default {
@@ -160,7 +157,6 @@ export default {
     Pane,
     CancelButton,
     QueryEditor,
-    CommandsHistoryModal,
     TabStatusIndicator,
     QueryResultTabs,
     BlockSizeSelector
@@ -199,7 +195,6 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
-      commandsModalVisible: false,
       lastQuery: null,
       queryInterval: null,
       resizeResultDiv: false,
@@ -421,14 +416,20 @@ export default {
     },
     exportData() {
       let cmd_type = `export_${this.exportType}`;
-      let query = this.lastQuery || this.getQueryEditorValue(true)
+      let command = this.lastQuery || this.getQueryEditorValue(true);
+      let explainRegex =
+          /^(EXPLAIN ANALYZE|EXPLAIN)\s*(\([^\)\(]+\))?\s+(.+)/is;
+      let queryMatch = command.match(explainRegex);
+      if (queryMatch) {
+        command = queryMatch[3] ?? command;
+      }
       this.querySQL(
         this.queryModes.DATA_OPERATION,
         cmd_type,
         true,
-        query,
+        command,
         true,
-        query,
+        command,
         true
       );
     },
@@ -509,7 +510,7 @@ export default {
       emitter.all.delete(`${this.tabId}_run_query`);
     },
     showCommandsHistory() {
-      this.commandsModalVisible = true
+      commandsHistoryStore.showModal(this.tabId, this.databaseIndex, "Query");
     },
     openFileManagerModal() {
       if (!!this.editorContent) {

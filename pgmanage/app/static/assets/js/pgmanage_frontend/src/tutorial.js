@@ -342,7 +342,6 @@ function startTutorial(p_tutorial_name) {
         <p>This is <strong>optional</strong>.</p>
         <p>If you want you can save the Passphrase of your user.</p>
         <p>* Leaving this empty will force the tool to request for your passphrase everytime you open a terminal connection.</p>
-        <p>i.e: If you are on linux, your linux user is available for a local connection.</p>
         `,
         p_target: function() {var v_target = document.getElementById('sshPassphrase'); return v_target},
         p_title: 'SSH Passphrase'
@@ -523,7 +522,7 @@ function startTutorial(p_tutorial_name) {
           if (!v_target) {
             v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .ace-editor`);
           }
-          return {x:v_target.getBoundingClientRect().x + 200,y:v_target.getBoundingClientRect().y + 40}},
+          return {x:v_target?.getBoundingClientRect()?.x + 200,y:v_target?.getBoundingClientRect()?.y + 40}},
         p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
         p_title: 'Query Result'
       }

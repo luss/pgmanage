@@ -38,7 +38,7 @@
     </div>
   </div>
   <div class="modal-footer mt-auto justify-content-between w-100">
-    <ConfirmableButton v-if="groupLocal.id" :callbackFunc="() => $emit('group:delete', groupLocal)" class="btn btn-danger" />
+    <ConfirmableButton v-if="groupLocal.id" :callbackFunc="() => $emit('group:delete', groupLocal)" class="btn btn-outline-danger" />
     <button type="button" 
       @click="trySave()" 
       class="btn btn-primary ms-auto"

@@ -3,7 +3,7 @@
     class="omnidb__tab-menu--container omnidb__tab-menu--container--primary omnidb__tab-menu--container--menu-shown"
   >
     <div
-      class="omnidb__tab-menu border-bottom omnidb__tab-menu--primary omnidb__theme-bg--menu-primary"
+      class="omnidb__tab-menu omnidb__tab-menu--primary omnidb__theme-bg--menu-primary"
     >
       <nav>
         <div class="nav nav-tabs">

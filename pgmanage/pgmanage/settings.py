@@ -116,7 +116,7 @@ elif PATH != '':
         PATH = PATH[:-1]
 
 
-LOGIN_URL = PATH + '/pgmanage_login'
+LOGIN_URL = PATH + '/pgmanage_login/'
 LOGIN_REDIRECT_URL = PATH + '/'
 
 STATIC_URL = PATH + '/static/'
