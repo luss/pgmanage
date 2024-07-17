@@ -32,14 +32,6 @@
             </a>
           </template>
           <a
-            v-if="superUser && !desktopMode"
-            id="omnidb__utilities-menu__link-user"
-            class="omnidb__menu__btn nav-item nav-link"
-            href="#"
-            @click="showUsers"
-            ><i class="fas fa-user" title="Users"></i
-          ></a>
-          <a
             id="omnidb__utilities-menu__link-config"
             class="omnidb__menu__btn nav-item nav-link"
             href="#"
@@ -81,7 +73,6 @@ import {
   settingsStore,
   utilitiesMenuStore,
 } from "../stores/stores_initializer.js";
-import { listUsers } from "../users.js";
 
 export default {
   name: "UtilitiesMenu",
@@ -133,9 +124,6 @@ export default {
       ) {
         this.menuExpanded = false;
       }
-    },
-    showUsers() {
-      listUsers();
     },
   },
 };

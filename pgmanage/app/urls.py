@@ -31,11 +31,6 @@ base_urlpatterns = [
 
     path('get_existing_tabs/', views.connections.get_existing_tabs, name='get_existing_tabs'),
 
-    #USERS
-    path('get_users/', views.users.get_users, name='get_users'),
-    path('remove_user/', views.users.remove_user, name='remove_user'),
-    path('save_users/', views.users.save_users, name='save_users'),
-
     #WORKSPACE
     path('workspace/', views.workspace.index, name='workspace'),
     path('renew_password/', views.workspace.renew_password, name='renew_password'),
