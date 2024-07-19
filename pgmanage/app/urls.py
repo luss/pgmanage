@@ -10,7 +10,6 @@ base_urlpatterns = [
     path('', views.login.check_session, name='check_session'),
     path('pgmanage_login/', views.login.index, name='login'),
     path('logout/', views.login.logout, name='logout'),
-    path('check_session_message/', views.login.check_session_message, name='check_session_message'),
     path('sign_in/', views.login.sign_in, name='sign_in'),
 
     path('upload/', views.plugins.upload_view, name='sign_in'),
@@ -31,11 +30,6 @@ base_urlpatterns = [
     path('delete_group/', views.connections.delete_group, name='delete_group'),
 
     path('get_existing_tabs/', views.connections.get_existing_tabs, name='get_existing_tabs'),
-
-    #USERS
-    path('get_users/', views.users.get_users, name='get_users'),
-    path('remove_user/', views.users.remove_user, name='remove_user'),
-    path('save_users/', views.users.save_users, name='save_users'),
 
     #WORKSPACE
     path('workspace/', views.workspace.index, name='workspace'),

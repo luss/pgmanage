@@ -11,6 +11,8 @@
   <CellDataModal />
   <FileManager />
   <UtilitiesMenu />
+  <AboutModal />
+  <CommandsHistoryModal />
   <template v-for="extraComp in enterpriseComps">
     <component :is="extraComp">
     </component>
@@ -28,8 +30,11 @@ import GenericMessageModal from "./components/GenericMessageModal.vue";
 import CellDataModal from "./components/CellDataModal.vue";
 import FileManager from "./components/FileManager.vue";
 import UtilitiesMenu from "./components/UtilitiesMenu.vue";
+import AboutModal from './components/AboutModal.vue';
+import CommandsHistoryModal from "./components/CommandsHistoryModal.vue";
 import { emitter } from "./emitter";
 import { startTutorial } from "./tutorial";
+import { createOmnis } from "./omnis-control";
 
 export default {
   name: "PgManage",
@@ -44,6 +49,8 @@ export default {
     CellDataModal,
     FileManager,
     UtilitiesMenu,
+    AboutModal,
+    CommandsHistoryModal,
   },
   data() {
     return {
@@ -70,6 +77,7 @@ export default {
       this.enterpriseComps = this?.enterpriseComponents ?? []
     },
     createOmnisAssistant() {
+      v_omnis = createOmnis();
       v_omnis.root = document.getElementById("app");
       v_omnis.div = document.createElement("div");
       v_omnis.div.setAttribute("id", "omnis");

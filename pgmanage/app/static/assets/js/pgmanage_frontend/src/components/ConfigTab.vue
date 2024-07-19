@@ -33,7 +33,7 @@
       <button class="btn btn-square btn-success me-2" :disabled="!selectedConf" @click="confirmConfig(e, true)">
         <i class="fa-solid fa-arrow-rotate-left"></i>
       </button>
-      <ConfirmableButton class="btn btn-square btn-danger me-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
+      <ConfirmableButton class="btn btn-danger me-2" :disabled="!selectedConf" :callbackFunc="() => deleteOldConfig(selectedConf.id)"> 
         <i class="fa-solid fa-xmark"></i>
       </ConfirmableButton>
       <button type="submit" class="btn btn-success ml-auto" :disabled="!hasUpdateValues || v$.$invalid"
@@ -65,8 +65,7 @@
 
         <div v-if="hasAppliedValues">
           <div id="ok-configuration" class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" aria-label="Close" @click="appliedSettings.data = ''">
-              <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+            <button type="button" class="btn-close" aria-label="Close" @click="appliedSettings.data = ''">
             </button>
             <p class="text-center">The following changes have been applied:</p>
             <table class="table table-sm table-borderless">

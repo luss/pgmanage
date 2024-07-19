@@ -83,8 +83,6 @@
           :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
     </pane>
   </splitpanes>
-
-  <CommandsHistoryModal ref="commandsHistory" :tab-id="tabId" :database-index="databaseIndex" tab-type="Console" :commands-modal-visible="commandsModalVisible" @modal-hide="commandsModalVisible=false"/>
 </div>
 </template>
 
@@ -95,10 +93,9 @@ import { CanvasAddon } from '@xterm/addon-canvas';
 import { Splitpanes, Pane } from "splitpanes";
 import { emitter } from "../emitter";
 import { showToast } from "../notification_control";
-import CommandsHistoryModal from "./CommandsHistoryModal.vue";
 import moment from "moment";
 import { createRequest } from "../long_polling";
-import { settingsStore, tabsStore, connectionsStore, messageModalStore, fileManagerStore } from "../stores/stores_initializer";
+import { settingsStore, tabsStore, connectionsStore, messageModalStore, fileManagerStore, commandsHistoryStore } from "../stores/stores_initializer";
 import TabStatusIndicator from "./TabStatusIndicator.vue";
 import QueryEditor from "./QueryEditor.vue";
 import CancelButton from "./CancelSQLButton.vue";
@@ -111,7 +108,6 @@ export default {
   components: {
     Splitpanes,
     Pane,
-    CommandsHistoryModal,
     TabStatusIndicator,
     QueryEditor,
     CancelButton,
@@ -142,7 +138,6 @@ export default {
       readOnlyEditor: false,
       editorContent: "",
       longQuery: false,
-      commandsModalVisible: false,
       terminal: null,
       fitAddon: null,
       blockSize: 50,
@@ -381,7 +376,7 @@ export default {
       this.editorContent = newContent;
     },
     showCommandsHistory() {
-      this.commandsModalVisible = true
+      commandsHistoryStore.showModal(this.tabId, this.databaseIndex, "Console");
     },
     openFileManagerModal() {
       if (!!this.editorContent) {
