@@ -76,7 +76,7 @@ python3.9 -mvenv .env
    - columns in query results data grid can now be minimized/maximized by double-clicking the column header
    - switchable data grid layouts in query tabs: adaptive, compact and fit-content can be selected by clicking the ellipsis icon on the top-left corner of the grid
    - existing DB connection can now be cloned in connection manager dialog
-   - the size of the next loaded data chunk can now be selcted when using "fetch-more" feature for large query results
+   - the size of the next loaded data chunk can now be selected when using "fetch-more" feature for large query results
    - added multi-statement queries support for SQlite3
    - database connections can now have a color label to make it easier to differentiate between different environments
    - scram-sha256 password hashing is now used when changing Postgres role passwords
