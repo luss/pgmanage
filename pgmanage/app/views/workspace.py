@@ -270,19 +270,20 @@ def draw_graph(request, database):
             edge['from_col'] = fkcol['column_name']
             edge['to_col'] = fkcol['r_column_name']
             edge['cgid'] = cgid
-            table = node_dict[fkcol['table_name']]
-            r_table = node_dict[fkcol['r_table_name']]
-            for col in table['columns']:
-                if col['name'] == fkcol['column_name']:
-                    col['is_fk'] = True
-                    col['cgid'] = cgid
+            table = node_dict.get(fkcol['table_name'])
+            r_table = node_dict.get(fkcol['r_table_name'])
+            if table and r_table:
+                for col in table['columns']:
+                    if col['name'] == fkcol['column_name']:
+                        col['is_fk'] = True
+                        col['cgid'] = cgid
 
-            for col in r_table['columns']:
-                if col['name'] == fkcol['r_column_name']:
-                    # FIXME: this is incomplete, seting PK based on FK constraints is not enough
-                    # there may be unreferenced PKs which will be missed
-                    col['is_pk'] = True
-                    col['cgid'] = f"{fkcol['r_table_name']}-{fkcol['r_column_name']}"
+                for col in r_table['columns']:
+                    if col['name'] == fkcol['r_column_name']:
+                        # FIXME: this is incomplete, seting PK based on FK constraints is not enough
+                        # there may be unreferenced PKs which will be missed
+                        col['is_pk'] = True
+                        col['cgid'] = f"{fkcol['r_table_name']}-{fkcol['r_column_name']}"
 
         response_data["v_data"] = {"nodes": list(node_dict.values()), "edges": list(edge_dict.values())}
 
