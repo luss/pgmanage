@@ -18,7 +18,8 @@ export default {
                 title: result.tooltip,
                 html: true,
                 delay: { show: 500, hide: 100 },
-                offset: [0, 10]
+                offset: [0, 10],
+                trigger: 'hover'
               });
             }
           });
@@ -40,26 +41,12 @@ export default {
         tab.clickFunction(event);
       }
 
-      if (tab.tooltip) {
-        const tooltipTriggerList =
-          document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) =>
-          Tooltip.getInstance(tooltipTriggerEl).hide()
-        );
-      }
     },
     contextMenuHandler(event, tab) {
       if (tab.rightClickFunction) {
         event.stopPropagation();
         event.preventDefault();
         tab.rightClickFunction(event, tab);
-      }
-      if (tab.tooltip) {
-        const tooltipTriggerList =
-          document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) =>
-          Tooltip.getInstance(tooltipTriggerEl).hide()
-        );
       }
     },
   },
