@@ -2,7 +2,6 @@ from functools import partial, wraps
 from typing import Any, Callable, Optional
 
 from app.client_manager import client_manager
-from app.utils.response_helpers import error_response
 from django.http import JsonResponse, HttpResponse
 
 
@@ -76,7 +75,6 @@ def superuser_required(function):
 
 def session_required(
     func: Optional[Callable[..., Any]] = None,
-    use_old_error_format: bool = False,
     include_session: bool = True,
 ) -> Callable[..., Any]:
     """
@@ -84,10 +82,6 @@ def session_required(
 
     Args:
         func (callable, optional): The function to be decorated.
-        use_old_error_format (bool, optional): Flag indicating whether to use old error format or not.
-            If True, returns a JsonResponse with old error format when session is invalid.
-            If False, returns a JsonResponse with a "Invalid session" message and status code 401.
-            Defaults to False.
         include_session (bool, optional): Flag indicating whether to include the session parameter
             when calling the decorated function. If True, the session parameter will be included.
             If False, the session parameter will be omitted. Defaults to True.
@@ -102,7 +96,6 @@ def session_required(
     if func is None:
         return partial(
             session_required,
-            use_old_error_format=use_old_error_format,
             include_session=include_session,
         )
 
@@ -110,8 +103,6 @@ def session_required(
     def containing_func(request, *args, **kwargs):
         session = request.session.get("pgmanage_session")
         if not session:
-            if use_old_error_format:
-                return error_response(message="", error_id=1)
             return JsonResponse({"data": "Invalid session"}, status=401)
 
         if include_session:
