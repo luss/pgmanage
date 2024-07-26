@@ -12,7 +12,6 @@ from app.utils.key_manager import key_manager
 from app.utils.master_password import (reset_master_pass,
                                        set_masterpass_check_text,
                                        validate_master_password)
-from app.utils.response_helpers import create_response_template, error_response
 from app.views.connections import session_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -206,7 +205,6 @@ def renew_password(request, session):
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
 def draw_graph(request, database):
-    response_data = create_response_template()
     schema = request.data.get("schema", '')
     edge_dict = {}
     node_dict = {}
@@ -275,10 +273,10 @@ def draw_graph(request, database):
                         col['is_pk'] = True
                         col['cgid'] = f"{fkcol['r_table_name']}-{fkcol['r_column_name']}"
 
-        response_data["v_data"] = {"nodes": list(node_dict.values()), "edges": list(edge_dict.values())}
+        response_data = {"nodes": list(node_dict.values()), "edges": list(edge_dict.values())}
 
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={'data': str(exc)}, status=400)
 
     return JsonResponse(response_data)
 
@@ -370,7 +368,7 @@ def get_database_meta(request, database):
         response_data["schemas"] = schema_list
 
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={'data': str(exc)}, status=400)
 
     return JsonResponse(response_data)
 
