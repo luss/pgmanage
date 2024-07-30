@@ -225,6 +225,9 @@ export default {
     },
     fileSaveDisabled() {
       return !this.editorContent;
+    },
+    hasChanges() {
+      return this.activeTransaction || this.executingState || (!!this.lastQuery && this.lastQuery !== this.editorContent);
     }
   },
   mounted() {
@@ -567,6 +570,14 @@ export default {
       this.resizeResultDiv = true
     }
   },
+  watch: {
+    hasChanges() {
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+      if (tab) {
+        tab.metaData.hasUnsavedChanges = this.hasChanges;
+      }
+    },
+  }
 };
 </script>
 
