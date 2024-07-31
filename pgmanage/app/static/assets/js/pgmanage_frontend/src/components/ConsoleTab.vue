@@ -159,6 +159,15 @@ export default {
     consoleModes() {
       return consoleModes;
     },
+    activeTransaction() {
+      return [
+        tabStatusMap.IDLE_IN_TRANSACTION,
+        tabStatusMap.IDLE_IN_TRANSACTION_ABORTED,
+      ].includes(this.tabStatus);
+    },
+    hasChanges() {
+      return this.activeTransaction || this.executingState || !!this.editorContent
+    }
   },
   updated() { 
     if (!this.terminal) {
@@ -392,6 +401,14 @@ export default {
       }
     },
   },
+  watch: {
+    hasChanges() {
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+      if (tab) {
+        tab.metaData.hasUnsavedChanges = this.hasChanges;
+      }
+    },
+  }
 };
 </script>
 
