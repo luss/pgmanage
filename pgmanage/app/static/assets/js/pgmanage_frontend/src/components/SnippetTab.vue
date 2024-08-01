@@ -99,8 +99,8 @@ export default {
     },
     hasChanges() {
       return (
-        (!!this.snippet.id && this.snippet.text !== this.editorValue) ||
-        (this.snippet.id === null && !!this.editorValue)
+        (!!this.snippet?.id && this.snippet.text !== this.editorValue) ||
+        (this.snippet?.id === null && !!this.editorValue)
       );
     },
   },
@@ -306,7 +306,7 @@ export default {
   },
   watch: {
     hasChanges() {
-      const tab = tabsStore.getSecondaryTabById(this.tabId, this.snippetPanel.id);
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.snippetPanel?.id);
       if (tab) {
         tab.metaData.hasUnsavedChanges = this.hasChanges;
       }
