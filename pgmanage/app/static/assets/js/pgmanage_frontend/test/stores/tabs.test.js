@@ -344,7 +344,8 @@ describe("useTabsStore", () => {
     const store = useTabsStore();
     store.createSchemaEditorTab(
       {
-        data: { schema: "TestSchema", database: "TestDB", title: "test_table" },
+        title: "test_table",
+        data: { schema: "TestSchema", database: "TestDB" },
       },
       "create",
       "mysql"
