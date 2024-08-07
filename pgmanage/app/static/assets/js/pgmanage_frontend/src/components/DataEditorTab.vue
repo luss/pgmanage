@@ -145,6 +145,9 @@ export default {
       }
     })
   },
+  unmounted() {
+    emitter.all.delete(`${this.tabId}_query_edit`);
+  },
   updated() {
     if (tabsStore.selectedPrimaryTab?.metaData?.selectedTab?.id === this.tabId) {
       this.handleResize();

@@ -3017,6 +3017,9 @@ export default {
       this.refreshTree(tables_node || schema_node, true);
     });
   },
+  unmounted() {
+    emitter.all.delete(`schemaChanged_${this.tabId}`);
+  },
   methods: {
     onContextMenu(node, e) {
       this.$refs.tree.select(node.path);

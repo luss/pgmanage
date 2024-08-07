@@ -144,6 +144,9 @@ export default {
       this.refreshTreeRecursive(parent_id);
     });
   },
+  unmounted() {
+    emitter.all.delete('refresh_snippet_tree');
+  },
   methods: {
     doubleClickNode(node, e) {
       if (node.isLeaf) {

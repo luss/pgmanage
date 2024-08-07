@@ -514,6 +514,7 @@ export default {
       emitter.all.delete(`${this.tabId}_run_explain`);
       emitter.all.delete(`${this.tabId}_run_explain_analyze`);
       emitter.all.delete(`${this.tabId}_run_query`);
+      emitter.all.delete(`${this.tabId}_run_selection`);
     },
     showCommandsHistory() {
       commandsHistoryStore.showModal(this.tabId, this.databaseIndex, "Query");

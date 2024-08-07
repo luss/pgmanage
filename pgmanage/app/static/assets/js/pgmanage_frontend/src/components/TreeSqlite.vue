@@ -333,6 +333,9 @@ export default {
       this.refreshTree(tables_node, true);
     });
   },
+  unmounted() {
+    emitter.all.delete(`schemaChanged_${this.tabId}`);
+  },
   methods: {
     refreshTree(node, force) {
       if (!this.shouldUpdateNode(node, force)) return
