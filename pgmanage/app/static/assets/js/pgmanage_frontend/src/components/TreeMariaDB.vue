@@ -655,6 +655,18 @@ export default {
         });
       }, 200);
     })
+    emitter.on(`schemaChanged_${this.tabId}`, ({ schema_name, database_name }) => {
+      const tree = this.$refs.tree;
+      let db_node = tree.getNextNode([0], (node) => {
+        return (
+          node.data.type === "database" && node.data.database === database_name
+        );
+      });
+      let tables_node = tree.getNextNode(db_node.path, (node) => {
+        return node.data.type === "table_list";
+      });
+      this.refreshTree(tables_node);
+    });
   },
   methods: {
     onContextMenu(node, e) {
@@ -1187,7 +1199,7 @@ export default {
               icon: "fas node-all fa-thumbtack node-index",
               type: "index",
               contextMenu: "cm_index",
-              uniqueness: el.uniqueness,
+              unique: el.unique ? 'Unique' : "Non unique",
               database: node.data.database
             });
           });

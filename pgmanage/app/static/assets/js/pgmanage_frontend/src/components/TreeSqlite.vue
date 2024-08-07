@@ -324,7 +324,7 @@ export default {
       }, 200)
     })
 
-    emitter.on(`schemaChanged_${this.id}`, () => {
+    emitter.on(`schemaChanged_${this.tabId}`, () => {
       const tree = this.$refs.tree;
       let tables_node = tree.getNextNode([0], (node) => {
         return node.data.type === "table_list";
@@ -685,7 +685,7 @@ export default {
               icon: "fas node-all fa-thumbtack node-index",
               type: "index",
               contextMenu: "cm_index",
-              uniqueness: el.uniqueness,
+              unique: el.unique ? 'Unique' : "Non unique",
             });
           });
         })

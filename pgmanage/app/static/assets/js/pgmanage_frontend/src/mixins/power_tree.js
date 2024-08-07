@@ -164,8 +164,8 @@ export default {
       this.refreshTree(node);
     },
     formatTitle(node) {
-      if (node.data.uniqueness !== undefined) {
-        return `${node.title} (${node.data.uniqueness})`;
+      if (node.data.unique !== undefined) {
+        return `${node.title} (${node.data.unique})`;
       }
       return node.title;
     },
