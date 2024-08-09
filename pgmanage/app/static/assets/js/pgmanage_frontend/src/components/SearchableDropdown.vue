@@ -17,6 +17,7 @@
     <div class="dropdown-searchable__content"
       v-show="optionsShown">
       <div
+        :data-testid="`dropdown-searchable-item-${index}`"
         class="dropdown-searchable__content_item"
         @mousedown="toggleOption(option)"
         v-for="(option, index) in filteredOptions"
@@ -165,7 +166,7 @@
       modelValue: {
         handler(newVal) {
           if (this.multiSelect) {
-            this.selected = this.options.filter(option => newVal.includes(option));
+            this.selected = this.options.filter(option => newVal?.includes(option));
           } else {
             this.selected = this.options.find(option => option === newVal) || newVal;
             this.searchFilter = this.selected;
