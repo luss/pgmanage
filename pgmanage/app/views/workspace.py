@@ -311,7 +311,7 @@ def get_table_columns(request, database):
                 pk_cols = database.QueryTablesPrimaryKeysColumns(table)
 
             cols = ', '.join(['t.'+x['column_name'] for x in pk_cols.Rows])
-            order_by = f"ORDER BY {cols}"
+            order_by = f"ORDER BY {cols}" if cols else ""
 
             pk_column_names = [x['column_name'] for x in pk_cols.Rows]
 
