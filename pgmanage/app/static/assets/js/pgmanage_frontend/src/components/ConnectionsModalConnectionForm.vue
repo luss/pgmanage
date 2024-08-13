@@ -439,21 +439,21 @@ import { Modal } from 'bootstrap';
       placeholder() {
         const placeholderMap = {
           'postgresql': {
-            'server': 'ex: 127.0.0.1',
+            'server': 'ex: host or UNIX socket basedir, blank for default basedir',
             'port': 'ex: 5432',
             'service': 'ex: postgres',
             'user': 'ex: postgres',
             'conn_string': 'ex: postgresql://postgres@localhost:5432/postgres'
           },
           'mysql': {
-            'server': 'ex: 127.0.0.1',
+            'server': 'ex: host or absolute UNIX socket path',
             'port': 'ex: 3306',
             'service': 'ex: db',
             'user': 'ex: root',
             'conn_string': 'ex: mysql://root@localhost:3306/db'
           },
           'mariadb': {
-            'server': 'ex: 127.0.0.1',
+            'server': 'ex: host or absolute UNIX socket path',
             'port': 'ex: 3306',
             'service': 'ex: db',
             'user': 'ex: root',
