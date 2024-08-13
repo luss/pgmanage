@@ -57,6 +57,7 @@
             </div>
             <div class="col-7">
               <a
+                data-testid="supporter-link"
                 target="_blank"
                 class="font-weight-bold"
                 href="https://www.commandprompt.com/"
@@ -73,6 +74,7 @@
             </div>
             <div class="col-7">
               <a
+                data-testid="pgmanage-github-link"
                 class="font-weight-bold"
                 target="_blank"
                 href="https://github.com/commandprompt/pgmanage"
