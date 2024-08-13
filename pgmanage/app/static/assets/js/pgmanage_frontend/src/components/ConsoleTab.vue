@@ -249,6 +249,7 @@ export default {
             let tab = tabsStore.getSelectedSecondaryTab(this.connId)
             this.queryDuration = "";
             this.cancelled = false;
+            this.fetchMoreData = false;
             this.longQuery = false;
             this.tempData = [];
             emitter.emit(`${this.tabId}_copy_to_editor`, "");
