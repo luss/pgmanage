@@ -355,7 +355,7 @@ export default {
       }
     },
     clearConsole() {
-      this.terminal.write("\x1b[H\x1b[2J");
+      this.terminal.clear();
       this.terminal.write(this.consoleHelp);
     },
     indentSQL() {
@@ -364,7 +364,7 @@ export default {
     cancelConsoleTab() {
       clearInterval(this.queryInterval);
       this.queryInterval = null;
-      
+
       this.readOnlyEditor = false;
 
       this.consoleState = requestState.Idle;
