@@ -240,6 +240,11 @@ export default {
         {
           title: "Command",
           field: "snippet",
+          tooltip: "Double-click to copy this command to editor",
+          cellDblClick: (e, cell) => {
+            emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
+            this.modalInstance.hide();
+          },
           contextMenu: [
             {
               label:
