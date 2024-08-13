@@ -56,6 +56,11 @@ export default {
       this.refreshTreeRecursive(node_type);
     });
 
+    this.$watch("selectedNode", (newVal) => {
+      if (newVal === undefined) {
+        this.$emit("clearTabs");
+      }
+    });
   },
   unmounted() {
     emitter.all.delete(`refreshNode_${this.id}`);
