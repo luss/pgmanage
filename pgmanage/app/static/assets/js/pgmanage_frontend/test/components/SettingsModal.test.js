@@ -84,7 +84,6 @@ describe("SettingsModal.vue", () => {
   });
 
   it("should handle the validation of PostgreSQL binary path", async () => {
-    console.log(wrapper.html());
     const validateBinaryPathSpy = vi.spyOn(wrapper.vm, "validateBinaryPath");
     const validateButton = wrapper.find(
       '[data-testid="validate-binary-path-button"]'
