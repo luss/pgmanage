@@ -63,7 +63,7 @@ export default {
   mounted() {
     this.setupEditor();
     this.setupEvents();
-    this.editor.on("change", () => {
+    this.editor.on("change", (obj, editor) => {
       this.$emit("editorChange", this.editor.getValue().trim());
     });
 
@@ -126,6 +126,13 @@ export default {
       this.editor.commands.bindKey("Ctrl-F", null);
       this.editor.commands.bindKey("Ctrl-,", null);
 
+      const scoreMap = {
+        COLUMN: 5000,
+        TABLE: 4000,
+        VIEW: 3000,
+        KEYWORD: 1000,
+      };
+
       this.editor.setOptions({
         enableBasicAutocompletion: [
           {
@@ -136,14 +143,13 @@ export default {
                 editor.getValue(),
                 editor.session.doc.positionToIndex(editor.selection.getCursor())
               );
-
               let ret = [];
               options.forEach(function(opt) {
                 ret.push({
                     caption: opt.value,
                     value: opt.value,
                     meta: opt.optionType.toLowerCase(),
-                    score: 100
+                    score: scoreMap[opt.optionType]
                 });
               })
               callback(null, ret)
