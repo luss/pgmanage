@@ -70,4 +70,34 @@ function createPgCronModal(node, mode) {
   app.mount(`#pgcron-modal-wrap`);
 }
 
-export { createExtensionModal, createPgCronModal };
+function createRoleModal(node, mode) {
+  const wrap_div = document.getElementById("role-modal-wrap");
+
+  wrap_div.innerHTML = `<role-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :conn-id="connId"></role-modal>`;
+
+  const app = createApp({
+    components: {
+      "role-modal": defineAsyncComponent(() => import("@/components/RoleModal.vue")),
+    },
+    data() {
+      return {
+        mode: mode,
+        treeNode: node,
+        databaseIndex:
+        tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
+        connId: tabsStore.selectedPrimaryTab.id,
+      };
+    },
+    mounted() {
+      setTimeout(() => {
+        let roleModalEl = document.getElementById("roleModal")
+        roleModalEl.addEventListener("hidden.bs.modal", () => {
+          app.unmount();
+        });
+      }, 500);
+    },
+  });
+  app.mount(`#role-modal-wrap`);
+}
+
+export { createExtensionModal, createPgCronModal, createRoleModal };

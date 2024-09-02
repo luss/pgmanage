@@ -34,7 +34,7 @@ import {
   TemplateInsertPostgresql,
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
-import { createExtensionModal, createPgCronModal } from "./postgresql_modals";
+import { createExtensionModal, createPgCronModal, createRoleModal } from "./postgresql_modals";
 import { showConfirm, showToast } from "../notification_control";
 import { connectionsStore, messageModalStore, tabsStore } from "../stores/stores_initializer";
 import ContextMenu from "@imengyu/vue3-context-menu";
@@ -2751,9 +2751,9 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Role",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
-              tabSQLTemplate("Create Role", this.templates.create_role);
+              createRoleModal(this.selectedNode, "Create");
             },
           },
           {
@@ -2773,7 +2773,7 @@ export default {
             label: "Change Password",
             icon: "fas cm-all fa-key",
             onClick: () => {
-              //FIXME: rewrite this properly
+              //TODO: remove the change password modal since its functionality is now handled by role editor
               let html_text = `<div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="change_pwd_role">Password</label>
@@ -2817,16 +2817,10 @@ export default {
             },
           },
           {
-            label: "Alter Role",
+            label: "Edit Role",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              tabSQLTemplate(
-                "Alter Role",
-                this.templates.alter_role.replace(
-                  "#role_name#",
-                  this.selectedNode.data.raw_value
-                )
-              );
+              createRoleModal(this.selectedNode, "Edit");
             },
           },
           {
