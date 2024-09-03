@@ -214,7 +214,7 @@
 
           <div class="modal-footer mt-auto justify-content-between">
             <button class="btn btn-outline-secondary"
-              v-if="mode == 'Edit'"
+              v-if="mode === operationModes.UPDATE"
               :disabled="!(v$.$invalid || hasChanges)"
               @click="revertChanges">
               Revert changes
@@ -240,6 +240,7 @@
   import { showToast } from '../notification_control'
   import moment from 'moment'
   import { settingsStore } from '../stores/stores_initializer'
+  import { operationModes } from '../constants';
   import { Modal } from 'bootstrap'
 
   export default {
@@ -248,7 +249,7 @@
         SearchableDropdown
     },
     props: {
-      mode: String,
+      mode: operationModes,
       treeNode: Object,
       connId: String,
       databaseIndex: Number,
@@ -310,7 +311,7 @@
 
     computed: {
       modalTitle() {
-        if (this.mode === 'Edit')
+        if (this.mode === operationModes.UPDATE)
           return 'Edit Role'
         return 'Create Role'
       },
@@ -345,8 +346,12 @@
         deep: true
       }
     },
+    created() {
+      // allows for using operationModes in the template
+      this.operationModes = operationModes
+    },
     mounted() {
-      if (this.mode === 'Edit') {
+      if (this.mode === operationModes.UPDATE) {
         this.getRoleDetails()
       } else {
         this.localRole = JSON.parse(JSON.stringify(this.initialRole));
@@ -405,7 +410,7 @@
         collection.push(defaultRole)
       },
       removeMember(collection, index) {
-        if(this.mode === 'Edit' && !collection[index].new) {
+        if(this.mode === operationModes.UPDATE && !collection[index].new) {
           collection[index].deleted = true;
         } else {
           collection.splice(index, 1)
@@ -432,7 +437,7 @@
           return permVals[permName][Number(this.localRole[permName])]
         }
 
-        if (this.mode === 'Create') {
+        if (this.mode === operationModes.CREATE) {
           let permissions = Object.keys(permVals)
             .map(k => formatPermission(k))
             .filter(item => typeof item ==='string')
@@ -465,7 +470,7 @@
 
           ret = `${roleParts.join('\n')};\n${membershipParts.join('\n')}`
           this.hasChanges = true
-        } else if (this.mode === 'Edit') {
+        } else if (this.mode === operationModes.UPDATE) {
           let roleParts = []
           let permissions = Object.keys(permVals)
             .filter(key => this.initialRole[key] != this.localRole[key])

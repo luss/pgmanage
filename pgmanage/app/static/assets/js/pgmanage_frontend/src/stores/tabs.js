@@ -6,7 +6,7 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import { createRequest, removeContext } from "../long_polling";
 import moment from "moment";
 import { emitter } from "../emitter";
-import { queryRequestCodes } from "../constants";
+import { queryRequestCodes, operationModes } from "../constants";
 import { showMenuNewTabOuter, renameTab } from "../workspace";
 import { h } from "vue";
 
@@ -696,8 +696,8 @@ const useTabsStore = defineStore("tabs", {
     createSchemaEditorTab(node, mode, dialect) {
       let tableName = node.title.replace(/^"(.*)"$/, "$1");
 
-      let tabTitle = mode === "alter" ? `Alter: ${tableName}` : "New Table";
-      let icon = `<i class="fas ${mode === 'create' ? 'fa-plus' : 'fa-edit'} cm-all icon-tab-title"></i>`;
+      let tabTitle = mode === operationModes.UPDATE ? `Alter: ${tableName}` : "New Table";
+      let icon = `<i class="fas ${mode === operationModes.CREATE ? 'fa-plus' : 'fa-edit'} cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
@@ -723,7 +723,7 @@ const useTabsStore = defineStore("tabs", {
       tab.metaData.dialect = dialect || "postgres";
       tab.metaData.editMode = mode;
       tab.metaData.schema = dialect === "mysql" ? node.data.database : node.data.schema;
-      tab.metaData.table = mode === "alter" ? tableName : null;
+      tab.metaData.table = mode === operationModes.UPDATE ? tableName : null;
       tab.metaData.treeNode = node;
       tab.metaData.databaseIndex =
         this.selectedPrimaryTab?.metaData?.selectedDatabaseIndex;

@@ -27,6 +27,12 @@ const consoleModes = {
   SKIP_FETCH: 3,
 }
 
+const operationModes = {
+  CREATE: 0,
+  UPDATE: 1,
+  DELETE: 2
+}
+
 /// <summary>
 /// Transaction codes of client requests.
 /// </summary>
@@ -104,5 +110,6 @@ export {
   maxLinesForIndentSQL,
   mimeTypeMap,
   consoleModes,
-  colorLabelMap
+  colorLabelMap,
+  operationModes
 };

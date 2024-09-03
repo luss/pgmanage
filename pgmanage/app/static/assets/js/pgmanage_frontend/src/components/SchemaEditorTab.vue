@@ -1,6 +1,6 @@
 <template>
   <div class="schema-editor-scrollable px-2 pt-3">
-    <template v-if="mode === 'alter'"> <!-- ALTER SCHEMA -->
+    <template v-if="mode === operationModes.UPDATE"> <!-- ALTER SCHEMA -->
       <div class="row">
         <div class="form-group col-2">
             <label class="fw-bold mb-2" :for="`${tabId}_tableNameInput`">Table Name</label>
@@ -54,7 +54,7 @@
       </div>
     </template>
 
-  <template v-if="mode !== 'alter'"> <!-- CREATE SCHEMA -->
+  <template v-if="mode !== operationModes.UPDATE"> <!-- CREATE SCHEMA -->
 
     <div class="row">
           <div class="form-group col-2">
@@ -113,7 +113,7 @@ import { useVuelidate } from '@vuelidate/core'
 import ColumnList from './SchemaEditorColumnList.vue'
 import dialects from './dialect-data'
 import { createRequest } from '../long_polling'
-import { queryRequestCodes } from '../constants'
+import { queryRequestCodes, operationModes } from '../constants'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import { settingsStore, tabsStore } from '../stores/stores_initializer'
@@ -143,7 +143,7 @@ export default {
   name: "SchemaEditor",
   props: {
     // pass dbrefs here so that we can make api calls
-    mode: String,
+    mode: operationModes,
     dialect: String,
     schema: String,
     table: String,
@@ -193,6 +193,10 @@ export default {
         tabType: "Columns"
     };
   },
+  created() {
+    // allows for using operationModes in the template
+    this.operationModes = operationModes
+  },
   mounted() {
     // the "client" parameter is a bit misleading here,
     // we do not connect to any db from Knex, just setting
@@ -200,7 +204,7 @@ export default {
     this.knex = Knex({ client: this.dialect })
     this.loadDialectData(this.dialect)
     this.setupEditor()
-    if(this.$props.mode==='alter') {
+    if(this.$props.mode === operationModes.UPDATE) {
       this.loadTableDefinition().then(() => {
         this.loadIndexes();
       });
@@ -475,7 +479,7 @@ export default {
       let k = this.knex.schema.withSchema(tabledef.schema)
 
       this.hasChanges = false
-      if(this.mode === 'alter') {
+      if(this.mode === operationModes.UPDATE) {
         this.generatedSQL = this.generateAlterSQL(k);
       } else {
         // mode==create
@@ -551,7 +555,7 @@ export default {
 
         emitter.emit(`schemaChanged_${this.connId}`, { database_name: this.databaseName, schema_name: this.localTable.schema })
         // ALTER: load table changes into UI
-        if(this.mode === 'alter') {
+        if(this.mode === operationModes.UPDATE) {
           this.loadTableDefinition().then(() => {
             this.loadIndexes();
           });
@@ -573,7 +577,7 @@ export default {
       return rawTypes
     },
     showSchema() {
-      return this.mode !== 'alter' && this.dialectData.hasSchema
+      return this.mode !== operationModes.UPDATE && this.dialectData.hasSchema
     },
     commentable() {
       return this.dialectData.hasComments
@@ -582,7 +586,7 @@ export default {
       return this.mode
     },
     editable() {
-      return ((this.mode == 'alter' && !this.dialectData?.disabledFeatures?.alterColumn) || this.mode == 'create')
+      return ((this.mode === operationModes.UPDATE && !this.dialectData?.disabledFeatures?.alterColumn) || this.mode === operationModes.CREATE)
     },
     multiPrimaryKeys() {
       return !this.dialectData?.disabledFeatures?.multiPrimaryKeys
