@@ -904,16 +904,6 @@ def get_role_details(request, database):
 
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
-def save_role(request, database):
-    data = request.data
-    try:
-        database.Execute(data.get("query"))
-    except Exception as exc:
-        return JsonResponse(data={"data": str(exc)}, status=400)
-    return JsonResponse({"status": "success"})
-
-@user_authenticated
-@database_required(check_timeout=True, open_connection=True)
 def get_functions(request, database):
     schema = request.data["schema"]
 
@@ -1220,7 +1210,7 @@ def get_extension_details(request, database):
 
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
-def save_extension(request, database):
+def execute_query(request, database):
     data = request.data
     try:
         database.Execute(data.get("query"))
