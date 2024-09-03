@@ -57,9 +57,9 @@
           </div>
 
           <div v-if="commentable" class="col-3">
-            <input :disabled="this.mode == 'alter'" v-model="column.comment" class="form-control mb-0"
+            <input :disabled="this.mode === operationModes.UPDATE" v-model="column.comment" class="form-control mb-0"
             type="text"
-            :placeholder="this.mode == 'alter' ? '' : 'column comment...'" />
+            :placeholder="this.mode === operationModes.UPDATE ? '' : 'column comment...'" />
           </div>
 
           <div :class="['col d-flex me-2', this.movable(column) ? 'justify-content-between': 'justify-content-end']">
@@ -94,6 +94,7 @@
 
 <script>
   import SearchableDropdown from "./SearchableDropdown.vue";
+  import { operationModes } from "../constants";
 
   export default {
     name: 'SchemaEditorColumnList',
@@ -102,6 +103,10 @@
         columns: [],
         value:'',
       }
+    },
+    created() {
+      // allows for using operationModes in the template
+      this.operationModes = operationModes
     },
     components: {
       SearchableDropdown
@@ -112,7 +117,7 @@
         default: []
       },
       commentable: Boolean,
-      mode: String,
+      mode: operationModes,
       dataTypes: Array,
       multiPKeys: Boolean
     },
@@ -123,7 +128,7 @@
       },
       disabledPrimaryKey() {
         // return this.mode === "alter" && !this.multiPKeys && this.countOfPrimaryKeys == 1
-        return this.mode === "alter" // TODO: add support for altering Primary Keys and then fix this
+        return this.mode === operationModes.UPDATE // TODO: add support for altering Primary Keys and then fix this
       }
     },
     methods: {
@@ -136,7 +141,7 @@
           nullable: false,
           isPK: false,
           comment:null,
-          new: this.mode === 'alter',
+          new: this.mode === operationModes.UPDATE,
           editable: true,
           is_dirty: false
         }
@@ -144,11 +149,11 @@
       },
       movable(column) {
         //all columns are movable when creating a new table
-        if(this.mode !== 'alter') return true;
+        if(this.mode !== operationModes.UPDATE) return true;
         if(column.new) return true;
       },
       removeColumn(index) {
-        if(this.mode === 'alter' && !this.columns[index].new) {
+        if(this.mode === operationModes.UPDATE && !this.columns[index].new) {
           this.columns[index].deleted = true;
         } else {
           this.columns.splice(index, 1)
@@ -157,7 +162,7 @@
       moveColumnUp(index) {
         // prevent moving newly added column above existing ones in "alter" mode
         if(index == 0) return;
-        if(this.mode === 'alter') {
+        if(this.mode === operationModes.UPDATE) {
           let colAbove = this.columns[index-1]
           if(!colAbove.new) return;
         }

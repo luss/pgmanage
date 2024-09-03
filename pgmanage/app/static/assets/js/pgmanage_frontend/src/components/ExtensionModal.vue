@@ -12,7 +12,7 @@
           <div class="form-group mb-2">
             <label for="extensionName" class="fw-bold mb-1">Name</label>
             <select id="extensionName" class="form-select" v-model="selectedExtension"
-              :disabled="mode === 'Alter'">
+              :disabled="mode === operationModes.UPDATE">
               <option value="" disabled>Select an item...</option>
               <option v-for="(extension, index) in availableExtensions" :value="extension" :key="index">{{ extension.name
               }}</option>
@@ -67,12 +67,13 @@ import { emitter } from '../emitter'
 import axios from 'axios'
 import { showToast } from '../notification_control'
 import { settingsStore, messageModalStore } from '../stores/stores_initializer';
+import { operationModes } from '../constants';
 import { Modal } from 'bootstrap';
 
 export default {
   name: 'ExtensionModal',
   props: {
-    mode: String,
+    mode: operationModes,
     treeNode: Object,
     tabId: String,
     databaseIndex: Number
@@ -90,12 +91,12 @@ export default {
   },
   computed: {
     generatedSQL() {
-      if (!!this.selectedExtension && this.mode === 'Create') {
+      if (!!this.selectedExtension && this.mode === operationModes.CREATE) {
         const schema = !!this.selectedSchema ? `\n    SCHEMA ${this.selectedSchema}` : ''
         const version = !!this.selectedVersion ? `\n    VERSION "${this.selectedVersion}"` : ''
         const name = this.selectedExtension.name.includes('-') ? `"${this.selectedExtension.name}"` : this.selectedExtension.name
         return `CREATE EXTENSION ${name}${schema}${version};`
-      } else if (this.mode === 'Alter' && !!this.selectedExtension) {
+      } else if (this.mode === operationModes.UPDATE && !!this.selectedExtension) {
         const name = this.selectedExtension.name.includes('-') ? `"${this.selectedExtension.name}"` : this.selectedExtension.name
         const clauses = [];
         if (this.selectedSchema !== this.selectedExtension?.schema) {
@@ -119,10 +120,10 @@ export default {
       }
     },
     isRelocatable() {
-      return this.mode === 'Create' || (this.mode === 'Alter' && this.selectedExtension.relocatable);
+      return this.mode === operationModes.CREATE || (this.mode === operationModes.UPDATE && this.selectedExtension.relocatable);
     },
     modalTitle() {
-      if (this.mode === 'Alter') return this.selectedExtension.name
+      if (this.mode === operationModes.UPDATE) return this.selectedExtension.name
       return 'Create Extension'
     },
     noUpdates() {
@@ -134,21 +135,25 @@ export default {
       this.selectedSchema = newValue ? newValue : ''
     },
     selectedExtension() {
-      if (this.mode === 'Create') this.selectedVersion = ''
+      if (this.mode === operationModes.CREATE) this.selectedVersion = ''
     },
     generatedSQL() {
       this.editor.setValue(this.generatedSQL)
       this.editor.clearSelection();
     }
   },
+  created() {
+    // allows for using operationModes in the template
+    this.operationModes = operationModes
+  },
   mounted() {
     this.getAvailableExtensions()
     this.getSchemas()
-    if (this.mode === 'Alter') {
+    if (this.mode === operationModes.UPDATE) {
       this.getExtensionDetails()
     }
     this.setupEditor()
-    if (this.mode !== 'Drop') {
+    if (this.mode !== operationModes.DELETE) {
       this.modalInstance = new Modal('#postgresqlExtensionModal')
       this.modalInstance.show()
     } else {

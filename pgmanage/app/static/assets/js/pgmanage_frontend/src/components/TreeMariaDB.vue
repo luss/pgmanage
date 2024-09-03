@@ -34,6 +34,7 @@ import { emitter } from "../emitter";
 import { tabsStore, connectionsStore } from "../stores/stores_initializer";
 import { checkBeforeChangeDatabase } from "../workspace";
 import ContextMenu from "@imengyu/vue3-context-menu";
+import { operationModes } from "../constants";
 
 export default {
   name: "TreeMariaDB",
@@ -123,7 +124,7 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "mysql")
+              tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.CREATE, "mysql")
             },
           },
         ],
@@ -194,7 +195,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "mysql")
+                  tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.UPDATE, "mysql")
                 },
               },
               {

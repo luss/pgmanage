@@ -35,6 +35,7 @@ import {
   TemplateSelectFunctionPostgresql,
 } from "../tree_context_functions/tree_postgresql";
 import { createExtensionModal, createPgCronModal, createRoleModal } from "./postgresql_modals";
+import { operationModes } from "../constants";
 import { showConfirm, showToast } from "../notification_control";
 import { connectionsStore, messageModalStore, tabsStore } from "../stores/stores_initializer";
 import ContextMenu from "@imengyu/vue3-context-menu";
@@ -239,7 +240,7 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "postgres")
+              tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.CREATE, "postgres")
             },
           },
           {
@@ -382,7 +383,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "postgres")
+                  tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.UPDATE, "postgres")
                 },
               },
               {
@@ -2199,7 +2200,7 @@ export default {
             label: "Create Extension",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              createExtensionModal(this.selectedNode, "Create");
+              createExtensionModal(this.selectedNode, operationModes.CREATE);
             },
           },
           {
@@ -2219,7 +2220,7 @@ export default {
             label: "Alter Extension",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              createExtensionModal(this.selectedNode, "Alter");
+              createExtensionModal(this.selectedNode, operationModes.UPDATE);
             },
           },
           {
@@ -2233,7 +2234,7 @@ export default {
             label: "Drop Extension",
             icon: "fas cm-all fa-times",
             onClick: () => {
-              createExtensionModal(this.selectedNode, "Drop");
+              createExtensionModal(this.selectedNode, operationModes.DELETE);
             },
           },
         ],
@@ -2753,7 +2754,7 @@ export default {
             label: "Create Role",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createRoleModal(this.selectedNode, "Create");
+              createRoleModal(this.selectedNode, operationModes.CREATE);
             },
           },
           {
@@ -2820,7 +2821,7 @@ export default {
             label: "Edit Role",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              createRoleModal(this.selectedNode, "Edit");
+              createRoleModal(this.selectedNode, operationModes.UPDATE);
             },
           },
           {
@@ -2928,7 +2929,7 @@ export default {
             label: "New Job",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              createPgCronModal(this.selectedNode, "Create");
+              createPgCronModal(this.selectedNode, operationModes.CREATE);
             },
           },
         ],
@@ -2937,7 +2938,7 @@ export default {
             label: "View/Edit",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              createPgCronModal(this.selectedNode, "Edit");
+              createPgCronModal(this.selectedNode, operationModes.UPDATE);
             },
           },
           {

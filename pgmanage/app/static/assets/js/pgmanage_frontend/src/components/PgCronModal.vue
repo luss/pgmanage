@@ -14,7 +14,7 @@
               <a class="nav-link active" id="job_schedule-tab" data-bs-toggle="tab" href="#job_schedule"
                 role="tab" aria-controls="job_schedule" aria-selected="true">Schedule</a>
             </li>
-            <li v-if="mode==='Edit'" class="nav-item">
+            <li v-if="mode===operationModes.UPDATE" class="nav-item">
               <a class="nav-link" id="job_statistics-tab" data-bs-toggle="tab" href="#job_statistics" role="tab"
                 aria-controls="job_statistics" aria-selected="false">Job Statistics</a>
             </li>
@@ -92,7 +92,7 @@
             </div>
 
             <!-- Job stats tab -->
-            <div v-if="mode==='Edit'" class="tab-pane fade show" id="job_statistics" role="tabpanel"
+            <div v-if="mode===operationModes.UPDATE" class="tab-pane fade show" id="job_statistics" role="tabpanel"
                 aria-labelledby="job_statistics-tab" style="height: 50vh">
                 <div v-if="jobLogs.length">
                   <div class='job-statistics-tab__header d-flex justify-content-between align-items-center pb-3'>
@@ -109,7 +109,7 @@
         </div>
 
         <div class="modal-footer mt-auto justify-content-between">
-          <ConfirmableButton v-if="mode==='Edit'" :callbackFunc="deleteJob" class="btn btn-danger m-0" />
+          <ConfirmableButton v-if="mode===operationModes.UPDATE" :callbackFunc="deleteJob" class="btn btn-danger m-0" />
           <button type="button" class="btn btn-primary m-0 ms-auto"
             @click="saveJob">
             Save
@@ -146,7 +146,8 @@ import axios from 'axios'
 import { showToast } from '../notification_control'
 import moment from 'moment'
 import { settingsStore } from '../stores/stores_initializer'
-import { TabulatorFull as Tabulator } from "tabulator-tables";
+import { TabulatorFull as Tabulator } from 'tabulator-tables'
+import { operationModes } from '../constants'
 import { Modal } from 'bootstrap'
 
 export default {
@@ -155,7 +156,7 @@ export default {
       ConfirmableButton
   },
   props: {
-    mode: String,
+    mode: operationModes,
     treeNode: Object,
     connId: String,
     databaseIndex: Number,
@@ -199,7 +200,7 @@ export default {
 
   computed: {
     modalTitle() {
-      if (this.mode === 'Edit') return 'Edit Job'
+      if (this.mode === operationModes.UPDATE) return 'Edit Job'
       return 'Create Job'
     },
     jobStatsHeader() {
@@ -237,10 +238,13 @@ export default {
       }
     }
   },
-
+  created() {
+    // allows for using operationModes in the template
+    this.operationModes = operationModes
+  },
   mounted() {
     this.getDatabases()
-    if (this.mode === 'Edit') {
+    if (this.mode === operationModes.UPDATE) {
         this.getJobDetails()
         let tabEl = document.getElementById('job_statistics-tab')
         tabEl.addEventListener('shown.bs.tab', this.setupJobStatisticsTab)

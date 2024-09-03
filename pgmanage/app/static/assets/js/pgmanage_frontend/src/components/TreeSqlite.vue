@@ -30,6 +30,7 @@ import {
 import { tabSQLTemplate } from "../tree_context_functions/tree_postgresql";
 import { emitter } from "../emitter";
 import { tabsStore } from "../stores/stores_initializer";
+import { operationModes } from "../constants";
 
 export default {
   name: "TreeSqlite",
@@ -80,7 +81,7 @@ export default {
             label: "Create Table",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              tabsStore.createSchemaEditorTab(this.selectedNode, "create", "sqlite3")
+              tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.CREATE, "sqlite3")
             },
           },
         ],
@@ -141,7 +142,7 @@ export default {
                 label: "Alter Table",
                 icon: "fas cm-all fa-edit",
                 onClick: () => {
-                  tabsStore.createSchemaEditorTab(this.selectedNode, "alter", "sqlite3")
+                  tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.UPDATE, "sqlite3")
                 },
               },
               {
