@@ -225,7 +225,7 @@ export default {
       const checkedValues = messageModalStore.checkboxes
       const cascade = checkedValues[0].checked ? 'CASCADE' : ''
       const query = `DROP EXTENSION IF EXISTS "${this.treeNode.title}" ${cascade};`
-      axios.post('/save_postgresql_extension/', {
+      axios.post('/execute_query_postgresql/', {
         database_index: this.databaseIndex,
         tab_id: this.tabId,
         query: query
