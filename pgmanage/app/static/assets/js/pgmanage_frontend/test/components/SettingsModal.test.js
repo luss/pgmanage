@@ -2,6 +2,15 @@ import { flushPromises, mount } from "@vue/test-utils";
 import SettingsModal from "@/components/SettingsModal.vue";
 import { useSettingsStore } from "../../src/stores/settings";
 import { vi, describe, beforeEach, afterEach, it, expect } from "vitest";
+import axios from "axios";
+
+vi.mock("@/notification_control", () => {
+  const showAlert = vi.fn();
+  return {
+    showAlert,
+  };
+});
+vi.mock("axios");
 
 describe("SettingsModal.vue", () => {
   let wrapper, settingsStore;
@@ -67,7 +76,7 @@ describe("SettingsModal.vue", () => {
     selectEl.dispatchEvent(new Event("change"));
     await flushPromises();
     expect(preview.text()).toMatch(
-      /^\d{2}\/\d{2}\/\d{4}, \d{1,2}:\d{2}:\d{2} (AM|PM)$/ // MM/D/YYYY, h:mm:ss A
+      /^\d{2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2}:\d{2} (AM|PM)$/ // MM/D/YYYY, h:mm:ss A
     );
 
     selectEl.selectedIndex = 0;
@@ -88,6 +97,7 @@ describe("SettingsModal.vue", () => {
     const validateButton = wrapper.find(
       '[data-testid="validate-binary-path-button"]'
     );
+    axios.post.mockResolvedValue({ data: { data: "test data" } });
     await validateButton.trigger("click");
     expect(validateBinaryPathSpy).toHaveBeenCalledWith(wrapper.vm.binaryPath, [
       "pg_dump",
