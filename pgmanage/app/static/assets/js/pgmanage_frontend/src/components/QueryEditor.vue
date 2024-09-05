@@ -145,7 +145,7 @@ export default {
                 editor.getValue(),
                 editor.session.doc.positionToIndex(editor.selection.getCursor())
               );
-              console.log('trigger', options)
+
               let ret = [];
               options.forEach(function(opt) {
                 ret.push({
