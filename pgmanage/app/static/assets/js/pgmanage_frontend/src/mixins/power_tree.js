@@ -56,6 +56,11 @@ export default {
       this.refreshTreeRecursive(node_type);
     });
 
+    this.$watch("selectedNode", (newVal) => {
+      if (newVal === undefined) {
+        this.$emit("clearTabs");
+      }
+    });
   },
   unmounted() {
     emitter.all.delete(`refreshNode_${this.id}`);
@@ -73,10 +78,8 @@ export default {
       if (node.isExpanded) return;
       this.refreshTree(node);
       if(settingsStore.scrollTree) {
-        this.getNodeEl(node.path).scrollIntoView({
-          block: "start",
-          inline: "nearest",
-          behavior: "smooth",
+        this.$nextTick(() => {
+          this.scrollIntoViewIfPossible(node)
         })
       }
     },
@@ -233,5 +236,26 @@ export default {
         getInnerNode(rootNode.children[i], node_type);
       }
     },
+    scrollIntoViewIfPossible(node) {
+      const nodeElement = this.getNodeEl(node.path).querySelector('.vue-power-tree-title');
+      const nodeRect = nodeElement.getBoundingClientRect();
+      const parentElement = this.$refs.tree.$el.parentElement
+
+      const scrollTop = parentElement.scrollTop;
+      const scrollHeight = parentElement.scrollHeight;
+      const clientHeight = parentElement.clientHeight;
+
+      // Calculate the space needed to scroll the node to the top
+      const spaceAvailableForScroll = scrollHeight - scrollTop - clientHeight;
+      const spaceNeededForScroll = nodeRect.top - 40
+
+      if (spaceNeededForScroll <= spaceAvailableForScroll) {
+        nodeElement.scrollIntoView({
+          block: "start",
+          inline: "end",
+          behavior: "smooth",
+        });
+      } 
+    }
   },
 };

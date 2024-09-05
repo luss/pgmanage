@@ -65,18 +65,16 @@
         <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
           @cancelled="cancelConsoleTab()" />
 
-        <div>
-          <p class="m-0 h6" v-if="cancelled">
-            <b>Cancelled</b>
-          </p>
-          <p v-else-if="queryStartTime && queryDuration" class="m-0 h6 me-2">
-            <b>Start time:</b> {{ queryStartTime.format() }}<br/>
-            <b>Duration:</b> {{ queryDuration }}
-          </p>
-          <p v-else-if="queryStartTime" class="m-0 h6 me-2">
-            <b>Start time:</b> {{ queryStartTime.format() }}
-          </p>
-        </div>
+        <p class="m-0 h6" v-if="cancelled">
+          <b>Cancelled</b>
+        </p>
+        <p v-else-if="queryStartTime && queryDuration" class="m-0 h6 me-2">
+          <b>Start time:</b> {{ queryStartTime.format() }}<br/>
+          <b>Duration:</b> {{ queryDuration }}
+        </p>
+        <p v-else-if="queryStartTime" class="m-0 h6 me-2">
+          <b>Start time:</b> {{ queryStartTime.format() }}
+        </p>
       </div>
       <!--FIXME: add proper editor height recalculation-->
         <QueryEditor ref="editor" class="custom-editor me-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
@@ -247,6 +245,7 @@ export default {
             let tab = tabsStore.getSelectedSecondaryTab(this.connId)
             this.queryDuration = "";
             this.cancelled = false;
+            this.fetchMoreData = false;
             this.longQuery = false;
             this.tempData = [];
             emitter.emit(`${this.tabId}_copy_to_editor`, "");
@@ -353,7 +352,7 @@ export default {
       }
     },
     clearConsole() {
-      this.terminal.write("\x1b[H\x1b[2J");
+      this.terminal.clear();
       this.terminal.write(this.consoleHelp);
     },
     indentSQL() {
@@ -362,7 +361,7 @@ export default {
     cancelConsoleTab() {
       clearInterval(this.queryInterval);
       this.queryInterval = null;
-      
+
       this.readOnlyEditor = false;
 
       this.consoleState = requestState.Idle;

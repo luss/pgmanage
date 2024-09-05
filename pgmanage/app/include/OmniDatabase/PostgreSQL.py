@@ -7505,9 +7505,30 @@ FROM #table_name#
                  (select array_upper(rolconfig,1) from pg_roles where quote_ident(rolname)='{0}')
               ) as generate_series(i)
              where quote_ident(rolname) = '{0}'
-             )
-            select ddl||coalesce(ddl_config||E'\n','')
-              from q1,q2
+             ),
+                                               q3 as (
+                select string_agg(ddl, E'\n') as ddl_grants from (
+                SELECT
+                    'GRANT ' || pg_catalog.array_to_string(pg_catalog.array_agg(rolname order by rolname), ', ') || ' TO ' || '{0}' ||
+                    CASE WHEN admin_option THEN ' WITH ADMIN OPTION;' ELSE ';' END AS ddl
+                FROM
+                    (SELECT
+                    pg_catalog.quote_ident(r.rolname) AS rolname, m.admin_option AS admin_option, m.member AS member
+                    FROM
+                        pg_catalog.pg_auth_members m
+                    LEFT JOIN pg_catalog.pg_roles r ON (m.roleid = r.oid)
+                    LEFT JOIN pg_catalog.pg_roles mem ON (m.member = mem.oid)
+                    WHERE
+                        quote_ident(mem.rolname) = '{0}'
+                    ORDER BY
+                    r.rolname
+                    ) a
+                GROUP BY admin_option, member) b 
+                )
+            select ddl||coalesce(ddl_config||E'\n','') || coalesce(ddl_grants, '')
+              from q1
+            left join q2 on true
+            left join q3 on true;
         '''.format(p_object))
     
     @lock_required

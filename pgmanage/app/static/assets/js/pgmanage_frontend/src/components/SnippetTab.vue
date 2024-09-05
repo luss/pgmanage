@@ -93,9 +93,13 @@ export default {
       return `calc(100vh - ${this.heightSubtract}px)`;
     },
     snippetPanel() {
-      return tabsStore.tabs.find(
-          (tab) => tab.name === "Snippets"
-        );
+      return tabsStore.tabs.find((tab) => tab.name === "Snippets");
+    },
+    hasChanges() {
+      return (
+        (!!this.snippet?.id && this.snippet.text !== this.editorValue) ||
+        (this.snippet?.id === null && !!this.editorValue)
+      );
     },
   },
   beforeMount() {
@@ -293,6 +297,14 @@ export default {
       }
     },
   },
+  watch: {
+    hasChanges() {
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.snippetPanel?.id);
+      if (tab) {
+        tab.metaData.hasUnsavedChanges = this.hasChanges;
+      }
+    },
+  }
 };
 </script>
 

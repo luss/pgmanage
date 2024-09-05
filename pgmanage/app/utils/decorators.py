@@ -4,6 +4,7 @@ from typing import Any, Callable, Optional
 from app.client_manager import client_manager
 from app.utils.response_helpers import error_response
 from django.http import JsonResponse, HttpResponse
+from app.include.Spartacus.Database import InvalidPasswordException
 
 
 def user_authenticated(function):
@@ -51,6 +52,9 @@ def database_required(check_timeout=True, open_connection=True):
                         database_name=database_name,
                         attempt_to_open_connection=open_connection,
                     )
+                except InvalidPasswordException as exc:
+                    data = {"password_timeout": True, "data": str(exc)}
+                    return JsonResponse(data=data, status=400)
                 except Exception as exc:
                     data = {"password_timeout": False, "data": str(exc)}
                     return JsonResponse(data=data, status=400)

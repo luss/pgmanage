@@ -64,6 +64,29 @@ python3.9 -mvenv .env
     - Password: admin
 
 
+# PgManage 1.1.1 Release
+
+## Release Date: Aug 28 2024
+
+## Release Notes
+
+  - New features:
+    - added IPv6 support for database connections
+    - allow using UNIX domain socket paths in connection form -> server field (#438)
+    - allow empty server values in the connection form for Postgres connections
+    - password prompt will now be shown when user tries to establish database connection with wrong password
+    - queries in console query history modal can now be copied to query tab with a double-click
+    - console history buffer is now cleared from memory when "clear console" button is clicked
+
+  - Bugs fixed:
+    - fixed unrestricted code execution vulnerability in monitoring widget back-end. The issue was reported by Andrew Effenhauser, Ayman Hammad and Daniel Crowley of X-Force Red
+    - fixed Entity Relationship not rendering diagram for some database layouts
+    - fixes issue when expanded DB object tree node was not always scrolled to the top of viewport
+    - fixed missing GRANT statements when roles is displayed in DDL tab
+    - fixed a bug when application tabs may become unresponsive some cases
+    - various minor layout fixes and tweaks
+
+
 # PgManage 1.1 Release
 
 ## Release Date: Jul 16 2024
