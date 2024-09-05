@@ -66,7 +66,7 @@ python3.9 -mvenv .env
 
 # PgManage 1.1.1 Release
 
-## Release Date: Aug 28 2024
+## Release Date: Sep 04 2024
 
 ## Release Notes
 
