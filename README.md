@@ -7,8 +7,9 @@ developers the initial focus is on the "management" of Postgres.
 We proudly leverage all of the great work done by the original
 (now dormant) project https://github.com/OmniDB/OmniDB
 
+PgManage is being developed by [CommandPrompt Inc.](https://www.commandprompt.com/)
 
-**Website & Downloads**: https://www.commandprompt.com/products/pgmanage/
+**Download and Install**: https://github.com/commandprompt/pgmanage/releases
 
 **Full Documentation**: https://pgmanage.readthedocs.io/en/latest/
 
