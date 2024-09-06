@@ -1170,9 +1170,8 @@ def thread_query(self, args) -> None:
             duration = get_duration(log_start_time, log_end_time)
 
             log_status = "error"
-
             response_data["data"] = {
-                "position": database.GetErrorPosition(str(exc)),
+                "position": database.GetErrorPosition(str(exc), sql_cmd),
                 "message": str(exc),
                 "duration": duration,
                 "notices": notices,

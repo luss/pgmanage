@@ -138,7 +138,6 @@ export default {
         enableBasicAutocompletion: [
           {
             getCompletions: (function (editor, session, pos, prefix, callback) {
-              
               if(!this.completer)
                 return
               const options = this.completer.autocomplete(
@@ -216,12 +215,15 @@ export default {
       this.completer = new SQLAutocomplete(DIALECT_MAP[this.dialect] || SQLDialect.PLpgSQL, tableNames, columnNames, viewNames, schemaNames);
     },
     getQueryEditorValue(raw_query) {
-      if (raw_query) return this.editor.getValue().trim();
+      if (raw_query) return this.editor.getValue();
       let selectedText = this.editor.getSelectedText();
       let lineAtCursor = this.editor.session.getLine(
         this.editor.getCursorPosition().row
       );
       return !!selectedText ? selectedText : lineAtCursor;
+    },
+    getQueryOffset() {
+      return this.editor.selection.getRange().start.row
     },
     contextMenu(event) {
       let option_list = [
