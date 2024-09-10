@@ -24,7 +24,8 @@ const useConnectionsStore = defineStore({
       if (!con) return;
       Object.assign(con, { ...data });
     },
-    selectConnection(connection) {
+    selectConnection(conn_id) {
+      let connection = this.getConnection(conn_id);
       connection.last_access_date = moment.now();
       if (connection.technology === "terminal") {
         let details = `${connection.tunnel.user}@${connection.tunnel.server}:${connection.tunnel.port}`;

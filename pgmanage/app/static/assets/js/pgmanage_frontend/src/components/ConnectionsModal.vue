@@ -77,6 +77,7 @@
                   @connection:save="saveConnection"
                   @connection:delete="deleteConnection"
                   @connection:clone="cloneConnection"
+                  @connection:change="(isChanged) => { isFormChanged = isChanged }"
                   :initialConnection="selectedConnection"
                   :technologies="technologies"
                   :visible="activeForm == 'connection'"
@@ -111,7 +112,8 @@ export default {
         technologies: [],
         selectedConnection: {},
         selectedGroup: undefined,
-        activeForm: undefined
+        activeForm: undefined,
+        isFormChanged: false,
       }
   },
   components: {
@@ -272,11 +274,12 @@ export default {
       return `${techname} - ${connection.server}:${connection.port}`
     },
     showForm(form_type, object = undefined) {
-      if (this.v$.$anyDirty) {
+      if (this.isFormChanged) {
         messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset();
+            this.isFormChanged = false;
             this.showForm(form_type, object);
           },
           null
@@ -367,14 +370,17 @@ export default {
       this.loadData(false)})
     
     this.$refs.connmodal.addEventListener("hide.bs.modal", (event) => {
-      if (this.v$.$anyDirty) {
+      if (this.isFormChanged) {
         event.preventDefault()
         messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
             this.v$.$reset()
-            this.$refs.connectionForm.reset()
-            Modal.getOrCreateInstance(this.$refs.connmodal).hide()
+            this.selectedConnection = {};
+            this.activeForm = undefined;
+            this.$nextTick(() => {
+              Modal.getOrCreateInstance(this.$refs.connmodal).hide()
+            })
           },
           null
         );
