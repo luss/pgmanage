@@ -33,7 +33,7 @@
                 </template>
               <span v-else>Test</span>
             </button>
-            <button v-if="this.connectionLocal.id" @click="selectConnection(this.connectionLocal)" class="btn btn-success">Connect</button>
+            <button v-if="this.connectionLocal.id" @click="selectConnection(this.connectionLocal.id)" class="btn btn-success">Connect</button>
           </div>
         </div>
 
@@ -267,6 +267,7 @@ import { connectionsStore, messageModalStore } from '../stores/stores_initialize
 import { colorLabelMap } from '../constants'
 import ConfirmableButton from './ConfirmableButton.vue'
 import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
 import { showToast } from '../notification_control';
 import { Modal } from 'bootstrap';
 
@@ -275,6 +276,12 @@ import { Modal } from 'bootstrap';
     components: {
       ConfirmableButton
     },
+    emits: [
+      "connection:change",
+      "connection:save",
+      "connection:delete",
+      "connection:clone",
+    ],
     data() {
       return {
         connectionLocal: {
@@ -512,7 +519,7 @@ import { Modal } from 'bootstrap';
         return this.connectionLocal.tunnel.key_set ? 'SSH Key Passphrase' : 'SSH Password'
       },
       isChanged() {
-        return !isEqual(this.connectionLocal, this.initialConnection)
+        return !isEmpty(this.initialConnection) && !isEqual(this.connectionLocal, this.initialConnection)
       }
     },
     methods: {
@@ -529,24 +536,25 @@ import { Modal } from 'bootstrap';
         this.connectionLocal.port = ''
       },
       reset() {
-        let defaults = this.$options.props.initialConnection.default
-        this.connectionLocal = {...defaults}
+        this.connectionLocal = JSON.parse(JSON.stringify(this.initialConnection));
         this.v$.connectionLocal.$reset()
       },
-      selectConnection(connection) {
-        if (this.v$.$anyDirty) {
+      selectConnection(conn_id) {
+        if (this.isChanged) {
           messageModalStore.showModal(
           "Are you sure you wish to discard the current changes?",
           () => {
-            this.v$.$reset()
-            Modal.getOrCreateInstance('#connections-modal').hide()
-            connectionsStore.selectConnection(connection)
+            this.reset();
+            this.$nextTick(() => {
+              Modal.getOrCreateInstance('#connections-modal').hide();
+              connectionsStore.selectConnection(conn_id);
+            });
           },
           null
         );
         } else {
           Modal.getOrCreateInstance('#connections-modal').hide()
-          connectionsStore.selectConnection(connection)
+          connectionsStore.selectConnection(conn_id)
         }
       },
       setColorLabel(val) {
@@ -614,10 +622,13 @@ import { Modal } from 'bootstrap';
       }
     },
     watch: {
-      initialConnection(newVal, oldVal) {
-        this.connectionLocal = {...newVal}
-        this.connectionLocal.tunnel = {...newVal.tunnel}
-        this.v$.connectionLocal.$reset()
+      initialConnection: {
+        handler(newVal, oldVal) {
+          this.connectionLocal = {...newVal};
+          this.connectionLocal.tunnel = {...newVal.tunnel};
+          this.v$.connectionLocal.$reset();
+        },
+        deep: true
       },
       'connectionLocal.technology': function (newVal, oldVal) {
         if (oldVal === undefined || this.connectionLocal.id) {
@@ -636,7 +647,10 @@ import { Modal } from 'bootstrap';
         }
         if (newVal)
           this.connectionLocal.port = this.placeholder.port.replace('ex: ','')
-    },
+      },
+      isChanged(value) {
+        this.$emit("connection:change", value);
+      },
     }
   }
 </script>

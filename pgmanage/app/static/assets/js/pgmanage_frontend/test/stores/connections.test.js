@@ -54,16 +54,17 @@ describe("connections store", () => {
 
   it("selects a connection and creates a terminal tab if technology is terminal", () => {
     const store = useConnectionsStore();
-    const createTerminalTab = vi.fn();
-    tabsStore.createTerminalTab = createTerminalTab;
     const connection = {
       id: 1,
       alias: "Test",
       technology: "terminal",
       tunnel: { user: "user", server: "server", port: 22 },
     };
+    store.connections = [connection];
+    const createTerminalTab = vi.fn();
+    tabsStore.createTerminalTab = createTerminalTab;
 
-    store.selectConnection(connection);
+    store.selectConnection(connection.id);
     expect(createTerminalTab).toHaveBeenCalledWith(
       connection.id,
       connection.alias,
@@ -73,11 +74,12 @@ describe("connections store", () => {
 
   it("selects a connection and creates a connection tab if technology is not terminal", () => {
     const store = useConnectionsStore();
+    const connection = { id: 1, technology: "other" };
+    store.connections = [connection];
     const createConnectionTab = vi.fn();
     tabsStore.createConnectionTab = createConnectionTab;
-    const connection = { id: 1, technology: "other" };
 
-    store.selectConnection(connection);
+    store.selectConnection(connection.id);
     expect(createConnectionTab).toHaveBeenCalledWith(connection.id);
   });
 
