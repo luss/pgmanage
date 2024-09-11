@@ -16,7 +16,7 @@
               <div class="recent-conections">
                 <h2 class="mb-3">Recent Connections</h2>
                 <div class="recent-conections__list d-flex flex-column">
-                  <div v-for="(connection, idx) in recentConnections" :key="idx" @click="selectConnection(connection)"
+                  <div v-for="(connection, idx) in recentConnections" :key="idx" @click="selectConnection(connection.id)"
                     :class="colorLabelMap[connection.color_label].class || ''"
                     class="recent-conections__item">
                     <div class="recent-conections__item_wrap d-flex align-items-center m-0">
@@ -148,8 +148,8 @@ export default {
       if(connection.technology === 'terminal') return `${connection.tunnel.server}:${connection.tunnel.port}`
       return `${connection.server}:${connection.port}/${connection.service}`
     },
-    selectConnection(connection) {
-      connectionsStore.selectConnection(connection);
+    selectConnection(conn_id) {
+      connectionsStore.selectConnection(conn_id);
     },
     loadShortcuts() {
       this.shortcuts = JSON.parse(JSON.stringify(settingsStore.shortcuts))
