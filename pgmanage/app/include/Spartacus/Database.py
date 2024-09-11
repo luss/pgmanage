@@ -3046,7 +3046,7 @@ class Oracle(Generic):
             v_table = DataTable(None, p_alltypesstr, p_simple)
             if self.v_cur.description:
                 for c in self.v_cur.description:
-                    v_table.AddColumn(c[0])
+                    v_table.AddColumn(c.name)
                 v_row = self.v_cur.fetchone()
                 while v_row is not None:
                     v_table.AddRow(list(v_row))
@@ -3158,12 +3158,12 @@ class Oracle(Generic):
             if r != None:
                 k = 0
                 for c in self.v_cur.description:
-                    v_fields.append(DataField(c[0], p_type=type(r[k]), p_dbtype=c[1].__name__))
+                    v_fields.append(DataField(c.name, p_type=type(r[k]), p_dbtype=c.type.name))
                     k = k + 1
             else:
                 k = 0
                 for c in self.v_cur.description:
-                    v_fields.append(DataField(c[0], p_type=type(None), p_dbtype=c[1].__name__))
+                    v_fields.append(DataField(c.name, p_type=type(None), p_dbtype=c.type.name))
                     k = k + 1
             return v_fields
         except Spartacus.Database.Exception as exc:
@@ -3253,8 +3253,8 @@ class Oracle(Generic):
                 v_table = DataTable(None, p_alltypesstr, p_simple)
                 if self.v_cur.description:
                     for c in self.v_cur.description:
-                        v_table.AddColumn(c[0])
-                        v_table.AddColumnTypeCode(c[1].num)
+                        v_table.AddColumn(c.name)
+                        v_table.AddColumnTypeCode(c.type_code.num)
                     v_row = self.v_cur.fetchone()
                     if p_blocksize > 0:
                         k = 0
