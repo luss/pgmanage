@@ -110,7 +110,7 @@ function setupAceSelectionHighlight(editor) {
       let escapedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
       // Find other occurrences of the selected text
-      let pattern = new RegExp(escapedText, "g");
+      let pattern = new RegExp(escapedText, "gi");
 
       editor.getSession().highlight(pattern);
       editor.getSession().$searchHighlight.clazz = "ace_selection";
