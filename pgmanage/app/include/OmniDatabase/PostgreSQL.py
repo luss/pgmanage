@@ -793,7 +793,7 @@ class PostgreSQL:
             v_return = str(exc)
         return v_return
 
-    def GetErrorPosition(self, p_error_message):
+    def GetErrorPosition(self, p_error_message, sql_cmd):
         vector = str(p_error_message).split('\n')
         v_return = None
         if len(vector) > 1 and vector[1][0:4]=='LINE':

@@ -172,6 +172,7 @@ export default {
       autocommit: true,
       queryStartTime: "",
       queryDuration: "",
+      queryOffset: 0,
       data: "",
       context: "",
       tempData: [],
@@ -312,7 +313,7 @@ export default {
           context.tab.metaData.context = context;
 
           createRequest(queryRequestCodes.Query, message_data, context);
-
+          this.$refs.editor.editor.getSession().clearAnnotations()
           this.queryState = requestState.Executing;
 
           setTimeout(() => {
@@ -336,6 +337,15 @@ export default {
         Array.prototype.push.apply(this.tempData, data.data.data)
       }
 
+      if(data.error && data.data?.position) {
+        let pos = data.data.position
+        this.$refs.editor.editor.getSession().setAnnotations([{
+            row: pos.row - 1 + this.queryOffset, //annotation rows are counted from 0
+            column: pos.col,
+            text: data.data.message,
+            type: "error"
+          }]);
+      }
       //Update tab_db_id if not null in response
       if (data.data.inserted_id) {
         this.tabDatabaseId = data.data.inserted_id;
@@ -418,6 +428,8 @@ export default {
         }
       }
 
+      // queryOffset is needed to correctly annotate errors when "Run Selection" is used
+      this.queryOffset = use_raw_query ? 0 : this.$refs.editor.getQueryOffset()
       this.querySQL(this.queryModes.DATA_OPERATION, null, false, query=query)
     },
     exportData() {

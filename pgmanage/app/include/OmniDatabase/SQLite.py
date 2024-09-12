@@ -985,17 +985,17 @@ END
     def GetAutocompleteValues(self, p_columns, p_filter):
         return None
 
-    def GetErrorPosition(self, p_error_message):
-        vector = str(p_error_message).split('\n')
-        v_return = None
+    def GetErrorPosition(self, p_error_message, sql_cmd):
+        ret = None
+        try:
+            err_token = re.search('.*near "(.*)".*', p_error_message).group(1)
+            if err_token:
+                row = sql_cmd.count('\n', 0, sql_cmd.find(err_token)) + 1
+                ret = {'row': row, 'col': 0}
+        except AttributeError:
+            pass
 
-        if len(vector) > 1 and vector[1][0:4]=='LINE':
-            v_return = {
-                'row': vector[1].split(':')[0].split(' ')[1],
-                'col': vector[2].index('^') - len(vector[1].split(':')[0])-2
-            }
-
-        return v_return
+        return ret
 
     def GetPropertiesTable(self, p_object):
         return self.v_connection.Query('''

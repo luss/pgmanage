@@ -239,15 +239,15 @@ class MariaDB:
             v_return = str(exc)
         return v_return
 
-    def GetErrorPosition(self, p_error_message):
-        vector = str(p_error_message).split('\n')
-        v_return = None
-        if len(vector) > 1 and vector[1][0:4]=='LINE':
-            v_return = {
-                'row': vector[1].split(':')[0].split(' ')[1],
-                'col': vector[2].index('^') - len(vector[1].split(':')[0])-2
-            }
-        return v_return
+    def GetErrorPosition(self, p_error_message, sql_cmd):
+        ret = None
+        try:
+            row = re.search('.*\sat line (\d+)', p_error_message).group(1)
+            ret = {'row': row, 'col': 0}
+        except AttributeError:
+            pass
+
+        return ret
 
     @lock_required
     def Query(self, p_sql, p_alltypesstr=False, p_simple=False):

@@ -106,9 +106,6 @@ function setupAceSelectionHighlight(editor) {
     // Get the selected text
     let selectedText = editor.getSelectedText();
 
-    // Clear existing highlights
-    editor.getSession().clearAnnotations();
-
     if (selectedText.length > 0) {
       let escapedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
