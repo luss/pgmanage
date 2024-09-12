@@ -243,7 +243,7 @@ class MySQL:
     def GetErrorPosition(self, p_error_message, sql_cmd):
         ret = None
         try:
-            row = re.search('.*\sat line (\d)', p_error_message).group(1)
+            row = re.search('.*\sat line (\d+)', p_error_message).group(1)
             ret = {'row': row, 'col': 0}
         except AttributeError:
             pass
