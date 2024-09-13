@@ -3,8 +3,6 @@ import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
-import Components from "unplugin-vue-components/vite";
-import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
 import path from "node:path";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import inject from "@rollup/plugin-inject";
@@ -24,9 +22,6 @@ export default defineConfig(({ command, mode }) => {
         sourceMap: isDebugBuild,
       }),
       vue(),
-      Components({
-        resolvers: [BootstrapVueNextResolver()],
-      }),
       nodePolyfills({
         globals: {
           process: true,
