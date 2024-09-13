@@ -280,11 +280,13 @@ const useTabsStore = defineStore("tabs", {
           showToast("error", "Create connections first.");
           reject("No connections available.");
         } else {
-          let connection = connectionsStore.getConnection(index)
+          let connection = connectionsStore.getConnection(index);
 
           // patch the connection last used date when connecting
           // to refresh last-used labels on the welcome screen
-          connectionsStore.updateConnection(index, {'last_access_date': moment.now()})
+          connectionsStore.updateConnection(index, {
+            last_access_date: moment.now(),
+          });
           let connName = "";
           if (name) {
             connName = name;
@@ -343,44 +345,23 @@ const useTabsStore = defineStore("tabs", {
             },
             closeFunction: (e, primaryTab) => {
               this.beforeCloseTab(e, () => {
-                let tabsToRemove = [];
+                const secondaryTabs = this.getSecondaryTabs(primaryTab.id);
 
-                let tab_ids = this.getSecondaryTabs(primaryTab.id).map(tab => tab.id);
-                tab_ids.forEach((tab_id) => {
-                  let tab = this.getSecondaryTabById(tab_id, primaryTab.id);
-                  if (
-                    tab.metaData.mode == "query" ||
-                    tab.metaData.mode == "edit" ||
-                    tab.metaData.mode == "debug" ||
-                    tab.metaData.mode == "console"
-                  ) {
-                    if (tab.metaData?.context && tab.metaData?.context?.code) {
-                      removeContext(tab.metaData.context.code);
-                    }
-                    let messageData = {
-                      tab_id: tab.id,
-                      tab_db_id: null,
-                      conn_tab_id: primaryTab.id,
-                    };
-                    if (tab.metaData.mode == "query")
-                      messageData.tab_db_id = tab.metaData.initTabDatabaseId;
-                    tabsToRemove.push(messageData);
-                  }
+                const hasUnsavedChanges = secondaryTabs.some(
+                  (tab) => tab.metaData.hasUnsavedChanges
+                );
 
-                  if (tab.closeFunction) tab.closeFunction(e, tab);
-                });
-
-                let messageData = {
-                  conn_tab_id: primaryTab.id,
-                  tab_db_id: null,
-                  tab_id: null,
-                };
-                tabsToRemove.push(messageData);
-
-                if (tabsToRemove.length > 0) {
-                  createRequest(queryRequestCodes.CloseTab, tabsToRemove);
+                if (hasUnsavedChanges) {
+                  messageModalStore.showModal(
+                    "Some tabs have unsaved changes. Do you wish to discard all changes and close?",
+                    () => {
+                      this.closeConnectionTab(primaryTab, secondaryTabs);
+                    },
+                    null
+                  );
+                } else {
+                  this.closeConnectionTab(primaryTab, secondaryTabs);
                 }
-                this.removeTab(primaryTab);
               });
             },
           });
@@ -406,7 +387,9 @@ const useTabsStore = defineStore("tabs", {
         tooltipName += `<div class="mb-1">${details}</div>`;
       }
 
-      connectionsStore.updateConnection(index, {'last_access_date': moment.now()})
+      connectionsStore.updateConnection(index, {
+        last_access_date: moment.now(),
+      });
 
       const tab = this.addTab({
         name: alias,
@@ -438,17 +421,11 @@ const useTabsStore = defineStore("tabs", {
           emitter.emit(`${this.id}_check_console_status`);
         },
         closeFunction: (e, tab) => {
-          if (tab.metaData.hasUnsavedChanges) {
-            messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved console changes?",
-              () => {
-                this.closeTab(tab);
-              },
-              null
-            );
-          } else {
-            this.closeTab(tab);
-          }
+          this.closeTabWithConfirmation(
+            tab,
+            "Are you sure you wish to discard unsaved console changes?",
+            this.closeTab
+          );
         },
       });
       const primaryTab = !!parentId
@@ -477,17 +454,11 @@ const useTabsStore = defineStore("tabs", {
           emitter.emit(`${this.id}_check_query_status`);
         },
         closeFunction: (e, tab) => {
-          if (tab.metaData.hasUnsavedChanges) {
-            messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved query changes?",
-              () => {
-                this.closeTab(tab);
-              },
-              null
-            );
-          } else {
-            this.closeTab(tab);
-          }
+          this.closeTabWithConfirmation(
+            tab,
+            "Are you sure you wish to discard unsaved query changes?",
+            this.closeTab
+          );
         },
         dblClickFunction: renameTab,
       });
@@ -533,17 +504,11 @@ const useTabsStore = defineStore("tabs", {
           emitter.emit(`${this.id}_resize`);
         },
         closeFunction: (e, tab) => {
-          if (tab.metaData.hasUnsavedChanges) {
-            messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved changes?",
-              () => {
-                this.closeTab(tab);
-              },
-              null
-            );
-          } else {
-            this.closeTab(tab);
-          }
+          this.closeTabWithConfirmation(
+            tab,
+            "Are you sure you wish to discard unsaved changes?",
+            this.closeTab
+          );
         },
       });
 
@@ -567,7 +532,7 @@ const useTabsStore = defineStore("tabs", {
         dblClickFunction: renameTab,
       });
       const primaryTab = this.selectedPrimaryTab;
-      
+
       tab.metaData.databaseIndex =
         this.selectedPrimaryTab?.metaData?.selectedDatabaseIndex;
       this.selectTab(tab);
@@ -580,17 +545,11 @@ const useTabsStore = defineStore("tabs", {
         component: "ConfigTab",
         mode: "configuration",
         closeFunction: (e, tab) => {
-          if (tab.metaData.hasUnsavedChanges) {
-            messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved configuration changes?",
-              () => {
-                this.closeTab(tab);
-              },
-              null
-            );
-          } else {
-            this.closeTab(tab);
-          }
+          this.closeTabWithConfirmation(
+            tab,
+            "Are you sure you wish to discard unsaved configuration changes?",
+            this.closeTab
+          );
         },
       });
 
@@ -605,7 +564,9 @@ const useTabsStore = defineStore("tabs", {
           : backupType;
       let tabName = `${utility} ${utilityTitle}`;
       let mode = utility.toLowerCase();
-      let icon = `<i class="fas ${mode === 'backup' ? 'fa-download' : 'fa-upload'} cm-all icon-tab-title"></i>`;
+      let icon = `<i class="fas ${
+        mode === "backup" ? "fa-download" : "fa-upload"
+      } cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
@@ -661,17 +622,11 @@ const useTabsStore = defineStore("tabs", {
         component: "DataEditorTab",
         mode: "edit",
         closeFunction: (e, tab) => {
-          if (tab.metaData.hasUnsavedChanges) {
-            messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved data editor changes?",
-              () => {
-                this.closeTab(tab);
-              },
-              null
-            );
-          } else {
-            this.closeTab(tab);
-          }
+          this.closeTabWithConfirmation(
+            tab,
+            "Are you sure you wish to discard unsaved data editor changes?",
+            this.closeTab
+          );
         },
       });
 
@@ -696,8 +651,11 @@ const useTabsStore = defineStore("tabs", {
     createSchemaEditorTab(node, mode, dialect) {
       let tableName = node.title.replace(/^"(.*)"$/, "$1");
 
-      let tabTitle = mode === operationModes.UPDATE ? `Alter: ${tableName}` : "New Table";
-      let icon = `<i class="fas ${mode === operationModes.CREATE ? 'fa-plus' : 'fa-edit'} cm-all icon-tab-title"></i>`;
+      let tabTitle =
+        mode === operationModes.UPDATE ? `Alter: ${tableName}` : "New Table";
+      let icon = `<i class="fas ${
+        mode === operationModes.CREATE ? "fa-plus" : "fa-edit"
+      } cm-all icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
@@ -706,23 +664,18 @@ const useTabsStore = defineStore("tabs", {
         component: "SchemaEditorTab",
         mode: "alter",
         closeFunction: (e, tab) => {
-          if (tab.metaData.hasUnsavedChanges) {
-            messageModalStore.showModal(
-              "Are you sure you wish to discard unsaved schema editor changes?",
-              () => {
-                this.closeTab(tab);
-              },
-              null
-            );
-          } else {
-            this.closeTab(tab);
-          }
+          this.closeTabWithConfirmation(
+            tab,
+            "Are you sure you wish to discard unsaved schema editor changes?",
+            this.closeTab
+          );
         },
       });
 
       tab.metaData.dialect = dialect || "postgres";
       tab.metaData.editMode = mode;
-      tab.metaData.schema = dialect === "mysql" ? node.data.database : node.data.schema;
+      tab.metaData.schema =
+        dialect === "mysql" ? node.data.database : node.data.schema;
       tab.metaData.table = mode === operationModes.UPDATE ? tableName : null;
       tab.metaData.treeNode = node;
       tab.metaData.databaseIndex =
@@ -811,7 +764,6 @@ const useTabsStore = defineStore("tabs", {
           tab.metaData.mode
         )
       ) {
-
         if (tab.metaData?.context && tab.metaData?.context?.code) {
           removeContext(tab.metaData.context.code);
         }
@@ -832,6 +784,55 @@ const useTabsStore = defineStore("tabs", {
       }
 
       this.removeTab(tab);
+    },
+    closeTabWithConfirmation(tab, message, callback) {
+      if (tab.metaData.hasUnsavedChanges) {
+        messageModalStore.showModal(
+          message || "Are you sure you wish to discard unsaved changes?",
+          () => {
+            callback(tab);
+          },
+          null
+        );
+      } else {
+        callback(tab);
+      }
+    },
+    closeConnectionTab(connectionTab, secondaryTabs) {
+      let tabsToRemove = [];
+      let tab_ids = secondaryTabs.map((tab) => tab.id);
+      tab_ids.forEach((tab_id) => {
+        let tab = this.getSecondaryTabById(tab_id, connectionTab.id);
+        if (
+          tab.metaData.mode == "query" ||
+          tab.metaData.mode == "edit" ||
+          tab.metaData.mode == "debug" ||
+          tab.metaData.mode == "console"
+        ) {
+          if (tab.metaData?.context && tab.metaData?.context?.code) {
+            removeContext(tab.metaData.context.code);
+          }
+          let messageData = {
+            tab_id: tab.id,
+            tab_db_id: null,
+            conn_tab_id: connectionTab.id,
+          };
+          if (tab.metaData.mode == "query")
+            messageData.tab_db_id = tab.metaData.initTabDatabaseId;
+          tabsToRemove.push(messageData);
+        }
+      });
+      let messageData = {
+        conn_tab_id: connectionTab.id,
+        tab_db_id: null,
+        tab_id: null,
+      };
+      tabsToRemove.push(messageData);
+
+      if (tabsToRemove.length > 0) {
+        createRequest(queryRequestCodes.CloseTab, tabsToRemove);
+      }
+      this.removeTab(connectionTab);
     },
   },
 });
