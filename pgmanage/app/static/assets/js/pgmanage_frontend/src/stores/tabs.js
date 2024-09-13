@@ -345,9 +345,9 @@ const useTabsStore = defineStore("tabs", {
               this.beforeCloseTab(e, () => {
                 let tabsToRemove = [];
 
-                let tabs = this.getSecondaryTabs(primaryTab.id);
-
-                tabs.forEach((tab) => {
+                let tab_ids = this.getSecondaryTabs(primaryTab.id).map(tab => tab.id);
+                tab_ids.forEach((tab_id) => {
+                  let tab = this.getSecondaryTabById(tab_id, primaryTab.id);
                   if (
                     tab.metaData.mode == "query" ||
                     tab.metaData.mode == "edit" ||
