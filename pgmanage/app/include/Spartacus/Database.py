@@ -29,6 +29,7 @@ import decimal
 import json
 import math
 import re
+import base64
 
 import app.include.Spartacus as Spartacus
 import app.include.Spartacus.prettytable as prettytable
@@ -614,6 +615,8 @@ class Generic(ABC):
     def String(self, p_value):
         if type(p_value) == type(list()):
             ret = self.MogrifyArray(p_value)
+        elif type(p_value) == memoryview:
+            ret = base64.b64encode(p_value.tobytes()).decode()
         else:
             ret = str(p_value)
         return ret
