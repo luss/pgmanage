@@ -23,16 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-import os.path
-import re
-from collections import OrderedDict
 from enum import Enum
 import app.include.Spartacus as Spartacus
 import app.include.Spartacus.Database as Database
 import app.include.Spartacus.Utils as Utils
 from urllib.parse import urlparse
 
-import threading
 
 '''
 ------------------------------------------------------------------------

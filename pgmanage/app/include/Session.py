@@ -1,41 +1,35 @@
 import io
-import app.include.Spartacus as Spartacus
-import app.include.Spartacus.Database as Database
-import app.include.Spartacus.Utils as Utils
-import app.include.OmniDatabase as OmniDatabase
-import uuid
-from datetime import datetime,timedelta
-from django.contrib.sessions.backends.db import SessionStore
-from pgmanage import settings
-import sys
-sys.path.append('app/include')
-import paramiko
-from sshtunnel import SSHTunnelForwarder
-import socket
-import time
-import os
+import logging
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
-from django.contrib.auth.models import User
-from app.models.main import *
+import paramiko
+from app.include import OmniDatabase
+from app.models.main import Connection, UserDetails
 from app.utils.crypto import decrypt
 from app.utils.key_manager import key_manager
+from django.contrib.sessions.backends.db import SessionStore
+from sshtunnel import SSHTunnelForwarder
 
-import logging
-logger = logging.getLogger('app.Session')
+from pgmanage import settings
+
+logger = logging.getLogger("app.Session")
+
+import threading
 
 from django.db.models import Q
-import threading
 
 tunnels = dict([])
 
 tunnel_locks = dict([])
 
-'''
+"""
 ------------------------------------------------------------------------
 Session
 ------------------------------------------------------------------------
-'''
+"""
+
+
 class Session(object):
     def __init__(self,
                 p_user_id,

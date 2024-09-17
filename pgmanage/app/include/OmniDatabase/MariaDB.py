@@ -23,9 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-import os.path
 import re
-from collections import OrderedDict
 from enum import Enum
 import app.include.Spartacus as Spartacus
 import app.include.Spartacus.Database as Database
