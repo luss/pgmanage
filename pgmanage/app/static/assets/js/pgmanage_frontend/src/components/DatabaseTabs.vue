@@ -120,13 +120,13 @@ import { colorLabelMap } from "../constants";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import SnippetTab from "./SnippetTab.vue";
 import TabsUtils from "../mixins/tabs_utils_mixin";
+import QueryTab from "./QueryTab.vue";
 
 export default {
   name: "DatabaseTabs",
   mixins: [TabsUtils],
   components: {
     ConsoleTab: defineAsyncComponent(() => import("./ConsoleTab.vue")),
-    QueryTab: defineAsyncComponent(() => import("./QueryTab.vue")),
     MonitoringDashboard: defineAsyncComponent(() =>
       import("./MonitoringDashboard.vue")
     ),
@@ -139,6 +139,7 @@ export default {
       import("./SchemaEditorTab.vue")
     ),
     MonitoringTab: defineAsyncComponent(() => import("./MonitoringTab.vue")),
+    QueryTab,
     SnippetTab,
   },
   props: {
