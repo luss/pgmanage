@@ -76,6 +76,14 @@ export default {
   },
   computed: {
     contextMenu() {
+      const COMMENT_MENUITEM = {
+        label: "Edit Comment",
+        icon: "fas cm-all fa-comment",
+        onClick: () => {
+          this.getObjectDescriptionPostgresql(this.selectedNode);
+        },
+      };
+
       return {
         cm_server: [this.cmRefreshObject],
         cm_databases: [
@@ -122,13 +130,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Database",
             icon: "fas cm-all fa-times",
@@ -213,13 +215,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Schema",
             icon: "fas cm-all fa-times",
@@ -386,13 +382,7 @@ export default {
                   tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.UPDATE, "postgres")
                 },
               },
-              {
-                label: "Edit Comment",
-                icon: "fas cm-all fa-edit",
-                onClick: () => {
-                  this.getObjectDescriptionPostgresql(this.selectedNode);
-                },
-              },
+              COMMENT_MENUITEM,
               {
                 label: "Drop Table",
                 icon: "fas cm-all fa-times",
@@ -441,6 +431,7 @@ export default {
         ],
         cm_column: [
           {
+            // FIXME: do we need alter column templates at all?
             label: "Alter Column",
             icon: "fas cm-all fa-edit",
             onClick: () => {
@@ -457,13 +448,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Column",
             icon: "fas cm-all fa-edit",
@@ -501,13 +486,7 @@ export default {
         ],
         cm_pk: [
           this.cmRefreshObject,
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Primary Key",
             icon: "fas cm-all fa-times",
@@ -548,13 +527,7 @@ export default {
         ],
         cm_fk: [
           this.cmRefreshObject,
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Foreign Key",
             icon: "fas cm-all fa-times",
@@ -595,13 +568,7 @@ export default {
         ],
         cm_unique: [
           this.cmRefreshObject,
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Unique",
             icon: "fas cm-all fa-times",
@@ -641,13 +608,7 @@ export default {
           },
         ],
         cm_check: [
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Check",
             icon: "fas cm-all fa-times",
@@ -687,13 +648,7 @@ export default {
           },
         ],
         cm_exclude: [
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Exclude",
             icon: "fas cm-all fa-times",
@@ -771,13 +726,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Index",
             icon: "fas cm-all fa-times",
@@ -845,13 +794,7 @@ export default {
               this.getRuleDefinitionPostgresql(this.selectedNode);
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Rule",
             icon: "fas cm-all fa-times",
@@ -950,13 +893,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Trigger",
             icon: "fas cm-all fa-times",
@@ -1004,13 +941,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Trigger Function",
             icon: "fas cm-all fa-times",
@@ -1189,13 +1120,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Statistics",
             icon: "fas cm-all fa-times",
@@ -1345,13 +1270,7 @@ export default {
                   );
                 },
               },
-              {
-                label: "Edit Comment",
-                icon: "fas cm-all fa-edit",
-                onClick: () => {
-                  this.getObjectDescriptionPostgresql(this.selectedNode);
-                },
-              },
+              COMMENT_MENUITEM,
               {
                 label: "Drop Foreign Table",
                 icon: "fas cm-all fa-times",
@@ -1461,13 +1380,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Sequence",
             icon: "fas cm-all fa-times",
@@ -1542,13 +1455,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop View",
             icon: "fas cm-all fa-times",
@@ -1677,13 +1584,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Mat. View",
             icon: "fas cm-all fa-times",
@@ -1765,13 +1666,7 @@ export default {
               tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Function",
             icon: "fas cm-all fa-times",
@@ -1834,13 +1729,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Trigger Function",
             icon: "fas cm-all fa-times",
@@ -1905,13 +1794,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Event Trigger Function",
             icon: "fas cm-all fa-times",
@@ -1986,13 +1869,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Procedure",
             icon: "fas cm-all fa-times",
@@ -2049,13 +1926,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Aggregate",
             icon: "fas cm-all fa-times",
@@ -2111,13 +1982,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Type",
             icon: "fas cm-all fa-times",
@@ -2173,13 +2038,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Domain",
             icon: "fas cm-all fa-times",
@@ -2223,13 +2082,7 @@ export default {
               createExtensionModal(this.selectedNode, operationModes.UPDATE);
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Extension",
             icon: "fas cm-all fa-times",
@@ -2276,13 +2129,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Foreign Data Wrapper",
             icon: "fas cm-all fa-times",
@@ -2340,13 +2187,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Foreign Server",
             icon: "fas cm-all fa-times",
@@ -2473,13 +2314,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Event Trigger",
             icon: "fas cm-all fa-times",
@@ -2517,13 +2352,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Event Trigger Function",
             icon: "fas cm-all fa-times",
@@ -2576,13 +2405,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Publication",
             icon: "fas cm-all fa-times",
@@ -2668,13 +2491,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Subscription",
             icon: "fas cm-all fa-times",
@@ -2727,13 +2544,7 @@ export default {
               );
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Tablespace",
             icon: "fas cm-all fa-times",
@@ -2777,13 +2588,7 @@ export default {
               createRoleModal(this.selectedNode, operationModes.UPDATE);
             },
           },
-          {
-            label: "Edit Comment",
-            icon: "fas cm-all fa-edit",
-            onClick: () => {
-              this.getObjectDescriptionPostgresql(this.selectedNode);
-            },
-          },
+          COMMENT_MENUITEM,
           {
             label: "Drop Role",
             icon: "fas cm-all fa-times",
