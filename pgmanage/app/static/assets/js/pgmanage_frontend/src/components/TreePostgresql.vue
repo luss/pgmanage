@@ -2771,54 +2771,7 @@ export default {
         ],
         cm_role: [
           {
-            label: "Change Password",
-            icon: "fas cm-all fa-key",
-            onClick: () => {
-              //TODO: remove the change password modal since its functionality is now handled by role editor
-              let html_text = `<div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="change_pwd_role">Password</label>
-                                <input type="password" id="change_pwd_role" class="form-control" placeholder="password" />
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label for="change_pwd_role_confirm">Password confirmation</label>
-                                <input type="password" id="change_pwd_role_confirm" class="form-control" placeholder="password confirmation" />
-                            </div>
-                        </div>`;
-
-              showConfirm(html_text, () => {
-                let password = document.getElementById("change_pwd_role").value;
-                let password_confirm = document.getElementById(
-                  "change_pwd_role_confirm"
-                ).value;
-
-                if (password == "") {
-                  showToast("error", "Password is empty.");
-                  return;
-                } else if (password_confirm == "") {
-                  showToast("error", "Password confirmation is empty");
-                  return;
-                } else if (password != password_confirm) {
-                  showToast("error", "Passwords do not match");
-                  return;
-                }
-
-                this.api
-                  .post("/change_role_password_postgresql/", {
-                    role: this.selectedNode.data.raw_value,
-                    password: password,
-                  })
-                  .then((resp) => {
-                    showToast("success", "Password changed successfully.");
-                  })
-                  .catch((error) => {
-                    this.nodeOpenError(error, this.selectedNode);
-                  });
-              });
-            },
-          },
-          {
-            label: "Edit Role",
+            label: "Alter Role",
             icon: "fas cm-all fa-edit",
             onClick: () => {
               createRoleModal(this.selectedNode, operationModes.UPDATE);
