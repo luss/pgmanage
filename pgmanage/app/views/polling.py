@@ -370,7 +370,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                     if conn_object["tunnel"]["key"].strip() != "":
                         key = paramiko.RSAKey.from_private_key(
                             io.StringIO(conn_object["tunnel"]["key"]),
-                            password=conn_object["tunnel"]["password"],
+                            password=conn_object["tunnel"]["password"] or None,
                         )
                         client.connect(
                             hostname=conn_object["tunnel"]["server"],
