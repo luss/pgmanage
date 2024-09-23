@@ -22,6 +22,11 @@ def delete_job(request, job_id):
 def details(request, job_id, out=-1, err=-1):
     try:
         job = BatchJob(id=job_id)
+        if job.user.id != request.user.id:
+            return JsonResponse(
+                data={"data": "Permission denied."},
+                status=403,
+            )
 
         return JsonResponse(data={"data": job.status(out, err)})
     except LookupError as exc:
