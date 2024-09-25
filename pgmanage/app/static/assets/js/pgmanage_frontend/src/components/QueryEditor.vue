@@ -24,6 +24,7 @@ export default {
       default: true,
     },
     tabId: String,
+    connTabId: String,
     tabMode: String,
     dialect: String,
     databaseIndex: Number,
@@ -81,7 +82,7 @@ export default {
         }
       });
 
-      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.tabId, this.databaseName)
+      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.connTabId, this.databaseName)
     }
     if(this.autocomplete) {
       this.editor.setOptions({
