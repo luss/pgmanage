@@ -9,7 +9,7 @@ function TemplateSelectOracle(schema, table) {
     .post("/template_select_oracle/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })
@@ -34,7 +34,7 @@ function TemplateInsertOracle(schema, table) {
     .post("/template_insert_oracle/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })
@@ -51,7 +51,7 @@ function TemplateUpdateOracle(schema, table) {
     .post("/template_update_oracle/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })

@@ -37,7 +37,7 @@ describe("MonitoringDashboard", () => {
       .mockResolvedValueOnce({ data: { data: "1234" } });
     dashboardWrapper = mount(MonitoringDashboard, {
       props: {
-        connId: "ConnectionId",
+        workspaceId: "workspaceId",
       },
     });
   });

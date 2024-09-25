@@ -75,7 +75,7 @@ export default {
   props: {
     mode: operationModes,
     treeNode: Object,
-    tabId: String,
+    workspaceId: String,
     databaseIndex: Number
   },
   data() {
@@ -164,7 +164,7 @@ export default {
     getAvailableExtensions() {
       axios.post('/get_available_extensions_postgresql/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        workspace_id: this.workspaceId,
       })
         .then((resp) => {
           this.availableExtensions.push(...resp.data.available_extensions)
@@ -176,7 +176,7 @@ export default {
     getSchemas() {
       axios.post('/get_schemas_postgresql/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        workspace_id: this.workspaceId,
       })
         .then((resp) => {
           this.schemaList = resp.data
@@ -188,11 +188,11 @@ export default {
     saveExtension() {
       axios.post('/execute_query_postgresql/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        workspace_id: this.workspaceId,
         query: this.generatedSQL
       })
         .then((resp) => {
-          emitter.emit(`refreshTreeRecursive_${this.tabId}`, "extension_list");
+          emitter.emit(`refreshTreeRecursive_${this.workspaceId}`, "extension_list");
           this.modalInstance.hide()
         })
         .catch((error) => {
@@ -213,7 +213,7 @@ export default {
     getExtensionDetails() {
       axios.post('/get_extension_details/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        workspace_id: this.workspaceId,
         ext_name: this.treeNode.title
       })
         .then((resp) => {
@@ -232,11 +232,11 @@ export default {
       const query = `DROP EXTENSION IF EXISTS "${this.treeNode.title}" ${cascade};`
       axios.post('/execute_query_postgresql/', {
         database_index: this.databaseIndex,
-        tab_id: this.tabId,
+        workspace_id: this.workspaceId,
         query: query
       })
         .then((resp) => {
-          emitter.emit(`refreshTreeRecursive_${this.tabId}`, "extension_list");
+          emitter.emit(`refreshTreeRecursive_${this.workspaceId}`, "extension_list");
         })
         .catch((error) => {
           showToast("error", error.response.data.data)

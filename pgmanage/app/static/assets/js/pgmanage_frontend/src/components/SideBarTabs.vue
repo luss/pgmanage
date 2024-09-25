@@ -97,13 +97,13 @@ export default {
     getCurrentProps(tab) {
       const componentsProps = {
         ConnectionTab: {
-          "conn-tab-id": tab.id,
+          workspaceId: tab.id,
         },
         SnippetPanel: {
-          "tab-id": tab.id,
+          workspaceId: tab.id,
         },
         TerminalTab: {
-          tabId: tab.id,
+          workspaceId: tab.id,
           databaseIndex: tab?.metaData?.selectedDatabaseIndex,
         },
       };

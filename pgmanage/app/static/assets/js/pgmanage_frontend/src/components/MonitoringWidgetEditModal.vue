@@ -132,7 +132,7 @@
                   class="col d-flex justify-content-center"
                 >
                   <MonitoringWidget
-                    :conn-id="connId"
+                    :workspace-id="workspaceId"
                     :tab-id="tabId"
                     :database-index="databaseIndex"
                     :monitoring-widget="testWidgetData"
@@ -203,7 +203,7 @@ export default {
     };
   },
   props: {
-    connId: String,
+    workspaceId: String,
     databaseIndex: Number,
     modalVisible: Boolean,
     widgetId: Number,
@@ -269,7 +269,7 @@ export default {
     getMonitoringWidgetList() {
       axios
         .post("/monitoring-widgets/list", {
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           database_index: this.databaseIndex,
         })
         .then((resp) => {
@@ -358,7 +358,7 @@ export default {
     createMonitoringWidget() {
       axios
         .post("/monitoring-widgets/user-created", {
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           database_index: this.databaseIndex,
           widget_name: this.widgetName,
           widget_type: this.selectedType,

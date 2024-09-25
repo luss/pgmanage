@@ -281,12 +281,12 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
     # Cancel thread
     if request_type == RequestType.CANCEL_THREAD:
         try:
-            tab_object: Optional[dict[str, Any]] = client_object.get_tab(
+            workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
                 tab_id=request_data.get("tab_id"),
-                conn_tab_id=request_data.get("conn_tab_id"),
+                conn_tab_id=request_data.get("workspace_id"),
             )
-            if tab_object:
-                if tab_object["type"] == "advancedobjectsearch":
+            if workspace_context:
+                if workspace_context["type"] == "advancedobjectsearch":
 
                     def callback(self):
                         try:
@@ -297,10 +297,10 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                         finally:
                             self.tag["lock"].release()
 
-                    tab_object["thread_pool"].stop(p_callback=callback)
+                    workspace_context["thread_pool"].stop(p_callback=callback)
                 else:
-                    tab_object["thread"].stop()
-                    tab_object["omnidatabase"].v_connection.Cancel(False)
+                    workspace_context["thread"].stop()
+                    workspace_context["omnidatabase"].v_connection.Cancel(False)
                     response_data = {
                         "response_type": ResponseType.OPERATION_CANCELLED,
                         "context_code": context_code,
@@ -314,7 +314,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
         for tab_close_data in request_data:
             client_object.close_tab(
                 tab_id=tab_close_data.get("tab_id"),
-                conn_tab_id=tab_close_data.get("conn_tab_id"),
+                conn_tab_id=tab_close_data.get("workspace_id"),
             )
             # remove from tabs table if db_tab_id is not null
             if tab_close_data.get("tab_db_id"):
@@ -339,16 +339,16 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                 return JsonResponse({})
 
         if request_type == RequestType.TERMINAL:
-            tab_object: Optional[dict[str, Any]] = client_object.get_tab(
-                conn_tab_id=request_data["tab_id"]
+            workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
+                conn_tab_id=request_data["workspace_id"]
             )
 
             if (
-                tab_object is None
-                or not tab_object.get("terminal_transport").is_active()
+                workspace_context is None
+                or not workspace_context.get("terminal_transport").is_active()
             ):
-                tab_object: dict[str, Any] = client_object.create_main_tab(
-                    conn_tab_id=request_data["tab_id"],
+                workspace_context: dict[str, Any] = client_object.create_main_tab(
+                    conn_tab_id=request_data["workspace_id"],
                     tab={"thread": None, "terminal_object": None},
                 )
                 start_thread: bool = True
@@ -390,14 +390,14 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                     transport = client.get_transport()
                     transport.set_keepalive(120)
 
-                    tab_object["terminal_ssh_client"] = client
-                    tab_object["terminal_transport"] = transport
-                    tab_object["terminal_object"] = SSHClientInteraction(
+                    workspace_context["terminal_ssh_client"] = client
+                    workspace_context["terminal_transport"] = transport
+                    workspace_context["terminal_object"] = SSHClientInteraction(
                         client, timeout=60, display=False
                     )
-                    tab_object["terminal_object"].send(request_data["cmd"])
+                    workspace_context["terminal_object"].send(request_data["cmd"])
 
-                    tab_object["terminal_type"] = "remote"
+                    workspace_context["terminal_type"] = "remote"
 
                 except Exception as exc:
                     start_thread = False
@@ -410,18 +410,18 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
 
                 if start_thread:
                     request_data["context_code"] = context_code
-                    request_data["tab_object"] = tab_object
+                    request_data["workspace_context"] = workspace_context
                     request_data["client_object"] = client_object
                     request_data["session"] = session
                     t = StoppableThread(thread_terminal, request_data)
-                    tab_object["thread"] = t
-                    tab_object["type"] = "terminal"
-                    tab_object["tab_id"] = request_data["tab_id"]
+                    workspace_context["thread"] = t
+                    workspace_context["type"] = "terminal"
+                    workspace_context["tab_id"] = request_data["tab_id"]
                     t.start()
             else:
                 try:
-                    tab_object["last_update"] = datetime.now()
-                    tab_object["terminal_object"].send(request_data["cmd"])
+                    workspace_context["last_update"] = datetime.now()
+                    workspace_context["terminal_object"].send(request_data["cmd"])
                 except OSError:
                     pass
 
@@ -433,12 +433,12 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
             RequestType.CONSOLE,
         ]:
             # create tab object if it doesn't exist
-            tab_object: Optional[dict[str, Any]] = client_object.get_tab(
-                conn_tab_id=request_data["conn_tab_id"], tab_id=request_data["tab_id"]
+            workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
+                conn_tab_id=request_data["workspace_id"], tab_id=request_data["tab_id"]
             )
-            if tab_object is None:
-                tab_object = client_object.create_tab(
-                    conn_tab_id=request_data["conn_tab_id"],
+            if workspace_context is None:
+                workspace_context = client_object.create_tab(
+                    conn_tab_id=request_data["workspace_id"],
                     tab_id=request_data["tab_id"],
                     tab={"thread": None, "omnidatabase": None, "inserted_tab": False},
                 )
@@ -446,8 +446,8 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
             try:
                 client_object.get_tab_database(
                     session=session,
-                    tab=tab_object,
-                    conn_tab_id=request_data["conn_tab_id"],
+                    tab=workspace_context,
+                    conn_tab_id=request_data["workspace_id"],
                     database_index=request_data["db_index"],
                     attempt_to_open_connection=True,
                     current_database=request_data.get("database_name"),
@@ -462,45 +462,45 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                 return JsonResponse({})
 
             request_data["context_code"] = context_code
-            request_data["database"] = tab_object["omnidatabase"]
+            request_data["database"] = workspace_context["omnidatabase"]
             request_data["client_object"] = client_object
             request_data["session"] = session
             # Query request
             if request_type == RequestType.QUERY:
-                tab_object["tab_db_id"] = request_data["tab_db_id"]
-                request_data["tab_object"] = tab_object
+                workspace_context["tab_db_id"] = request_data["tab_db_id"]
+                request_data["workspace_context"] = workspace_context
                 t = StoppableThread(thread_query, request_data)
-                tab_object["thread"] = t
-                tab_object["type"] = "query"
-                tab_object["sql_cmd"] = request_data["sql_cmd"]
-                tab_object["sql_save"] = request_data["sql_save"]
-                tab_object["tab_id"] = request_data["tab_id"]
+                workspace_context["thread"] = t
+                workspace_context["type"] = "query"
+                workspace_context["sql_cmd"] = request_data["sql_cmd"]
+                workspace_context["sql_save"] = request_data["sql_save"]
+                workspace_context["tab_id"] = request_data["tab_id"]
                 # t.setDaemon(True)
                 t.start()
 
             # Console request
             elif request_type == RequestType.CONSOLE:
-                request_data["tab_object"] = tab_object
+                request_data["workspace_context"] = workspace_context
                 t = StoppableThread(thread_console, request_data)
-                tab_object["thread"] = t
-                tab_object["type"] = "console"
-                tab_object["sql_cmd"] = request_data["sql_cmd"]
+                workspace_context["thread"] = t
+                workspace_context["type"] = "console"
+                workspace_context["sql_cmd"] = request_data["sql_cmd"]
                 # t.setDaemon(True)
                 t.start()
 
             # Query edit data
             elif request_type == RequestType.QUERY_EDIT_DATA:
                 t = StoppableThread(thread_query_edit_data, request_data)
-                tab_object["thread"] = t
-                tab_object["type"] = "edit"
+                workspace_context["thread"] = t
+                workspace_context["type"] = "edit"
                 # t.setDaemon(True)
                 t.start()
 
             # Save edit data
             elif request_type == RequestType.SAVE_EDIT_DATA:
                 t = StoppableThread(thread_save_edit_data, request_data)
-                tab_object["thread"] = t
-                tab_object["type"] = "edit"
+                workspace_context["thread"] = t
+                workspace_context["type"] = "edit"
                 # t.setDaemon(True)
                 t.start()
 
@@ -508,14 +508,14 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
         elif request_type == RequestType.DEBUG:
 
             # create tab object if it doesn't exist
-            tab_object: Optional[dict[str, Any]] = client_object.get_tab(
-                conn_tab_id=request_data.get("v_conn_tab_id"),
+            workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
+                conn_tab_id=request_data.get("workspace_id"),
                 tab_id=request_data.get("v_tab_id"),
             )
 
-            if tab_object is None:
-                tab_object = client_object.create_tab(
-                    conn_tab_id=request_data.get("v_conn_tab_id"),
+            if workspace_context is None:
+                workspace_context = client_object.create_tab(
+                    conn_tab_id=request_data.get("workspace_id"),
                     tab_id=request_data.get("v_tab_id"),
                     tab={
                         "thread": None,
@@ -560,10 +560,10 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                         p_conn_string=v_conn_tab_connection.v_conn_string,
                         p_parse_conn_string=False,
                     )
-                    tab_object["omnidatabase_debug"] = v_database_debug
-                    tab_object["cancelled"] = False
-                    tab_object["omnidatabase_control"] = v_database_control
-                    tab_object["port"] = v_database_debug.v_connection.ExecuteScalar(
+                    workspace_context["omnidatabase_debug"] = v_database_debug
+                    workspace_context["cancelled"] = False
+                    workspace_context["omnidatabase_control"] = v_database_control
+                    workspace_context["port"] = v_database_debug.v_connection.ExecuteScalar(
                         "show port"
                     )
                 except Exception as exc:
@@ -579,11 +579,11 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                     queue_response(client_object, response_data)
 
             request_data["context_code"] = context_code
-            request_data["tab_object"] = tab_object
+            request_data["workspace_context"] = workspace_context
             request_data["client_object"] = client_object
 
             t = StoppableThread(thread_debug, request_data)
-            tab_object["thread"] = t
+            workspace_context["thread"] = t
             # t.setDaemon(True)
             t.start()
 
@@ -899,14 +899,14 @@ def thread_debug_run_func(self, args):
 def thread_terminal(self, args) -> None:
 
     try:
-        tab_object: dict[str, Any] = args["tab_object"]
-        terminal_object: SSHClientInteraction = tab_object["terminal_object"]
-        terminal_ssh_client: paramiko.SSHClient = tab_object["terminal_ssh_client"]
+        workspace_context: dict[str, Any] = args["workspace_context"]
+        terminal_object: SSHClientInteraction = workspace_context["terminal_object"]
+        terminal_ssh_client: paramiko.SSHClient = workspace_context["terminal_ssh_client"]
         client_object: Client = args["client_object"]
 
         while not self.cancel:
             try:
-                if tab_object["terminal_type"] == "local":
+                if workspace_context["terminal_type"] == "local":
                     data_return = terminal_object.read_nonblocking(size=1024)
                 else:
                     data_return = terminal_object.read_current()
@@ -970,7 +970,7 @@ def thread_query(self, args) -> None:
     try:
         sql_cmd: str = args.get("sql_cmd")
         cmd_type: Optional[str] = args.get("cmd_type")
-        tab_object: dict = args.get("tab_object")
+        workspace_context: dict = args.get("workspace_context")
         mode: QueryModes = args.get("mode")
         all_data: bool = args.get("all_data")
         log_query: bool = args.get("log_query")
@@ -987,20 +987,20 @@ def thread_query(self, args) -> None:
 
         inserted_id: Optional[int] = None
         if (
-            not tab_object.get("tab_db_id")
-            and not tab_object.get("inserted_tab")
+            not workspace_context.get("tab_db_id")
+            and not workspace_context.get("inserted_tab")
             and log_query
         ):
             db_tab = Tab(
                 user=User.objects.get(id=session.v_user_id),
                 connection=Connection.objects.get(id=database.v_conn_id),
                 title=tab_title,
-                snippet=tab_object.get("sql_save"),
+                snippet=workspace_context.get("sql_save"),
                 database=database.v_active_service,
             )
             db_tab.save()
             inserted_id = db_tab.id
-            tab_object["inserted_tab"] = True
+            workspace_context["inserted_tab"] = True
 
         log_end_time = datetime.now(timezone.utc)
         duration = get_duration(log_start_time, log_end_time)
@@ -1197,10 +1197,10 @@ def thread_query(self, args) -> None:
             database=database.v_active_service,
         )
 
-    if mode == QueryModes.DATA_OPERATION and tab_object.get("tab_db_id") and log_query:
-        tab = Tab.objects.filter(id=tab_object.get("tab_db_id")).first()
+    if mode == QueryModes.DATA_OPERATION and workspace_context.get("tab_db_id") and log_query:
+        tab = Tab.objects.filter(id=workspace_context.get("tab_db_id")).first()
         if tab:
-            tab.snippet = tab_object.get("sql_save")
+            tab.snippet = workspace_context.get("sql_save")
             tab.title = tab_title
             tab.save()
 
@@ -1214,7 +1214,7 @@ def thread_console(self, args) -> None:
     }
     try:
         sql_cmd: str = args.get("sql_cmd")
-        tab_object: dict[str, Any] = args.get("tab_object")
+        workspace_context: dict[str, Any] = args.get("workspace_context")
         autocommit: bool = args.get("autocommit")
         mode: ConsoleModes = args.get("mode")
         client_object: Client = args.get("client_object")
@@ -1266,7 +1266,7 @@ def thread_console(self, args) -> None:
                         + database.v_connection.GetStatus()
                     )
                     run_command_list = True
-                    list_sql = tab_object["remaining_commands"]
+                    list_sql = workspace_context["remaining_commands"]
             elif mode == ConsoleModes.FETCH_ALL:
                 has_more_records = True
                 run_command_list = False
@@ -1304,7 +1304,7 @@ def thread_console(self, args) -> None:
 
             if mode == ConsoleModes.SKIP_FETCH:
                 run_command_list = True
-                list_sql = tab_object["remaining_commands"]
+                list_sql = workspace_context["remaining_commands"]
 
             if run_command_list:
                 counter = 0
@@ -1336,7 +1336,7 @@ def thread_console(self, args) -> None:
 
                         if database.v_use_server_cursor:
                             if database.v_connection.v_last_fetched_size == 50:
-                                tab_object["remaining_commands"] = list_sql[counter:]
+                                workspace_context["remaining_commands"] = list_sql[counter:]
                                 show_fetch_button = True
                                 break
                     except Exception as exc:
@@ -1351,7 +1351,7 @@ def thread_console(self, args) -> None:
                             None
                         response_data["error"] = True
                         data_return += str(exc)
-                    tab_object["remaining_commands"] = []
+                    workspace_context["remaining_commands"] = []
 
             log_end_time = datetime.now(timezone.utc)
             duration = get_duration(log_start_time, log_end_time)

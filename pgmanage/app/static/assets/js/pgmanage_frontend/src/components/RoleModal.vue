@@ -251,7 +251,7 @@
     props: {
       mode: operationModes,
       treeNode: Object,
-      connId: String,
+      workspaceId: String,
       databaseIndex: Number,
     },
     data() {
@@ -371,7 +371,7 @@
       getRoleDetails() {
         axios.post('/get_role_details/', {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           oid: this.treeNode.data.oid
         })
         .then((resp) => {
@@ -395,7 +395,7 @@
       getExistingRoles() {
         axios.post('/get_roles_postgresql/', {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           oid: this.treeNode.data.oid
         })
         .then((resp) => {
@@ -585,11 +585,11 @@
         if(!this.v$.$invalid) {
           axios.post('/execute_query_postgresql/', {
             database_index: this.databaseIndex,
-            tab_id: this.tabId,
+            workspace_id: this.workspaceId,
             query: this.generatedSQL
           })
           .then((resp) => {
-            emitter.emit(`refreshTreeRecursive_${this.connId}`, 'role_list');
+            emitter.emit(`refreshTreeRecursive_${this.workspaceId}`, 'role_list');
             this.modalInstance.hide()
           })
           .catch((error) => {

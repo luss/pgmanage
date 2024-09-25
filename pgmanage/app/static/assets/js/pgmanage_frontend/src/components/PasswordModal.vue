@@ -130,7 +130,7 @@ export default {
       axios
         .post("/renew_password/", {
           database_index: this.databaseIndex,
-          tab_id: tabsStore.selectedPrimaryTab.id,
+          workspace_id: tabsStore.selectedPrimaryTab.id,
           password: this.password,
           password_kind: this.passwordKind,
         })

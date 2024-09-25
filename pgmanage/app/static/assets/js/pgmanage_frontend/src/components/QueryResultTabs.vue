@@ -86,7 +86,7 @@ export default {
   },
   props: {
     tabId: String,
-    connId: String,
+    workspaceId: String,
     editorContent: String,
     dialect: String,
     tabStatus: Number,
@@ -240,7 +240,7 @@ export default {
                 : null;
 
               if (!!node_type)
-                emitter.emit(`refreshTreeRecursive_${this.connId}`, node_type);
+                emitter.emit(`refreshTreeRecursive_${this.workspaceId}`, node_type);
             }
           }
         }

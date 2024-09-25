@@ -12,13 +12,13 @@ import { tabsStore } from "../stores/stores_initializer";
 export default {
   props: {
     tabId: String,
-    connId: String,
+    workspaceId: String,
   },
   emits: ['cancelled'],
   methods: {
     cancelSQL() {
-      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
-      let message_data = { tab_id: this.tabId, conn_tab_id: this.connId };
+      let tab = tabsStore.getSelectedSecondaryTab(this.workspaceId);
+      let message_data = { tab_id: this.tabId, workspace_id: this.workspaceId };
       let context = {
         tab: tab,
         database_index: this.databaseIndex,
@@ -28,7 +28,7 @@ export default {
       createRequest(queryRequestCodes.CancelThread, message_data, context);
     },
     cancelSQLReturn() {
-      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
+      let tab = tabsStore.getSelectedSecondaryTab(this.workspaceId);
       tab.metaData.isLoading = false;
       tab.metaData.isReady = false;
       this.$emit("cancelled");

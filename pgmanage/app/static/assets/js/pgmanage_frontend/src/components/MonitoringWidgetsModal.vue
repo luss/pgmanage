@@ -37,7 +37,7 @@
     </div>
   </div>
   <MonitoringWidgetEditModal
-    :conn-id="connId"
+    :workspace-id="workspaceId"
     :tab-id="tabId"
     :database-index="databaseIndex"
     :modal-visible="editModalVisible"
@@ -61,7 +61,7 @@ export default {
   },
   props: {
     widgetsModalVisible: Boolean,
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     widgets: Array,
@@ -96,7 +96,7 @@ export default {
       axios
         .post("/monitoring-widgets/list", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
         })
         .then((resp) => {
           this.table = new Tabulator(this.$refs.tabulator, {

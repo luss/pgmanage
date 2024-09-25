@@ -12,13 +12,13 @@ const useDbMetadataStore = defineStore("dbMetadata", {
         if(this.dbMeta[conn_id][db_name])
           return this.dbMeta[conn_id][db_name]
     },
-    async fetchDbMeta(conn_id, conn_tab_id, db_name) {
+    async fetchDbMeta(conn_id, workspace_id, db_name) {
       if(this.dbMeta[conn_id])
         if(this.dbMeta[conn_id][db_name])
           return
       const meta_response = await axios.post('/get_database_meta/', {
         database_index: conn_id,
-        tab_id: conn_tab_id,
+        workspace_id: workspace_id,
         database_name: db_name
       })
 

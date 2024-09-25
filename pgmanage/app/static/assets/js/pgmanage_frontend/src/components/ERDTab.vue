@@ -14,7 +14,7 @@ export default {
   name: "ERDTab",
   props: {
     schema: String,
-    connTabId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     databaseName: String,
@@ -43,7 +43,7 @@ export default {
     loadSchemaGraph() {
       axios.post('/draw_graph/', {
         database_index: this.databaseIndex,
-        tab_id: this.connTabId,
+        workspace_id: this.workspaceId,
         schema: this.schema,
       })
       .then((response) => {

@@ -322,7 +322,7 @@ export default {
     UtilityJobs,
   },
   props: {
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     backupType: String,
@@ -455,7 +455,7 @@ export default {
     getRoleNames() {
       axios.post("/get_roles_postgresql/", {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
       })
         .then((resp) => {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
@@ -467,7 +467,7 @@ export default {
     saveBackup() {
       axios.post("/backup/", {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspaceId: this.workspaceId,
         data: this.backupOptions,
         backup_type: this.type
       })
@@ -494,7 +494,7 @@ export default {
     previewCommand() {
       axios.post("/backup/preview_command/", {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspaceId: this.workspaceId,
         data: this.backupOptions,
         backup_type: this.type
       })

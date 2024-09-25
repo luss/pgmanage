@@ -28,7 +28,7 @@ enableAutoUnmount(afterEach);
 describe("ConfigTab.vue", () => {
   let wrapper;
   const initialProps = {
-    connId: "test-conn-id",
+    workspaceId: "test-workspace-id",
     databaseIndex: 0,
     tabId: "test-tab-id",
   };
@@ -88,7 +88,7 @@ describe("ConfigTab.vue", () => {
     await flushPromises();
     expect(axios.post).toHaveBeenCalledWith("/configuration/categories/", {
       database_index: initialProps.databaseIndex,
-      tab_id: initialProps.connId,
+      workspace_id: initialProps.workspaceId,
     });
     expect(wrapper.vm.categories).toEqual(["Category 1", "Category 2"]);
     expect(wrapper.vm.selected).toBe("Category 1");
@@ -109,7 +109,7 @@ describe("ConfigTab.vue", () => {
 
     expect(axios.post).toHaveBeenNthCalledWith(5, "/save_configuration/", {
       database_index: initialProps.databaseIndex,
-      tab_id: initialProps.connId,
+      workspace_id: initialProps.workspaceId,
       settings: expect.objectContaining({
         setting1: expect.objectContaining({
           name: "setting1",
@@ -161,7 +161,7 @@ describe("ConfigTab.vue", () => {
 
     expect(tabsStore.getSecondaryTabById).toHaveBeenCalledWith(
       initialProps.tabId,
-      initialProps.connId
+      initialProps.workspaceId
     );
     expect(wrapper.vm.$data.updateSettings).toEqual(
       expect.objectContaining({

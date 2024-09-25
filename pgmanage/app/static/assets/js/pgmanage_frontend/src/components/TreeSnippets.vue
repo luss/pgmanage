@@ -42,7 +42,7 @@ export default {
   },
   mixins: [TreeMixin],
   props: {
-    tabId: String,
+    workspaceId: String,
   },
   emits: ["treeUpdated"],
   data() {
@@ -305,7 +305,7 @@ export default {
         if (existing_tab) {
           tabsStore.selectTab(existing_tab);
         } else {
-          tabsStore.createSnippetTab(this.tabId, {...node.data, text: resp.data.data})
+          tabsStore.createSnippetTab(this.workspaceId, {...node.data, text: resp.data.data})
         }
         })
         .catch((error) => {

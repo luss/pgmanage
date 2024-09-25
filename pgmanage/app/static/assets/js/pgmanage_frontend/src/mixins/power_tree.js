@@ -25,9 +25,6 @@ export default {
       return this.getSelectedNode();
     },
   },
-  beforeCreate() {
-    this.id = Math.random().toString(16).slice(2);
-  },
   mounted() {
     this.api = axios.create({
       transformRequest: [
@@ -35,7 +32,7 @@ export default {
           const transformedData = {
             ...data,
             database_index: this.databaseIndex,
-            tab_id: this.tabId,
+            workspace_id: this.workspaceId,
           };
           return transformedData;
         },
@@ -44,15 +41,15 @@ export default {
     });
     axiosHooks(logger, this.api)
 
-    emitter.on(`refreshNode_${this.tabId}`, (e) => {
+    emitter.on(`refreshNode_${this.workspaceId}`, (e) => {
       this.refreshTree(e.node, true);
     });
 
-    emitter.on(`removeNode_${this.tabId}`, (e) => {
+    emitter.on(`removeNode_${this.workspaceId}`, (e) => {
       this.removeNode(e.node);
     });
 
-    emitter.on(`refreshTreeRecursive_${this.tabId}`, (node_type) => {
+    emitter.on(`refreshTreeRecursive_${this.workspaceId}`, (node_type) => {
       this.refreshTreeRecursive(node_type);
     });
 
@@ -63,9 +60,9 @@ export default {
     });
   },
   unmounted() {
-    emitter.all.delete(`refreshNode_${this.id}`);
-    emitter.all.delete(`removeNode_${this.id}`);
-    emitter.all.delete(`refreshTreeRecursive_${this.tabId}`)
+    emitter.all.delete(`refreshNode_${this.workspaceId}`);
+    emitter.all.delete(`removeNode_${this.workspaceId}`);
+    emitter.all.delete(`refreshTreeRecursive_${this.workspaceId}`)
   },
   methods: {
     onClickHandler(node, e) {
@@ -184,7 +181,7 @@ export default {
           successCallback: () => {
             connectionsStore.queueChangeActiveDatabaseThreadSafe({
               database_index: this.databaseIndex,
-              tab_id: this.tabId,
+              workspace_id: this.workspaceId,
               database: this.selectedDatabase,
             });
 

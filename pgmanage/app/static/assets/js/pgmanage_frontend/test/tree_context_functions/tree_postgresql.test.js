@@ -66,7 +66,7 @@ describe("TemplatePostgresql Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_select_postgresql/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table: "table",
         schema: "schema",
         kind: "kind",
@@ -104,7 +104,7 @@ describe("TemplatePostgresql Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_insert_postgresql/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table: "table",
         schema: "schema",
       });
@@ -140,7 +140,7 @@ describe("TemplatePostgresql Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_update_postgresql/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table: "table",
         schema: "schema",
       });
@@ -178,7 +178,7 @@ describe("TemplatePostgresql Functions", () => {
         "/template_select_function_postgresql/",
         {
           database_index: 1,
-          tab_id: "primary-tab-id",
+          workspace_id: "primary-tab-id",
           function: "func",
           functionid: "functionid",
           schema: "schema",

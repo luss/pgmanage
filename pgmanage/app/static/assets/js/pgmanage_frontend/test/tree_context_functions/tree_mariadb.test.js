@@ -65,7 +65,7 @@ describe("Template Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_select_mariadb/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table,
         schema,
       });
@@ -106,7 +106,7 @@ describe("Template Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_insert_mariadb/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table,
         schema,
       });
@@ -144,7 +144,7 @@ describe("Template Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_update_mariadb/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table,
         schema,
       });

@@ -161,11 +161,11 @@ def save_user_password(request):
 @session_required
 def change_active_database(request, session):
     data = request.data
-    tab_id = data["tab_id"]
+    workspace_id = data["workspace_id"]
     new_database = data["database"]
     conn_id = data["database_index"]
 
-    session.v_tabs_databases[tab_id] = new_database
+    session.v_tabs_databases[workspace_id] = new_database
 
     conn = Connection.objects.get(id=conn_id)
     conn.last_used_database = new_database

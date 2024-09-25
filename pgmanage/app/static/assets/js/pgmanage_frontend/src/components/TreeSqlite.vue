@@ -43,7 +43,7 @@ export default {
       type: Number,
       required: true,
     },
-    tabId: {
+    workspaceId: {
       type: String,
       required: true,
     },
@@ -325,7 +325,7 @@ export default {
       }, 200)
     })
 
-    emitter.on(`schemaChanged_${this.tabId}`, () => {
+    emitter.on(`schemaChanged_${this.workspaceId}`, () => {
       const tree = this.$refs.tree;
       let tables_node = tree.getNextNode([0], (node) => {
         return node.data.type === "table_list";
@@ -335,7 +335,7 @@ export default {
     });
   },
   unmounted() {
-    emitter.all.delete(`schemaChanged_${this.tabId}`);
+    emitter.all.delete(`schemaChanged_${this.workspaceId}`);
   },
   methods: {
     refreshTree(node, force) {

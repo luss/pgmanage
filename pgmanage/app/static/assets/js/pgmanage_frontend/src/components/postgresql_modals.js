@@ -6,7 +6,7 @@ import { tabsStore } from "../stores/stores_initializer";
 function createExtensionModal(node, mode) {
   const wrap_div = document.getElementById("extension-modal-wrap");
 
-  wrap_div.innerHTML = `<extension-modal :mode=mode :tree-node=treeNode :tab-id=tabId :database-index=databaseIndex></extension-modal>`;
+  wrap_div.innerHTML = `<extension-modal :mode=mode :tree-node=treeNode :workspace-id=workspaceId :database-index=databaseIndex></extension-modal>`;
 
   const app = createApp({
     components: {
@@ -16,7 +16,7 @@ function createExtensionModal(node, mode) {
       return {
         mode: mode,
         treeNode: node,
-        tabId: tabsStore.selectedPrimaryTab.id,
+        workspaceId: tabsStore.selectedPrimaryTab.id,
         databaseIndex: tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex
       };
     },
@@ -42,7 +42,7 @@ function createPgCronModal(node, mode) {
   cronLight.install.installed = false;
   const wrap_div = document.getElementById("pgcron-modal-wrap");
 
-  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :conn-id="connId"></pgcron-modal>`;
+  wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :workspace-id="workspaceId"></pgcron-modal>`;
 
   const app = createApp({
     components: {
@@ -54,7 +54,7 @@ function createPgCronModal(node, mode) {
         treeNode: node,
         databaseIndex:
           tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-        connId: tabsStore.selectedPrimaryTab.id,
+        workspaceId: tabsStore.selectedPrimaryTab.id,
       };
     },
     mounted() {
@@ -73,7 +73,7 @@ function createPgCronModal(node, mode) {
 function createRoleModal(node, mode) {
   const wrap_div = document.getElementById("role-modal-wrap");
 
-  wrap_div.innerHTML = `<role-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :conn-id="connId"></role-modal>`;
+  wrap_div.innerHTML = `<role-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :workspace-id="workspaceId"></role-modal>`;
 
   const app = createApp({
     components: {
@@ -85,7 +85,7 @@ function createRoleModal(node, mode) {
         treeNode: node,
         databaseIndex:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-        connId: tabsStore.selectedPrimaryTab.id,
+        workspaceId: tabsStore.selectedPrimaryTab.id,
       };
     },
     mounted() {

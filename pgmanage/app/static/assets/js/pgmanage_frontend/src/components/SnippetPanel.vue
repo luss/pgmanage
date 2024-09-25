@@ -1,6 +1,6 @@
 <template>
   <div
-    :id="`${tabId}_panel_snippet`"
+    :id="`${workspaceId}_panel_snippet`"
     :class="[
       'panel-body',
       'omnidb__panel omnidb__panel--snippet',
@@ -16,7 +16,7 @@
     </button>
 
     <div class="container-fluid h-100 position-relative g-0">
-      <div :id="`${tabId}_snippet_div_layout_grid`" class="row h-100">
+      <div :id="`${workspaceId}_snippet_div_layout_grid`" class="row h-100">
         <splitpanes class="default-theme">
           <pane min-size="18" size="25">
             <div class="omnidb__snippets__div-left col h-100">
@@ -24,7 +24,7 @@
                 <div class="omnidb__snippets__content-left border-end">
                   <div class="snippets-tree">
                     <TreeSnippets
-                      :tab-id="tabId"
+                      :workspace-id="workspaceId"
                       @tree-updated="getAllSnippets"
                     />
                   </div>
@@ -37,7 +37,7 @@
               class="omnidb__snippets__div-right pt-0 col h-100 position-relative"
             >
               <div class="row">
-                <DatabaseTabs :id="`${tabId}`" class="w-100" :tab-id="tabId" />
+                <DatabaseTabs :id="`${workspaceId}`" class="w-100" :workspace-id="workspaceId" />
               </div>
             </div>
           </pane>
@@ -69,7 +69,7 @@ export default {
     };
   },
   props: {
-    tabId: String,
+    workspaceId: String,
   },
   mounted() {
     this.getAllSnippets();
