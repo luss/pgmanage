@@ -5,6 +5,7 @@
       <QueryEditor ref="editor" class="h-100 me-2"
         :read-only="readOnlyEditor"
         :tab-id="tabId"
+        :conn-tab-id="connId"
         :database-index="databaseIndex"
         :database-name="databaseName"
         tab-mode="query"

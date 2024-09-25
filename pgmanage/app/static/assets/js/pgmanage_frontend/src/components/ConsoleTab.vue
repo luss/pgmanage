@@ -77,7 +77,7 @@
         </p>
       </div>
       <!--FIXME: add proper editor height recalculation-->
-        <QueryEditor ref="editor" class="custom-editor me-2" :read-only="readOnlyEditor" :tab-id="tabId" tab-mode="console"
+        <QueryEditor ref="editor" class="custom-editor me-2" :read-only="readOnlyEditor" :tab-id="tabId" :conn-tab-id="connId" tab-mode="console"
           :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
     </pane>
   </splitpanes>
