@@ -46,7 +46,7 @@ def database_required(check_timeout=True, open_connection=True):
 
                     database = client.get_main_tab_database(
                         session=session,
-                        conn_tab_id=workspace_id,
+                        workspace_id=workspace_id,
                         database_index=database_index,
                         database_name=database_name,
                         attempt_to_open_connection=open_connection,

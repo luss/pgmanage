@@ -283,7 +283,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
         try:
             workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
                 tab_id=request_data.get("tab_id"),
-                conn_tab_id=request_data.get("workspace_id"),
+                workspace_id=request_data.get("workspace_id"),
             )
             if workspace_context:
                 if workspace_context["type"] == "advancedobjectsearch":
@@ -314,7 +314,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
         for tab_close_data in request_data:
             client_object.close_tab(
                 tab_id=tab_close_data.get("tab_id"),
-                conn_tab_id=tab_close_data.get("workspace_id"),
+                workspace_id=tab_close_data.get("workspace_id"),
             )
             # remove from tabs table if db_tab_id is not null
             if tab_close_data.get("tab_db_id"):
@@ -340,7 +340,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
 
         if request_type == RequestType.TERMINAL:
             workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
-                conn_tab_id=request_data["workspace_id"]
+                workspace_id=request_data["workspace_id"]
             )
 
             if (
@@ -348,7 +348,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                 or not workspace_context.get("terminal_transport").is_active()
             ):
                 workspace_context: dict[str, Any] = client_object.create_main_tab(
-                    conn_tab_id=request_data["workspace_id"],
+                    workspace_id=request_data["workspace_id"],
                     tab={"thread": None, "terminal_object": None},
                 )
                 start_thread: bool = True
@@ -434,11 +434,11 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
         ]:
             # create tab object if it doesn't exist
             workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
-                conn_tab_id=request_data["workspace_id"], tab_id=request_data["tab_id"]
+                workspace_id=request_data["workspace_id"], tab_id=request_data["tab_id"]
             )
             if workspace_context is None:
                 workspace_context = client_object.create_tab(
-                    conn_tab_id=request_data["workspace_id"],
+                    workspace_id=request_data["workspace_id"],
                     tab_id=request_data["tab_id"],
                     tab={"thread": None, "omnidatabase": None, "inserted_tab": False},
                 )
@@ -447,7 +447,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                 client_object.get_tab_database(
                     session=session,
                     tab=workspace_context,
-                    conn_tab_id=request_data["workspace_id"],
+                    workspace_id=request_data["workspace_id"],
                     database_index=request_data["db_index"],
                     attempt_to_open_connection=True,
                     current_database=request_data.get("database_name"),
@@ -509,13 +509,13 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
 
             # create tab object if it doesn't exist
             workspace_context: Optional[dict[str, Any]] = client_object.get_tab(
-                conn_tab_id=request_data.get("workspace_id"),
+                workspace_id=request_data.get("workspace_id"),
                 tab_id=request_data.get("v_tab_id"),
             )
 
             if workspace_context is None:
                 workspace_context = client_object.create_tab(
-                    conn_tab_id=request_data.get("workspace_id"),
+                    workspace_id=request_data.get("workspace_id"),
                     tab_id=request_data.get("v_tab_id"),
                     tab={
                         "thread": None,
