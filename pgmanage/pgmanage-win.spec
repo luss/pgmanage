@@ -1,6 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import os
+import pkgutil
+
+dateutil_path = os.path.dirname(pkgutil.get_loader("dateutil").path)
 
 # since pyinstaller does not have option to specify folders to exclude
 # we use basic filtering
@@ -19,14 +22,15 @@ data_files_server = [
   ('app/include','app/include'),
   ('app/templates','app/templates'),
   ('app/plugins','app/plugins'),
-  ('app/bgjob/process_executor.py', 'app/bgjob')
+  ('app/bgjob/process_executor.py', 'app/bgjob'),
+  (dateutil_path, 'dateutil'),
 ]
 
 
 a = Analysis(['pgmanage-server.py'],
              binaries=[],
              datas=data_files_server,
-             hiddenimports=['cheroot.ssl','cheroot.ssl.builtin','psycopg2','paramiko', 'pkg_resources.extern', 'cryptography.hazmat.primitives.kdf.pbkdf2'],
+             hiddenimports=['cheroot.ssl','cheroot.ssl.builtin', 'psycopg2','paramiko', 'pkg_resources.extern', 'cryptography.hazmat.primitives.kdf.pbkdf2'],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
