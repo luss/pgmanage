@@ -1,7 +1,7 @@
 #this script is intended to be run under cygwin + win10 environment
 #make sure you have installed NSIS and Resource Hacker software
 #run as ./deploy.sh 1.0b, replace the actual version number with the correct one
-set -e -e
+set -e
 
 APP_VERSION="$1"
 REPO="https://github.com/commandprompt/pgmanage"
@@ -41,7 +41,8 @@ source venv/Scripts/activate
 echo "installing python dependencies"
 pip3 install -r requirements.txt
 pip3 install pyinstaller==5.13.2
-
+# use pipdeptree to troubleshoot dependency issues
+# pipdeptree
 cd pgmanage/
 
 # set up versions in custom_settins.py

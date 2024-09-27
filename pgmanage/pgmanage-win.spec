@@ -1,7 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-
 import os
-
 # since pyinstaller does not have option to specify folders to exclude
 # we use basic filtering
 # https://github.com/orgs/pyinstaller/discussions/6126
@@ -19,9 +17,8 @@ data_files_server = [
   ('app/include','app/include'),
   ('app/templates','app/templates'),
   ('app/plugins','app/plugins'),
-  ('app/bgjob/process_executor.py', 'app/bgjob')
+  ('app/bgjob/process_executor.py', 'app/bgjob'),
 ]
-
 
 a = Analysis(['pgmanage-server.py'],
              binaries=[],
@@ -34,7 +31,7 @@ a = Analysis(['pgmanage-server.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
-             
+
 a.datas = [entry for entry in a.datas if not any(pattern in entry[0] for pattern in exclude_patterns)]
 
 pyz = PYZ(a.pure, a.zipped_data,
