@@ -1,11 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
+
 import os
+
 # since pyinstaller does not have option to specify folders to exclude
 # we use basic filtering
 # https://github.com/orgs/pyinstaller/discussions/6126
 
 exclude_patterns = [
   os.path.join('static', 'pgmanage_frontend'),
+  '.dist-info',
+  'django\\contrib\\gis',
+  'django\\contrib\\humanize'
 ]
 
 block_cipher = None

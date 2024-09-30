@@ -8,6 +8,9 @@ import os
 
 exclude_patterns = [
   os.path.join('static', 'pgmanage_frontend'),
+  '.dist-info',
+  'django/contrib/gis',
+  'django/contrib/admin'
 ]
 
 block_cipher = None
