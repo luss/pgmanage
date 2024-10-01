@@ -22,12 +22,15 @@ CSRF_TRUSTED_ORIGINS = []
 SESSION_COOKIE_NAME = 'pgmanage_sessionid'
 CSRF_COOKIE_NAME = 'pgmanage_csrftoken'
 ALLOWED_HOSTS = ['*']
+SQLITE_PATH = os.path.join(HOME_DIR, 'pgmanage.db')
+if not DESKTOP_MODE:
+    SQLITE_PATH = os.path.join(HOME_DIR, 'pgmanage-server.db')
 
 # Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(HOME_DIR, 'pgmanage.db')
+        'NAME': SQLITE_PATH
     }
 }
 
