@@ -5,7 +5,7 @@
       <QueryEditor ref="editor" class="h-100 me-2"
         :read-only="readOnlyEditor"
         :tab-id="tabId"
-        :conn-tab-id="connId"
+        :workspace-id="workspaceId"
         :database-index="databaseIndex"
         :database-name="databaseName"
         tab-mode="query"
@@ -93,7 +93,7 @@
             Rollback
           </button>
 
-          <CancelButton v-show="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
+          <CancelButton v-show="executingState && longQuery" :tab-id="tabId" :workspace-id="workspaceId"
             @cancelled="cancelSQLTab()" />
 
           <!-- QUERY INFO-->
@@ -122,7 +122,7 @@
           </div>
         </div>
       </div>
-      <QueryResultTabs ref="queryResults" :block-size="blockSize" :conn-id="connId" :tab-id="tabId" :editor-content="editorContent"
+      <QueryResultTabs ref="queryResults" :block-size="blockSize" :workspace-id="workspaceId" :tab-id="tabId" :editor-content="editorContent"
         :dialect="dialect" :tab-status="tabStatus" :resize-div="resizeResultDiv" @enable-explain-buttons="toggleExplainButtons"
         @run-explain="runExplain(0)" @show-fetch-buttons="toggleFetchButtons" @resized="resizeResultDiv = false"/>
     </pane>
@@ -158,7 +158,7 @@ export default {
   },
   mixins: [FileInputChangeMixin],
   props: {
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     databaseName: String,
@@ -269,7 +269,7 @@ export default {
         if (!query) {
           showToast("info", "Please provide a string.");
         } else {
-          let tab = tabsStore.getSelectedSecondaryTab(this.connId);
+          let tab = tabsStore.getSelectedSecondaryTab(this.workspaceId);
           this.queryDuration = "";
           this.cancelled = false;
           this.showFetchButtons = false;
@@ -282,7 +282,7 @@ export default {
             mode: mode,
             autocommit: this.autocommit,
             db_index: this.databaseIndex,
-            conn_tab_id: this.connId,
+            workspace_id: this.workspaceId,
             tab_id: this.tabId,
             tab_db_id: this.tabDatabaseId,
             sql_save: save_query,
@@ -349,7 +349,7 @@ export default {
       }
       //Update tab_db_id if not null in response
       if (data.data.inserted_id) {
-        let tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+        let tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId);
         this.tabDatabaseId = data.data.inserted_id;
         tab.metaData.initTabDatabaseId = data.data.inserted_id;
       }
@@ -364,7 +364,7 @@ export default {
         clearInterval(this.queryInterval)
         this.queryInterval = null;
         if (
-          this.connId === tabsStore.selectedPrimaryTab.id &&
+          this.workspaceId === tabsStore.selectedPrimaryTab.id &&
           this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
           this.context = "";
@@ -550,7 +550,7 @@ export default {
     async saveFile() {
       const today = new Date()
       const nameSuffix = `${today.getHours()}${today.getMinutes()}`
-      let tab = tabsStore.getSelectedSecondaryTab(this.connId);
+      let tab = tabsStore.getSelectedSecondaryTab(this.workspaceId);
       const fileName = tab.metaData?.editingFile ? tab.name : `pgmanage-query-${nameSuffix}.sql`
 
       const file = new File([this.editorContent], fileName, {
@@ -591,7 +591,7 @@ export default {
   },
   watch: {
     hasChanges() {
-      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId);
       if (tab) {
         tab.metaData.hasUnsavedChanges = this.hasChanges;
       }

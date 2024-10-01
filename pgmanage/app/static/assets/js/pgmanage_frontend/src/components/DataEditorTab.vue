@@ -63,7 +63,7 @@ export default {
     schema: String,
     table: String,
     tabId: String,
-    connId: String,
+    workspaceId: String,
     databaseIndex: Number,
     databaseName: String,
     initial_filter: {
@@ -198,7 +198,7 @@ export default {
       return axios
         .post("/get_table_columns/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           schema: this.schema,
           table: this.table
         })
@@ -255,7 +255,7 @@ export default {
         db_index: this.databaseIndex,
         query_filter : this.queryFilter,
         count: this.rowLimit,
-        conn_tab_id: this.connId,
+        workspace_id: this.workspaceId,
         tab_id: this.tabId
       }
 
@@ -407,7 +407,7 @@ export default {
         sql_cmd : query,
         sql_save : false,
         db_index: this.databaseIndex,
-        conn_tab_id: this.connId,
+        workspace_id: this.workspaceId,
         tab_id: this.tabId,
         tab_db_id: this.databaseIndex,
       }
@@ -434,7 +434,7 @@ export default {
       deep: true
     },
     hasChanges() {
-      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId);
       if (tab) {
         tab.metaData.hasUnsavedChanges = this.hasChanges;
       }

@@ -9,7 +9,7 @@ function TemplateSelectMysql(schema, table) {
     .post("/template_select_mariadb/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })
@@ -33,7 +33,7 @@ function TemplateInsertMysql(schema, table) {
     .post("/template_insert_mariadb/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })
@@ -50,7 +50,7 @@ function TemplateUpdateMysql(schema, table) {
     .post("/template_update_mariadb/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })

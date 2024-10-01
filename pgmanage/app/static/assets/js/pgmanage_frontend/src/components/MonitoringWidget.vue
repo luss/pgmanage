@@ -130,7 +130,7 @@ export default {
       type: Object,
       required: true,
     },
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     refreshWidget: Boolean,
@@ -212,7 +212,7 @@ export default {
       axios
         .post(`/monitoring-widgets/${this.monitoringWidget.saved_id}/refresh`, {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           widget: {
             ...this.monitoringWidget,
             initial: !this.visualizationObject,
@@ -508,7 +508,7 @@ export default {
     testMonitoringWidget() {
       axios
         .post("/monitoring-widgets/test", {
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           database_index: this.databaseIndex,
           widget: this.monitoringWidget,
         })

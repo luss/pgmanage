@@ -770,7 +770,7 @@ const useTabsStore = defineStore("tabs", {
         let messageData = {
           tab_id: tab.id,
           tab_db_id: null,
-          conn_tab_id: this.selectedPrimaryTab.id,
+          workspace_id: this.selectedPrimaryTab.id,
         };
         if (tab.metaData.mode === "query") {
           messageData.tab_db_id = tab.metaData.initTabDatabaseId;
@@ -815,7 +815,7 @@ const useTabsStore = defineStore("tabs", {
           let messageData = {
             tab_id: tab.id,
             tab_db_id: null,
-            conn_tab_id: connectionTab.id,
+            workspace_id: connectionTab.id,
           };
           if (tab.metaData.mode == "query")
             messageData.tab_db_id = tab.metaData.initTabDatabaseId;
@@ -823,7 +823,7 @@ const useTabsStore = defineStore("tabs", {
         }
       });
       let messageData = {
-        conn_tab_id: connectionTab.id,
+        workspace_id: connectionTab.id,
         tab_db_id: null,
         tab_id: null,
       };

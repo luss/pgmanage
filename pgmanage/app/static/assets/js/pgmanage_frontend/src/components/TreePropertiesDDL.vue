@@ -30,24 +30,24 @@
         <nav>
           <div class="nav nav-tabs">
             <a
-              :id="`${connId}_tree_properties_nav`"
+              :id="`${workspaceId}_tree_properties_nav`"
               class="omnidb__tab-menu__link nav-item nav-link active"
               data-bs-toggle="tab"
               role="tab"
               aria-selected="true"
               ref="treePropertiesNav"
-              :href="`#${connId}_tree_properties`"
-              :aria-controls="`${connId}_tree_properties`"
+              :href="`#${workspaceId}_tree_properties`"
+              :aria-controls="`${workspaceId}_tree_properties`"
               >Properties</a
             >
             <a
-              :id="`${connId}_tree_ddl_nav`"
+              :id="`${workspaceId}_tree_ddl_nav`"
               class="omnidb__tab-menu__link nav-item nav-link"
               data-bs-toggle="tab"
               role="tab"
               aria-selected="false"
-              :href="`#${connId}_tree_ddl`"
-              :aria-controls="`${connId}_tree_ddl`"
+              :href="`#${workspaceId}_tree_ddl`"
+              :aria-controls="`${workspaceId}_tree_ddl`"
               >DDL</a
             >
           </div>
@@ -60,9 +60,9 @@
       >
         <div
           class="tab-pane active"
-          :id="`${connId}_tree_properties`"
+          :id="`${workspaceId}_tree_properties`"
           role="tabpanel"
-          :aria-labelledby="`${connId}_tree_properties_nav`"
+          :aria-labelledby="`${workspaceId}_tree_properties_nav`"
           style="height: 90%"
         >
           <div ref="tabulator" class="tabulator-custom simple pt-2"></div>
@@ -70,9 +70,9 @@
 
         <div
           class="tab-pane h-100"
-          :id="`${connId}_tree_ddl`"
+          :id="`${workspaceId}_tree_ddl`"
           role="tabpanel"
-          :aria-labelledby="`${connId}_tree_ddl_nav`"
+          :aria-labelledby="`${workspaceId}_tree_ddl_nav`"
         >
           <div ref="editor" class="pb-3" style="height: 90%"></div>
         </div>
@@ -87,7 +87,7 @@ import { settingsStore } from "../stores/stores_initializer";
 
 export default {
   props: {
-    connId: String,
+    workspaceId: String,
     databaseTechnology: String,
     ddlData: String,
     propertiesData: Array,

@@ -147,7 +147,7 @@ export default {
     dialect: String,
     schema: String,
     table: String,
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     databaseName: String,
@@ -230,7 +230,7 @@ export default {
 
       axios.post(schemasUrl, {
         database_index: this.databaseIndex,
-        tab_id: this.connId
+        workspace_id: this.workspaceId
       })
       .then((response) => {
         this.schemas = response.data.map((schema) => {return schema.name})
@@ -245,7 +245,7 @@ export default {
 
       axios.post(typesUrl, {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         schema: this.schema
       })
       .then((response) => {
@@ -259,7 +259,7 @@ export default {
       try {
         const response = await axios.post(this.dialectData.api_endpoints.table_definition_url, {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           table: this.localTable.tableName || this.table,
           schema: this.schema
         })
@@ -291,7 +291,7 @@ export default {
 
       axios.post(indexesUrl, {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         schema: this.schema,
         table: this.localTable.tableName || this.table
       })
@@ -521,7 +521,7 @@ export default {
 				sql_save : false,
 				cmd_type: null,
 				db_index: this.databaseIndex,
-				conn_tab_id: this.connId,
+				workspace_id: this.workspaceId,
 				tab_id: this.tabId,
 				tab_db_id: this.databaseIndex,
 				mode: 0,
@@ -553,7 +553,7 @@ export default {
         let msg = response.data.status === "CREATE TABLE" ? `Table "${this.localTable.tableName}" created` : `Table "${this.localTable.tableName}" updated`
         showToast("success", msg)
 
-        emitter.emit(`schemaChanged_${this.connId}`, { database_name: this.databaseName, schema_name: this.localTable.schema })
+        emitter.emit(`schemaChanged_${this.workspaceId}`, { database_name: this.databaseName, schema_name: this.localTable.schema })
         // ALTER: load table changes into UI
         if(this.mode === operationModes.UPDATE) {
           this.loadTableDefinition().then(() => {
@@ -633,7 +633,7 @@ export default {
       deep: true
     },
     hasChanges() {
-      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId);
       if (tab) {
         tab.metaData.hasUnsavedChanges = this.hasChanges;
       }

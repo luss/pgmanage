@@ -40,7 +40,7 @@ export default {
       type: Number,
       required: true,
     },
-    tabId: {
+    workspaceId: {
       type: String,
       required: true,
     },

@@ -143,7 +143,7 @@ export default {
     SnippetTab,
   },
   props: {
-    tabId: {
+    workspaceId: {
       type: String,
       required: true,
     },
@@ -156,17 +156,17 @@ export default {
   },
   computed: {
     tabs() {
-      return tabsStore.getSecondaryTabs(this.tabId);
+      return tabsStore.getSecondaryTabs(this.workspaceId);
     },
     selectedTab() {
-      return tabsStore.getSelectedSecondaryTab(this.tabId);
+      return tabsStore.getSelectedSecondaryTab(this.workspaceId);
     },
     isSnippetsPanel() {
-      let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
+      let primaryTab = tabsStore.getPrimaryTabById(this.workspaceId);
       return primaryTab?.name === "Snippets";
     },
     tabColorLabelClass() {
-      let primaryTab = tabsStore.getPrimaryTabById(this.tabId);
+      let primaryTab = tabsStore.getPrimaryTabById(this.workspaceId);
       let connection = connectionsStore.getConnection(primaryTab.metaData?.selectedDatabaseIndex);
       if(connection) {
         return colorLabelMap[connection.color_label].class || ''
@@ -180,14 +180,14 @@ export default {
   },
   mounted() {
     if (this.isSnippetsPanel) {
-      tabsStore.createSnippetTab(this.tabId);
+      tabsStore.createSnippetTab(this.workspaceId);
     }
 
     tabsStore.$onAction((action) => {
       if (action.name === "addTab") {
         action.after(() => {
           if (
-            (tabsStore.selectedPrimaryTab.id === this.tabId &&
+            (tabsStore.selectedPrimaryTab.id === this.workspaceId &&
               this.tabs.includes(this.selectedTab)) ||
             this.isSnippetsPanel
           ) {
@@ -215,14 +215,14 @@ export default {
           snippet: tab.metaData.snippetObject,
         },
         ConsoleTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           consoleHelp: tab?.metaData?.consoleHelp,
           databaseIndex: tab?.metaData?.databaseIndex,
           dialect: tab?.metaData?.dialect,
         },
         QueryTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           databaseIndex: tab.metaData?.databaseIndex,
           dialect: tab.metaData?.dialect,
@@ -231,19 +231,19 @@ export default {
           initialQuery: tab.metaData.initialQuery,
         },
         MonitoringDashboard: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           databaseIndex: tab?.metaData?.databaseIndex,
         },
         BackupTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           databaseIndex: tab?.metaData?.databaseIndex,
           backupType: tab.metaData.backupType,
           treeNode: tab.metaData.treeNode,
         },
         RestoreTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           databaseIndex: tab?.metaData?.databaseIndex,
           restoreType: tab.metaData.backupType,
@@ -251,13 +251,13 @@ export default {
         },
         ERDTab: {
           tabId: tab.id,
-          connTabId: tab.parentId,
+          workspaceId: tab.parentId,
           databaseIndex: tab?.metaData?.databaseIndex,
           databaseName: tab?.metaData?.databaseName,
           schema: tab.metaData?.schema,
         },
         DataEditorTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           databaseIndex: tab?.metaData?.databaseIndex,
           databaseName: tab?.metaData?.databaseName,
@@ -267,7 +267,7 @@ export default {
           query_filter: tab.metaData.dialect,
         },
         SchemaEditorTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
           databaseIndex: tab?.metaData?.databaseIndex,
           databaseName: tab?.metaData?.databaseName,
@@ -278,22 +278,22 @@ export default {
           dialect: tab.metaData.dialect,
         },
         MonitoringTab: {
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           databaseIndex: tab?.metaData?.databaseIndex,
           dialect: tab?.metaData?.dialect,
           query: tab.metaData.query,
         },
         ConfigTab: {
           databaseIndex: tab?.metaData?.databaseIndex,
-          connId: tab.parentId,
+          workspaceId: tab.parentId,
           tabId: tab.id,
         },
       };
       return componentsProps[tab.component];
     },
     addTab(event) {
-      if (tabsStore.getPrimaryTabById(this.tabId).name === "Snippets") {
-        tabsStore.createSnippetTab(this.tabId);
+      if (tabsStore.getPrimaryTabById(this.workspaceId).name === "Snippets") {
+        tabsStore.createSnippetTab(this.workspaceId);
       } else {
         this.showMenuNewTab(event);
       }

@@ -41,7 +41,7 @@ describe("MonitoringWidget", () => {
     wrapper = mount(MonitoringWidget, {
       props: {
         monitoringWidget: monitoringWidget,
-        connId: "testConnId",
+        workspaceId: "testWorkspaceId",
         tabId: tabId,
         databaseIndex: 1,
         refreshWidget: false,
@@ -72,7 +72,7 @@ describe("MonitoringWidget", () => {
     wrapper = mount(MonitoringWidget, {
       props: {
         monitoringWidget: monitoringWidget,
-        connId: "ConnectionId",
+        workspaceId: "workspaceId",
         isTestWidget: true,
       },
       attachTo: document.body,
@@ -91,7 +91,7 @@ describe("MonitoringWidget", () => {
     wrapper = mount(MonitoringWidget, {
       props: {
         monitoringWidget: monitoringWidget,
-        connId: "ConnectionId",
+        workspaceId: "workspaceId",
       },
       attachTo: document.body,
     });

@@ -21,7 +21,7 @@
           v-for="widget in widgets"
           :key="widget.saved_id"
           :monitoring-widget="widget"
-          :conn-id="connId"
+          :workspace-id="workspaceId"
           :tab-id="tabId"
           :database-index="databaseIndex"
           :refresh-widget="refreshWidget"
@@ -34,7 +34,7 @@
     <Teleport to="body">
       <MonitoringWidgetsModal
         :widgets="widgets"
-        :conn-id="connId"
+        :workspace-id="workspaceId"
         :tab-id="tabId"
         :database-index="databaseIndex"
         :widgets-modal-visible="monitoringModalVisible"
@@ -58,7 +58,7 @@ export default {
     MonitoringWidgetsModal,
   },
   props: {
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
   },
@@ -77,7 +77,7 @@ export default {
     getMonitoringWidges() {
       axios
         .post("/monitoring-widgets", {
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           database_index: this.databaseIndex,
         })
         .then((resp) => {
@@ -139,7 +139,7 @@ export default {
     saveWidgetToDatabaseAndShow(newWidget) {
       axios
         .post("/monitoring-widgets/create", {
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           database_index: this.databaseIndex,
           widget_data: newWidget,
         })

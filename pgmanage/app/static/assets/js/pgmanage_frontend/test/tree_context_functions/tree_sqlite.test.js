@@ -66,7 +66,7 @@ describe("TemplateSqlite Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_select_sqlite/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table: "table",
         kind: "kind",
       });
@@ -104,7 +104,7 @@ describe("TemplateSqlite Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_insert_sqlite/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table: "table",
       });
       expect(tabSQLTemplate).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe("TemplateSqlite Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_update_sqlite/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table: "table",
       });
       expect(tabSQLTemplate).toHaveBeenCalledTimes(1);

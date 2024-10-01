@@ -179,7 +179,7 @@ export default {
     }
   },
   props: {
-    connId: String,
+    workspaceId: String,
     databaseIndex: Number,
     tabId: String,
   },
@@ -198,7 +198,7 @@ export default {
         restartChanges: "",
         restartPending: "",
       },
-      modalId: `config_modal_${this.connId}_${Date.now()}`,
+      modalId: `config_modal_${this.workspaceId}_${Date.now()}`,
       modalRevertConfig: false,
       configDiffData: '',
       intervalId: ''
@@ -246,7 +246,7 @@ export default {
   },
   watch: {
     hasUpdateValues() {
-      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId)
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId)
       if (tab) {
         tab.metaData.hasUnsavedChanges = this.hasUpdateValues
       }
@@ -263,7 +263,7 @@ export default {
       axios
         .post("/configuration/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
         })
         .then((response) => {
           this.data = response.data.settings;
@@ -277,7 +277,7 @@ export default {
       axios
         .post("/configuration/categories/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
         })
         .then((response) => {
           this.categories = response.data.categories;
@@ -299,7 +299,7 @@ export default {
       axios
         .post("/save_configuration/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           settings: this.updateSettings,
           commit_comment: this.commitComment,
           new_config: newConfig,
@@ -321,7 +321,7 @@ export default {
       axios
         .post("/get_configuration_history/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
         })
         .then((response) => {
           this.configHistory = response.data.config_history.map((el) => {
@@ -359,7 +359,7 @@ export default {
       axios
         .post("/configuration/status/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
         })
         .then((response) => {
           this.appliedSettings.restartPending = response.data.restart_pending;
@@ -397,7 +397,7 @@ export default {
       axios
         .post("/configuration/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           grouped: false,
           exclude_read_only: true
         })

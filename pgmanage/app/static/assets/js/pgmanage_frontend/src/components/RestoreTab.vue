@@ -269,7 +269,7 @@ export default {
     UtilityJobs,
   },
   props: {
-    connId: String,
+    workspaceId: String,
     tabId: String,
     databaseIndex: Number,
     treeNode: Object,
@@ -372,7 +372,7 @@ export default {
     getRoleNames() {
       axios.post("/get_roles_postgresql/", {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
       })
         .then((resp) => {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
@@ -384,7 +384,7 @@ export default {
     createRestore() {
       axios.post("/restore/", {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         data: this.restoreOptions
       })
         .then((resp) => {
@@ -410,7 +410,7 @@ export default {
     previewCommand() {
       axios.post("/restore/preview_command/", {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         data: this.restoreOptions,
       })
         .then((resp) => {

@@ -12,7 +12,7 @@ function TemplateSelectPostgresql(schema, table, kind) {
     .post("/template_select_postgresql/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
       kind: kind,
@@ -36,7 +36,7 @@ function TemplateInsertPostgresql(schema, table) {
     .post("/template_insert_postgresql/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })
@@ -53,7 +53,7 @@ function TemplateUpdatePostgresql(schema, table) {
     .post("/template_update_postgresql/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       schema: schema,
     })
@@ -70,7 +70,7 @@ function TemplateSelectFunctionPostgresql(schema, func, functionid) {
     .post("/template_select_function_postgresql/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       function: func,
       functionid: functionid,
       schema: schema,

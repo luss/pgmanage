@@ -158,7 +158,7 @@ export default {
   props: {
     mode: operationModes,
     treeNode: Object,
-    connId: String,
+    workspaceId: String,
     databaseIndex: Number,
   },
   data() {
@@ -264,7 +264,7 @@ export default {
     getDatabases() {
       axios.post('/get_databases_postgresql/', {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
       })
         .then((resp) => {
           this.databases = resp.data.map((x) => x.name)
@@ -277,7 +277,7 @@ export default {
     getJobDetails() {
       axios.post('/get_pgcron_job_details/', {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
@@ -312,7 +312,7 @@ export default {
       ]
       axios.post('/get_pgcron_job_logs/', {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
@@ -346,7 +346,7 @@ export default {
     clearJobStats() {
       axios.post('/delete_pgcron_job_logs/', {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
@@ -362,7 +362,7 @@ export default {
       if(!this.v$.$invalid) {
           axios.post('/save_pgcron_job/', {
             database_index: this.databaseIndex,
-            tab_id: this.connId,
+            workspace_id: this.workspaceId,
             jobId: this.jobId,
             jobName: this.jobName,
             schedule: this.schedule,
@@ -370,7 +370,7 @@ export default {
             inDatabase: this.inDatabase
           })
             .then((resp) => {
-              emitter.emit(`refreshNode_${this.connId}`, {"node": this.treeNode})
+              emitter.emit(`refreshNode_${this.workspaceId}`, {"node": this.treeNode})
               Modal.getOrCreateInstance('#pgCronModal').hide()
             })
             .catch((error) => {
@@ -396,11 +396,11 @@ export default {
     deleteJob() {
       axios.post('/delete_pgcron_job/', {
         database_index: this.databaseIndex,
-        tab_id: this.connId,
+        workspace_id: this.workspaceId,
         job_meta: this.treeNode.data.job_meta
       })
         .then((resp) => {
-          emitter.emit(`removeNode_${this.connId}`, {"node": this.treeNode})
+          emitter.emit(`removeNode_${this.workspaceId}`, {"node": this.treeNode})
           Modal.getOrCreateInstance('#pgCronModal').hide()
         })
         .catch((error) => {

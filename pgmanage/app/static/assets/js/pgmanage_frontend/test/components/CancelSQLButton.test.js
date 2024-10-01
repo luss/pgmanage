@@ -21,7 +21,7 @@ vi.mock("@/long_polling", () => ({
 
 describe("CancelButton.vue", () => {
   const tabId = "tab-1";
-  const connId = "conn-1";
+  const workspaceId = "workspace-1";
   const mockTab = {
     metaData: {
       context: { code: "some-code" },
@@ -40,7 +40,7 @@ describe("CancelButton.vue", () => {
 
   it("should call cancelSQL method when button is clicked", async () => {
     const wrapper = mount(CancelButton, {
-      props: { tabId, connId },
+      props: { tabId, workspaceId },
       shallow: true,
     });
 
@@ -52,7 +52,7 @@ describe("CancelButton.vue", () => {
 
   it("should call removeContext and createRequest in cancelSQL", async () => {
     const wrapper = mount(CancelButton, {
-      props: { tabId, connId },
+      props: { tabId, workspaceId },
       shallow: true,
     });
 
@@ -61,7 +61,7 @@ describe("CancelButton.vue", () => {
     expect(removeContext).toHaveBeenCalledWith(mockTab.metaData.context.code);
     expect(createRequest).toHaveBeenCalledWith(
       queryRequestCodes.CancelThread,
-      { tab_id: tabId, conn_tab_id: connId },
+      { tab_id: tabId, workspace_id: workspaceId },
       {
         tab: mockTab,
         database_index: undefined,
@@ -75,7 +75,7 @@ describe("CancelButton.vue", () => {
 
   it("should set tab metadata and emit cancelled event in cancelSQLReturn", async () => {
     const wrapper = mount(CancelButton, {
-      props: { tabId, connId },
+      props: { tabId, workspaceId },
       shallow: true,
     });
 
@@ -88,7 +88,7 @@ describe("CancelButton.vue", () => {
 
   it("should handle and unregister emitter events", () => {
     const wrapper = mount(CancelButton, {
-      props: { tabId, connId },
+      props: { tabId, workspaceId },
       shallow: true,
     });
     const cancelSQLSpy = vi.spyOn(wrapper.vm, "cancelSQL");

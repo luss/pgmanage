@@ -63,7 +63,7 @@ describe("Template Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_select_oracle/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table,
         schema,
       });
@@ -105,7 +105,7 @@ describe("Template Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_insert_oracle/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table,
         schema,
       });
@@ -143,7 +143,7 @@ describe("Template Functions", () => {
 
       expect(axios.post).toHaveBeenCalledWith("/template_update_oracle/", {
         database_index: 1,
-        tab_id: "primary-tab-id",
+        workspace_id: "primary-tab-id",
         table,
         schema,
       });

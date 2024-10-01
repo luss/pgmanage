@@ -62,7 +62,7 @@
           Rollback
         </button>
 
-        <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :conn-id="connId"
+        <CancelButton v-if="executingState && longQuery" :tab-id="tabId" :workspace-id="workspaceId"
           @cancelled="cancelConsoleTab()" />
 
         <p class="m-0 h6" v-if="cancelled">
@@ -77,7 +77,7 @@
         </p>
       </div>
       <!--FIXME: add proper editor height recalculation-->
-        <QueryEditor ref="editor" class="custom-editor me-2" :read-only="readOnlyEditor" :tab-id="tabId" :conn-tab-id="connId" tab-mode="console"
+        <QueryEditor ref="editor" class="custom-editor me-2" :read-only="readOnlyEditor" :tab-id="tabId" :workspace-id="workspaceId" tab-mode="console"
           :dialect="dialect" @editor-change="updateEditorContent" :autocomplete="autocomplete"/>
     </pane>
   </splitpanes>
@@ -113,7 +113,7 @@ export default {
   },
   mixins: [FileInputChangeMixin],
   props: {
-    connId: String,
+    workspaceId: String,
     tabId: String,
     consoleHelp: String,
     databaseIndex: Number,
@@ -246,7 +246,7 @@ export default {
           if (command === "" && mode === consoleModes.DATA_OPERATION) {
             showToast("info", "Please provide a string.");
           } else {
-            let tab = tabsStore.getSelectedSecondaryTab(this.connId)
+            let tab = tabsStore.getSelectedSecondaryTab(this.workspaceId)
             this.queryDuration = "";
             this.cancelled = false;
             this.fetchMoreData = false;
@@ -259,7 +259,7 @@ export default {
               sql_cmd: command,
               mode: mode,
               db_index: this.databaseIndex,
-              conn_tab_id: this.connId,
+              workspace_id: this.workspaceId,
               tab_id: this.tabId,
               autocommit: this.autocommit,
               block_size: this.blockSize
@@ -317,7 +317,7 @@ export default {
         this.readOnlyEditor = false;
         this.tabStatus = data.data.con_status;
         if (
-          this.connId === tabsStore.selectedPrimaryTab.id &&
+          this.workspaceId === tabsStore.selectedPrimaryTab.id &&
           this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
         ) {
           this.context = "";
@@ -351,7 +351,7 @@ export default {
           let node_type = status[1] ? `${status[1].toLowerCase()}_list` : null;
 
           if (!!node_type)
-            emitter.emit(`refreshTreeRecursive_${this.connId}`, node_type);
+            emitter.emit(`refreshTreeRecursive_${this.workspaceId}`, node_type);
         }
       }
     },
@@ -402,7 +402,7 @@ export default {
   },
   watch: {
     hasChanges() {
-      const tab = tabsStore.getSecondaryTabById(this.tabId, this.connId);
+      const tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId);
       if (tab) {
         tab.metaData.hasUnsavedChanges = this.hasChanges;
       }

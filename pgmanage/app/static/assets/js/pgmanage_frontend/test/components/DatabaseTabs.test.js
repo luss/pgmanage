@@ -23,7 +23,7 @@ describe("DatabaseTabs.vue", () => {
   test("renders a component", async () => {
     const wrapper = mount(DatabaseTabs, {
       props: {
-        tabId: connTab.id,
+        workspaceId: connTab.id,
       },
       shallow: true,
     });
@@ -36,7 +36,7 @@ describe("DatabaseTabs.vue", () => {
   test("calls addTab method on add button click", async () => {
     const wrapper = mount(DatabaseTabs, {
       props: {
-        tabId: connTab.id,
+        workspaceId: connTab.id,
       },
       shallow: true,
     });
@@ -50,7 +50,7 @@ describe("DatabaseTabs.vue", () => {
   test("addTab method adds snippet tab when sideBarTab is 'Snippets", async () => {
     const wrapper = mount(DatabaseTabs, {
       props: {
-        tabId: snippetTab.id,
+        workspaceId: snippetTab.id,
       },
       shallow: true,
     });
@@ -66,7 +66,7 @@ describe("DatabaseTabs.vue", () => {
   test("addTab method calls showMenuNewTab method when sideBarTab is not 'Snippets", async () => {
     const wrapper = mount(DatabaseTabs, {
       props: {
-        tabId: connTab.id,
+        workspaceId: connTab.id,
       },
       shallow: true,
     });

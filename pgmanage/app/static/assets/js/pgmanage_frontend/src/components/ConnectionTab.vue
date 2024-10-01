@@ -4,7 +4,7 @@
       <splitpanes class="default-theme">
         <pane min-size="18" size="25">
           <div
-            :id="`${connTabId}_div_left`"
+            :id="`${workspaceId}_div_left`"
             class="omnidb__workspace__div-left col"
           >
             <div class="row g-0">
@@ -16,7 +16,7 @@
                   </p>
 
                   <div
-                    :id="`${connTabId}_switch`"
+                    :id="`${workspaceId}_switch`"
                     class="omnidb__switch omnidb__switch--sm"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
@@ -25,13 +25,13 @@
                   >
                     <input
                       type="checkbox"
-                      :id="`${connTabId}_autocomplete`"
+                      :id="`${workspaceId}_autocomplete`"
                       class="omnidb__switch--input"
                       v-model="autocompleteStatus"
                       @change="emitConnectionSave"
                     />
                     <label
-                      :for="`${connTabId}_autocomplete`"
+                      :for="`${workspaceId}_autocomplete`"
                       class="omnidb__switch--label"
                     >
                       <span>
@@ -46,10 +46,10 @@
                   @resize="treeTabsPaneSize = $event[1].size"
                 >
                   <pane :size="100 - treeTabsPaneSize">
-                    <div :id="`${connTabId}_tree`" class="database-tree">
+                    <div :id="`${workspaceId}_tree`" class="database-tree">
                       <component
                         :is="treeComponent"
-                        :tab-id="connTabId"
+                        :workspace-id="workspaceId"
                         :database-index="databaseIndex"
                         @tree-tabs-update="getProperties"
                         @clear-tabs="clearTreeTabsData"
@@ -63,7 +63,7 @@
                     style="min-height: 2rem"
                   >
                     <TreePropertiesDDL
-                      :conn-id="connTabId"
+                      :workspace-id="workspaceId"
                       :database-technology="databaseTechnology"
                       :ddl-data="ddlData"
                       :properties-data="propertiesData"
@@ -78,14 +78,14 @@
         </pane>
         <pane min-size="2">
           <div
-            :id="`${connTabId}_div_right`"
+            :id="`${workspaceId}_div_right`"
             class="omnidb__workspace__div-right col position-relative right-div-height"
           >
             <div class="row">
               <DatabaseTabs
-                :id="`${connTabId}`"
+                :id="`${workspaceId}`"
                 class="w-100"
-                :tab-id="connTabId"
+                :workspace-id="workspaceId"
                 :color-label-class='connectionTab.metaData?.colorLabelClass'
               />
             </div>
@@ -124,7 +124,7 @@ export default {
   },
   mixins: [TabTitleUpdateMixin],
   props: {
-    connTabId: String,
+    workspaceId: String,
   },
   data() {
     return {
@@ -139,7 +139,7 @@ export default {
   },
   computed: {
     connectionTab() {
-      return tabsStore.getPrimaryTabById(this.connTabId);
+      return tabsStore.getPrimaryTabById(this.workspaceId);
     },
     databaseConnection() {
       return connectionsStore.getConnection(this.databaseIndex);
@@ -181,7 +181,7 @@ export default {
   },
   mounted() {
     this.changeDatabase(this.connectionTab.metaData.selectedDatabaseIndex);
-    this.subscribeToConnectionChanges(this.connTabId, this.databaseIndex);
+    this.subscribeToConnectionChanges(this.workspaceId, this.databaseIndex);
     this.$nextTick(() => {
       if (this.connectionTab.metaData.createInitialTabs) {
         let name = tabsStore.selectedPrimaryTab.metaData.selectedDatabase.replace('\\', '/').split('/').pop()
@@ -190,7 +190,7 @@ export default {
       }
     });
 
-    new Tooltip(`#${this.connTabId}_switch`, {
+    new Tooltip(`#${this.workspaceId}_switch`, {
       boundary: "window",
       trigger: 'hover'
     });
@@ -213,7 +213,7 @@ export default {
         connObject = connectionsStore.connections[0];
       }
 
-      let tabData = tabsStore.getPrimaryTabById(this.connTabId);
+      let tabData = tabsStore.getPrimaryTabById(this.workspaceId);
 
       tabData.metaData.selectedDatabaseIndex = value;
       tabData.metaData.selectedDBMS = connObject.technology;
@@ -225,14 +225,14 @@ export default {
       if (["oracle", "sqlite"].includes(connObject.technology)) {
         connectionsStore.queueChangeActiveDatabaseThreadSafe({
           database_index: value,
-          tab_id: this.connTabId,
+          workspace_id: this.workspaceId,
           database: tabData.metaData.selectedDatabase,
         });
       } else {
         axios
           .post(`/get_databases_${connObject.technology}/`, {
             database_index: value,
-            tab_id: this.connTabId,
+            workspace_id: this.workspaceId,
           })
           .then((resp) => {
             if (
@@ -244,7 +244,7 @@ export default {
             }
             connectionsStore.queueChangeActiveDatabaseThreadSafe({
               database_index: value,
-              tab_id: this.connTabId,
+              workspace_id: this.workspaceId,
               database: tabData.metaData.selectedDatabase,
             });
           })
@@ -268,7 +268,7 @@ export default {
       axios
         .post(view, {
           database_index: this.databaseIndex,
-          tab_id: this.connTabId,
+          workspace_id: this.workspaceId,
           data: data,
         })
         .then((resp) => {

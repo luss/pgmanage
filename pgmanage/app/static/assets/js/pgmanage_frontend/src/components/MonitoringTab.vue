@@ -26,7 +26,7 @@ export default {
   props: {
     query: String,
     databaseIndex: Number,
-    connId: String,
+    workspaceId: String,
     dialect: String,
   },
   data() {
@@ -156,7 +156,7 @@ export default {
       axios
         .post("/refresh_monitoring/", {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           query: this.query,
         })
         .then((resp) => {
@@ -226,7 +226,7 @@ export default {
       axios
         .post(`/kill_backend_${this.dialect}/`, {
           database_index: this.databaseIndex,
-          tab_id: this.connId,
+          workspace_id: this.workspaceId,
           pid: pid,
         })
         .then((resp) => {

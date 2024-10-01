@@ -9,7 +9,7 @@ function TemplateSelectSqlite(table, kind) {
     .post("/template_select_sqlite/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
       kind: kind,
     })
@@ -32,7 +32,7 @@ function TemplateInsertSqlite(table) {
     .post("/template_insert_sqlite/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
     })
     .then((resp) => {
@@ -48,7 +48,7 @@ function TemplateUpdateSqlite(table) {
     .post("/template_update_sqlite/", {
       database_index:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
-      tab_id: tabsStore.selectedPrimaryTab.id,
+      workspace_id: tabsStore.selectedPrimaryTab.id,
       table: table,
     })
     .then((resp) => {

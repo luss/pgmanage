@@ -23,7 +23,7 @@ import TabTitleUpdateMixin from "../mixins/sidebar_title_update_mixin";
 export default {
   name: "TerminalTab",
   props: {
-    tabId: String,
+    workspaceId: String,
     databaseIndex: Number,
   },
   mixins: [TabTitleUpdateMixin],
@@ -47,7 +47,7 @@ export default {
       this.fitAddon.fit();
     });
 
-    this.subscribeToConnectionChanges(this.tabId, this.databaseIndex);
+    this.subscribeToConnectionChanges(this.workspaceId, this.databaseIndex);
   },
   unmounted() {
     this.clearEvents();
@@ -73,7 +73,7 @@ export default {
       this.term.focus();
       this.term.write("Starting terminal...");
 
-      const tab = tabsStore.getPrimaryTabById(this.tabId);
+      const tab = tabsStore.getPrimaryTabById(this.workspaceId);
 
       let context = {
         tab: tab,
@@ -95,27 +95,27 @@ export default {
     setupEvents() {
       window.addEventListener("resize", this.resizeBrowserHandler);
 
-      emitter.on(`${this.tabId}_resize`, () => {
+      emitter.on(`${this.workspaceId}_resize`, () => {
         this.$nextTick(() => {
           this.resizeBrowserHandler();
         });
       });
 
-      emitter.on(`${this.tabId}_adjust_terminal_dimensions`, () => {
+      emitter.on(`${this.workspaceId}_adjust_terminal_dimensions`, () => {
         this.adjustTermninalDimensions();
         this.term.focus();
       });
     },
     clearEvents() {
       window.removeEventListener("resize", this.resizeBrowserHandler);
-      emitter.all.delete(`${this.tabId}_resize`);
-      emitter.all.delete(`${this.tabId}_adjust_terminal_dimensions`);
+      emitter.all.delete(`${this.workspaceId}_resize`);
+      emitter.all.delete(`${this.workspaceId}_adjust_terminal_dimensions`);
     },
     terminalRun(spawn = true, query = "\r") {
       this.lastCommand = query;
       let messageData = {
         cmd: query,
-        tab_id: this.tabId,
+        workspace_id: this.workspaceId,
         db_index: null,
         spawn: spawn,
         ssh_id: this.databaseIndex,
@@ -136,7 +136,7 @@ export default {
       this.term.write(data.data.data);
     },
     resizeBrowserHandler() {
-      if (this.tabId === tabsStore.selectedPrimaryTab.id) {
+      if (this.workspaceId === tabsStore.selectedPrimaryTab.id) {
         this.fitAddon.fit();
       }
     },
