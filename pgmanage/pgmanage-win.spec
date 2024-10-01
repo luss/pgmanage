@@ -9,6 +9,7 @@ import os
 exclude_patterns = [
   os.path.join('static', 'pgmanage_frontend'),
   '.dist-info',
+  '.py',
   'django\\contrib\\gis',
   'django\\contrib\\humanize',
   'django\\contrib\\flatpages',
