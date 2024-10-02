@@ -1,8 +1,9 @@
 import os
 import shutil
-from unittest.util import _MAX_LENGTH
-from django.db import models
+
+from app.utils.crypto import decrypt, encrypt
 from django.contrib.auth.models import User
+from django.db import models, transaction, DatabaseError
 
 
 class Technology(models.Model):
@@ -80,6 +81,50 @@ class Connection(models.Model):
     last_access_date = models.DateTimeField(null=True)
     autocomplete = models.BooleanField(default=True)
     color_label = models.IntegerField(blank=False, default=0)
+
+    @classmethod
+    def reencrypt_credentials(cls, user_id: int, old_key: str, new_key: str) -> None:
+        """
+        Re-encrypts the credentials (password, ssh_password, ssh_key) of all connections 
+        for the specified user using a new encryption key.
+
+        This method operates within an atomic transaction. If any error occurs during the 
+        re-encryption process, no changes are saved to the database and the error is raised.
+
+        Args:
+            user_id (int): The ID of the user whose connections should be re-encrypted.
+            old_key (str): The old encryption key used to decrypt the current values.
+            new_key (str): The new encryption key used to encrypt the values.
+
+        Raises:
+            DatabaseError: If an error occurs during the transaction.
+        """
+        try:
+            with transaction.atomic():
+                for conn in cls.objects.filter(user_id=user_id):
+                    conn.reencrypt_field("password", old_key, new_key)
+                    conn.reencrypt_field("ssh_password", old_key, new_key)
+                    conn.reencrypt_field("ssh_key", old_key, new_key)
+                    conn.save()
+        except Exception as exc:
+            raise DatabaseError(f"Failed to re-encrypt credentials: {exc}") from exc
+    
+    def reencrypt_field(self, field_name: str, old_key: str, new_key: str) -> None:
+        """
+        Re-encrypts a specific field of a connection using the provided new encryption key.
+
+        Args:
+            field_name (str): The name of the field to be re-encrypted.
+            old_key (str): The old encryption key used to decrypt the current value.
+            new_key (str): The new encryption key used to encrypt the value.
+        """
+        field_value = getattr(self, field_name, "")
+        if field_value:
+            decrypted_value = decrypt(field_value, old_key)
+            if isinstance(decrypted_value, bytes):
+                decrypted_value = decrypted_value.decode()
+            encrypted_value = encrypt(decrypted_value, new_key)
+            setattr(self, field_name, encrypted_value)
 
 class SnippetFolder(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)

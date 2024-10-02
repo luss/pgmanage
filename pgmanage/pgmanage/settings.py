@@ -22,12 +22,15 @@ CSRF_TRUSTED_ORIGINS = []
 SESSION_COOKIE_NAME = 'pgmanage_sessionid'
 CSRF_COOKIE_NAME = 'pgmanage_csrftoken'
 ALLOWED_HOSTS = ['*']
+SQLITE_PATH = os.path.join(HOME_DIR, 'pgmanage.db')
+if not DESKTOP_MODE:
+    SQLITE_PATH = os.path.join(HOME_DIR, 'pgmanage-server.db')
 
 # Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(HOME_DIR, 'pgmanage.db')
+        'NAME': SQLITE_PATH
     }
 }
 
@@ -210,6 +213,7 @@ CH_CMDS_PER_PAGE = 20
 PWD_TIMEOUT_TOTAL = 1800
 PWD_TIMEOUT_REFRESH = 300
 THREAD_POOL_MAX_WORKERS = 2
+MASTER_PASSWORD_REQUIRED = custom_settings.DESKTOP_MODE
 
 DJANGO_VITE_DEV_MODE = DEBUG
 DJANGO_VITE_DEV_SERVER_PORT = 3000

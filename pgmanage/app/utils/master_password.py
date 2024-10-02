@@ -71,6 +71,6 @@ def reset_master_pass(current_user):
                 conn.ssh_password = ''
                 conn.ssh_key = ''
                 conn.save()
-        
+
     except Exception:
         raise
