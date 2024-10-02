@@ -89,15 +89,15 @@ class Connection(models.Model):
         for the specified user using a new encryption key.
 
         This method operates within an atomic transaction. If any error occurs during the 
-        re-encryption process, no changes are saved to the database.
+        re-encryption process, no changes are saved to the database and the error is raised.
 
         Args:
             user_id (int): The ID of the user whose connections should be re-encrypted.
             old_key (str): The old encryption key used to decrypt the current values.
             new_key (str): The new encryption key used to encrypt the values.
 
-        Returns:
-            Optional[str]: Returns None if successful, or an error message if a failure occurs.
+        Raises:
+            DatabaseError: If an error occurs during the transaction.
         """
         try:
             with transaction.atomic():
