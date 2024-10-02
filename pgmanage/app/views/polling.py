@@ -444,7 +444,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                 )
 
             try:
-                client_object.get_tab_database(
+                client_object.get_database(
                     session=session,
                     tab=workspace_context,
                     workspace_id=request_data["workspace_id"],

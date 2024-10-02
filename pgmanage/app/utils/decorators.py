@@ -25,7 +25,8 @@ def database_required(check_timeout=True, open_connection=True):
             data = request.data
             database_name = data.get("database_name")
             database_index = data.get("database_index")
-            workspace_id = data.get("workspace_id")
+            tab_id = data.get("tab_id")
+            workspace_id=data.get("workspace_id")
             client = client_manager.get_or_create_client(
                 client_id=request.session.session_key
             )
@@ -43,10 +44,10 @@ def database_required(check_timeout=True, open_connection=True):
                                 "kind": timeout.get("kind", "database")
                             }
                             return JsonResponse(data=data, status=400)
-
-                    database = client.get_main_tab_database(
+                    database = client.get_tab_database(
                         session=session,
                         workspace_id=workspace_id,
+                        tab_id=tab_id,
                         database_index=database_index,
                         database_name=database_name,
                         attempt_to_open_connection=open_connection,

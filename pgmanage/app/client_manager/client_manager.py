@@ -244,45 +244,6 @@ class Client:
             tab["terminal_object"].close()
             tab["terminal_ssh_client"].close()
 
-    def get_main_tab_database(
-        self,
-        session: Session,
-        workspace_id: str,
-        database_index: int,
-        database_name: str = None,
-        attempt_to_open_connection: bool = False,
-    ):
-        """Retrieves the database for the specified session and connection tab.
-
-        Args:
-            session (Session): The session object.
-            workspace_id (str): The ID of the connection workspace.
-            database_index (int): The index of the database.
-            database_name (str, optional): The name of the database.
-            attempt_to_open_connection (bool, optional): Specifies whether
-            to attempt opening the connection if not already open. Defaults to False.
-
-        Returns:
-            The database object.
-        """
-
-        # Retrieving tab object
-        tab = self.get_tab(workspace_id=workspace_id)
-        if tab is None:
-            tab = self.create_main_tab(
-                tab={"omnidatabase": None, "type": "connection", "tab_list": {}},
-                workspace_id=workspace_id,
-            )
-
-        return self.get_tab_database(
-            session=session,
-            tab=tab,
-            workspace_id=workspace_id,
-            database_index=database_index,
-            current_database = database_name,
-            attempt_to_open_connection=attempt_to_open_connection,
-            use_lock=True,
-        )
 
     def _should_update_database(
         self, tab: Dict[str, Any], current_tab_database: str, main_tab_database
@@ -363,7 +324,7 @@ class Client:
 
         tab["omnidatabase"] = database_new
 
-    def get_tab_database(
+    def get_database(
         self,
         session: Session,
         tab: Dict[str, Any],
@@ -416,6 +377,61 @@ class Client:
             tab["omnidatabase"].v_connection.Open()
 
         return tab["omnidatabase"]
+
+    def get_tab_database(
+        self,
+        session: Session,
+        workspace_id: str,
+        database_index: int,
+        tab_id: str = None,
+        database_name: str = None,
+        attempt_to_open_connection: bool = False,
+    ):
+        """Retrieves the database for the specified session, connection workspace and tab.
+
+        Args:
+            session (Session): The session object.
+            workspace_id (str): The ID of the connection workspace.
+            database_index (int): The index of the database.
+            tab_id (str, optional): The ID of the tab. If provided, will retrieve the specified tab.
+            database_name (str, optional): The name of the database to be used.
+            attempt_to_open_connection (bool, optional): Specifies whether to attempt opening
+                the connection if not already open. Defaults to False.
+
+        Returns:
+            The database object associated with the specified session and tab.
+        """
+
+        if tab_id and workspace_id:
+            tab = self.get_tab(workspace_id=workspace_id, tab_id=tab_id)
+            if tab is None:
+                tab = self.create_tab(
+                    workspace_id=workspace_id,
+                    tab_id=tab_id,
+                    tab={
+                        "thread": None,
+                        "omnidatabase": None,
+                        "inserted_tab": False,
+                        "type": "query",
+                    },
+                )
+        else:
+            tab = self.get_tab(workspace_id=workspace_id)
+            if tab is None:
+                tab = self.create_main_tab(
+                    tab={"omnidatabase": None, "type": "connection", "tab_list": {}},
+                    workspace_id=workspace_id,
+                )
+
+        return self.get_database(
+            session=session,
+            tab=tab,
+            workspace_id=workspace_id,
+            database_index=database_index,
+            current_database=database_name,
+            attempt_to_open_connection=attempt_to_open_connection,
+            use_lock=True,
+        )
 
 
 class ClientManager:
