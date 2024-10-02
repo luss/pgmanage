@@ -9,6 +9,8 @@ REPO="https://github.com/commandprompt/pgmanage"
 BRANCH="${2:-master}"
 DEPLOY_DIR=$(pwd)
 TEMP_DIR=$DEPLOY_DIR/tmp
+# use this when building in virtualbox
+# TEMP_DIR=/cygdrive/c/pgmanage_tmp
 
 # if version is not provided, we use last tag from repository
 if [ -z "$APP_VERSION" ]
