@@ -82,7 +82,7 @@ export default {
         }
       });
 
-      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.workspaceId, this.databaseName)
+      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.workspaceId, this.tabId, this.databaseName)
     }
     if(this.autocomplete) {
       this.editor.setOptions({
