@@ -88,6 +88,7 @@ def get_connections(request, session):
                 conn_object['user'] = conn.username
                 conn_object['password'] = ''
                 conn_object['password_set'] = False if conn.password.strip() == '' else True
+                conn_object['decryption_failed'] = database_object.get("decryption_failed", False)
 
             connection_list.append(conn_object)
 
@@ -203,13 +204,15 @@ def test_connection(request):
 
     if conn_id:
         conn = Connection.objects.get(id=conn_id)
-        if password == '' and conn_type != 'terminal' and conn_object.get("password_set") is True:
-            password = decrypt(conn.password, key) if conn.password else ''
-        if ssh_password == '' and conn_object['tunnel']['password_set'] is True:
-            ssh_password = decrypt(conn.ssh_password, key) if conn.ssh_password else ''
-        if conn_object['tunnel']['key'].strip() == '':
-            ssh_key = decrypt(conn.ssh_key, key) if conn.ssh_key else ''
-
+        try:
+            if password == '' and conn_type != 'terminal' and conn_object.get("password_set") is True:
+                password = decrypt(conn.password, key) if conn.password else ''
+            if ssh_password == '' and conn_object['tunnel']['password_set'] is True:
+                ssh_password = decrypt(conn.ssh_password, key) if conn.ssh_password else ''
+            if conn_object['tunnel']['key'].strip() == '':
+                ssh_key = decrypt(conn.ssh_key, key) if conn.ssh_key else ''
+        except UnicodeDecodeError:
+            return JsonResponse(data={"data": "There was an error decrypting the passwords. Please try re-saving them to encrypt with the new key."}, status=400)
     if conn_type == 'terminal':
 
         client = paramiko.SSHClient()

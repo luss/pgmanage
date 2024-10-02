@@ -16,6 +16,7 @@ from app.views.connections import session_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import DatabaseError
 from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -34,6 +35,12 @@ def index(request):
         return redirect(settings.LOGIN_REDIRECT_URL)
 
     session = request.session.get("pgmanage_session")
+
+    if not settings.MASTER_PASSWORD_REQUIRED and user_details.masterpass_check == '':
+
+        key = key_manager.get(request.user)
+
+        set_masterpass_check_text(user_details, key)
     if key_manager.get(request.user):
         session.RefreshDatabaseList()
 
@@ -149,10 +156,20 @@ def save_user_password(request):
     if not password:
         return JsonResponse(data={"data": "Password can not be empty."}, status=400)
 
-    user = User.objects.get(id=request.user.id)
-    user.set_password(password)
-    user.save()
-    update_session_auth_hash(request, user)
+    try:
+        user = User.objects.get(id=request.user.id)
+        user.set_password(password)
+        user.save()
+        update_session_auth_hash(request, user)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=500)
+    
+    old_key = key_manager.get(request.user)
+    key_manager.set(request.user, password)
+    try:
+        Connection.reencrypt_credentials(request.user.id, old_key, password)
+    except DatabaseError as exc:
+        return JsonResponse(data={"data": str(exc)}, status=500)
 
     return HttpResponse(status=200)
 
