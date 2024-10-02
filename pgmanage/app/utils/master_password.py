@@ -74,32 +74,3 @@ def reset_master_pass(current_user):
 
     except Exception:
         raise
-
-
-def reencrypt_connection_passwords(user_id: int, old_key: str, new_key: str) -> None:
-
-    for conn in Connection.objects.filter(user_id=user_id):
-        if conn.password != "":
-            password = decrypt(conn.password, old_key)
-
-            if isinstance(password, bytes):
-                password = password.decode()
-
-            password = encrypt(password, new_key)
-            setattr(conn, "password", password)
-
-        if conn.ssh_password != "":
-            ssh_password = decrypt(conn.ssh_password, old_key)
-            if isinstance(ssh_password, bytes):
-                ssh_password = ssh_password.decode()
-
-            ssh_password = encrypt(ssh_password, new_key)
-            setattr(conn, "ssh_password", ssh_password)
-
-        if conn.ssh_key != "":
-            ssh_key = decrypt(conn.ssh_key, old_key)
-            if isinstance(ssh_key, bytes):
-                ssh_key = ssh_key.decode()
-            ssh_key = encrypt(ssh_key, new_key)
-            setattr(conn, "ssh_key", ssh_key)
-        conn.save()

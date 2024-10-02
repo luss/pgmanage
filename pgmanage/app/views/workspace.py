@@ -9,14 +9,14 @@ from app.models.main import Connection, Shortcut, Tab, UserDetails
 from app.utils.crypto import make_hash
 from app.utils.decorators import database_required, user_authenticated
 from app.utils.key_manager import key_manager
-from app.utils.master_password import (reencrypt_connection_passwords,
-                                       reset_master_pass,
+from app.utils.master_password import (reset_master_pass,
                                        set_masterpass_check_text,
                                        validate_master_password)
 from app.views.connections import session_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import DatabaseError
 from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -36,7 +36,7 @@ def index(request):
 
     session = request.session.get("pgmanage_session")
 
-    if not settings.DESKTOP_MODE and user_details.masterpass_check == '':
+    if not settings.MASTER_PASSWORD_REQUIRED and user_details.masterpass_check == '':
 
         key = key_manager.get(request.user)
 
@@ -166,7 +166,10 @@ def save_user_password(request):
     
     old_key = key_manager.get(request.user)
     key_manager.set(request.user, password)
-    reencrypt_connection_passwords(request.user.id, old_key, password)
+    try:
+        Connection.reencrypt_credentials(request.user.id, old_key, password)
+    except DatabaseError as exc:
+        return JsonResponse(data={"data": str(exc)}, status=500)
 
     return HttpResponse(status=200)
 
