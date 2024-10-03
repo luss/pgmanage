@@ -48,11 +48,12 @@ describe("dbMetadata store", () => {
     };
     axios.post.mockResolvedValue(mockResponse);
 
-    await dbMetadataStore.fetchDbMeta(1, "workspace1", "test_db");
+    await dbMetadataStore.fetchDbMeta(1, "workspace1", "tab1", "test_db");
 
     expect(axios.post).toHaveBeenCalledWith("/get_database_meta/", {
       database_index: 1,
       workspace_id: "workspace1",
+      tab_id: "tab1",
       database_name: "test_db",
     });
 
@@ -73,7 +74,7 @@ describe("dbMetadata store", () => {
       },
     };
 
-    await dbMetadataStore.fetchDbMeta(1, "tab1", "test_db");
+    await dbMetadataStore.fetchDbMeta(1, "workspace1", "tab1", "test_db");
 
     expect(axios.post).not.toHaveBeenCalled();
   });
