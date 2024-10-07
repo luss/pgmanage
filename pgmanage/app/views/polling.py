@@ -17,7 +17,7 @@ from app.include.custom_paramiko_expect import SSHClientInteraction
 from app.include.Session import Session
 from app.include.Spartacus import Utils
 from app.models.main import Connection, ConsoleHistory, QueryHistory, Tab
-from app.utils.decorators import session_required
+from app.utils.decorators import session_required, user_authenticated
 from django.contrib.auth.models import User
 from django.http import HttpRequest, JsonResponse
 
@@ -210,11 +210,15 @@ def export_data(
     return file_name, extension
 
 
+@user_authenticated
+@session_required(include_session=False)
 def clear_client(request: HttpRequest) -> JsonResponse:
     client_manager.clear_client(request.session.session_key)
     return JsonResponse({})
 
 
+@user_authenticated
+@session_required(include_session=False)
 def client_keep_alive(request: HttpRequest) -> JsonResponse:
     client: Client = client_manager.get_or_create_client(
         client_id=request.session.session_key
