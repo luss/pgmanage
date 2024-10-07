@@ -62,7 +62,7 @@ sed -i -e 's/DESKTOP_MODE = False/DESKTOP_MODE = True/g' pgmanage/custom_setting
 echo "Done."
 
 # building vite bundle
-cd app/static/assets/js/pgmanage_frontend/
+cd app/static/pgmanage_frontend/
 
 echo "installing javascript dependencies"
 npm install

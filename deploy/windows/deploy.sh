@@ -51,7 +51,7 @@ sed -i "s/Dev/PgManage $APP_VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$APP_VERSION/" pgmanage/custom_settings.py
 
 # building vite bundle
-cd app/static/assets/js/pgmanage_frontend/
+cd app/static/pgmanage_frontend/
 
 echo "installing javascript dependencies"
 npm install
