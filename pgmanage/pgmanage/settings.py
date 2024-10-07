@@ -219,11 +219,11 @@ DJANGO_VITE_DEV_MODE = DEBUG
 DJANGO_VITE_DEV_SERVER_PORT = 3000
 
 if not DEBUG:
-    DJANGO_VITE_MANIFEST_PATH = os.path.join(STATIC_ROOT, 'assets', 'js', 'dist', 'manifest.json')
-    DJANGO_VITE_STATIC_URL_PREFIX = os.path.join('assets', 'js', 'dist')
-    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, os.path.join('assets', 'js', 'dist' ))
+    DJANGO_VITE_MANIFEST_PATH = os.path.join(STATIC_ROOT, "dist", 'manifest.json')
+    DJANGO_VITE_STATIC_URL_PREFIX = "dist"
+    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, "dist")
 else:
-    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, os.path.join('assets', 'js', 'pgmanage_frontend'))
+    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, "pgmanage_frontend")
 
 STATICFILES_DIRS = [
     DJANGO_VITE_ASSETS_PATH,
