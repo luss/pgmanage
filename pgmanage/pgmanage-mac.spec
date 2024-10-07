@@ -6,7 +6,7 @@ import os
 # https://github.com/orgs/pyinstaller/discussions/6126
 
 exclude_patterns = [
-  os.path.join('js', 'pgmanage_frontend'),
+  os.path.join('static', 'pgmanage_frontend'),
 ]
 
 block_cipher = None
