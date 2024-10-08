@@ -223,7 +223,7 @@ class ConfigurationViewTests(TestCase):
     def test_get_configuration_history_url_resolves_get_configuration_history_view(
         self,
     ):
-        view = resolve("/get_configuration_history//")
+        view = resolve("/get_configuration_history/")
         self.assertEqual(view.func.__name__, get_configuration_history.__name__)
 
     @patch("app.views.configuration.get_settings_status")
