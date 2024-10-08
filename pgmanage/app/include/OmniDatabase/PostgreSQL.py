@@ -5266,7 +5266,9 @@ INDEX
 ''')
 
     def TemplateDropIndex(self):
-        return Template('''DROP INDEX [ CONCURRENTLY ] #index_name#
+        return Template('''DROP INDEX
+--CONCURRENTLY
+#index_name#
 --CASCADE
 ''')
 
