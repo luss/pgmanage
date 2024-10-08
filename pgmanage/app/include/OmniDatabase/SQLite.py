@@ -169,14 +169,6 @@ class SQLite:
     def PrintDatabaseDetails(self):
         return 'Local File'
 
-    def HandleUpdateDeleteRules(self, p_update_rule, p_delete_rule):
-        v_rules = ''
-        if p_update_rule.strip() != "":
-            v_rules += " on update " + p_update_rule + " "
-        if p_delete_rule.strip() != "":
-            v_rules += " on delete " + p_delete_rule + " "
-        return v_rules
-
     def TestConnection(self):
         v_return = ''
         try:

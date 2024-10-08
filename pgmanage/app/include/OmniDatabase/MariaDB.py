@@ -213,14 +213,6 @@ class MariaDB:
     def PrintDatabaseDetails(self):
         return self.v_active_server + ':' + self.v_active_port
 
-    def HandleUpdateDeleteRules(self, p_update_rule, p_delete_rule):
-        v_rules = ''
-        if p_update_rule.strip() != '':
-            v_rules += ' on update ' + p_delete_rule + ' '
-        if p_delete_rule.strip() != '':
-            v_rules += ' on delete ' + p_delete_rule + ' '
-        return v_rules
-
     def TestConnection(self):
         v_return = ''
         if self.v_conn_string and self.v_conn_string_error!='':
