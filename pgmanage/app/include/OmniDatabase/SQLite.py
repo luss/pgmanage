@@ -65,6 +65,15 @@ class SQLite:
         self.v_schema = ''
         self.v_connection = Spartacus.Database.SQLite(p_service, p_foreignkeys)
 
+        self.v_can_rename_table = True
+        self.v_can_alter_type = False
+        self.v_can_alter_nullable = False
+        self.v_can_rename_column = False
+        self.v_can_add_column = True
+        self.v_can_drop_column = False
+        self.v_can_add_constraint = False
+        self.v_can_drop_constraint = False
+
         self.v_has_schema = False
         self.v_has_functions = False
         self.v_has_procedures = False
@@ -80,39 +89,8 @@ class SQLite:
         self.v_has_triggers = True
         self.v_has_partitions = True
         self.v_has_statistics = False
-
         self.v_has_update_rule = True
-        self.v_can_rename_table = True
-        self.v_rename_table_command = "alter table #p_table_name# rename to #p_new_table_name#"
-        self.v_create_pk_command = "constraint #p_constraint_name# primary key (#p_columns#)"
-        self.v_create_fk_command = "constraint #p_constraint_name# foreign key (#p_columns#) references #p_r_table_name# (#p_r_columns#) #p_delete_update_rules#"
-        self.v_create_unique_command = "constraint #p_constraint_name# unique (#p_columns#)"
-        self.v_can_alter_type = False
-        self.v_can_alter_nullable = False
-        self.v_can_rename_column = False
-        self.v_can_add_column = True
-        self.v_add_column_command = "alter table #p_table_name# add column #p_column_name# #p_data_type# #p_nullable#"
-        self.v_can_drop_column = False
-        self.v_can_add_constraint = False
-        self.v_can_drop_constraint = False
-        self.v_create_index_command = "create index #p_index_name# on #p_table_name# (#p_columns#)";
-        self.v_create_unique_index_command = "create unique index #p_index_name# on #p_table_name# (#p_columns#)"
-        self.v_drop_index_command = "drop index #p_index_name#"
-        self.v_update_rules = [
-            "NO ACTION",
-			"RESTRICT",
-			"SET NULL",
-			"SET DEFAULT",
-			"CASCADE"
-        ]
-        self.v_delete_rules = [
-            "NO ACTION",
-			"RESTRICT",
-			"SET NULL",
-			"SET DEFAULT",
-			"CASCADE"
-        ]
-        self.v_reserved_words = []
+
         self.v_console_help = "Console tab."
         self.v_use_server_cursor = False
         self.v_version = ''
@@ -172,6 +150,7 @@ class SQLite:
     def TestConnection(self):
         v_return = ''
         try:
+            # FIXME: this is too naiive, try actually opening SQLite db with sqlite3.connect
             if os.path.isfile(self.v_service):
                 v_return = 'Connection successful.'
             else:
