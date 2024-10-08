@@ -12,7 +12,7 @@ base_urlpatterns = [
     path('logout/', views.login.logout, name='logout'),
     path('sign_in/', views.login.sign_in, name='sign_in'),
 
-    path('upload/', views.plugins.upload_view, name='sign_in'),
+    # path('upload/', views.plugins.upload_view, name='sign_in'),
 
     path('long_polling/', views.polling.long_polling, name='long_polling'),
     path('create_request/', views.polling.create_request, name='create_request'),
@@ -39,7 +39,7 @@ base_urlpatterns = [
     path('draw_graph/', views.workspace.draw_graph, name='draw_graph'),
     path('get_table_columns/', views.workspace.get_table_columns, name='get_table_columns'),
     path('refresh_monitoring/', views.workspace.refresh_monitoring, name='refresh_monitoring'),
-    path('delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
+    # path('delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
     path('get_database_meta/', views.workspace.get_database_meta, name='get_database_meta'),
 
     #SETINGS
@@ -51,10 +51,10 @@ base_urlpatterns = [
     path('clear_commands_history/', views.commands_history.clear_commands_history, name="clear_commands_history"),
 
     #HOOKS
-    path('get_plugins/', views.plugins.get_plugins, name='get_plugins'),
-    path('list_plugins/', views.plugins.list_plugins, name='list_plugins'),
-    path('reload_plugins/', views.plugins.reload_plugins, name='reload_plugins'),
-    path('exec_plugin_function/', views.plugins.exec_plugin_function, name='exec_plugin_function'),
+    # path('get_plugins/', views.plugins.get_plugins, name='get_plugins'),
+    # path('list_plugins/', views.plugins.list_plugins, name='list_plugins'),
+    # path('reload_plugins/', views.plugins.reload_plugins, name='reload_plugins'),
+    # path('exec_plugin_function/', views.plugins.exec_plugin_function, name='exec_plugin_function'),
 
     #TREE_SNIPPETS
     path('get_node_children/', views.tree_snippets.get_node_children, name='get_node_children'),

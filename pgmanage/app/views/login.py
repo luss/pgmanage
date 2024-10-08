@@ -81,6 +81,9 @@ def sign_in_automatic(request, username, pwd):
     user = authenticate(username=username, password=pwd)
     if user is not None:
         login(request, user)
+        if not settings.MASTER_PASSWORD_REQUIRED:
+            # store the master pass in the memory
+            key_manager.set(request.user, pwd)
     else:
         return -1
 

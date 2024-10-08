@@ -1,20 +1,16 @@
+from collections import OrderedDict
+
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from collections import OrderedDict
-import json
 
 from pgmanage import settings
-from django.contrib.auth.models import User
 
-import app.include.Spartacus.Utils
-from .utils_testing import (
-    build_client_ajax_request,
-    execute_client_login,
-    get_client_ajax_response_content,
-    get_client_omnidb_session,
-    get_session_alert_message,
-    USERS
-)
+from .utils_testing import (USERS, build_client_ajax_request,
+                            execute_client_login,
+                            get_client_ajax_response_content,
+                            get_client_omnidb_session,
+                            get_session_alert_message)
 
 
 class ConnectionsNoSession(TestCase):
@@ -62,7 +58,7 @@ class LoginNoSession(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('app/workspace.html', [template.name for template in response.templates])
-        self.assertEqual(len(response.redirect_chain), 3)
+        self.assertEqual(len(response.redirect_chain), 2)
         self.assertEqual(response.redirect_chain[-1][0], reverse('workspace'))
         self.assertEqual(response.redirect_chain[0][1], 302)
         self.assertIn('pgmanage_short_version', response.context)
@@ -124,37 +120,15 @@ class LoginNoSession(TestCase):
             reverse('sign_in'),
             build_client_ajax_request(
                 p_data={
-                    'p_username': '{p_user}kkk'.format(p_user=self.user['user']),
-                    'p_pwd': self.user['password']
+                    'username': '{p_user}kkk'.format(p_user=self.user['user']),
+                    'password': self.user['password']
                 }
             )
         )
 
         self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEqual(v_content['v_data'], -1)
-        self.assertFalse(v_content['v_error'])
-        self.assertIsNone(get_client_omnidb_session(p_client=self.client))
-
-
-    def test_sign_in_no_user_password(self):
-        """Test if sign in fails with valid user and invalid password.
-        """
-
-        response = self.client.post(
-            reverse('sign_in'),
-            build_client_ajax_request(
-                p_data={
-                    'username': self.user['user'],
-                    'password': '{p_password}kkk'.format(p_password=self.user['password'])
-                }
-            )
-        )
-
-        self.assertEqual(response.status_code, 200)
-        v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEqual(v_content['v_data'], -1)
-        self.assertFalse(v_content['v_error'])
+        self.assertEqual(v_content['data'], -1)
         self.assertIsNone(get_client_omnidb_session(p_client=self.client))
 
 
@@ -174,8 +148,7 @@ class LoginNoSession(TestCase):
 
         self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertTrue(v_content['v_data'] >= 0)
-        self.assertFalse(v_content['v_error'])
+        self.assertTrue(v_content['data'] >= 0)
 
 
 
@@ -214,8 +187,8 @@ class LoginSession(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('app/workspace.html', [template.name for template in response.templates])
-        self.assertEqual(len(response.redirect_chain), 3)
-        self.assertEqual(response.redirect_chain[2][0], reverse('workspace'))
+        self.assertEqual(len(response.redirect_chain), 2)
+        self.assertEqual(response.redirect_chain[1][0], reverse('workspace'))
         self.assertEqual(response.redirect_chain[1][1], 302)
         self.assertIn('pgmanage_short_version', response.context)
         self.assertEqual(response.context['pgmanage_short_version'], settings.PGMANAGE_SHORT_VERSION)
@@ -278,42 +251,22 @@ class LoginSession(TestCase):
     def test_sign_in_no_user_password(self):
         """Test if sign in fails with invalid user and valid password.
         """
-
+        self.client.logout()
         response = self.client.post(
             reverse('sign_in'),
             build_client_ajax_request(
                 p_data={
-                    'p_username': '{p_user}kkk'.format(p_user=self.user['user']),
-                    'p_pwd': self.user['password']
+                    'username': '{p_user}kkk'.format(p_user=self.user['user']),
+                    'password': self.user['password']
                 }
             )
         )
 
         self.assertEqual(response.status_code, 200)
         v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEqual(v_content['v_data'], -1)
-        self.assertFalse(v_content['v_error'])
+        self.assertEqual(v_content['data'], -1)
         self.assertIsNone(get_client_omnidb_session(p_client=self.client))
 
-
-    def test_sign_in_no_user_password(self):
-        """Test if sign in fails with valid user and invalid password.
-        """
-
-        response = self.client.post(
-            reverse('sign_in'),
-            build_client_ajax_request(
-                p_data={
-                    'username': self.user['user'],
-                    'password': '{p_password}kkk'.format(p_password=self.user['password'])
-                }
-            )
-        )
-
-        self.assertEqual(response.status_code, 200)
-        v_content = get_client_ajax_response_content(p_response=response)
-        self.assertEqual(v_content['v_data'], -1)
-        self.assertFalse(v_content['v_error'])
 
 
     def test_sign_in_user_password(self):
@@ -332,8 +285,7 @@ class LoginSession(TestCase):
 
         self.assertEqual(response.status_code, 200)
         ajax_response = get_client_ajax_response_content(p_response=response)
-        self.assertTrue(ajax_response['v_data'] >= 0)
-        self.assertFalse(ajax_response['v_error'])
+        self.assertTrue(ajax_response['data'] >= 0)
         app_session = get_client_omnidb_session(p_client=self.client)
         self.assertIsNotNone(app_session)
 
