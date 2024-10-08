@@ -171,11 +171,7 @@ class PostgreSQL:
         return self.v_connection.ExecuteScalar("select rolsuper from pg_roles where rolname = '{0}'".format(self.v_user))
 
     def PrintDatabaseInfo(self):
-        # FIXME: Why?
-        if self.v_conn_string=='':
-            return self.v_active_user + '@' + self.v_active_service
-        else:
-            return self.v_active_user + '@' + self.v_active_service
+        return self.v_active_user + '@' + self.v_active_service
 
     def PrintDatabaseDetails(self):
         return self.v_active_server + ':' + self.v_active_port

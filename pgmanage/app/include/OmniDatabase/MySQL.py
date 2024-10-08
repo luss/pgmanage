@@ -209,10 +209,7 @@ class MySQL:
             return False
 
     def PrintDatabaseInfo(self):
-        if self.v_conn_string=='':
-            return self.v_active_user + '@' + self.v_active_service
-        else:
-            return self.v_active_user + '@' + self.v_active_service
+        return self.v_active_user + '@' + self.v_active_service
 
     def PrintDatabaseDetails(self):
         return self.v_active_server + ':' + self.v_active_port
