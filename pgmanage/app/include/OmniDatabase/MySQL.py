@@ -116,45 +116,13 @@ class MySQL:
 
         self.v_has_update_rule = True
         self.v_can_rename_table = True
-        self.v_rename_table_command = "alter table #p_table_name# rename to #p_new_table_name#"
-        self.v_create_pk_command = "constraint #p_constraint_name# primary key (#p_columns#)"
-        self.v_create_fk_command = "constraint #p_constraint_name# foreign key (#p_columns#) references #p_r_table_name# (#p_r_columns#) #p_delete_update_rules#"
-        self.v_create_unique_command = "constraint #p_constraint_name# unique (#p_columns#)"
         self.v_can_alter_type = True
-        self.v_alter_type_command = "alter table #p_table_name# modify #p_column_name# #p_new_data_type#"
         self.v_can_alter_nullable = True
-        self.v_set_nullable_command = "alter table #p_table_name# modify #p_column_name# null"
-        self.v_drop_nullable_command = "alter table #p_table_name# modify #p_column_name# not null"
         self.v_can_rename_column = True
-        self.v_rename_column_command = "alter table #p_table_name# rename column #p_column_name# to #p_new_column_name#"
         self.v_can_add_column = True
-        self.v_add_column_command = "alter table #p_table_name# add #p_column_name# #p_data_type# #p_nullable#"
         self.v_can_drop_column = True
-        self.v_drop_column_command = "alter table #p_table_name# drop column #p_column_name#"
         self.v_can_add_constraint = True
-        self.v_add_pk_command = "alter table #p_table_name# add constraint #p_constraint_name# primary key (#p_columns#)"
-        self.v_add_fk_command = "alter table #p_table_name# add constraint #p_constraint_name# foreign key (#p_columns#) references #p_r_table_name# (#p_r_columns#) #p_delete_update_rules#"
-        self.v_add_unique_command = "alter table #p_table_name# add constraint #p_constraint_name# unique (#p_columns#)"
         self.v_can_drop_constraint = True
-        self.v_drop_pk_command = "alter table #p_table_name# drop constraint #p_constraint_name#"
-        self.v_drop_fk_command = "alter table #p_table_name# drop constraint #p_constraint_name#"
-        self.v_drop_unique_command = "alter table #p_table_name# drop constraint #p_constraint_name#"
-        self.v_create_index_command = "create index #p_index_name# on #p_table_name# (#p_columns#)";
-        self.v_create_unique_index_command = "create unique index #p_index_name# on #p_table_name# (#p_columns#)"
-        self.v_drop_index_command = "drop index #p_schema_name#.#p_index_name#"
-        self.v_update_rules = [
-            "NO ACTION",
-            "RESTRICT",
-			"SET NULL",
-			"CASCADE"
-        ]
-        self.v_delete_rules = [
-            "NO ACTION",
-            "RESTRICT",
-			"SET NULL",
-			"CASCADE"
-        ]
-        self.v_reserved_words = []
         self.v_console_help = "Console tab. Type the commands in the editor below this box. \? to view command list."
         self.v_use_server_cursor = False
 
@@ -1244,8 +1212,5 @@ WHERE condition
         else:
             return self.Query('show create {0} {1}.{2}'.format(p_type, p_schema, p_object), True, True).Rows[0][1]
 
-    def GetAutocompleteValues(self, p_columns, p_filter):
-        return None
-    
     def QueryTableDefinition(self, table=None):
         return self.v_connection.Query("SHOW FULL COLUMNS FROM {0}".format(table), True)
