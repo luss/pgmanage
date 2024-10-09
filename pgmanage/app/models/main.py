@@ -14,7 +14,7 @@ class UserDetails(models.Model):
     theme = models.CharField(max_length=50, blank=False,default='light')
     font_size = models.IntegerField(blank=False,default=12)
     csv_encoding = models.CharField(max_length=50, blank=False, default='utf-8')
-    csv_delimiter = models.CharField(max_length=10, blank=False, default=';')
+    csv_delimiter = models.CharField(max_length=10, blank=False, default=',')
     welcome_closed = models.BooleanField(default=False)
     masterpass_check = models.CharField(max_length=256, default='')
     binary_path = models.CharField(max_length=256, null=True)
