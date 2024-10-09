@@ -175,7 +175,6 @@ def export_data(
     data = database.v_connection.QueryBlock(sql_cmd, 1000, False, True)
 
     file_path: str = os.path.join(export_dir, file_name)
-
     file = Utils.DataFileWriter(
         file_path, data.Columns, encoding, delimiter, skip_headers=skip_headers
     )
@@ -1025,10 +1024,10 @@ def thread_query(self, args) -> None:
 
             log_end_time = datetime.now(timezone.utc)
             duration = get_duration(log_start_time, log_end_time)
-
+            file_suffix = log_end_time.strftime("%Y-%m-%d_%H-%M-%S")
             response_data["data"] = {
                 "file_name": f"{settings.PATH}/static/temp/{file_name}",
-                "download_name": f"pgmanage_exported-{log_end_time}.{extension}",
+                "download_name": f"pgmanage_exported-{file_suffix}.{extension}",
                 "duration": duration,
                 "inserted_id": inserted_id,
                 "con_status": database.v_connection.GetConStatus(),
