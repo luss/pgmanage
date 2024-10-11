@@ -83,7 +83,8 @@ def sign_in_automatic(request, username, pwd):
         login(request, user)
         if not settings.MASTER_PASSWORD_REQUIRED:
             # store the master pass in the memory
-            key_manager.set(request.user, pwd)
+            if not key_manager.get(request.user):
+                key_manager.set(request.user, pwd)
     else:
         return -1
 
@@ -110,7 +111,8 @@ def sign_in(request):
         login(request, user)
         if not settings.MASTER_PASSWORD_REQUIRED:
             # store the master pass in the memory
-            key_manager.set(request.user, pwd)
+            if not key_manager.get(request.user):
+                key_manager.set(request.user, pwd)
     else:
         return JsonResponse(response_data)
 
