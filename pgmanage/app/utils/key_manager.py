@@ -33,7 +33,7 @@ if settings.DEBUG:
     user_keys_env = os.getenv("PGMANAGE_USER_KEYS")
     if user_keys_env:
         for user_key_pair in user_keys_env.split("|"):
-            user_id, user_key = user_key_pair.split(":")
-            user = get_user_model().objects.filter(id=user_id).first()
+            username, user_key = user_key_pair.split(":")
+            user = get_user_model().objects.filter(username=username).first()
             if user:
                 key_manager.set(user, user_key)
