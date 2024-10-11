@@ -244,7 +244,6 @@ class Client:
             tab["terminal_object"].close()
             tab["terminal_ssh_client"].close()
 
-
     def _should_update_database(
         self, tab: Dict[str, Any], current_tab_database: str, main_tab_database
     ) -> bool:
@@ -352,7 +351,9 @@ class Client:
             The tab's database object.
         """
         main_tab_database = session.v_databases[database_index]["database"]
-        current_tab_database = current_database or session.v_tabs_databases.get(workspace_id)
+        current_tab_database = current_database or session.v_tabs_databases.get(
+            workspace_id
+        )
 
         # Updating time
         tab["last_update"] = datetime.now()
@@ -536,6 +537,17 @@ class ClientManager:
 
         client.release_returning_data_lock()
 
+    def remove_client(self, client_id: str) -> None:
+        """Removes the client with the specified client_id.
+
+        Args:
+            client_id (str): The ID of the client to be removed.
+
+        Returns:
+            None
+        """
+        self.clients.pop(client_id, None)
+
 
 client_manager = ClientManager()
 
@@ -575,6 +587,9 @@ def cleanup_thread():
                     tab = client.get_tab(workspace_id=workspace_id)
                     if is_tab_expired(tab, client_timeout_reached):
                         client.close_tab(workspace_id=workspace_id)
+
+            if client_timeout_reached:
+                client_manager.remove_client(client_id=client_id)
         time.sleep(30)
 
 
