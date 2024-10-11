@@ -42,6 +42,6 @@
 			var v_csrf_cookie_name = '{{ csrf_cookie_name }}';
 		</script>
 		{% vite_asset 'src/login.js' %}
+		{% csrf_token %}
 	</body>
 </html>
-{% csrf_token %}
