@@ -262,9 +262,6 @@ const useTabsStore = defineStore("tabs", {
         tooltip: "Welcome to PgManage",
         closable: false,
         isDraggable: false,
-        selectFunction: function () {
-          document.title = "Welcome to PgManage";
-        },
       });
 
       this.selectTab(tab);

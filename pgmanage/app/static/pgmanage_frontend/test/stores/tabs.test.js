@@ -216,7 +216,6 @@ describe("useTabsStore", () => {
     expect(tab).toBeTruthy();
     expect(tab.component).toBe("WelcomeScreen");
     expect(store.selectedPrimaryTab).toBe(tab);
-    expect(document.title).toBe("Welcome to PgManage");
   });
 
   it("should create and select a connection tab", async () => {
