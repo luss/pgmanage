@@ -753,19 +753,16 @@ result = {
 from datetime import datetime
 
 if previous_data != None:
-    query = '''
+    query = f'''
         SELECT round(
-                   ((sum(pg_database_size(datname)) - {0})/1048576.0) / (extract(epoch from now()::time - '{1}'::time))::numeric,
+                   ((sum(pg_database_size(datname)) - {previous_data['current_sum']})/1048576.0) / (extract(epoch from now()::time - '{previous_data['current_time']}'::time))::numeric,
                    2
                ) AS database_growth,
                sum(pg_database_size(datname)) AS current_sum,
                now()::text AS current_time
         FROM pg_stat_database
         WHERE datname IS NOT NULL
-    '''.format(
-        previous_data['current_sum'],
-        previous_data['current_time']
-    )
+    '''
 else:
     query = '''
         SELECT 0 AS database_growth,
@@ -817,7 +814,7 @@ result = {
             },
             "title":{
                 "display":True,
-                "text":"Heap Cache Miss Ratio (Database: {0})".format(database_name)
+                "text":f"Heap Cache Miss Ratio (Database: {database_name})"
             },
             "tooltip": {
                 "mode": "index",
@@ -855,22 +852,19 @@ result = {
 from datetime import datetime
 
 if previous_data != None:
-    query = '''
+    query = f'''
         SELECT sum(heap_blks_read) AS current_reads,
                sum(heap_blks_hit) AS current_hits,
                now()::time AS current_time,
-               CASE (sum(heap_blks_read) + sum(heap_blks_hit) - {1})
+               CASE (sum(heap_blks_read) + sum(heap_blks_hit) - {int(previous_data['current_hits']) + int(previous_data['current_reads'])})
                WHEN 0 THEN 0.0
                ELSE
                round(
-                   ((sum(heap_blks_read) - {0})*100::float / (sum(heap_blks_read) + sum(heap_blks_hit) - {1}))::numeric,
+                   ((sum(heap_blks_read) - {previous_data['current_reads']})*100::float / (sum(heap_blks_read) + sum(heap_blks_hit) - {int(previous_data['current_hits']) + int(previous_data['current_reads'])}))::numeric,
                    2
                ) END AS miss_ratio
         FROM pg_statio_all_tables
-    '''.format(
-        previous_data['current_reads'],
-        int(previous_data['current_hits']) + int(previous_data['current_reads'])
-    )
+    '''
 else:
     query = '''
         SELECT sum(heap_blks_read) AS current_reads,
@@ -923,7 +917,7 @@ result = {
             },
             "title":{
                 "display":True,
-                "text":"Index Cache Miss Ratio (Database: {0})".format(database_name)
+                "text":f"Index Cache Miss Ratio (Database: {database_name})"
             },
             "tooltip": {
                 "mode": "index",
@@ -961,22 +955,19 @@ result = {
 from datetime import datetime
 
 if previous_data != None:
-    query = '''
+    query = f'''
         SELECT sum(idx_blks_read) AS current_reads,
                sum(idx_blks_hit) AS current_hits,
                now()::time AS current_time,
-               CASE (sum(idx_blks_read) + sum(idx_blks_hit) - {1})
+               CASE (sum(idx_blks_read) + sum(idx_blks_hit) - {int(previous_data['current_hits']) + int(previous_data['current_reads'])})
                WHEN 0 THEN 0.0
                ELSE
                round(
-                   ((sum(idx_blks_read) - {0})*100::float / (sum(idx_blks_read) + sum(idx_blks_hit) - {1}))::numeric,
+                   ((sum(idx_blks_read) - {previous_data['current_reads']})*100::float / (sum(idx_blks_read) + sum(idx_blks_hit) - {int(previous_data['current_hits']) + int(previous_data['current_reads'])}))::numeric,
                    2
                ) END AS miss_ratio
         FROM pg_statio_all_tables
-    '''.format(
-        previous_data['current_reads'],
-        int(previous_data['current_hits']) + int(previous_data['current_reads'])
-    )
+    '''
 else:
     query = '''
         SELECT sum(idx_blks_read) AS current_reads,
@@ -1029,7 +1020,7 @@ result = {
             },
             "title":{
                 "display":True,
-                "text":"Seq Scan Ratio (Database: {0})".format(database_name)
+                "text":f"Seq Scan Ratio (Database: {database_name})"
             },
             "tooltip": {
                 "mode": "index",
@@ -1067,22 +1058,19 @@ result = {
 from datetime import datetime
 
 if previous_data != None:
-    query = '''
+    query = f'''
         SELECT sum(seq_scan) as current_seq,
                sum(idx_scan) as current_idx,
                now()::time AS current_time,
-               CASE (sum(seq_scan) + sum(idx_scan) - {1})
+               CASE (sum(seq_scan) + sum(idx_scan) - {int(previous_data['current_seq']) + int(previous_data['current_idx'])})
                WHEN 0 THEN 0.0
                ELSE
                round(
-                   ((sum(seq_scan) - {0})*100::float / (sum(seq_scan) + sum(idx_scan) - {1}))::numeric,
+                   ((sum(seq_scan) - {previous_data['current_seq']})*100::float / (sum(seq_scan) + sum(idx_scan) - {int(previous_data['current_seq']) + int(previous_data['current_idx'])}))::numeric,
                    2
                ) END AS ratio
         FROM pg_stat_all_tables
-    '''.format(
-        previous_data['current_seq'],
-        int(previous_data['current_seq']) + int(previous_data['current_idx'])
-    )
+    '''
 else:
     query = '''
         SELECT sum(seq_scan) as current_seq,
