@@ -84,7 +84,6 @@ class SettingsView(View):
                     "binary_path",
                     "pigz_path",
                     "masterpass_check",
-                    "welcome_closed",
                 ],
             ),
             "binary_path": user_details.get_binary_path(),
