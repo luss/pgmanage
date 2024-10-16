@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { test, describe, beforeEach, vi, expect } from "vitest";
 import MonitoringDashboard from "../../src/components/MonitoringDashboard.vue";
 import MonitoringWidget from "../../src/components/MonitoringWidget.vue";
@@ -60,6 +60,19 @@ describe("MonitoringDashboard", () => {
     expect(
       dashboardWrapper.getComponent(MonitoringWidget).emitted()
     ).toHaveProperty("widgetRefreshed");
+  });
+
+  test("should not refresh widgets when none exist", async () => {
+    await dashboardWrapper.vm.closeWidget(1);
+    await flushPromises();
+
+    const refreshWidgetsSpy = vi.spyOn(dashboardWrapper.vm, "refreshWidgets");
+    await dashboardWrapper
+      .get('[data-testid="refresh-all-widgets-button"]')
+      .trigger("click");
+
+    expect(refreshWidgetsSpy).toBeCalledTimes(1);
+    expect(dashboardWrapper.vm.refreshWidget).toBe(false);
   });
 
   test("should remove widget from dashboard on 'close' button click", async () => {
