@@ -88,7 +88,7 @@ export default {
         });
     },
     refreshWidgets() {
-      this.refreshWidget = true;
+      if (this.widgets.length > 0) this.refreshWidget = true;
     },
     waitForAllAndRefreshCounter() {
       this.counter++;
