@@ -13,7 +13,7 @@ git clone $REPO --depth 1 -b $BRANCH pgmanage
 cd pgmanage/
 mkdir -p /deploy/pip-cache
 pip3 install -r requirements.txt --cache-dir /deploy/pip-cache
-pip3 install pyinstaller==5.13.2  --cache-dir /deploy/pip-cache
+pip3 install pyinstaller==6.10.0  --cache-dir /deploy/pip-cache
 
 # if version is not provided, we use last tag from repository
 if [ -z "$VERSION" ]
