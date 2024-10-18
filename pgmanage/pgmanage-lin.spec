@@ -41,9 +41,11 @@ a = Analysis(['pgmanage-server.py'],
              win_private_assemblies=False,
              cipher=block_cipher)
 
+# config.py gets removed by the next expression, keep it for restoring later
 configpy = [entry for entry in a.datas if 'config.py' in entry[0]]
 a.datas = [entry for entry in a.datas if not any(pattern in entry[0] for pattern in exclude_patterns)]
 a.datas = a.datas + configpy
+
 pyz = PYZ(a.pure, a.zipped_data,
             cipher=block_cipher)
 
