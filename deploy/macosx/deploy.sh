@@ -49,7 +49,7 @@ source venv/bin/activate
 # Install all required libraries
 echo "installing python dependencies"
 pip3 install -r requirements.txt
-pip3 install pyinstaller==6.10.0
+pip3 install pyinstaller==5.13.2
 
 cd pgmanage/
 
