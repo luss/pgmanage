@@ -7,7 +7,7 @@ set -e -e
 
 APP_VERSION="$1"
 REPO="https://github.com/commandprompt/pgmanage"
-BRANCH="master"
+BRANCH="${2:-master}"
 DEPLOY_DIR=$(pwd)
 TEMP_DIR=$DEPLOY_DIR/tmp
 
