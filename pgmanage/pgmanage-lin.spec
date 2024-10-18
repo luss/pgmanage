@@ -32,7 +32,6 @@ data_files = [
 a = Analysis(['pgmanage-server.py'],
              pathex=['app/include/'],
              binaries=[],
-             datas=data_files,
              hiddenimports=['cheroot.ssl','cheroot.ssl.builtin','psycopg2','paramiko', 'pkg_resources.extern', 'cryptography.hazmat.primitives.kdf.pbkdf2'],
              hookspath=[],
              runtime_hooks=[],
@@ -41,7 +40,7 @@ a = Analysis(['pgmanage-server.py'],
              win_private_assemblies=False,
              cipher=block_cipher)
 
-a.datas = [entry for entry in a.datas if not any(pattern in entry[0] for pattern in exclude_patterns)]
+a.datas = [entry for entry in a.datas if not any(pattern in entry[0] for pattern in exclude_patterns)] + data_files
 
 pyz = PYZ(a.pure, a.zipped_data,
             cipher=block_cipher)
