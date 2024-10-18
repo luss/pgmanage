@@ -8,9 +8,9 @@ REPO="https://github.com/commandprompt/pgmanage"
 
 BRANCH="${2:-master}"
 DEPLOY_DIR=$(pwd)
-TEMP_DIR=$DEPLOY_DIR/tmp
+# TEMP_DIR=$DEPLOY_DIR/tmp
 # use this when building in virtualbox
-# TEMP_DIR=/cygdrive/c/pgmanage_tmp
+TEMP_DIR=/cygdrive/c/pgmanage_tmp
 
 # if version is not provided, we use last tag from repository
 if [ -z "$APP_VERSION" ]
@@ -42,7 +42,7 @@ source venv/Scripts/activate
 # Install all required libraries
 echo "installing python dependencies"
 pip3 install -r requirements.txt
-pip3 install pyinstaller==6.10.0
+pip3 install pyinstaller==5.13.2
 # use pipdeptree to troubleshoot dependency issues
 # pipdeptree
 cd pgmanage/
