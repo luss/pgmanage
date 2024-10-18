@@ -88,6 +88,8 @@ pyinstaller pgmanage-mac.spec
 pyinstaller process_executor-mac.spec
 
 mkdir pgmanage-server 
+echo 'Removing signature from libpython3.9.dylib library'
+codesign --remove-signature dist/pgmanage-server/libpython3.9.dylib
 mv dist/process_executor pgmanage-server/
 mv dist/pgmanage-server/* pgmanage-server/
 
