@@ -251,7 +251,6 @@ export default {
       if (data?.error) {
         this.query = this.editorContent;
         this.plan = data.data.message;
-        showToast("error", data.data.message);
         return;
       }
 
