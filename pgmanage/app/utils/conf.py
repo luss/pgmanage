@@ -269,7 +269,7 @@ def post_settings(request, conn, update, commit_comment=None, new_config=True):
             raise ValidationError(
                 code=400, message=f"{setting_name}: Invalid setting."
             ) from exc
-        if item["category"] == "Preset Options":
+        if setting.get("category") == "Preset Options":
             continue
         if setting_valid:
             if (
