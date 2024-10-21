@@ -582,7 +582,7 @@ function startTutorial(p_tutorial_name) {
     document.getElementById("terminal_connection_tutorial").onclick = function() { startTutorial('terminal_connection')}
     document.getElementById("connections_menu_tutorial").onclick = function() { startTutorial('connections_menu')}
     document.getElementById("connection_tab_tutorial").onclick = function() { startTutorial('connection_tab')}
-    if (!gv_desktopMode && v_super_user) {
+    if (!gv_desktopMode && v_super_user && __VITE_ENTERPRISE__) {
       document.getElementById("utilities_menu_tutorial").onclick = function() { startTutorial('utilities_menu')}
     }
   }
