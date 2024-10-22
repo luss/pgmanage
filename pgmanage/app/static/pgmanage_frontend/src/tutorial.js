@@ -495,7 +495,7 @@ function startTutorial(p_tutorial_name) {
          ${tabsStore.selectedPrimaryTab.metaData.selectedDBMS === 'postgresql' ? '<span class="bg-info rounded px-1 text-white">explain</span>, <span class="bg-info rounded px-1 text-white">explain analyze</span>' : ''}.</p>
         <p>If you navigate the Tree on the left to find a table and use the action <strong>Query Data</strong> from it's context menu, the editor will autofill and the run query will be issued.</p>
         `,
-        p_position: function() {var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return {x:v_target.getBoundingClientRect().x + 40,y:v_target.getBoundingClientRect().y}},
+        p_position: function() {var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return {x:v_target?.getBoundingClientRect()?.x + 40,y:v_target?.getBoundingClientRect()?.y}},
         p_target: function(){var v_target = document.querySelector(`#${tabsStore.selectedPrimaryTab.metaData.selectedTab.id}_content .tab-actions`); return v_target;},
         p_title: 'Actions Panel'
       },
