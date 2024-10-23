@@ -131,7 +131,8 @@
 
             <div class="form-group col-3">
               <label for="connectionUsername" class="fw-bold mb-2">Username</label>
-              <input v-model="connectionLocal.user" type="text" class="form-control" id="connectionUsername"
+              <input v-model="connectionLocal.user"
+                type="text" class="form-control" id="connectionUsername" autocomplete="new-password"
                 :class="['form-control', { 'is-invalid': v$.connectionLocal.user.$invalid }]"
                 :placeholder="placeholder.user"
                 :disabled="dbFormDisabled">
@@ -146,7 +147,8 @@
               <label for="connectionPassword" class="fw-bold mb-2">Password</label>
               <div class="position-relative">
                 <input v-model="connectionLocal.password"
-                  :placeholder="this.connectionLocal.password_set ? '••••••••' : ''" type="password" class="form-control" id="connectionPassword"
+                  type="password" class="form-control" id="connectionPassword" autocomplete="new-password"
+                  :placeholder="this.connectionLocal.password_set ? '••••••••' : ''"
                   :disabled="dbFormDisabled">
                 <a v-if="this.connectionLocal.password_set || this.connectionLocal.password?.length > 0"
                   @click.prevent="this.connectionLocal.password_set = false; this.connectionLocal.password = ''"
