@@ -389,8 +389,7 @@ export default {
               table.specificType(coldef.name, coldef.dataType)
 
             coldef.nullable ? col.nullable() : col.notNullable()
-
-            if(coldef.defaultValue !== '') {
+            if(coldef.defaultValue) {
               let formattedDefault = formatDefaultValue(coldef.defaultValue, coldef.dataType, table);
               col.defaultTo(formattedDefault);
             }
