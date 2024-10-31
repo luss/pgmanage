@@ -239,7 +239,7 @@
   import axios from 'axios'
   import { showToast } from '../notification_control'
   import moment from 'moment'
-  import { settingsStore } from '../stores/stores_initializer'
+  import { settingsStore, tabsStore } from '../stores/stores_initializer'
   import { operationModes } from '../constants';
   import { Modal } from 'bootstrap'
 
@@ -604,6 +604,25 @@
         this.editor.setFontSize(Number(settingsStore.fontSize));
         this.editor.setReadOnly(true);
         this.editor.$blockScrolling = Infinity;
+
+        const copyToEditorButton = document.createElement("button");
+        copyToEditorButton.classList.add("position-absolute", "btn", "btn-outline-secondary", "bg-light", "btn-sm", "m-2", "d-none", "d-block", "top-0", "end-0");
+        copyToEditorButton.setAttribute("title", "Copy to Query Editor")
+        copyToEditorButton.onclick = () => {
+          tabsStore.createQueryTab('Query', null, null, this.editor.getValue());
+        };
+
+        const iconEl = document.createElement("i")
+        iconEl.classList.add("fa-solid", "fa-clipboard")
+
+        copyToEditorButton.appendChild(iconEl)
+
+        const editorContainer = document.getElementById("role_sql_command");
+        editorContainer.addEventListener("mouseover", () => copyToEditorButton.classList.toggle("d-none"));
+        editorContainer.addEventListener("mouseout", () => copyToEditorButton.classList.toggle("d-none"));
+
+        // Append the button to the editor container after initializing Ace
+        document.getElementById("role_sql_command").appendChild(copyToEditorButton);
       },
     },
   }
