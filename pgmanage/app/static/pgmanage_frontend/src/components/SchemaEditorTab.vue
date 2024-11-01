@@ -99,8 +99,7 @@
   </template>
 
     <div class="form-group mb-2">
-        <p class="fw-bold mb-2">Generated SQL</p>
-        <div ref="editor" style="height: 30vh"></div>
+        <GeneratedSqlPreview :editor-text="generatedSQL" label="Generated SQL" style="height: 30vh"/>
     </div>
   </div>
 </template>
@@ -116,9 +115,10 @@ import { createRequest } from '../long_polling'
 import { queryRequestCodes, operationModes } from '../constants'
 import axios from 'axios'
 import { showToast } from '../notification_control'
-import { settingsStore, tabsStore } from '../stores/stores_initializer'
+import { tabsStore } from '../stores/stores_initializer'
 import IndexesList from './SchemaEditorIndexesList.vue'
 import isEqual from 'lodash/isEqual';
+import GeneratedSqlPreview from './GeneratedSqlPreview.vue'
 
 
 function formatDefaultValue(defaultValue, dataType, table) {
@@ -155,7 +155,8 @@ export default {
   },
   components: {
     ColumnList,
-    IndexesList
+    IndexesList,
+    GeneratedSqlPreview,
   },
   setup(props) {
     // FIXME: add column nam not-null validations
@@ -203,7 +204,6 @@ export default {
     // the correct SQL dialect with this option
     this.knex = Knex({ client: this.dialect })
     this.loadDialectData(this.dialect)
-    this.setupEditor()
     if(this.$props.mode === operationModes.UPDATE) {
       this.loadTableDefinition().then(() => {
         this.loadIndexes();
@@ -304,21 +304,6 @@ export default {
       .catch((error) => {
         console.log(error)
       })
-    },
-    setupEditor() {
-      this.editor = ace.edit(this.$refs.editor);
-      this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
-      this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(Number(settingsStore.fontSize));
-      this.editor.$blockScrolling = Infinity;
-      this.editor.clearSelection();
-      this.editor.setReadOnly(true);
-      this.editor.setShowPrintMargin(false)
-
-      settingsStore.$subscribe((mutation, state) => {
-        this.editor.setTheme(`ace/theme/${state.editorTheme}`);
-        this.editor.setFontSize(state.fontSize);
-      });
     },
     generateAlterSQL(knexInstance) {
       let columnChanges = {
@@ -507,6 +492,17 @@ export default {
           }
         }).toQuery()
       }
+      if (this.generatedSQL.length > 0) {
+        this.generatedSQL = format(
+          this.generatedSQL,
+            {
+              tabWidth: 2,
+              keywordCase: 'upper',
+              language: this.dialectData.formatterDialect,
+              linesBetweenQueries: 1,
+            }
+        )
+      }
       this.hasChanges = this.generatedSQL.length > 0
     },
     changeColumns(columns) {
@@ -606,19 +602,6 @@ export default {
     }
   },
   watch: {
-    generatedSQL() {
-      this.editor.setValue(
-        format(
-          this.generatedSQL,
-          {
-            tabWidth: 2,
-            keywordCase: 'upper',
-            language: this.dialectData.formatterDialect,
-            linesBetweenQueries: 1,
-          }
-      ))
-      this.editor.clearSelection();
-    },
     // watch our local working copy for changes, generate new SQL when the change occcurs
     localTable: {
       handler(newVal, oldVal) {
