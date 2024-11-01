@@ -5,6 +5,7 @@
 ## Release Notes
 
   - New features:
+    - implemented support for adding/changing table indexes in Schema Editor
     - implemented Postgres role editor
     - added SQL error annotations in query editor
     - significant code completion improvements: added context-aware schema, table, view, column and function completions
