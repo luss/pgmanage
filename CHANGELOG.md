@@ -1,3 +1,48 @@
+# PgManage 1.2 Release
+
+## Release Date: Nov 07 2024
+
+## Release Notes
+
+  - New features:
+    - implemented Postgres role editor
+    - added SQL error annotations in query editor
+    - significant code completion improvements: added context-aware schema, table, view, column and function completions
+    - added support for Postgres byte array display query results data grid
+    
+  - Bugs fixed:
+    - fixes a bug in connection manager where "Discard changes" confirmation was shown after clicking "Test Connection" button
+    - fixed a bug when PgManage was trying to restore tabs for closed DB workspaces
+    - fixed a bug when "Discard changes" confirmation appeared after running "Explain/Analyze" and then closing DB workspace
+    - fall back to unencrypted ssh key when no password is provided (thanks @El-Virus)
+    - use user-provided database password instead of previously stored one when "Test connection" is clicked in connection manager
+    - fixed a bug when backup/restore background job info was potentially accessible by other pgmanage user accounts
+    - fixed a bug when redundant database back-end was instantiated when requesting database auto-completion metadata 
+    - fixed a rare race condition when opening new database workspace
+    - rearranged parts of DROP INDEX query template to make it runnable without needing extra modifications by the user
+    - fixed a bug in Monitoring Dashboard when "Refresh all widgets" button was doing nothing after deleting all and restoring some monitoring widgets
+    - fixes a bug in connection manager where "Discard changes" confirmation was shown for connections with passwords auto-filled by the browser
+    - fixes a bug in schema editor where "DEFAULT" part of column definition was rendered regardless of presence of column default value
+    
+  - UI/UX Improvements:
+    - new application startup screen
+    - improved naming for exported CSV/XLS files
+    
+  - Other changes
+    - Django updated from 4.2.11 to 4.2.16
+    - cryptography updated from 36.0.2 to 41.0.7
+    - pymysql updated from 1.0.x to 1.1.1
+    - psycopg2 updated from 2.9.5 to 2.9.9
+    - oracledb updated form 1.3.1 to 2.2.1
+    - other occurrences of highlighed selection in query editor are now case-insensitive
+    - implemented custom SESSION_SERIALIZER for improved sesion handling security
+    - eager-load QueryTab components when opening database workspace for improved app responsiveness
+    - added uniqueness validation to connection group names
+    - removed unnecessary files from windows build of PgManage
+    - changed default value for CSV separator setting
+    - improved database back-end cleanup when no keep-alive requests come from the front-end
+    - don't show error toast when running Explain/Analyze if PEV2 can display these errors by itself
+
 # PgManage 1.1.1 Release
 
 ## Release Date: Sep 04 2024
