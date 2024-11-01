@@ -1,7 +1,7 @@
 ![PgManage Banner](/artwork/readme_banner.png)
-<h2 align="center" >
+<h3 align="center" >
   <strong>A modern multi-platform Postgres-centric database client/administration tool. </strong><br /><br />
-</h2>
+</h3>
 
 ![PgManage Showcase](/artwork/showcase.gif)  
 
@@ -64,6 +64,6 @@ PgManage is being developed by [CommandPrompt Inc](https://www.commandprompt.com
 We proudly leverage all of the great work done by the original (now dormant) project [OmniDB](https://github.com/OmniDB/OmniDB).  
 
 Postgres query plan visualization is powered by [Pev2](https://github.com/dalibo/pev2).  
-SQL Query generation in Schema editor is powered by [Knex.js]([https://tabulator.info/](https://knexjs.org).  
+SQL Query generation in Schema editor is powered by [Knex.js](https://knexjs.org).  
 SQL code completion is powered by [ANTLR](https://www.antlr.org/).  
 Data tables handled by an awesome [Tabulator.js](https://tabulator.info/) library.  
