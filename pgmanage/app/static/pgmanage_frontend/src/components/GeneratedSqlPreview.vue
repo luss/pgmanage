@@ -1,10 +1,20 @@
 <template>
   <p v-show="showLabel" class="fw-bold mb-2">{{ label }}</p>
   <div ref="editor" v-bind="$attrs"></div>
+
+  <button
+    ref="copyButton"
+    title="Copy to Query Editor"
+    class="btn btn-outline-secondary bg-light btn-sm m-2 d-none d-block top-0 end-0 position-absolute"
+    :disabled="isCopyButtonClicked"
+    @click="copyToEditor"
+  >
+    <i class="fa-solid fa-clipboard"></i>
+  </button>
 </template>
 
 <script>
-import { EDITOR_MODEMAP } from "../constants";
+import { editorModeMap } from "../constants";
 import { settingsStore, tabsStore } from "../stores/stores_initializer";
 export default {
   props: {
@@ -24,7 +34,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      isCopyButtonClicked: false,
+    };
   },
   mounted() {
     this.setupEditor();
@@ -33,11 +45,12 @@ export default {
     editorText(newValue, oldValue) {
       this.editor.setValue(newValue);
       this.editor.clearSelection();
+      this.isCopyButtonClicked = false;
     },
   },
   methods: {
     setupEditor() {
-      let editor_mode = EDITOR_MODEMAP[this.databaseTechnology] || "sql";
+      let editor_mode = editorModeMap[this.databaseTechnology] || "sql";
       this.editor = ace.edit(this.$refs.editor);
       this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
       this.editor.setFontSize(Number(settingsStore.fontSize));
@@ -65,28 +78,7 @@ export default {
       this.addCopyToEditorButton();
     },
     addCopyToEditorButton() {
-      const copyToEditorButton = document.createElement("button");
-      copyToEditorButton.classList.add(
-        "position-absolute",
-        "btn",
-        "btn-outline-secondary",
-        "bg-light",
-        "btn-sm",
-        "m-2",
-        "d-none",
-        "d-block",
-        "top-0",
-        "end-0"
-      );
-      copyToEditorButton.setAttribute("title", "Copy to Query Editor");
-      copyToEditorButton.onclick = () => {
-        tabsStore.createQueryTab("Query", null, null, this.editor.getValue());
-      };
-
-      const iconEl = document.createElement("i");
-      iconEl.classList.add("fa-solid", "fa-clipboard");
-
-      copyToEditorButton.appendChild(iconEl);
+      const copyToEditorButton = this.$refs.copyButton;
 
       const editorContainer = this.$refs.editor;
       editorContainer.addEventListener("mouseover", () =>
@@ -97,6 +89,10 @@ export default {
       );
 
       editorContainer.appendChild(copyToEditorButton);
+    },
+    copyToEditor() {
+      tabsStore.createQueryTab("Query", null, null, this.editor.getValue());
+      this.isCopyButtonClicked = true;
     },
   },
 };
