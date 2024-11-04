@@ -38,6 +38,15 @@ ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
 
 axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 
+document.addEventListener('auxclick', function(event) {
+  if (event.button === 1) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    return false;
+  }
+});
+
 settingsStore.getSettings().then(() => {
   const app = createApp(App);
   setupLogger(app);
