@@ -47,6 +47,7 @@
             <p class="fw-bold mb-1">Preview</p>
             <div id="generated_sql_div" style="height: 10vh">
             </div>
+            <PreviewBox :editor-text="generatedSQL" style="height: 10vh" />
           </div>
         </div>
 
@@ -66,12 +67,16 @@
 import { emitter } from '../emitter'
 import axios from 'axios'
 import { showToast } from '../notification_control'
-import { settingsStore, messageModalStore } from '../stores/stores_initializer';
+import { messageModalStore } from '../stores/stores_initializer';
 import { operationModes } from '../constants';
 import { Modal } from 'bootstrap';
+import PreviewBox from './PreviewBox.vue';
 
 export default {
   name: 'ExtensionModal',
+  components: {
+    PreviewBox,
+  },
   props: {
     mode: operationModes,
     treeNode: Object,
@@ -137,10 +142,6 @@ export default {
     selectedExtension() {
       if (this.mode === operationModes.CREATE) this.selectedVersion = ''
     },
-    generatedSQL() {
-      this.editor.setValue(this.generatedSQL)
-      this.editor.clearSelection();
-    }
   },
   created() {
     // allows for using operationModes in the template
@@ -152,7 +153,6 @@ export default {
     if (this.mode === operationModes.UPDATE) {
       this.getExtensionDetails()
     }
-    this.setupEditor()
     if (this.mode !== operationModes.DELETE) {
       this.modalInstance = new Modal('#postgresqlExtensionModal')
       this.modalInstance.show()
@@ -198,17 +198,6 @@ export default {
         .catch((error) => {
           showToast("error", error.response.data.data)
         })
-    },
-    setupEditor() {
-      this.editor = ace.edit('generated_sql_div');
-      this.editor.setTheme("ace/theme/" + settingsStore.editorTheme);
-      this.editor.session.setMode("ace/mode/sql");
-      this.editor.setFontSize(Number(settingsStore.fontSize));
-      this.editor.setReadOnly(true);
-      this.editor.$blockScrolling = Infinity;
-
-      this.editor.setValue(this.generatedSQL)
-      this.editor.clearSelection();
     },
     getExtensionDetails() {
       axios.post('/get_extension_details/', {
