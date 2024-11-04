@@ -99,7 +99,7 @@
   </template>
 
     <div class="form-group mb-2">
-        <GeneratedSqlPreview :editor-text="generatedSQL" label="Generated SQL" style="height: 30vh"/>
+        <PreviewBox :editor-text="generatedSQL" label="Generated SQL" style="height: 30vh"/>
     </div>
   </div>
 </template>
@@ -118,7 +118,7 @@ import { showToast } from '../notification_control'
 import { tabsStore } from '../stores/stores_initializer'
 import IndexesList from './SchemaEditorIndexesList.vue'
 import isEqual from 'lodash/isEqual';
-import GeneratedSqlPreview from './GeneratedSqlPreview.vue'
+import PreviewBox from './PreviewBox.vue'
 
 
 function formatDefaultValue(defaultValue, dataType, table) {
@@ -156,7 +156,7 @@ export default {
   components: {
     ColumnList,
     IndexesList,
-    GeneratedSqlPreview,
+    PreviewBox,
   },
   setup(props) {
     // FIXME: add column nam not-null validations

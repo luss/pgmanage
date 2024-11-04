@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="form-group mb-2">
-                  <GeneratedSqlPreview label="Preview" :editor-text="generatedSQL" style="height: 20vh"/>
+                  <PreviewBox label="Preview" :editor-text="generatedSQL" style="height: 20vh"/>
                 </div>
               </div>
 
@@ -240,13 +240,13 @@
   import moment from 'moment'
   import { operationModes } from '../constants';
   import { Modal } from 'bootstrap'
-  import GeneratedSqlPreview from './GeneratedSqlPreview.vue';
+  import PreviewBox from './PreviewBox.vue';
 
   export default {
     name: 'RoleModal',
     components: {
         SearchableDropdown,
-        GeneratedSqlPreview,
+        PreviewBox,
     },
     props: {
       mode: operationModes,

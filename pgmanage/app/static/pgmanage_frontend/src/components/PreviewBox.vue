@@ -5,11 +5,11 @@
   <button
     ref="copyButton"
     title="Copy to Query Editor"
-    class="btn btn-outline-secondary bg-light btn-sm m-2 d-none d-block top-0 end-0 position-absolute"
+    class="btn btn-icon btn-icon-primary btn-sm m-2 d-none d-block top-0 end-0 position-absolute copy-to-editor-button"
     :disabled="isCopyButtonClicked"
     @click="copyToEditor"
   >
-    <i class="fa-solid fa-clipboard"></i>
+    <i class="fa-solid fa-edit"></i>
   </button>
 </template>
 
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       isCopyButtonClicked: false,
+      isEmpty: true,
     };
   },
   mounted() {
@@ -43,6 +44,7 @@ export default {
   },
   watch: {
     editorText(newValue, oldValue) {
+      this.isEmpty = !newValue;
       this.editor.setValue(newValue);
       this.editor.clearSelection();
       this.isCopyButtonClicked = false;
@@ -81,12 +83,16 @@ export default {
       const copyToEditorButton = this.$refs.copyButton;
 
       const editorContainer = this.$refs.editor;
-      editorContainer.addEventListener("mouseover", () =>
-        copyToEditorButton.classList.toggle("d-none")
-      );
-      editorContainer.addEventListener("mouseout", () =>
-        copyToEditorButton.classList.toggle("d-none")
-      );
+      editorContainer.addEventListener("mouseover", () => {
+        if (!this.isEmpty) {
+          copyToEditorButton.classList.toggle("d-none");
+        }
+      });
+      editorContainer.addEventListener("mouseout", () => {
+        if (!this.isEmpty) {
+          copyToEditorButton.classList.toggle("d-none");
+        }
+      });
 
       editorContainer.appendChild(copyToEditorButton);
     },
@@ -97,3 +103,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.copy-to-editor-button {
+  z-index: 1000;
+}
+</style>

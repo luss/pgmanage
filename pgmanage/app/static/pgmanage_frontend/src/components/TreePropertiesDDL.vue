@@ -74,7 +74,7 @@
           role="tabpanel"
           :aria-labelledby="`${workspaceId}_tree_ddl_nav`"
         >
-         <GeneratedSqlPreview :database-technology="databaseTechnology" class="pb-3" style="height: 90%" :editor-text="ddlData" :show-label="false"/>
+         <PreviewBox :database-technology="databaseTechnology" class="pb-3" style="height: 90%" :editor-text="ddlData" :show-label="false"/>
         </div>
       </div>
     </div>
@@ -83,11 +83,11 @@
 
 <script>
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import GeneratedSqlPreview from "./GeneratedSqlPreview.vue";
+import PreviewBox from "./PreviewBox.vue";
 
 export default {
   components: {
-    GeneratedSqlPreview,
+    PreviewBox,
   },
   props: {
     workspaceId: String,

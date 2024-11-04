@@ -47,7 +47,7 @@
             <p class="fw-bold mb-1">Preview</p>
             <div id="generated_sql_div" style="height: 10vh">
             </div>
-            <GeneratedSqlPreview :editor-text="generatedSQL" style="height: 10vh" />
+            <PreviewBox :editor-text="generatedSQL" style="height: 10vh" />
           </div>
         </div>
 
@@ -70,12 +70,12 @@ import { showToast } from '../notification_control'
 import { messageModalStore } from '../stores/stores_initializer';
 import { operationModes } from '../constants';
 import { Modal } from 'bootstrap';
-import GeneratedSqlPreview from './GeneratedSqlPreview.vue';
+import PreviewBox from './PreviewBox.vue';
 
 export default {
   name: 'ExtensionModal',
   components: {
-    GeneratedSqlPreview,
+    PreviewBox,
   },
   props: {
     mode: operationModes,
