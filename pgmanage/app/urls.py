@@ -10,10 +10,9 @@ base_urlpatterns = [
     path('', views.login.check_session, name='check_session'),
     path('pgmanage_login/', views.login.index, name='login'),
     path('logout/', views.login.logout, name='logout'),
-    path('check_session_message/', views.login.check_session_message, name='check_session_message'),
     path('sign_in/', views.login.sign_in, name='sign_in'),
 
-    path('upload/', views.plugins.upload_view, name='sign_in'),
+    # path('upload/', views.plugins.upload_view, name='sign_in'),
 
     path('long_polling/', views.polling.long_polling, name='long_polling'),
     path('create_request/', views.polling.create_request, name='create_request'),
@@ -32,11 +31,6 @@ base_urlpatterns = [
 
     path('get_existing_tabs/', views.connections.get_existing_tabs, name='get_existing_tabs'),
 
-    #USERS
-    path('get_users/', views.users.get_users, name='get_users'),
-    path('remove_user/', views.users.remove_user, name='remove_user'),
-    path('save_users/', views.users.save_users, name='save_users'),
-
     #WORKSPACE
     path('workspace/', views.workspace.index, name='workspace'),
     path('renew_password/', views.workspace.renew_password, name='renew_password'),
@@ -45,7 +39,7 @@ base_urlpatterns = [
     path('draw_graph/', views.workspace.draw_graph, name='draw_graph'),
     path('get_table_columns/', views.workspace.get_table_columns, name='get_table_columns'),
     path('refresh_monitoring/', views.workspace.refresh_monitoring, name='refresh_monitoring'),
-    path('delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
+    # path('delete_plugin/', views.plugins.delete_plugin, name='delete_plugin'),
     path('get_database_meta/', views.workspace.get_database_meta, name='get_database_meta'),
 
     #SETINGS
@@ -57,10 +51,10 @@ base_urlpatterns = [
     path('clear_commands_history/', views.commands_history.clear_commands_history, name="clear_commands_history"),
 
     #HOOKS
-    path('get_plugins/', views.plugins.get_plugins, name='get_plugins'),
-    path('list_plugins/', views.plugins.list_plugins, name='list_plugins'),
-    path('reload_plugins/', views.plugins.reload_plugins, name='reload_plugins'),
-    path('exec_plugin_function/', views.plugins.exec_plugin_function, name='exec_plugin_function'),
+    # path('get_plugins/', views.plugins.get_plugins, name='get_plugins'),
+    # path('list_plugins/', views.plugins.list_plugins, name='list_plugins'),
+    # path('reload_plugins/', views.plugins.reload_plugins, name='reload_plugins'),
+    # path('exec_plugin_function/', views.plugins.exec_plugin_function, name='exec_plugin_function'),
 
     #TREE_SNIPPETS
     path('get_node_children/', views.tree_snippets.get_node_children, name='get_node_children'),
@@ -123,9 +117,10 @@ base_urlpatterns = [
     path('get_databases_postgresql/', views.tree_postgresql.get_databases, name='get_databases'),
     path('get_tablespaces_postgresql/', views.tree_postgresql.get_tablespaces, name='get_tablespaces'),
     path('get_roles_postgresql/', views.tree_postgresql.get_roles, name='get_roles'),
+    path('get_role_details/', views.tree_postgresql.get_role_details, name='get_role_details'),
     path('get_extensions_postgresql/', views.tree_postgresql.get_extensions, name='get_extensions'),
     path('get_extension_details/', views.tree_postgresql.get_extension_details, name='get_extension_details'),
-    path('save_postgresql_extension/', views.tree_postgresql.save_extension, name="save_postgresql_extension"),
+    path('execute_query_postgresql/', views.tree_postgresql.execute_query, name="execute_query"),
     path('get_available_extensions_postgresql/', views.tree_postgresql.get_available_extensions, name='get_available_extensions'),
     path('get_physicalreplicationslots_postgresql/', views.tree_postgresql.get_physicalreplicationslots, name='get_physicalreplicationslots'),
     path('get_logicalreplicationslots_postgresql/', views.tree_postgresql.get_logicalreplicationslots, name='get_logicalreplicationslots'),

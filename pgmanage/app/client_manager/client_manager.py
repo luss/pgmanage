@@ -61,19 +61,19 @@ class Client:
             pass
 
     def get_tab(
-        self, conn_tab_id: str, tab_id: Optional[str] = None
+        self, workspace_id: str, tab_id: Optional[str] = None
     ) -> Union[Dict[str, Any], None]:
         """Retrieves the tab with the given IDs from the client.
 
         Args:
-            conn_tab_id (str): The ID of the connection tab.
+            workspace_id (str): The ID of the connection workspace.
             tab_id (Optional[str], None): The ID of the tab. Defaults to None.
 
         Returns:
             Union[Dict[str, Any], None]: The tab object if found, otherwise None.
         """
 
-        main_tab = self.connection_sessions.get(conn_tab_id)
+        main_tab = self.connection_sessions.get(workspace_id)
 
         if tab_id is None:
             return main_tab
@@ -84,7 +84,7 @@ class Client:
 
     def create_tab(
         self,
-        conn_tab_id: str,
+        workspace_id: str,
         tab: Dict[str, Any],
         tab_id: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -92,7 +92,7 @@ class Client:
         adds it to the tab_list of client's connection session.
 
         Args:
-            conn_tab_id (str): The ID of the connection tab.
+            workspace_id (str): The ID of the connection workspace.
             tab (Dict[str, Any]): The details of the tab.
             tab_id (Optional[str], optional): The ID of the tab. Defaults to None.
 
@@ -101,32 +101,32 @@ class Client:
         """
 
         tab = self._create_tab_internal(
-            conn_tab_id=conn_tab_id,
+            workspace_id=workspace_id,
             tab=tab,
             tab_id=tab_id,
             is_main_tab=False,
         )
         return tab
 
-    def create_main_tab(self, conn_tab_id: str, tab: Dict[str, Any]) -> Dict[str, Any]:
+    def create_main_tab(self, workspace_id: str, tab: Dict[str, Any]) -> Dict[str, Any]:
         """Creates a new main tab with the given details and
         adds it to the client's connection sessions.
 
         Args:
-            conn_tab_id (str): The ID of the connection tab.
+            workspace_id (str): The ID of the connection workspace.
             tab (Dict[str, Any]): The details of the main tab.
 
         Returns:
             Dict[str, Any]: The created main tab object.
         """
         tab = self._create_tab_internal(
-            conn_tab_id=conn_tab_id, tab=tab, is_main_tab=True
+            workspace_id=workspace_id, tab=tab, is_main_tab=True
         )
         return tab
 
     def _create_tab_internal(
         self,
-        conn_tab_id: str,
+        workspace_id: str,
         tab: Dict[str, Any],
         tab_id: Optional[str] = None,
         is_main_tab: bool = False,
@@ -135,7 +135,7 @@ class Client:
         add it to the client's connection sessions.
 
         Args:
-            conn_tab_id (str): The ID of the connection tab.
+            workspace_id (str): The ID of the connection workspace.
             tab (Dict[str, Any]): The details of the tab.
             tab_id (Optional[str], optional): The ID of the tab. Defaults to None.
             is_main_tab (bool, optional): Specifies if the tab is a main tab. Defaults to False.
@@ -148,39 +148,39 @@ class Client:
         tab["to_be_removed"] = False
 
         if is_main_tab:
-            self._connection_sessions[conn_tab_id] = tab
+            self._connection_sessions[workspace_id] = tab
         else:
-            main_tab = self.get_tab(conn_tab_id=conn_tab_id)
+            main_tab = self.get_tab(workspace_id=workspace_id)
             if not main_tab:
                 self.create_main_tab(
                     tab={"omnidatabase": None, "type": "connection", "tab_list": {}},
-                    conn_tab_id=conn_tab_id,
+                    workspace_id=workspace_id,
                 )
 
-            self._connection_sessions[conn_tab_id]["tab_list"][tab_id] = tab
+            self._connection_sessions[workspace_id]["tab_list"][tab_id] = tab
 
         return tab
 
-    def close_tab(self, conn_tab_id: str, tab_id: Optional[str] = None) -> None:
+    def close_tab(self, workspace_id: str, tab_id: Optional[str] = None) -> None:
         """Closes the tab with the given IDs by removing it from the client's connection sessions
         and closing associated connections.
 
         Args:
-            conn_tab_id (str): The ID of the connection tab.
+            workspace_id (str): The ID of the connection workspace.
             tab_id (Optional[str], optional): The ID of the tab. Defaults to None.
 
         Returns:
             None
         """
 
-        tab = self.get_tab(tab_id=tab_id, conn_tab_id=conn_tab_id)
+        tab = self.get_tab(tab_id=tab_id, workspace_id=workspace_id)
         if tab is None:
             return
 
         if tab_id:
-            del self._connection_sessions[conn_tab_id]["tab_list"][tab_id]
+            del self._connection_sessions[workspace_id]["tab_list"][tab_id]
         else:
-            del self._connection_sessions[conn_tab_id]
+            del self._connection_sessions[workspace_id]
 
         if tab["type"] in ["query", "console", "connection", "edit"]:
             try:
@@ -243,46 +243,6 @@ class Client:
         else:
             tab["terminal_object"].close()
             tab["terminal_ssh_client"].close()
-
-    def get_main_tab_database(
-        self,
-        session: Session,
-        conn_tab_id: str,
-        database_index: int,
-        database_name: str = None,
-        attempt_to_open_connection: bool = False,
-    ):
-        """Retrieves the database for the specified session and connection tab.
-
-        Args:
-            session (Session): The session object.
-            conn_tab_id (str): The ID of the connection tab.
-            database_index (int): The index of the database.
-            database_name (str, optional): The name of the database.
-            attempt_to_open_connection (bool, optional): Specifies whether
-            to attempt opening the connection if not already open. Defaults to False.
-
-        Returns:
-            The database object.
-        """
-
-        # Retrieving tab object
-        tab = self.get_tab(conn_tab_id=conn_tab_id)
-        if tab is None:
-            tab = self.create_main_tab(
-                tab={"omnidatabase": None, "type": "connection", "tab_list": {}},
-                conn_tab_id=conn_tab_id,
-            )
-
-        return self.get_tab_database(
-            session=session,
-            tab=tab,
-            conn_tab_id=conn_tab_id,
-            database_index=database_index,
-            current_database = database_name,
-            attempt_to_open_connection=attempt_to_open_connection,
-            use_lock=True,
-        )
 
     def _should_update_database(
         self, tab: Dict[str, Any], current_tab_database: str, main_tab_database
@@ -363,11 +323,11 @@ class Client:
 
         tab["omnidatabase"] = database_new
 
-    def get_tab_database(
+    def get_database(
         self,
         session: Session,
         tab: Dict[str, Any],
-        conn_tab_id: str,
+        workspace_id: str,
         database_index: int,
         current_database: str = None,
         attempt_to_open_connection: bool = False,
@@ -379,7 +339,7 @@ class Client:
         Args:
             session (Session): The session object.
             tab (Dict[str, Any]): The tab object.
-            conn_tab_id (str): The ID of the connection tab.
+            workspace_id (str): The ID of the connection workspace.
             database_index (int): The index of the database.
             current_database (str, optional): The current database. Defaults to None.
             attempt_to_open_connection (bool, optional): Specifies whether
@@ -391,7 +351,9 @@ class Client:
             The tab's database object.
         """
         main_tab_database = session.v_databases[database_index]["database"]
-        current_tab_database = current_database or session.v_tabs_databases.get(conn_tab_id)
+        current_tab_database = current_database or session.v_tabs_databases.get(
+            workspace_id
+        )
 
         # Updating time
         tab["last_update"] = datetime.now()
@@ -416,6 +378,61 @@ class Client:
             tab["omnidatabase"].v_connection.Open()
 
         return tab["omnidatabase"]
+
+    def get_tab_database(
+        self,
+        session: Session,
+        workspace_id: str,
+        database_index: int,
+        tab_id: str = None,
+        database_name: str = None,
+        attempt_to_open_connection: bool = False,
+    ):
+        """Retrieves the database for the specified session, connection workspace and tab.
+
+        Args:
+            session (Session): The session object.
+            workspace_id (str): The ID of the connection workspace.
+            database_index (int): The index of the database.
+            tab_id (str, optional): The ID of the tab. If provided, will retrieve the specified tab.
+            database_name (str, optional): The name of the database to be used.
+            attempt_to_open_connection (bool, optional): Specifies whether to attempt opening
+                the connection if not already open. Defaults to False.
+
+        Returns:
+            The database object associated with the specified session and tab.
+        """
+
+        if tab_id and workspace_id:
+            tab = self.get_tab(workspace_id=workspace_id, tab_id=tab_id)
+            if tab is None:
+                tab = self.create_tab(
+                    workspace_id=workspace_id,
+                    tab_id=tab_id,
+                    tab={
+                        "thread": None,
+                        "omnidatabase": None,
+                        "inserted_tab": False,
+                        "type": "query",
+                    },
+                )
+        else:
+            tab = self.get_tab(workspace_id=workspace_id)
+            if tab is None:
+                tab = self.create_main_tab(
+                    tab={"omnidatabase": None, "type": "connection", "tab_list": {}},
+                    workspace_id=workspace_id,
+                )
+
+        return self.get_database(
+            session=session,
+            tab=tab,
+            workspace_id=workspace_id,
+            database_index=database_index,
+            current_database=database_name,
+            attempt_to_open_connection=attempt_to_open_connection,
+            use_lock=True,
+        )
 
 
 class ClientManager:
@@ -520,6 +537,17 @@ class ClientManager:
 
         client.release_returning_data_lock()
 
+    def remove_client(self, client_id: str) -> None:
+        """Removes the client with the specified client_id.
+
+        Args:
+            client_id (str): The ID of the client to be removed.
+
+        Returns:
+            None
+        """
+        self.clients.pop(client_id, None)
+
 
 client_manager = ClientManager()
 
@@ -546,19 +574,22 @@ def cleanup_thread():
                 0, 3600
             )
 
-            for conn_tab_id in list(client.connection_sessions):
+            for workspace_id in list(client.connection_sessions):
                 for tab_id in list(
-                    client.connection_sessions[conn_tab_id].get("tab_list", [])
+                    client.connection_sessions[workspace_id].get("tab_list", [])
                 ):
-                    tab = client.get_tab(conn_tab_id=conn_tab_id, tab_id=tab_id)
+                    tab = client.get_tab(workspace_id=workspace_id, tab_id=tab_id)
 
                     if is_tab_expired(tab, client_timeout_reached):
-                        client.close_tab(tab_id=tab_id, conn_tab_id=conn_tab_id)
+                        client.close_tab(tab_id=tab_id, workspace_id=workspace_id)
 
-                if not client.connection_sessions[conn_tab_id].get("tab_list"):
-                    tab = client.get_tab(conn_tab_id=conn_tab_id)
+                if not client.connection_sessions[workspace_id].get("tab_list"):
+                    tab = client.get_tab(workspace_id=workspace_id)
                     if is_tab_expired(tab, client_timeout_reached):
-                        client.close_tab(conn_tab_id=conn_tab_id)
+                        client.close_tab(workspace_id=workspace_id)
+
+            if client_timeout_reached:
+                client_manager.remove_client(client_id=client_id)
         time.sleep(30)
 
 

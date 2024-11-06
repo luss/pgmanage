@@ -22,12 +22,15 @@ CSRF_TRUSTED_ORIGINS = []
 SESSION_COOKIE_NAME = 'pgmanage_sessionid'
 CSRF_COOKIE_NAME = 'pgmanage_csrftoken'
 ALLOWED_HOSTS = ['*']
+SQLITE_PATH = os.path.join(HOME_DIR, 'pgmanage.db')
+if not DESKTOP_MODE:
+    SQLITE_PATH = os.path.join(HOME_DIR, 'pgmanage-server.db')
 
 # Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(HOME_DIR, 'pgmanage.db')
+        'NAME': SQLITE_PATH
     }
 }
 
@@ -116,13 +119,13 @@ elif PATH != '':
         PATH = PATH[:-1]
 
 
-LOGIN_URL = PATH + '/pgmanage_login'
+LOGIN_URL = PATH + '/pgmanage_login/'
 LOGIN_REDIRECT_URL = PATH + '/'
 
 STATIC_URL = PATH + '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "app/static")
 
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer' #TODO: remove PickleSerializer and fix upcomming errors
+SESSION_SERIALIZER = 'app.serializers.PickleSerializer'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
@@ -210,15 +213,17 @@ CH_CMDS_PER_PAGE = 20
 PWD_TIMEOUT_TOTAL = 1800
 PWD_TIMEOUT_REFRESH = 300
 THREAD_POOL_MAX_WORKERS = 2
+MASTER_PASSWORD_REQUIRED = custom_settings.DESKTOP_MODE
 
 DJANGO_VITE_DEV_MODE = DEBUG
+DJANGO_VITE_DEV_SERVER_PORT = 3000
 
 if not DEBUG:
-    DJANGO_VITE_MANIFEST_PATH = os.path.join(STATIC_ROOT, 'assets', 'js', 'dist', 'manifest.json')
-    DJANGO_VITE_STATIC_URL_PREFIX = os.path.join('assets', 'js', 'dist')
-    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, os.path.join('assets', 'js', 'dist' ))
+    DJANGO_VITE_MANIFEST_PATH = os.path.join(STATIC_ROOT, "dist", 'manifest.json')
+    DJANGO_VITE_STATIC_URL_PREFIX = "dist"
+    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, "dist")
 else:
-    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, os.path.join('assets', 'js', 'pgmanage_frontend'))
+    DJANGO_VITE_ASSETS_PATH = os.path.join(STATIC_ROOT, "pgmanage_frontend")
 
 STATICFILES_DIRS = [
     DJANGO_VITE_ASSETS_PATH,

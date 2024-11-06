@@ -1,14 +1,16 @@
 #this script is intended to be run under cygwin + win10 environment
 #make sure you have installed NSIS and Resource Hacker software
 #run as ./deploy.sh 1.0b, replace the actual version number with the correct one
-set -e -e
+set -e
 
 APP_VERSION="$1"
 REPO="https://github.com/commandprompt/pgmanage"
 
 BRANCH="${2:-master}"
 DEPLOY_DIR=$(pwd)
-TEMP_DIR=$DEPLOY_DIR/tmp
+# TEMP_DIR=$DEPLOY_DIR/tmp
+# use this when building in virtualbox
+TEMP_DIR=/cygdrive/c/pgmanage_tmp
 
 # if version is not provided, we use last tag from repository
 if [ -z "$APP_VERSION" ]
@@ -41,7 +43,8 @@ source venv/Scripts/activate
 echo "installing python dependencies"
 pip3 install -r requirements.txt
 pip3 install pyinstaller==5.13.2
-
+# use pipdeptree to troubleshoot dependency issues
+# pipdeptree
 cd pgmanage/
 
 # set up versions in custom_settins.py
@@ -50,7 +53,7 @@ sed -i "s/Dev/PgManage $APP_VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$APP_VERSION/" pgmanage/custom_settings.py
 
 # building vite bundle
-cd app/static/assets/js/pgmanage_frontend/
+cd app/static/pgmanage_frontend/
 
 echo "installing javascript dependencies"
 npm install

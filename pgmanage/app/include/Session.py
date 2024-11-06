@@ -1,41 +1,35 @@
 import io
-import app.include.Spartacus as Spartacus
-import app.include.Spartacus.Database as Database
-import app.include.Spartacus.Utils as Utils
-import app.include.OmniDatabase as OmniDatabase
-import uuid
-from datetime import datetime,timedelta
-from django.contrib.sessions.backends.db import SessionStore
-from pgmanage import settings
-import sys
-sys.path.append('app/include')
-import paramiko
-from sshtunnel import SSHTunnelForwarder
-import socket
-import time
-import os
+import logging
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
-from django.contrib.auth.models import User
-from app.models.main import *
+import paramiko
+from app.include import OmniDatabase
+from app.models.main import Connection, UserDetails
 from app.utils.crypto import decrypt
 from app.utils.key_manager import key_manager
+from django.contrib.sessions.backends.db import SessionStore
+from sshtunnel import SSHTunnelForwarder
 
-import logging
-logger = logging.getLogger('app.Session')
+from pgmanage import settings
+
+logger = logging.getLogger("app.Session")
+
+import threading
 
 from django.db.models import Q
-import threading
 
 tunnels = dict([])
 
 tunnel_locks = dict([])
 
-'''
+"""
 ------------------------------------------------------------------------
 Session
 ------------------------------------------------------------------------
-'''
+"""
+
+
 class Session(object):
     def __init__(self,
                 p_user_id,
@@ -67,7 +61,8 @@ class Session(object):
                     p_prompt_password = True,
                     p_tunnel_information = None,
                     p_alias = None,
-                    p_public = None):
+                    p_public = None,
+                    decryption_failed=False):
         if len(self.v_databases)==0:
             self.v_database_index = 0
 
@@ -79,12 +74,13 @@ class Session(object):
                                 'tunnel_object': None,
                                 'alias': p_alias,
                                 'technology': p_technology,
-                                'public': p_public
+                                'public': p_public,
+                                'decryption_failed': decryption_failed
                                 }
 
     def RemoveDatabase(self,
                        p_conn_id = None):
-       del self.v_databases[p_conn_id]
+       self.v_databases.pop(p_conn_id, None)
 
     def DatabaseReachPasswordTimeout(self,p_database_index):
         v_return = { 'timeout': False, 'message': '', 'kind': 'database'}
@@ -196,20 +192,26 @@ class Session(object):
         self.v_databases = {}
 
         try:
+            decryption_failed=False
             current_user = UserDetails.objects.filter(user__id=self.v_user_id).select_related("user").first()
             key = key_manager.get(current_user.user)
             connections = Connection.objects.filter(Q(user=current_user.user) | Q(public=True)).prefetch_related("technology")
             for conn in connections:
-                tunnel_information = {
-                    'enabled': conn.use_tunnel,
-                    'server': conn.ssh_server,
-                    'port': conn.ssh_port,
-                    'user': conn.ssh_user,
-                    'password': decrypt(conn.ssh_password, key) if conn.ssh_password else '',
-                    'key': decrypt(conn.ssh_key, key) if conn.ssh_key else ''
-                }
-                # this is for sqlite3 db connection because it has now password
-                password = decrypt(conn.password, key) if conn.password else ''
+                try:
+                    tunnel_information = {
+                        'enabled': conn.use_tunnel,
+                        'server': conn.ssh_server,
+                        'port': conn.ssh_port,
+                        'user': conn.ssh_user,
+                        'password': decrypt(conn.ssh_password, key) if conn.ssh_password else '',
+                        'key': decrypt(conn.ssh_key, key) if conn.ssh_key else ''
+                    }
+                    # this is for sqlite3 db connection because it has now password
+                    password = decrypt(conn.password, key) if conn.password else ''
+                except UnicodeDecodeError:
+                    password = "wrong decrypted password"
+                    decryption_failed = True
+                # in case of decrypt error, set up bad_decrypt variable as True.
                 database = OmniDatabase.Generic.InstantiateDatabase(
     				conn.technology.name,
     				conn.server,
@@ -226,7 +228,7 @@ class Session(object):
 
                 prompt_password = conn.password == ''
 
-                self.AddDatabase(conn.id,conn.technology.name,database,prompt_password,tunnel_information,conn.alias,conn.public)
+                self.AddDatabase(conn.id,conn.technology.name,database,prompt_password,tunnel_information,conn.alias,conn.public, decryption_failed=decryption_failed)
         # No connections
         except Exception as exc:
             None

@@ -1,7 +1,8 @@
+import ast
+
 from app.utils.crypto import pg_scram_sha256
 from app.utils.decorators import database_required, user_authenticated
 from django.http import HttpResponse, JsonResponse
-
 
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
@@ -409,8 +410,13 @@ def get_indexes(request, database):
             index_data = {
                 "index_name": index["index_name"],
                 "name_raw": index["name_raw"],
-                "uniqueness": index["uniqueness"],
+                "unique": index["uniqueness"] == "Unique",
+                "type": "unique" if index["uniqueness"] == "Unique" else "non-unique",
                 "oid": index["oid"],
+                "is_primary": index["is_primary"] == "True",
+                "columns": list(ast.literal_eval(index["columns"])),
+                "method": index["method"],
+                "predicate": index["constraint"],
             }
             list_indexes.append(index_data)
     except Exception as exc:
@@ -858,6 +864,43 @@ def get_roles(request, database):
         return JsonResponse(data={"data": str(exc)}, status=400)
     return JsonResponse(data={"data": list_roles})
 
+@user_authenticated
+@database_required(check_timeout=True, open_connection=True)
+def get_role_details(request, database):
+    role_oid = request.data["oid"]
+
+    try:
+        role = database.QueryRoleDetails(role_oid)
+        if not role.Rows:
+            return JsonResponse(
+                {"data": f"Role with oid '{role_oid}' does not exist."}, status=400
+            )
+
+        rolerow = role.Rows[0]
+
+        role_details = {
+            'name': rolerow["role_name"],
+            'name_raw': rolerow["name_raw"],
+            'rolsuper': rolerow["rolsuper"],
+            'rolinherit': rolerow["rolinherit"],
+            'rolcanlogin': rolerow["rolcanlogin"],
+            'rolcreaterole': rolerow["rolcreaterole"],
+            'rolcreatedb': rolerow["rolcreatedb"],
+            'rolbypassrls': rolerow["rolbypassrls"],
+            'rolreplication': rolerow["rolreplication"],
+            'rolconnlimit': rolerow["rolconnlimit"],
+            'rolpassword': rolerow["rolpassword"],
+            'rolvaliduntil': None if rolerow["rolvaliduntil"] == 'infinity' else rolerow["rolvaliduntil"],
+            'members': rolerow["members"],
+            'member_of': rolerow["member_of"],
+        }
+
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=400)
+
+
+    return JsonResponse(data=role_details)
+
 
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
@@ -1167,7 +1210,7 @@ def get_extension_details(request, database):
 
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
-def save_extension(request, database):
+def execute_query(request, database):
     data = request.data
     try:
         database.Execute(data.get("query"))

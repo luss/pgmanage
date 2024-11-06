@@ -23,9 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-import os.path
 import re
-from collections import OrderedDict
 from enum import Enum
 import app.include.Spartacus as Spartacus
 import app.include.Spartacus.Database as Database
@@ -239,15 +237,15 @@ class MariaDB:
             v_return = str(exc)
         return v_return
 
-    def GetErrorPosition(self, p_error_message):
-        vector = str(p_error_message).split('\n')
-        v_return = None
-        if len(vector) > 1 and vector[1][0:4]=='LINE':
-            v_return = {
-                'row': vector[1].split(':')[0].split(' ')[1],
-                'col': vector[2].index('^') - len(vector[1].split(':')[0])-2
-            }
-        return v_return
+    def GetErrorPosition(self, p_error_message, sql_cmd):
+        ret = None
+        try:
+            row = re.search('.*\sat line (\d+)', p_error_message).group(1)
+            ret = {'row': row, 'col': 0}
+        except AttributeError:
+            pass
+
+        return ret
 
     @lock_required
     def Query(self, p_sql, p_alltypesstr=False, p_simple=False):
@@ -523,11 +521,23 @@ class MariaDB:
             select distinct t.table_schema as schema_name,
                    t.table_name,
                    (case when t.index_name = 'PRIMARY' then concat('pk_', t.table_name) else t.index_name end) as index_name,
-                   case when t.non_unique = 1 then 'Non Unique' else 'Unique' end as uniqueness
+                   case when t.non_unique = 1 then 'Non Unique' else 'Unique' end as uniqueness,
+                    JSON_ARRAYAGG(t.column_name) as columns,
+                    case 
+                        when tc.constraint_type = 'PRIMARY KEY' then TRUE 
+                        else FALSE 
+                    end as is_primary,
+                    t.index_type AS index_type
             from information_schema.statistics t
+            left join 
+                information_schema.table_constraints tc
+                ON t.table_schema = tc.table_schema 
+                AND t.table_name = tc.table_name 
+                AND t.index_name = tc.constraint_name
             where 1 = 1
             {0}
-            order by 1, 2, 3
+            GROUP BY t.table_schema, t.table_name, t.index_name, t.non_unique, tc.constraint_type, t.index_type
+            ORDER BY t.table_schema, t.table_name, t.index_name;
         '''.format(v_filter), True)
 
     def QueryTablesIndexesColumns(self, p_index, p_table=None, p_all_schemas=False, p_schema=None):

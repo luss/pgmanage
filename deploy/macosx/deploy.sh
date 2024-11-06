@@ -49,7 +49,7 @@ source venv/bin/activate
 # Install all required libraries
 echo "installing python dependencies"
 pip3 install -r requirements.txt
-pip3 install pyinstaller==5.13.0
+pip3 install pyinstaller==5.13.2
 
 cd pgmanage/
 
@@ -62,7 +62,7 @@ sed -i -e 's/DESKTOP_MODE = False/DESKTOP_MODE = True/g' pgmanage/custom_setting
 echo "Done."
 
 # building vite bundle
-cd app/static/assets/js/pgmanage_frontend/
+cd app/static/pgmanage_frontend/
 
 echo "installing javascript dependencies"
 npm install

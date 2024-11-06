@@ -7,7 +7,15 @@ import os
 # https://github.com/orgs/pyinstaller/discussions/6126
 
 exclude_patterns = [
-  os.path.join('js', 'pgmanage_frontend'),
+  os.path.join('static', 'pgmanage_frontend'),
+  '.dist-info',
+  '.py',
+  'django/contrib/humanize',
+  'django/contrib/gis',
+  'django/contrib/flatpages',
+  'django/contrib/sitemaps',
+  'django/contrib/syndication',
+  'django/contrib/admindocs',
 ]
 
 block_cipher = None
@@ -28,12 +36,15 @@ a = Analysis(['pgmanage-server.py'],
              hiddenimports=['cheroot.ssl','cheroot.ssl.builtin','psycopg2','paramiko', 'pkg_resources.extern', 'cryptography.hazmat.primitives.kdf.pbkdf2'],
              hookspath=[],
              runtime_hooks=[],
-             excludes=[],
+             excludes=['django.contrib.gis', 'django.contrib.sitemaps', 'django.contrib.flatpages', 'django.contrib.syndication', 'django.contrib.admindocs', 'django.contrib.humanize'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)
 
+# config.py gets removed by the next expression, keep it for restoring later
+configpy = [entry for entry in a.datas if 'config.py' in entry[0]]
 a.datas = [entry for entry in a.datas if not any(pattern in entry[0] for pattern in exclude_patterns)]
+a.datas = a.datas + configpy
 
 pyz = PYZ(a.pure, a.zipped_data,
             cipher=block_cipher)

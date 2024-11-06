@@ -505,39 +505,89 @@ class SQLite:
         v_indexes_all = Spartacus.Database.DataTable()
 
         v_indexes_all.Columns = [
-            'index_name',
-            'table_name',
-            'uniqueness'
+            "index_name",
+            "table_name",
+            "unique",
+            "is_primary",
+            "columns",
+            "constraint",
         ]
 
         if p_table:
-            v_tables = self.v_connection.Query('''
+            v_tables = self.v_connection.Query(
+                """
                 select name
                 from sqlite_master
                 where type = 'table'
                   and name = '{0}'
-            '''.format(p_table), True)
+            """.format(
+                    p_table
+                ),
+                True,
+            )
         else:
-            v_tables = self.v_connection.Query('''
+            v_tables = self.v_connection.Query(
+                """
                 select name
                 from sqlite_master
                 where type = 'table'
-            ''', True)
+            """,
+                True,
+            )
 
         for v_table in v_tables.Rows:
-            v_indexes = self.v_connection.Query('''
+            v_indexes = self.v_connection.Query(
+                """
                 PRAGMA index_list('{0}')
-            '''.format(
-                v_table['name']
-            ), True)
+            """.format(
+                    v_table["name"]
+                ),
+                True,
+            )
 
             for v_index in v_indexes.Rows:
-                if v_index['origin'] == 'c':
-                    v_indexes_all.AddRow([
-                        v_index['name'],
-                        v_table['name'],
-                        'Unique' if v_index['unique'] == '1' else 'Non Unique'
-                    ])
+                if v_index["origin"] == "c":
+                    # Get columns associated with the index
+                    index_columns = self.v_connection.Query(
+                        """
+                        PRAGMA index_info('{0}')
+                    """.format(
+                            v_index["name"]
+                        ),
+                        True,
+                    )
+
+                    # Collect column names
+                    column_names = [col["name"] for col in index_columns.Rows]
+
+                    create_stmt = self.v_connection.Query(
+                        """
+                        SELECT sql
+                        FROM sqlite_master
+                        WHERE type = 'index'
+                        AND name = '{0}'
+                    """.format(
+                            v_index["name"]
+                        ),
+                        True,
+                    )
+
+                    constraint = None
+                    if create_stmt.Rows and "WHERE" in create_stmt.Rows[0]["sql"]:
+                        constraint = (
+                            create_stmt.Rows[0]["sql"].split("WHERE", 1)[1].strip()
+                        )
+
+                    v_indexes_all.AddRow(
+                        [
+                            v_index["name"],
+                            v_table["name"],
+                            v_index["unique"] == "1",
+                            v_index["origin"] == "pk",
+                            column_names,
+                            constraint,
+                        ]
+                    )
 
         return v_indexes_all
 
@@ -618,7 +668,7 @@ class SQLite:
         else:
             v_tables = self.QueryTables()
         for v_table in v_tables.Rows:
-            v_table_columns_tmp = self.v_connection.Query("pragma table_info('{0}')".format(v_table['table_name']), True)
+            v_table_columns_tmp = self.v_connection.Query("pragma table_info({0})".format(v_table['table_name']), True)
             v_table_columns = Spartacus.Database.DataTable()
             v_table_columns.Columns = [
                 'column_name',
@@ -928,24 +978,24 @@ END
 
     def TemplateDropTrigger(self):
         return Template('DROP TRIGGER #trigger_name#')
-    
+
     def TemplateAlterTrigger(self):
         return Template(f"{self.TemplateDropTrigger().v_text};\n{self.TemplateCreateTrigger().v_text}")
 
     def GetAutocompleteValues(self, p_columns, p_filter):
         return None
 
-    def GetErrorPosition(self, p_error_message):
-        vector = str(p_error_message).split('\n')
-        v_return = None
+    def GetErrorPosition(self, p_error_message, sql_cmd):
+        ret = None
+        try:
+            err_token = re.search('.*near "(.*)".*', p_error_message).group(1)
+            if err_token:
+                row = sql_cmd.count('\n', 0, sql_cmd.find(err_token)) + 1
+                ret = {'row': row, 'col': 0}
+        except AttributeError:
+            pass
 
-        if len(vector) > 1 and vector[1][0:4]=='LINE':
-            v_return = {
-                'row': vector[1].split(':')[0].split(' ')[1],
-                'col': vector[2].index('^') - len(vector[1].split(':')[0])-2
-            }
-
-        return v_return
+        return ret
 
     def GetPropertiesTable(self, p_object):
         return self.v_connection.Query('''
@@ -1086,7 +1136,7 @@ END
     @lock_required
     def QueryTableDefinition(self, table=None):
         return self.v_connection.Query("PRAGMA table_info('{0}')".format(table), True)
-    
+
     @lock_required
     def GetViewDefinition(self, view):
         return self.v_connection.ExecuteScalar(f"SELECT sql from sqlite_master WHERE type = 'view' AND name = '{view}'")

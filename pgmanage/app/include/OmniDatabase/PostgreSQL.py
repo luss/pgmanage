@@ -23,16 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-import os.path
-import re
-from collections import OrderedDict
 from enum import Enum
 import app.include.Spartacus as Spartacus
 import app.include.Spartacus.Database as Database
 import app.include.Spartacus.Utils as Utils
 from urllib.parse import urlparse
 
-import threading
 
 '''
 ------------------------------------------------------------------------
@@ -793,7 +789,7 @@ class PostgreSQL:
             v_return = str(exc)
         return v_return
 
-    def GetErrorPosition(self, p_error_message):
+    def GetErrorPosition(self, p_error_message, sql_cmd):
         vector = str(p_error_message).split('\n')
         v_return = None
         if len(vector) > 1 and vector[1][0:4]=='LINE':
@@ -828,6 +824,33 @@ class PostgreSQL:
             from pg_roles
             order by rolname
         ''', True)
+
+    @lock_required
+    def QueryRoleDetails(self, oid):
+        return self.v_connection.Query('''
+            select quote_ident(rolname) as name_raw,
+            rolname as role_name, oid, rolcanlogin,
+            rolsuper, rolinherit, rolcreaterole,
+            rolcreatedb, rolreplication, rolbypassrls,
+            rolconnlimit, rolpassword, rolvaliduntil,
+            ARRAY(
+                SELECT
+                    array[rm.rolname, pgam.admin_option::text]
+                FROM
+                    (SELECT * FROM pg_catalog.pg_auth_members WHERE member = pgr.oid) pgam
+                    LEFT JOIN pg_catalog.pg_roles rm ON (rm.oid = pgam.roleid)
+                ORDER BY rm.rolname
+            ) AS member_of,
+            ARRAY(
+                SELECT
+                    array[pgrm.name, pgrm.admin_option::text]
+                FROM
+                    (SELECT pg_roles.rolname AS name, pg_auth_members.admin_option AS admin_option FROM pg_roles
+                    JOIN pg_auth_members ON pg_roles.oid=pg_auth_members.member AND pg_auth_members.roleid={0}) pgrm
+            ) members
+            from pg_roles pgr
+            where oid={0}
+        '''.format(oid), False)
 
     @lock_required
     def QueryTablespaces(self):
@@ -1471,13 +1494,17 @@ class PostgreSQL:
             select quote_ident(c.relname) as table_name,
                    quote_ident(ci.relname) as name_raw,
                    ci.relname as index_name,
+                   i.indisprimary as is_primary,
                    (case when i.indisunique then 'Unique' else 'Non Unique' end) as uniqueness,
                    quote_ident(n.nspname) as schema_name,
                    format(
                        '%s;',
                        pg_get_indexdef(i.indexrelid)
                    ) AS definition,
-                   ci.oid
+                   ci.oid,
+                   array_agg(quote_ident(a.attname)) AS columns,
+                am.amname AS method,
+                pg_get_expr(i.indpred, i.indrelid, true) AS constraint
             from pg_index i
             inner join pg_class ci
             on ci.oid = i.indexrelid
@@ -1487,9 +1514,13 @@ class PostgreSQL:
             on c.oid = i.indrelid
             inner join pg_namespace n
             on n.oid = c.relnamespace
+            inner join pg_attribute a 
+            on a.attrelid = c.oid AND a.attnum = ANY(i.indkey)
+            inner join pg_am am on ci.relam = am.oid
             where i.indisvalid
               and i.indislive
               {0}
+            group by c.relname, ci.relname, ci.oid, i.indisprimary, i.indisunique, n.nspname, i.indexrelid, am.amname
             order by 1, 2
         '''.format(v_filter), True)
 
@@ -5235,7 +5266,9 @@ INDEX
 ''')
 
     def TemplateDropIndex(self):
-        return Template('''DROP INDEX [ CONCURRENTLY ] #index_name#
+        return Template('''DROP INDEX
+--CONCURRENTLY
+#index_name#
 --CASCADE
 ''')
 

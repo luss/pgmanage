@@ -1,7 +1,5 @@
 import json
 import os
-import random
-import string
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -14,11 +12,11 @@ from app.utils.key_manager import key_manager
 from app.utils.master_password import (reset_master_pass,
                                        set_masterpass_check_text,
                                        validate_master_password)
-from app.utils.response_helpers import create_response_template, error_response
 from app.views.connections import session_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import DatabaseError
 from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -32,27 +30,28 @@ from pgmanage import settings
 def index(request):
     user_details, _ = UserDetails.objects.get_or_create(user=request.user)
 
+    if not settings.MASTER_PASSWORD_REQUIRED and not key_manager.get(request.user):
+        return redirect(settings.LOGIN_URL)
+
     # Invalid session
     if not request.session.get("pgmanage_session"):
         return redirect(settings.LOGIN_REDIRECT_URL)
 
     session = request.session.get("pgmanage_session")
+
+    if not settings.MASTER_PASSWORD_REQUIRED and user_details.masterpass_check == '':
+
+        key = key_manager.get(request.user)
+
+        set_masterpass_check_text(user_details, key)
     if key_manager.get(request.user):
         session.RefreshDatabaseList()
 
     context = {
-        "session": None,
-        "user_id": request.user.id,
-        "user_key": request.session.session_key,
-        "user_name": request.user.username,
         "super_user": request.user.is_superuser,
         "desktop_mode": settings.DESKTOP_MODE,
         "pgmanage_version": settings.PGMANAGE_VERSION,
         "pgmanage_short_version": settings.PGMANAGE_SHORT_VERSION,
-        "menu_item": "workspace",
-        "tab_token": "".join(
-            random.choice(string.ascii_lowercase + string.digits) for i in range(20)
-        ),
         "base_path": settings.PATH,
         "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
         "master_key": "new"
@@ -85,7 +84,6 @@ class SettingsView(View):
                     "binary_path",
                     "pigz_path",
                     "masterpass_check",
-                    "welcome_closed",
                 ],
             ),
             "binary_path": user_details.get_binary_path(),
@@ -160,10 +158,20 @@ def save_user_password(request):
     if not password:
         return JsonResponse(data={"data": "Password can not be empty."}, status=400)
 
-    user = User.objects.get(id=request.user.id)
-    user.set_password(password)
-    user.save()
-    update_session_auth_hash(request, user)
+    try:
+        user = User.objects.get(id=request.user.id)
+        user.set_password(password)
+        user.save()
+        update_session_auth_hash(request, user)
+    except Exception as exc:
+        return JsonResponse(data={"data": str(exc)}, status=500)
+    
+    old_key = key_manager.get(request.user)
+    key_manager.set(request.user, password)
+    try:
+        Connection.reencrypt_credentials(request.user.id, old_key, password)
+    except DatabaseError as exc:
+        return JsonResponse(data={"data": str(exc)}, status=500)
 
     return HttpResponse(status=200)
 
@@ -172,11 +180,11 @@ def save_user_password(request):
 @session_required
 def change_active_database(request, session):
     data = request.data
-    tab_id = data["tab_id"]
+    workspace_id = data["workspace_id"]
     new_database = data["database"]
     conn_id = data["database_index"]
 
-    session.v_tabs_databases[tab_id] = new_database
+    session.v_tabs_databases[workspace_id] = new_database
 
     conn = Connection.objects.get(id=conn_id)
     conn.last_used_database = new_database
@@ -216,7 +224,6 @@ def renew_password(request, session):
 @user_authenticated
 @database_required(check_timeout=True, open_connection=True)
 def draw_graph(request, database):
-    response_data = create_response_template()
     schema = request.data.get("schema", '')
     edge_dict = {}
     node_dict = {}
@@ -285,10 +292,10 @@ def draw_graph(request, database):
                         col['is_pk'] = True
                         col['cgid'] = f"{fkcol['r_table_name']}-{fkcol['r_column_name']}"
 
-        response_data["v_data"] = {"nodes": list(node_dict.values()), "edges": list(edge_dict.values())}
+        response_data = {"nodes": list(node_dict.values()), "edges": list(edge_dict.values())}
 
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={'data': str(exc)}, status=400)
 
     return JsonResponse(response_data)
 
@@ -323,7 +330,7 @@ def get_table_columns(request, database):
                 pk_cols = database.QueryTablesPrimaryKeysColumns(table)
 
             cols = ', '.join(['t.'+x['column_name'] for x in pk_cols.Rows])
-            order_by = f"ORDER BY {cols}"
+            order_by = f"ORDER BY {cols}" if cols else ""
 
             pk_column_names = [x['column_name'] for x in pk_cols.Rows]
 
@@ -352,14 +359,15 @@ def get_database_meta(request, database):
 
     try:
         if database.v_has_schema:
-            schemas = database.QuerySchemas().Rows
+            schemas = database.QuerySchemas().Rows if hasattr(database, 'QuerySchemas') else [{"schema_name": database.v_schema}]
         else:
             schemas = [{'schema_name': '-noschema-'}]
 
         for schema in schemas:
             schema_data = {
                 "name": schema["schema_name"],
-                "tables": []
+                "tables": [],
+                "views": [],
             }
 
             tables = database.QueryTables(False, schema["schema_name"])
@@ -375,12 +383,33 @@ def get_database_meta(request, database):
 
                 table_data['columns'] = list((c['column_name'] for c in table_columns))
                 schema_data['tables'].append(table_data)
+            
+            if database.v_has_schema:
+                views = database.QueryViews(p_all_schemas=False, p_schema=schema["schema_name"])
+            else:
+                views = database.QueryViews()
+
+            for view in views.Rows:
+                view_data = {
+                    "name": view["table_name"],
+                    "columns": []
+                }
+                view_name = view.get('name_raw') or view["table_name"]
+
+                if database.v_has_schema:
+                    view_columns = database.QueryViewFields(p_table=view_name, p_all_schemas=False, p_schema=schema["schema_name"])
+                else:
+                    view_columns = database.QueryViewFields(p_table=view_name)
+
+                view_data['columns'] = list((c['column_name'] for c in view_columns.Rows))
+                schema_data['views'].append(view_data)
+
             schema_list.append(schema_data)
 
         response_data["schemas"] = schema_list
 
     except Exception as exc:
-        return error_response(message=str(exc), password_timeout=True)
+        return JsonResponse(data={'data': str(exc)}, status=400)
 
     return JsonResponse(response_data)
 

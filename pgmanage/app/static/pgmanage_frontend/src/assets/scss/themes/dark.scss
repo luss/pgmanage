@@ -1,0 +1,829 @@
+/*
+This file is part of OmniDB.
+OmniDB is open-source software, distributed "AS IS" under the MIT license in the hope that it will be useful.
+
+The MIT License (MIT)
+
+Portions Copyright (c) 2015-2020, The OmniDB Team
+Portions Copyright (c) 2017-2020, 2ndQuadrant Limited
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+.omnidb--theme-dark {
+  color: #F8FAFC;
+
+  .omnidb__main {
+    background-color: #101D2E;
+  }
+
+  iframe {
+    border-color: #383b42;
+  }
+
+  .omnidb__theme-bg--menu-primary {
+    background-color: #162d4e;
+
+    &::-webkit-scrollbar-track {
+      background: #373944;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #4C4E58;
+    }
+  }
+  .omnidb__theme-bg--menu-utilities {
+    background-color: #1560AD;
+  }
+  .omnidb__theme-border--primary {
+    border: 1px solid #2C3B5A;
+  }
+  .omnidb__theme-border-top--primary {
+    border-top: 1px solid #2C3B5A;
+  }
+  .omnidb__theme-icon--primary {
+    color: #0054A6;
+  }
+  .omnidb__workspace__div-left,
+  .omnidb__snippets__div-left {
+    background-color: #161D2D;
+  }
+  .omnidb__workspace__div-right,
+  .omnidb__snippets__div-right {
+    background-color: #16171E;
+  }
+  .omnidb__theme-bg--light {
+    background-color: #282A2F;
+  }
+
+  /* OMNIS */
+  .omnis {
+    background-color: rgba(47,49,54,0.25);
+    svg {
+      .icon-body {
+        fill: #1560AD;
+      }
+      .icon-bg {
+        fill: white;
+      }
+    }
+  }
+  .omnis.omnis--active {
+    background-color: rgba(47,49,54,1);
+  }
+  .omnis__cloned-element__waves span {
+    background-color: #2FB344;
+  }
+
+  /* ICONS */
+  .close,
+  i.icon-close {
+    color: #DEDEDE;
+  }
+
+  /* BRANDING ICON */
+  .omnidb-icon__theme--branding,
+  .omnidb-icon__theme--branding path {
+  	fill: #FFF;
+  }
+
+  /* CONSOLE */
+  .omnidb__txt-console {
+    border-color: #16171E;
+  }
+
+  /* TABS */
+  .nav-tabs {
+    border-color: #43464E;
+  }
+  .nav-tabs .nav-link {
+    color: #FFF;
+  }
+  .nav-tabs .nav-link.active {
+    background-color: inherit;
+  }
+  .omnidb__tab-menu--primary .nav-tabs .nav-link {
+    border-top: 0;
+    transition: all .3s ease-in-out;
+
+    &.active {
+      background-color: #164171;
+    }
+  }
+
+  /* TABS WITH CARD-HEADERS */
+  .omnidb__tab-menu.card-header .nav-tabs .nav-link.active {
+    border-color: #383b42;
+    border-bottom-color: #27292E;
+    border-top: 2px solid #0054A6;
+  }
+
+  /* TEXT */
+  .omnidb__theme__text--primary {
+    color: #394E83;
+  }
+  .omnidb__theme__text--secondary {
+    color: #4C5365;
+  }
+
+  /* PRIMARY TAB */
+  .omnidb__tab-menu--primary .omnidb__menu__btn {
+    background-color: #282A2F;
+  }
+  .omnidb__tab-menu--primary .omnidb__tab-menu__link.nav-link.active .omnidb__tab-menu__link-name {
+    color: #F8FAFC;
+  }
+  .omnidb__tab-menu--primary .omnidb__tab-menu__link-name {
+  	color: #F8FAFC;
+  }
+  .omnidb__tab-menu--primary .omnidb__tab-menu__link-icon {
+    background-color: unset;
+  	color: #F8FAFC;
+  }
+
+  /* UTILITIES MENU */
+  .omnidb__utilities-menu .omnidb__menu__btn {
+    background-color: unset;
+    color: #F8FAFC !important;
+  }
+  .omnidb__utilities-menu .omnidb__menu__btn-text {
+    color: #F8FAFC !important;
+  }
+  .omnidb__utilities-menu .fa-code-branch {
+    color: #FFF;
+  }
+  .omnidb__utilities-menu .badge-info {
+    color: #585858;
+    background-color: #FFF;
+  }
+
+  a {
+    color: #92c7ff;
+  }
+  a:hover {
+    color: #ffffff;
+  }
+
+  /* SECONDARY TAB */
+  .omnidb__tab-menu--secondary {
+    .nav-tabs {
+      border-bottom-color: transparent !important;
+    }
+
+    .omnidb__tab-menu__link {
+      background-color: #161D2D;
+      border-radius: 4px 4px 0 0;
+      border-width: 2px 1px 0 1px;
+      opacity: 0.7;
+
+      &:first-of-type{
+        border-radius: 0 4px 0 0;
+      }
+
+      &.active {
+        background-color: #16171E;
+        border-color: #162D4E;
+        border-top-color: #1560AD;
+        border-bottom-color: transparent;
+        opacity: 1;
+      }
+
+      &-name {
+        color: #F8FAFD !important;
+      }
+
+      &-icon {
+        background-color: unset;
+
+        &.active {
+          background-color: #16243C;
+          border-color: #162D4E;
+          border-top-color: #0054A6;
+        }
+      }
+    }
+  }
+
+
+  /* TREE TAB */
+  .omnidb__tree-tabs .omnidb__tab-menu .nav-tabs {
+    border-bottom-color: transparent !important;
+  }
+  .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link {
+    background-color: transparent;
+    border-color: #2C3B5A;
+  }
+  .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-name {
+    color: #F8FAFD !important;
+  }
+  .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link-icon {
+    background-color: #2F3136 !important;
+  }
+  .omnidb__tree-tabs .omnidb__tab-menu .omnidb__tab-menu__link.active {
+    background-color: transparent;
+    border-color: #383b42;
+    border-bottom-color: #282A2F;
+    border-top: 2px solid #0054A6;
+  }
+
+  /* QUERY RESULT TABS */
+  .omnidb__query-result-tabs {
+    .omnidb__tab-menu  {
+      &__link {
+        background-color: transparent;
+        border-width: 0 0 2px 0;
+        border-style: solid;
+        opacity: .7;
+        padding-left: 0;
+        padding-right: 0;
+
+        &.active {
+          background-color: #16171E;
+          border-color: #2C3B5A;
+          border-bottom-color: #1560AD;
+          opacity: 1;
+          font-weight: 500;
+        }
+
+        &-name {
+          color: #F8FAFD !important;
+        }
+
+        &-icon {
+          background-color: #2F3136 !important;
+        }
+
+        &:hover:not(.active) {
+          border-color: #90949a67;
+        }
+
+        &:not(:last-of-type) {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  /* PANEL FULL VIEW */
+  .omnidb__panel-view--full {
+    background-color: #16171E;
+  }
+
+  /* MODAL CONFIG */
+  .omnidb__modal-config .nav-tabs {
+    border-bottom-color: transparent !important;
+  }
+  .omnidb__modal-config .nav-link {
+    background-color: transparent;
+    border-color: #2C3B5A;
+    color: #DCDDDE !important;
+  }
+  .omnidb__modal-config .nav-link.active {
+    background-color: transparent;
+    border-color: #2C3B5A;
+    border-top: 2px solid #0054A6;
+  }
+  .omnidb__modal-config .nav-tabs .nav-link:focus,
+  .omnidb__modal-config .nav-tabs .nav-link:hover {
+    border-bottom-color: #2C3B5A;
+  }
+
+  /* MONITORING */
+  .omnidb__monitoring-result-tabs {
+    border: 1px solid #43464E;
+  }
+
+  /* FORMS */
+  ::placeholder {
+    color: #636A71;
+  }
+
+  .omnidb__form-check .form-check-label::before {
+    background-color: #2F3136 !important;
+    border: 1px solid #4C5365 !important;
+  }
+
+  .omnidb__form-check input:checked~.form-check-label::after {
+    background-color: #2FB344;
+  }
+
+  .required > label::after {
+    color: #D72239;
+  }
+
+  .custom-file > input+label {
+    background-color: #282A2F;
+    color: #d7d7d7;
+    border-color: #4C5365;
+    &::after {
+      background-color: #282A2F;
+      color: #d7d7d7;
+    }
+  }
+
+  .custom-file > input[disabled]+label {
+    background-color: #32343A !important;
+    border-color: #4c5365;
+    color: #677077;
+    &::after {
+      color: #636a71;
+      background-color: #32343A;
+    }
+  }
+
+  /* Input-group */
+  span.input-group-text {
+    border-color: #484a55;
+  }
+
+  /* Switch */
+  label.omnidb__switch--label,
+  label.omnidb__switch--explain--label {
+    background-color: #3D424E;
+  }
+  label.omnidb__switch--label span,
+  label.omnidb__switch--explain--label span {
+    color: #fff;
+    background-color: #2f3136;
+  }
+  .omnidb__switch--input:checked~.omnidb__switch--label {
+    background-color: #0054A6;
+  }
+  .secondq__omnidb--input:checked ~ .omnidb__switch--label {
+    background-color: #809dde;
+  }
+  .omnidb__main:not(.omnidb__explain--default) label.omnidb__switch--explain--label {
+      background-color: #394e83;
+  }
+
+  /* EXPLAIN */
+  .omnidb__query-result-tabs__content  {
+    .table thead th,
+    .table-resultset td {
+      border-bottom-color: #383B42;
+      border-top-color: #383B42;
+    }
+    .table-resultset tbody tr:hover {
+      color: #8199b0;
+    }
+  }
+
+  /* MODAL */
+  .modal-header {
+    border-color: #484a55;
+  }
+  .modal-content {
+    background-color: #2F3136;
+  }
+  .modal-footer {
+    border-top-color: #484a55;
+  }
+
+  /* SCROLLBAR FIREFOX (new versions) */
+  * {
+    scrollbar-color: #47505D transparent;
+  }
+
+  /* TOAST */
+  .toast {
+    background-color: #2f3136;
+    border-color: #1d1f21;
+   }
+  .toast-header {
+    background-color: #1d1f21;
+  }
+
+  /* JSON BUILDER */
+  .jsonBuilder--template-2 .jsonBuilder__label {
+    background-color: #1D1F21;
+  }
+
+  /* PAGINATION */
+  .page-link {
+    color: #7CBAFB;
+    background-color: #1d1f21;
+    border: 1px solid #484a55;
+  }
+  .page-item.active .page-link {
+    color: #FFF;
+    background-color: #394E83;
+    border-color: #394E83;
+  }
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #222529;
+    border-color: #474954;
+  }
+
+  /* Workspace Connection Info */
+  .omnidb__workspace__connection-details b {
+    color: #206BC4;
+  }
+  .omnidb__ht__first-col-actions td:first-child {
+    color: #1CF58A;
+  }
+
+  /* Aimara Tree */
+  .node-all {
+    color: inherit;
+  }
+
+  /* Tree Component */
+  .div_left ul.tree {
+    background-color: #373b41 !important;
+  }
+  .div_left ul.tree li.last {
+    background-color: #373b41 !important;
+  }
+  .div_right ul.tree {
+    background-color: #373b41 !important;
+    font-weight: bold;
+  }
+  .div_right ul.tree li.last {
+    background-color: #373b41 !important;
+  }
+  .node:hover a {
+    color: white !important;
+  }
+  .node a {
+    color: #ffffff !important;
+  }
+  span.node_selected span {
+    color: inherit;
+  }
+
+  body {
+    background-color: #373b41 !important;
+    color: white;
+  }
+  .header .header_a_selected {
+    background-color: #1E90FF !important;
+  }
+  .header_menu a {
+    background-color: #1A1A1D !important;
+  }
+  .header .header_a_selected:hover,
+  .header_menu a:hover {
+    color: #f8f8f8 !important;
+    background: #1E90FF !important;
+  }
+
+  .div_right div > div.tab {
+    background-color: #525252 !important;
+  }
+  /* --------------------
+  			Conn Tabs
+  ---------------------*/
+  .conn_tabs div > div.tab, .white_box div > div.tab, .config_box div > div.tab {
+    background-color: #373b41 !important;
+  }
+  .white_box .div_tabs {
+    border: 1px solid #484a55 !important;
+  }
+  .conn_tabs .tabs, .white_box .tabs, .config_box .tabs {
+    background: #25282c !important;
+  }
+  .conn_tabs .tabs > li, .white_box .tabs > li, .config_box .tabs > li {
+    background-color: #373b41 !important;
+    color: #ffffff !important;
+  }
+
+  .config_box {
+    color: #ffffff !important;
+  }
+
+  .link_text {
+    color: #ffc67a !important;
+  }
+  /* --------------------
+  			Right Div
+  ---------------------*/
+  .div_right div > div.tab {
+    background-color: #373b41 !important;
+  }
+
+  .div_right .tabs {
+    background: #25282c !important;
+  }
+  .div_right .tabs > li {
+    background-color: #373b41 !important;
+    color: #ffffff !important;
+  }
+
+  .handsontable .wtBorder.corner {
+    border: 2px solid #5292f7 !important;
+  }
+  .handsontable td.area {
+    background: #2e3136 !important;
+  }
+  .handsontable.listbox .ht_master table {
+      color: #d7d7d7 !important;
+      border: 1px solid #2F3136 !important;
+      border-collapse: separate;
+      background: red;
+  }
+  .handsontable.listbox tr td.current, .handsontable.listbox tr:hover td {
+  	background-color: #1E90FF !important;
+  	color: #fff !important;
+  }
+  .ace_rightAlignedText {
+  	color: #d7d7d7 !important;
+  }
+  /* --------------------
+  			White Box
+  ---------------------*/
+  /* Handsontables */
+
+  /* --------------------
+  			Left Div
+  ---------------------*/
+  /* Connection Selector */
+  .dd {
+    border: none;
+    border-top: 1px solid #484a55 !important;
+    border-left: 1px solid #484a55 !important;
+    border-right: 1px solid #484a55 !important;
+  }
+  .div_left .ddTitle {
+    color: #ffffff !important;
+    background: #373b41 !important;
+  }
+  .div_left .dd .divider {
+    border-left: 1px solid #484a55 !important;
+    border-right: 0px solid #484a55 !important;
+  }
+  .div_left .dd .ddChild li.selected {
+    background-color: #25282c !important;
+  }
+  .div_left .dd .ddChild li {
+    background-color: #25282c !important;
+    color: #d7d7d7 !important;
+  }
+  .div_left .dd .ddChild li .ddlabel {
+    color: #d7d7d7 !important;
+  }
+  .div_left .dd .ddChild li {
+      border-bottom: 1px solid #484a55 !important;
+  }
+  .div_left .dd .ddChild {
+      border: none;
+      border-top: 1px solid #484a55 !important;
+      border-left: 1px solid #484a55 !important;
+      border-right: 1px solid #484a55 !important;
+  }
+
+  .div_left h2 {
+  	color: #d7d7d7 !important;
+  }
+  .cm-all {
+      color: inherit !important;
+  }
+  /* -----------------------
+  				Handsontables Menu
+  ------------------------*/
+  .htContextMenu .wtSpreader table.htCore {
+    border-color: #6d6d6d !important;
+  }
+  .htContextMenu .wtSpreader table.htCore div {
+    color: #d7d7d7 !important;
+  }
+  .htContextMenu .wtSpreader table.htCore td {
+    background-color: #191919 !important;
+  }
+  .htContextMenu .wtSpreader table.htCore td:hover {
+    background-color: #1E90FF !important;
+  }
+
+  /* -------------------------
+  				Modal
+  --------------------------*/
+  .white_box, .config_box, .plugin_box, .users_box, .connection_list, .dashboard_unit_list, .dashboard_unit, .dashboard_unit_test {
+    border: 1px solid #16375F !important;
+    background-color: #25282c !important;
+    box-shadow: none !important;
+    color: #ffffff;
+  }
+  .modal_background_dark {
+    color: #d7d7d7 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+  }
+  .table-resultset, .explain-plan-toolbar, .dashboard_unit {
+    color: #d7d7d7 !important;
+  }
+  .box_color {
+    border: 1px solid #484a55 !important;
+    background-color: #25282c !important;
+    box-shadow: none !important;
+  }
+
+  .box_color2 {
+    border: 1px solid #484a55 !important;
+    background-color: #373b41 !important;
+    box-shadow: none !important;
+    color: #ffffff;
+  }
+
+  a.modal-closer {
+      color: #ffffff !important;
+      border: 1px solid #1E90FF !important;
+      background-color: #1E90FF !important;
+  }
+  a.modal-closer:hover {
+      background-color: #303030 !important;
+      color: #ffffff !important;
+      border: 1px solid #6d6d6d !important;
+  }
+
+  #plugin_file_label {
+    background: #25282c;
+    border: solid #484a55 1px;
+    color: #ffffff;
+  }
+  #plugin_file_label:hover {
+    color: #fff !important;
+    background: #1E90FF !important;
+  }
+  input[type="text"],
+  input[type="password"],
+  textarea  {
+    background-color: #1A2234 !important;
+    border-color: #243049 !important;
+  	color: #F8FAFC !important;
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0px 1000px #1A2234 inset;
+      -webkit-text-fill-color: #F8FAFC !important;
+      -moz-box-shadow: 0 0 0px 1000px #1A2234 inset !important;
+      -moz-text-fill-color: #F8FAFC !important;
+      background-color: #1A2234!important;
+      border-color: #243049 !important;
+    	color: #F8FAFC !important;
+    }
+  }
+
+  table {
+    color: #F8FAFC;
+  }
+
+  .cellNew {
+  	background-color: rgb(125, 187, 109) !important;
+  	color: #000 !important;
+  }
+
+  .cellEdit {
+  	background-color: rgb(255, 238, 154) !important;
+  	color: #000 !important;
+  }
+
+  .cellRemove {
+  	background-color: rgb(255, 144, 144) !important;
+  	color: #000 !important;
+  }
+  .conversion_table {
+  	color: #d7d7d7;
+  }
+  .even_tr {
+  	background-color: #484a55;
+  }
+
+  .div_chat_header_default {
+  	background-color: #1D1F21 !important;
+  }
+
+  .div_chat_header_blink {
+  	background-color: rgb(255, 147, 15) !important;
+  }
+
+  .query_result {
+    color: #d7d7d7;
+  }
+
+  #popup_chat {
+      color: white;
+  }
+
+  .popup-header {
+      background: #25282c !important;
+      border-bottom: 2px solid #6d6d6d !important;
+  }
+
+  #div_chat_left {
+      background-color: rgb(72, 74, 85) !important;
+  }
+
+  #div_chat_right_left {
+      background-color: #1D1F21 !important;
+  }
+
+  #div_chat_right_right {
+      background-color: #1D1F21 !important;
+  }
+
+  .modal_content {
+      background-color: rgb(72, 74, 85) !important;
+      color: white !important;
+  }
+
+  .context_menu {
+      background-color: #191919 !important;
+      background-color: rgb(72, 74, 85) !important;
+  }
+
+  .context_menu_item:hover {
+      background-color: #1E90FF !important;
+  }
+
+  .div_chat_right_left_footer_left_options {
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      background-color: rgb(72, 74, 85) !important;
+      color: black !important;
+  }
+
+  #div_chat_right_left_pre_header {
+      background-color: rgb(72, 74, 85) !important;
+  }
+
+  .div_chat_message_attachment_container {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background-color: rgb(72, 74, 85) !important;
+  }
+
+  #horizontal-resize-line {
+    border-left-color: white;
+  }
+
+  #vertical-resize-line {
+    border-top-color: white;
+  }
+
+  .fa-light {
+    color: #ffffff !important;
+  }
+
+  .icon-tab-title {
+    color: #ffffff;
+  }
+
+  .icon-group {
+    color: #50a8ff !important;
+  }
+
+  .icon-conn-string {
+    color: #50a8ff !important;
+  }
+
+  .shortcut_block_title {
+      border-bottom: 1px dashed #484a55 !important;
+  }
+
+  .checkmark {
+      background-color: #25282c !important;
+      border: 1px solid #585858 !important;
+  }
+
+  .error_text {
+    color: #ffffff !important;
+  }
+
+  i.action-check {
+      color: #1CF58A !important;
+  }
+
+  i.action-test {
+      color: #a2b1bf !important;
+  }
+
+  div.welcome_release_content h2 {
+    background-color: #1E90FF !important;
+  }
+  ul.welcome_release_list {
+      border-left: 1px solid #1E90FF !important;
+  }
+  li.welcome_release_item::before {
+      background-color: #1E90FF !important;
+  }
+  li.welcome_release_item span::before {
+      background-color: #1E90FF !important;
+  }
+  li.welcome_release_item span {
+    background: #25282c !important;
+    color: #f6f6f6 !important;
+  }
+}

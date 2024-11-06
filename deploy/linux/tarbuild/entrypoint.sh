@@ -13,7 +13,7 @@ git clone $REPO --depth 1 -b $BRANCH pgmanage
 cd pgmanage/
 mkdir -p /deploy/pip-cache
 pip3 install -r requirements.txt --cache-dir /deploy/pip-cache
-pip3 install pyinstaller==5.13.0  --cache-dir /deploy/pip-cache
+pip3 install pyinstaller==5.13.2  --cache-dir /deploy/pip-cache
 
 # if version is not provided, we use last tag from repository
 if [ -z "$VERSION" ]
@@ -56,7 +56,7 @@ sed -i "s/Dev/PgManage $VERSION/" pgmanage/custom_settings.py
 sed -i "s/dev/$VERSION/" pgmanage/custom_settings.py
 
 # building vite bundle
-cd app/static/assets/js/pgmanage_frontend/
+cd app/static/pgmanage_frontend/
 npm install
 npm run build
 cd $HOME/pgmanage/pgmanage/

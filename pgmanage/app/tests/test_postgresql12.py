@@ -1,17 +1,11 @@
-from django.test import TestCase, Client
-from django.http import JsonResponse
-
 import json
 from datetime import datetime, timedelta
 
-import app.include.Spartacus as Spartacus
 import app.include.OmniDatabase as OmniDatabase
+from django.test import Client, TestCase
 
+from .utils_testing import execute_client_login, get_client_omnidb_session
 
-from .utils_testing import (
-    execute_client_login,
-    get_client_omnidb_session,
-)
 
 class PostgreSQL(TestCase):
 
@@ -42,7 +36,7 @@ class PostgreSQL(TestCase):
 
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
-        assert 0 <= data['v_data']
+        assert 0 <= data['data']
         session = self.client_session.session
         assert 'admin' == session['pgmanage_session'].v_user_name
 
@@ -71,7 +65,7 @@ class PostgreSQL(TestCase):
         assert 401 == response.status_code
 
     def test_get_tree_info_postgresql_session(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
 
         data = json.loads(response.content.decode())
@@ -81,7 +75,7 @@ class PostgreSQL(TestCase):
         assert keys == keys_l
 
     def test_template_create_tablespace(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE TABLESPACE name
@@ -91,7 +85,7 @@ LOCATION 'directory'
 ''' == data['create_tablespace']
 
     def test_template_alter_tablespace(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLESPACE #tablespace_name#
@@ -106,13 +100,13 @@ LOCATION 'directory'
 ''' == data['alter_tablespace']
 
     def test_template_drop_tablespace(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'DROP TABLESPACE #tablespace_name#' == data['drop_tablespace']
 
     def test_template_create_role(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE ROLE name
@@ -135,7 +129,7 @@ LOCATION 'directory'
 ''' == data['create_role']
 
     def test_template_alter_role(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER ROLE #role_name#
@@ -157,13 +151,13 @@ LOCATION 'directory'
 ''' == data['alter_role']
 
     def test_template_drop_role(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'DROP ROLE #role_name#' == data['drop_role']
 
     def test_template_create_database(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE DATABASE name
@@ -185,7 +179,7 @@ LOCATION 'directory'
 ''' == data['create_database']
 
     def test_template_alter_database(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER DATABASE #database_name#
@@ -202,7 +196,7 @@ LOCATION 'directory'
 ''' == data['alter_database']
 
     def test_template_drop_database(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP DATABASE #database_name#
@@ -210,7 +204,7 @@ LOCATION 'directory'
 ''' == data['drop_database']
 
     def test_template_create_schema(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE SCHEMA schema_name
@@ -218,7 +212,7 @@ LOCATION 'directory'
 ''' == data['create_schema']
 
     def test_template_alter_schema(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER SCHEMA #schema_name#
@@ -227,7 +221,7 @@ LOCATION 'directory'
 ''' == data['alter_schema']
 
     def test_template_drop_schema(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP SCHEMA #schema_name#
@@ -235,7 +229,7 @@ LOCATION 'directory'
 ''' == data['drop_schema']
 
     def test_template_drop_table(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP TABLE #table_name#
@@ -243,7 +237,7 @@ LOCATION 'directory'
 ''' == data['drop_table']
 
     def test_template_create_sequence(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE SEQUENCE #schema_name#.name
@@ -257,7 +251,7 @@ LOCATION 'directory'
 ''' == data['create_sequence']
 
     def test_template_alter_sequence(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER SEQUENCE #sequence_name#
@@ -277,7 +271,7 @@ LOCATION 'directory'
 ''' == data['alter_sequence']
 
     def test_template_drop_sequence(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP SEQUENCE #sequence_name#
@@ -285,7 +279,7 @@ LOCATION 'directory'
 ''' == data['drop_sequence']
 
     def test_template_create_function(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE OR REPLACE FUNCTION #schema_name#.name
@@ -311,7 +305,7 @@ $function$
 ''' == data['create_function']
 
     def test_template_drop_function(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP FUNCTION #function_name#
@@ -319,7 +313,7 @@ $function$
 ''' == data['drop_function']
 
     def test_template_create_triggerfunction(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE OR REPLACE FUNCTION #schema_name#.name()
@@ -338,7 +332,7 @@ $function$
 ''' == data['create_triggerfunction']
 
     def test_template_drop_triggerfunction(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP FUNCTION #function_name#
@@ -346,7 +340,7 @@ $function$
 ''' == data['drop_triggerfunction']
 
     def test_template_create_view(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE [ OR REPLACE ] [ TEMP | TEMPORARY ] [ RECURSIVE ] VIEW #schema_name#.name
@@ -357,7 +351,7 @@ SELECT ...
 ''' == data['create_view']
 
     def test_template_drop_view(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP VIEW #view_name#
@@ -365,7 +359,7 @@ SELECT ...
 ''' == data['drop_view']
 
     def test_template_create_mview(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE MATERIALIZED VIEW #schema_name#.name AS
@@ -374,7 +368,7 @@ SELECT ...
 ''' == data['create_mview']
 
     def test_template_refresh_mview(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''REFRESH MATERIALIZED VIEW
@@ -384,7 +378,7 @@ SELECT ...
 ''' == data['refresh_mview']
 
     def test_template_drop_mview(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP MATERIALIZED VIEW #view_name#
@@ -392,7 +386,7 @@ SELECT ...
 ''' == data['drop_mview']
 
     def test_template_create_column(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -402,7 +396,7 @@ ADD COLUMN name data_type
 ''' == data['create_column']
 
     def test_template_alter_column(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -420,7 +414,7 @@ ADD COLUMN name data_type
 ''' == data['alter_column']
 
     def test_template_drop_column(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -429,7 +423,7 @@ DROP COLUMN #column_name#
 ''' == data['drop_column']
 
     def test_template_create_primarykey(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -442,7 +436,7 @@ PRIMARY KEY ( column_name [, ... ] )
 ''' == data['create_primarykey']
 
     def test_template_drop_primarykey(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -451,7 +445,7 @@ DROP CONSTRAINT #constraint_name#
 ''' == data['drop_primarykey']
 
     def test_template_create_unique(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -464,7 +458,7 @@ UNIQUE ( column_name [, ... ] )
 ''' == data['create_unique']
 
     def test_template_drop_unique(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -473,7 +467,7 @@ DROP CONSTRAINT #constraint_name#
 ''' == data['drop_unique']
 
     def test_template_create_foreignkey(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -487,7 +481,7 @@ REFERENCES reftable [ ( refcolumn [, ... ] ) ]
 ''' == data['create_foreignkey']
 
     def test_template_drop_foreignkey(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -496,7 +490,7 @@ DROP CONSTRAINT #constraint_name#
 ''' == data['drop_foreignkey']
 
     def test_template_create_index(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] name
@@ -509,7 +503,7 @@ ON [ ONLY ] #table_name#
 ''' == data['create_index']
 
     def test_template_alter_index(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER INDEX #index_name#
@@ -523,7 +517,7 @@ ON [ ONLY ] #table_name#
 ''' == data['alter_index']
 
     def test_template_drop_index(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP INDEX [ CONCURRENTLY ] #index_name#
@@ -531,7 +525,7 @@ ON [ ONLY ] #table_name#
 ''' == data['drop_index']
 
     def test_template_create_check(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -540,7 +534,7 @@ CHECK ( expression )
 ''' == data['create_check']
 
     def test_template_drop_check(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -549,7 +543,7 @@ DROP CONSTRAINT #constraint_name#
 ''' == data['drop_check']
 
     def test_template_create_exclude(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -561,7 +555,7 @@ EXCLUDE ( exclude_element WITH operator [, ... ] )
 ''' == data['create_exclude']
 
     def test_template_drop_exclude(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name#
@@ -570,7 +564,7 @@ DROP CONSTRAINT #constraint_name#
 ''' == data['drop_exclude']
 
     def test_template_create_rule(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE RULE name
@@ -582,13 +576,13 @@ TO #table_name#
 ''' == data['create_rule']
 
     def test_template_alter_rule(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'ALTER RULE #rule_name# ON #table_name# RENAME TO new_name' == data['alter_rule']
 
     def test_template_drop_rule(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP RULE #rule_name# ON #table_name#
@@ -596,7 +590,7 @@ TO #table_name#
 ''' == data['drop_rule']
 
     def test_template_create_trigger(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE TRIGGER name
@@ -612,7 +606,7 @@ ON #table_name#
 ''' == data['create_trigger']
 
     def test_template_create_view_trigger(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE TRIGGER name
@@ -629,7 +623,7 @@ ON #table_name#
 ''' == data['create_view_trigger']
 
     def test_template_alter_trigger(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TRIGGER #trigger_name# ON #table_name#
@@ -639,7 +633,7 @@ ON #table_name#
 ''' == data['alter_trigger']
 
     def test_template_enable_trigger(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER TABLE #table_name# ENABLE
@@ -649,13 +643,13 @@ TRIGGER #trigger_name#
 ''' == data['enable_trigger']
 
     def test_template_disable_trigger(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'ALTER TABLE #table_name# DISABLE TRIGGER #trigger_name#' == data['disable_trigger']
 
     def test_template_drop_trigger(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP TRIGGER #trigger_name# ON #table_name#
@@ -663,7 +657,7 @@ TRIGGER #trigger_name#
 ''' == data['drop_trigger']
 
     def test_template_create_inherited(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE TABLE name (
@@ -672,19 +666,19 @@ TRIGGER #trigger_name#
 ''' == data['create_inherited']
 
     def test_template_noinherit_partition(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'ALTER TABLE #partition_name# NO INHERIT #table_name#' == data['noinherit_partition']
 
     def test_template_drop_partition(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'DROP TABLE #partition_name#' == data['drop_partition']
 
     def test_template_vacuum(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''VACUUM
@@ -699,7 +693,7 @@ TRIGGER #trigger_name#
 ''' == data['vacuum']
 
     def test_template_vacuum_table(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         data = json.loads(response.content.decode())
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
@@ -717,13 +711,13 @@ TRIGGER #trigger_name#
 ''' == data['vacuum_table']
 
     def test_template_analyze(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'ANALYZE' == data['analyze']
 
     def test_template_analyze_table(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ANALYZE #table_name#
@@ -731,7 +725,7 @@ TRIGGER #trigger_name#
 ''' == data['analyze_table']
 
     def test_template_truncate(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''TRUNCATE
@@ -742,31 +736,31 @@ TRIGGER #trigger_name#
 ''' == data['truncate']
 
     def test_template_create_physicalreplicationslot(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''SELECT * FROM pg_create_physical_replication_slot('slot_name')''' == data['create_physicalreplicationslot']
 
     def test_template_drop_physicalreplicationslot(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''SELECT pg_drop_replication_slot('#slot_name#')''' == data['drop_physicalreplicationslot']
 
     def test_template_create_logicalreplicationslot(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''SELECT * FROM pg_create_logical_replication_slot('slot_name', 'pgoutput')''' == data['create_logicalreplicationslot']
 
     def test_template_drop_logicalreplicationslot(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''SELECT pg_drop_replication_slot('#slot_name#')''' == data['drop_logicalreplicationslot']
 
     def test_template_create_publication(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE PUBLICATION name
@@ -777,7 +771,7 @@ TRIGGER #trigger_name#
 ''' == data['create_publication']
 
     def test_template_alter_publication(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER PUBLICATION #pub_name#
@@ -791,7 +785,7 @@ TRIGGER #trigger_name#
 ''' == data['alter_publication']
 
     def test_template_drop_publication(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP PUBLICATION #pub_name#
@@ -799,19 +793,19 @@ TRIGGER #trigger_name#
 ''' == data['drop_publication']
 
     def test_template_add_pubtable(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'ALTER PUBLICATION #pub_name# ADD TABLE table_name' == data['add_pubtable']
 
     def test_template_drop_pubtable(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'ALTER PUBLICATION #pub_name# DROP TABLE #table_name#' == data['drop_pubtable']
 
     def test_template_create_subscription(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE SUBSCRIPTION name
@@ -828,7 +822,7 @@ PUBLICATION pub_name [, ...]
 ''' == data['create_subscription']
 
     def test_template_alter_subscription(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''ALTER SUBSCRIPTION #sub_name#
@@ -846,7 +840,7 @@ PUBLICATION pub_name [, ...]
 ''' == data['alter_subscription']
 
     def test_template_drop_subscription(self):
-        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tree_info_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP SUBSCRIPTION #sub_name#
@@ -859,7 +853,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_tables_postgresql_session(self):
-        response = self.client_session.post('/get_tables_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_tables_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], [
@@ -879,7 +873,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_table_definition_postgresql_session(self):
-        response = self.client_session.post('/get_table_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "inventory"}'})
+        response = self.client_session.post('/get_table_definition_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "inventory"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data['data']], ['prod_id', 'quan_in_stock', 'sales'])
@@ -890,7 +884,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_schemas_postgresql_session(self):
-        response = self.client_session.post('/get_schemas_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_schemas_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], [
@@ -904,7 +898,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_columns_postgresql_session(self):
-        response = self.client_session.post('/get_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['column_name'] for a in data], [
@@ -921,7 +915,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_pk_postgresql_session(self):
-        response = self.client_session.post('/get_pk_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_pk_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['constraint_name'] for a in data], ['orders_pkey'])
@@ -931,7 +925,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_pk_columns_postgresql_session(self):
-        response = self.client_session.post('/get_pk_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "key": "orders_pkey", "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_pk_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "key": "orders_pkey", "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a for a in data], ['orderid'])
@@ -941,7 +935,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_fks_postgresql_session(self):
-        response = self.client_session.post('/get_fks_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_fks_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['constraint_name'] for a in data], ['fk_customerid'])
@@ -951,7 +945,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_fks_columns_postgresql_session(self):
-        response = self.client_session.post('/get_fks_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "fkey": "fk_customerid", "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_fks_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "fkey": "fk_customerid", "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['column_name'] for a in data], ['customerid'])
@@ -963,7 +957,7 @@ PUBLICATION pub_name [, ...]
     def test_get_uniques_postgresql_session(self):
         self.database.v_connection.Execute('alter table public.categories drop constraint if exists un_test')
         self.database.v_connection.Execute('alter table public.categories add constraint un_test unique (categoryname)')
-        response = self.client_session.post('/get_uniques_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_uniques_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['constraint_name'] for a in data], ['un_test'])
@@ -976,7 +970,7 @@ PUBLICATION pub_name [, ...]
     def test_get_uniques_columns_postgresql_session(self):
         self.database.v_connection.Execute('alter table public.categories drop constraint if exists un_test')
         self.database.v_connection.Execute('alter table public.categories add constraint un_test unique (categoryname)')
-        response = self.client_session.post('/get_uniques_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "unique": "un_test", "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_uniques_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "unique": "un_test", "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a for a in data], ['categoryname'])
@@ -987,7 +981,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_indexes_postgresql_session(self):
-        response = self.client_session.post('/get_indexes_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_indexes_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['index_name'] for a in data], ['ix_order_custid', 'orders_pkey'])
@@ -997,7 +991,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_indexes_columns_postgresql_session(self):
-        response = self.client_session.post('/get_indexes_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "index": "ix_order_custid", "schema": "public", "table": "orders"}'})
+        response = self.client_session.post('/get_indexes_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "index": "ix_order_custid", "schema": "public", "table": "orders"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal(data, ['customerid'])
@@ -1007,7 +1001,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_functions_postgresql_session(self):
-        response = self.client_session.post('/get_functions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_functions_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'new_customer' in [a['name'] for a in data]
@@ -1017,7 +1011,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_function_fields_postgresql_session(self):
-        response = self.client_session.post('/get_function_fields_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "function": "new_customer(character varying, character varying, character varying, character varying, character varying, character varying, integer, character varying, integer, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, integer, character varying)"}'})
+        response = self.client_session.post('/get_function_fields_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "function": "new_customer(character varying, character varying, character varying, character varying, character varying, character varying, integer, character varying, integer, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, integer, character varying)"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], [
@@ -1048,7 +1042,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_function_definition_postgresql_session(self):
-        response = self.client_session.post('/get_function_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "function": "new_customer(character varying, character varying, character varying, character varying, character varying, character varying, integer, character varying, integer, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, integer, character varying)"}'})
+        response = self.client_session.post('/get_function_definition_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "function": "new_customer(character varying, character varying, character varying, character varying, character varying, character varying, integer, character varying, integer, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, integer, character varying)"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE OR REPLACE FUNCTION public.new_customer(firstname_in character varying, lastname_in character varying, address1_in character varying, address2_in character varying, city_in character varying, state_in character varying, zip_in integer, country_in character varying, region_in integer, email_in character varying, phone_in character varying, creditcardtype_in integer, creditcard_in character varying, creditcardexpiration_in character varying, username_in character varying, password_in character varying, age_in integer, income_in integer, gender_in character varying, OUT customerid_out integer)
@@ -1060,7 +1054,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_sequences_postgresql_session(self):
-        response = self.client_session.post('/get_sequences_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_sequences_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['sequence_name'] for a in data], [
@@ -1076,7 +1070,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_views_postgresql_session(self):
         self.database.v_connection.Execute('create or replace view vw_omnidb_test as select c.customerid, c.firstname, c.lastname, sum(o.totalamount) as totalamount from customers c inner join orders o on o.customerid = c.customerid group by c.customerid, c.firstname, c.lastname')
-        response = self.client_session.post('/get_views_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_views_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], ['vw_omnidb_test'])
@@ -1088,7 +1082,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_views_columns_postgresql_session(self):
         self.database.v_connection.Execute('create or replace view vw_omnidb_test as select c.customerid, c.firstname, c.lastname, sum(o.totalamount) as totalamount from customers c inner join orders o on o.customerid = c.customerid group by c.customerid, c.firstname, c.lastname')
-        response = self.client_session.post('/get_views_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "vw_omnidb_test"}'})
+        response = self.client_session.post('/get_views_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "vw_omnidb_test"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['column_name'] for a in data], [
@@ -1105,7 +1099,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_view_definition_postgresql_session(self):
         self.database.v_connection.Execute('create or replace view vw_omnidb_test as select c.customerid, c.firstname, c.lastname, sum(o.totalamount) as totalamount from customers c inner join orders o on o.customerid = c.customerid group by c.customerid, c.firstname, c.lastname')
-        response = self.client_session.post('/get_view_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "view": "vw_omnidb_test"}'})
+        response = self.client_session.post('/get_view_definition_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "view": "vw_omnidb_test"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE OR REPLACE VIEW public.vw_omnidb_test AS
@@ -1123,7 +1117,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_databases_postgresql_session(self):
-        response = self.client_session.post('/get_databases_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_databases_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.service in [a['name'] for a in data]
@@ -1133,7 +1127,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_tablespaces_postgresql_session(self):
-        response = self.client_session.post('/get_tablespaces_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_tablespaces_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'pg_default' in [a['name'] for a in data]
@@ -1143,7 +1137,7 @@ PUBLICATION pub_name [, ...]
         assert 401 == response.status_code
 
     def test_get_roles_postgresql_session(self):
-        response = self.client_session.post('/get_roles_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_roles_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.role in [a['name'] for a in data['data']]
@@ -1155,7 +1149,7 @@ PUBLICATION pub_name [, ...]
     def test_get_checks_postgresql_session(self):
         self.database.v_connection.Execute('alter table public.categories drop constraint if exists ch_test')
         self.database.v_connection.Execute("alter table public.categories add constraint ch_test check ( position(' ' in categoryname) = 0 )")
-        response = self.client_session.post('/get_checks_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_checks_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['constraint_name'] for a in data], ['ch_test'])
@@ -1169,7 +1163,7 @@ PUBLICATION pub_name [, ...]
     def test_get_excludes_postgresql_session(self):
         self.database.v_connection.Execute('alter table public.categories drop constraint if exists ex_test')
         self.database.v_connection.Execute('alter table public.categories add constraint ex_test exclude (categoryname with = )')
-        response = self.client_session.post('/get_excludes_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_excludes_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert data[0]['constraint_name'] == 'ex_test'
@@ -1181,7 +1175,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_rules_postgresql_session(self):
         self.database.v_connection.Execute('create or replace rule ru_test as on delete to public.categories do instead nothing')
-        response = self.client_session.post('/get_rules_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_rules_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['rule_name'] for a in data], ['ru_test'])
@@ -1193,7 +1187,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_rule_definition_postgresql_session(self):
         self.database.v_connection.Execute('create or replace rule ru_test as on delete to public.categories do instead nothing')
-        response = self.client_session.post('/get_rule_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories", "rule": "ru_test"}'})
+        response = self.client_session.post('/get_rule_definition_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories", "rule": "ru_test"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE OR REPLACE RULE ru_test AS
@@ -1206,7 +1200,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_triggerfunctions_postgresql_session(self):
         self.database.v_connection.Execute("create or replace function public.tg_ins_category() returns trigger language plpgsql as $function$begin new.categoryname := old.categoryname || ' modified'; end;$function$")
-        response = self.client_session.post('/get_triggerfunctions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_triggerfunctions_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], ['tg_ins_category'])
@@ -1218,7 +1212,7 @@ PUBLICATION pub_name [, ...]
 
     def test_get_triggerfunction_definition_postgresql_session(self):
         self.database.v_connection.Execute("create or replace function public.tg_ins_category() returns trigger language plpgsql as $function$begin new.categoryname := old.categoryname || ' modified'; end;$function$")
-        response = self.client_session.post('/get_triggerfunction_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "function": "public.tg_ins_category()"}'})
+        response = self.client_session.post('/get_triggerfunction_definition_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "function": "public.tg_ins_category()"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''CREATE OR REPLACE FUNCTION public.tg_ins_category()
@@ -1233,7 +1227,7 @@ AS $function$begin new.categoryname := old.categoryname || ' modified'; end;$fun
     def test_get_triggers_postgresql_session(self):
         self.database.v_connection.Execute("create or replace function public.tg_ins_category() returns trigger language plpgsql as $function$begin new.categoryname := old.categoryname || ' modified'; end;$function$")
         self.database.v_connection.Execute('create or replace trigger tg_ins before insert on public.categories for each statement execute procedure public.tg_ins_category()')
-        response = self.client_session.post('/get_triggers_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_triggers_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['trigger_name'] for a in data], ['tg_ins'])
@@ -1246,7 +1240,7 @@ AS $function$begin new.categoryname := old.categoryname || ' modified'; end;$fun
 
     def test_get_inheriteds_postgresql_session(self):
         self.database.v_connection.Execute('create table if not exists public.categories_p1 (check ( category < 100 )) inherits (public.categories)')
-        response = self.client_session.post('/get_inheriteds_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "categories"}'})
+        response = self.client_session.post('/get_inheriteds_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "categories"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal(data, ['public.categories_p1'])
@@ -1259,7 +1253,7 @@ AS $function$begin new.categoryname := old.categoryname || ' modified'; end;$fun
 
     def test_get_mviews_postgresql_session(self):
         self.database.v_connection.Execute('create materialized view if not exists public.mvw_omnidb_test as select c.customerid, c.firstname, c.lastname, sum(o.totalamount) as totalamount from customers c inner join orders o on o.customerid = c.customerid group by c.customerid, c.firstname, c.lastname')
-        response = self.client_session.post('/get_mviews_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_mviews_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], ['mvw_omnidb_test'])
@@ -1271,7 +1265,7 @@ AS $function$begin new.categoryname := old.categoryname || ' modified'; end;$fun
 
     def test_get_mviews_columns_postgresql_session(self):
         self.database.v_connection.Execute('create materialized view if not exists public.mvw_omnidb_test as select c.customerid, c.firstname, c.lastname, sum(o.totalamount) as totalamount from customers c inner join orders o on o.customerid = c.customerid group by c.customerid, c.firstname, c.lastname')
-        response = self.client_session.post('/get_mviews_columns_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "table": "mvw_omnidb_test"}'})
+        response = self.client_session.post('/get_mviews_columns_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "table": "mvw_omnidb_test"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['column_name'] for a in data], [
@@ -1288,7 +1282,7 @@ AS $function$begin new.categoryname := old.categoryname || ' modified'; end;$fun
 
     def test_get_mview_definition_postgresql_session(self):
         self.database.v_connection.Execute('create materialized view if not exists public.mvw_omnidb_test as select c.customerid, c.firstname, c.lastname, sum(o.totalamount) as totalamount from customers c inner join orders o on o.customerid = c.customerid group by c.customerid, c.firstname, c.lastname')
-        response = self.client_session.post('/get_mview_definition_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public", "view": "mvw_omnidb_test"}'})
+        response = self.client_session.post('/get_mview_definition_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public", "view": "mvw_omnidb_test"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert '''DROP MATERIALIZED VIEW public.mvw_omnidb_test;
@@ -1309,7 +1303,7 @@ CREATE MATERIALIZED VIEW public.mvw_omnidb_test AS
         assert 401 == response.status_code
 
     def test_get_extensions_postgresql_session(self):
-        response = self.client_session.post('/get_extensions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_extensions_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert 'plpgsql' in [a['name'] for a in data], ['plpgsql']
@@ -1320,7 +1314,7 @@ CREATE MATERIALIZED VIEW public.mvw_omnidb_test AS
 
     def test_get_physicalreplicationslots_postgresql_session(self):
         self.database.v_connection.Execute("select * from pg_create_physical_replication_slot('test_slot')")
-        response = self.client_session.post('/get_physicalreplicationslots_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_physicalreplicationslots_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], ['test_slot'])
@@ -1332,7 +1326,7 @@ CREATE MATERIALIZED VIEW public.mvw_omnidb_test AS
 
     def test_get_logicalreplicationslots_postgresql_session(self):
         self.database.v_connection.Execute("select * from pg_create_logical_replication_slot('test_slot', 'pgoutput')")
-        response = self.client_session.post('/get_logicalreplicationslots_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_logicalreplicationslots_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert self.lists_equal([a['name'] for a in data], ['test_slot'])
@@ -1343,47 +1337,47 @@ CREATE MATERIALIZED VIEW public.mvw_omnidb_test AS
         assert 401 == response.status_code
 
     def test_get_extension_details_postgresql_session(self):
-        response = self.client_session.post('/get_extension_details/', {'data': '{"database_index": 0, "ext_name": "nonexistentextension", "tab_id": 0}'})
+        response = self.client_session.post('/get_extension_details/', {'data': '{"database_index": 0, "ext_name": "nonexistentextension", "workspace_id": 0}'})
         assert 400 == response.status_code
         data = json.loads(response.content.decode())
         assert "does not exist" in data['data']
 
-        response = self.client_session.post('/get_extension_details/', {'data': '{"database_index": 0, "ext_name": "plpgsql", "tab_id": 0}'})
+        response = self.client_session.post('/get_extension_details/', {'data': '{"database_index": 0, "ext_name": "plpgsql", "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert data['name'] == 'plpgsql'
 
-    def test_save_postgresql_extension_session(self):
-        response = self.client_session.post('/save_postgresql_extension/', {'data': '{"database_index": 0, "tab_id": 0, "query": "select 1=1"}'})
+    def test_execute_query_postgresql_session(self):
+        response = self.client_session.post('/execute_query_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "query": "select 1=1"}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert data['status'] == 'success'
 
-    def test_save_postgresql_extension_nosession(self):
-        response = self.client_nosession.post('/save_postgresql_extension/', {'data': '{"database_index": 0, "tab_id": 0}'})
+    def test_execute_query_postgresql_nosession(self):
+        response = self.client_nosession.post('/execute_query_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 401 == response.status_code
 
     def test_get_available_extensions_postgresql_session(self):
-        response = self.client_session.post('/get_available_extensions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_session.post('/get_available_extensions_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert len(data['available_extensions']) > 0
 
     def test_get_available_extensions_postgresql_nosession(self):
-        response = self.client_nosession.post('/get_available_extensions_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_nosession.post('/get_available_extensions_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 401 == response.status_code
 
     def test_get_object_description_postgresql_session(self):
         # just get something with a valid oid to run tests on
-        response = self.client_session.post('/get_tables_postgresql/', {'data': '{"database_index": 0, "tab_id": 0, "schema": "public"}'})
+        response = self.client_session.post('/get_tables_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0, "schema": "public"}'})
         data = json.loads(response.content.decode())
         table_data = data[0]
-        request_params = '{"database_index": 0, "tab_id": 0, "object_type": "table", "position": 0, "oid":' + table_data['oid'] + '}'
+        request_params = '{"database_index": 0, "workspace_id": 0, "object_type": "table", "position": 0, "oid":' + table_data['oid'] + '}'
         response = self.client_session.post('/get_object_description_postgresql/', {'data': request_params})
         assert 200 == response.status_code
         data = json.loads(response.content.decode())
         assert "COMMENT" in data['data']
 
     def test_get_object_description_postgresql_nosession(self):
-        response = self.client_nosession.post('/get_object_description_postgresql/', {'data': '{"database_index": 0, "tab_id": 0}'})
+        response = self.client_nosession.post('/get_object_description_postgresql/', {'data': '{"database_index": 0, "workspace_id": 0}'})
         assert 401 == response.status_code

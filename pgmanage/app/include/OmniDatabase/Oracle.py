@@ -23,9 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-import os.path
-import re
-from collections import OrderedDict
 from enum import Enum
 from urllib.parse import urlparse
 import app.include.Spartacus as Spartacus
@@ -244,15 +241,8 @@ class Oracle:
             v_return = str(exc)
         return v_return
 
-    def GetErrorPosition(self, p_error_message):
-        vector = str(p_error_message).split('\n')
-        v_return = None
-        if len(vector) > 1 and vector[1][0:4]=='LINE':
-            v_return = {
-                'row': vector[1].split(':')[0].split(' ')[1],
-                'col': vector[2].index('^') - len(vector[1].split(':')[0])-2
-            }
-        return v_return
+    def GetErrorPosition(self, p_error_message, sql_cmd):
+        return None
 
     @lock_required
     def Query(self, p_sql, p_alltypesstr=False, p_simple=False):

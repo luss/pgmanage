@@ -3,23 +3,40 @@ import hashlib
 import hmac
 import os
 
+from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from django.utils.crypto import pbkdf2
 
 
 def encrypt(plaintext, key):
     iv = os.urandom(16)
-    cipher = Cipher(algorithms.AES(key), modes.CFB(iv))
+    cipher = Cipher(algorithms.AES(pad(key)), modes.CFB(iv))
     encryptor = cipher.encryptor()
     ct = encryptor.update(plaintext.encode()) + encryptor.finalize()
     return base64.b64encode(iv + ct).decode()
+
+
+def pad(key) -> bytes:
+    """Add padding to the key."""
+    if isinstance(key, str):
+        key = key.encode()
+
+    # Check if key is of valid size (16, 24, 32 bytes)
+    if len(key) in (16, 24, 32):
+        return key
+
+    padder = padding.PKCS7(256).padder()
+
+    padded_key = padder.update(key) + padder.finalize()
+
+    return padded_key[:32]
 
 
 def decrypt(encrypted_text, key):
     data = base64.b64decode(encrypted_text.encode())
     iv = data[:16]
     encrypted_key = data[16:]
-    cipher = Cipher(algorithms.AES(key), modes.CFB(iv))
+    cipher = Cipher(algorithms.AES(pad(key)), modes.CFB(iv))
     decryptor = cipher.decryptor()
     conn_pass = decryptor.update(encrypted_key) + decryptor.finalize()
 

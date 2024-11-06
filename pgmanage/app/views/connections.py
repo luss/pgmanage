@@ -1,4 +1,5 @@
 import io
+from typing import Optional
 
 import paramiko
 from app.include import OmniDatabase
@@ -16,8 +17,6 @@ from sshtunnel import SSHTunnelForwarder
 def get_connections(request, session):
     response_data = {'data': [], 'status': 'success'}
 
-    active_connection_ids = request.data.get('active_connection_ids',[])
-
     tech_list = [tech.name for tech in Technology.objects.all()] #convert to values_list
 
     connection_list = []
@@ -31,7 +30,7 @@ def get_connections(request, session):
         for conn in connections:
             conn_object = {
                 'id': conn.id,
-                'locked': conn.id in active_connection_ids,
+                'locked': False,
                 'public': conn.public,
                 'is_mine': conn.user.id == request.user.id,
                 'technology': conn.technology.name,
@@ -88,6 +87,7 @@ def get_connections(request, session):
                 conn_object['user'] = conn.username
                 conn_object['password'] = ''
                 conn_object['password_set'] = False if conn.password.strip() == '' else True
+                conn_object['decryption_failed'] = database_object.get("decryption_failed", False)
 
             connection_list.append(conn_object)
 
@@ -120,56 +120,45 @@ def get_groups(request):
 
 @user_authenticated
 def delete_group(request):
-    response_data = {'data': '', 'status': 'success'}
+    group_id: Optional[int] = request.data.get('id')
 
-    group_id = request.data['id']
-
-    try:
-        group = Group.objects.filter(id=group_id).select_related("user").first()
-
+    group = Group.objects.filter(id=group_id).select_related("user").first()
+        
+    if group:
         if group.user.id != request.user.id:
-            response_data['data'] = 'This group does not belong to you.'
-            response_data['status'] = 'failed'
-            return JsonResponse(response_data, status=403)
+            return JsonResponse(data={"data": 'This group does not belong to you.'}, status=403)
 
         group.delete()
 
-    except Exception as exc:
-        response_data['data'] = str(exc)
-        response_data['status'] = 'failed'
-        return JsonResponse(response_data, status=400)
-
-    return JsonResponse(response_data)
+    return HttpResponse(status=204)
 
 
 @user_authenticated
 def save_group(request):
-    response_data = {'data': '', 'status': 'success'}
-
     group_object = request.data
     group_id = group_object.get('id', None)
-    group_name = group_object['name']
+    group_name = group_object.get('name')
 
-    if not group_name.strip():
-        response_data['data'] = "Group name can not be empty."
-        response_data['status'] = 'failed'
-
-        return JsonResponse(response_data, status=400)
+    if not group_name or not group_name.strip():
+        return JsonResponse(data={"data": "Group name can not be empty."}, status=400)
 
     try:
         # New group
         if group_id is None:
+            db_group = Group.objects.filter(user=request.user, name=group_name)
+            if db_group:
+                return JsonResponse(data={"data": "Group with this name already exists."}, status=400)
+
             group = Group(user=request.user, name=group_name)
             group.save()
         # update
         else:
             group = Group.objects.filter(id=group_id).select_related("user").first()
+            if not group:
+                return JsonResponse(data={"data": "Group not found."}, status=404)
 
             if group.user.id != request.user.id:
-                response_data['data'] = 'This group does not belong to you.'
-                response_data['status'] = 'failed'
-
-                return JsonResponse(response_data, status=403)
+                return JsonResponse(data={"data": "This group does not belong to you."}, status=403)
 
             group.name = group_name
             group.save()
@@ -185,12 +174,10 @@ def save_group(request):
         # create new group relations with group.id
 
     except Exception as exc:
-        response_data['data'] = str(exc)
-        response_data['status'] = 'failed'
-        return JsonResponse(response_data, status=400)
+        return JsonResponse(data={"data": str(exc)}, status=400)
 
 
-    return JsonResponse(response_data)
+    return HttpResponse(status=200)
 
 
 @user_authenticated
@@ -208,14 +195,21 @@ def test_connection(request):
     key = key_manager.get(request.user)
 
     if conn_id:
-        conn = Connection.objects.get(id=conn_id)
-        if conn_object.get('password','').strip() == '' and conn_type != 'terminal':
-            password = decrypt(conn.password, key) if conn.password else ''
-        if conn_object['tunnel']['password'].strip() == '':
-            ssh_password = decrypt(conn.ssh_password, key) if conn.ssh_password else ''
-        if conn_object['tunnel']['key'].strip() == '':
-            ssh_key = decrypt(conn.ssh_key, key) if conn.ssh_key else ''
+        conn = Connection.objects.filter(id=conn_id).first()
+        if not conn:
+                return JsonResponse(data={"data": "Connection not found."}, status=404)
 
+        if conn.user.id != request.user.id:
+                return JsonResponse(data={"data": 'This connection does not belong to you.'}, status=403)
+        try:
+            if password == '' and conn_type != 'terminal' and conn_object.get("password_set") is True:
+                password = decrypt(conn.password, key) if conn.password else ''
+            if ssh_password == '' and conn_object['tunnel']['password_set'] is True:
+                ssh_password = decrypt(conn.ssh_password, key) if conn.ssh_password else ''
+            if conn_object['tunnel']['key'].strip() == '':
+                ssh_key = decrypt(conn.ssh_key, key) if conn.ssh_key else ''
+        except UnicodeDecodeError:
+            return JsonResponse(data={"data": "There was an error decrypting the passwords. Please try re-saving them to encrypt with the new key."}, status=400)
     if conn_type == 'terminal':
 
         client = paramiko.SSHClient()
@@ -225,7 +219,7 @@ def test_connection(request):
         try:
             # ssh key provided
             if ssh_key.strip() != '':
-                key = paramiko.RSAKey.from_private_key(io.StringIO(ssh_key), password=ssh_password)
+                key = paramiko.RSAKey.from_private_key(io.StringIO(ssh_key), password=ssh_password or None)
                 client.connect(hostname=conn_object['tunnel']['server'], username=conn_object['tunnel']['user'],
                                pkey=key, passphrase=ssh_password,
                                port=int(conn_object['tunnel']['port']), timeout=5)
@@ -260,7 +254,7 @@ def test_connection(request):
 
             try:
                 if ssh_key.strip() != '':
-                    key = paramiko.RSAKey.from_private_key(io.StringIO(ssh_key), password=ssh_password)
+                    key = paramiko.RSAKey.from_private_key(io.StringIO(ssh_key), password=ssh_password or None)
                     server = SSHTunnelForwarder(
                         (conn_object['tunnel']['server'], int(conn_object['tunnel']['port'])),
                         ssh_username=conn_object['tunnel']['user'],
@@ -449,28 +443,18 @@ def save_connection(request, session):
 @user_authenticated
 @session_required
 def delete_connection(request, session):
-    response_data = {'data': '', 'status': 'success'}
+    conn_id: Optional[int] = request.data.get('id')
 
-    conn_id = request.data['id']
-
-    try:
-        conn = Connection.objects.get(id=conn_id)
-
+    conn = Connection.objects.filter(id=conn_id).first()
+    if conn:
         if conn.user.id != request.user.id:
-            response_data['data'] = 'This connection does not belong to you.'
-            response_data['status'] = 'failed'
-            return JsonResponse(response_data, status=403)
+            return JsonResponse(data={"data": "This connection does not belong to you."}, status=403)
 
         conn.delete()
         session.RemoveDatabase(conn_id)
-    except Exception as exc:
-        response_data['data'] = str(exc)
-        response_data['status'] = 'failed'
-        return JsonResponse(response_data, status=400)
+        request.session['pgmanage_session'] = session
 
-    request.session['pgmanage_session'] = session
-
-    return JsonResponse(response_data)
+    return HttpResponse(status=204)
 
 
 @user_authenticated

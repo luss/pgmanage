@@ -2,9 +2,8 @@ from functools import partial, wraps
 from typing import Any, Callable, Optional
 
 from app.client_manager import client_manager
-from app.utils.response_helpers import error_response
-from django.http import JsonResponse, HttpResponse
 from app.include.Spartacus.Database import InvalidPasswordException
+from django.http import HttpResponse, JsonResponse
 
 
 def user_authenticated(function):
@@ -27,6 +26,7 @@ def database_required(check_timeout=True, open_connection=True):
             database_name = data.get("database_name")
             database_index = data.get("database_index")
             tab_id = data.get("tab_id")
+            workspace_id=data.get("workspace_id")
             client = client_manager.get_or_create_client(
                 client_id=request.session.session_key
             )
@@ -44,16 +44,25 @@ def database_required(check_timeout=True, open_connection=True):
                                 "kind": timeout.get("kind", "database")
                             }
                             return JsonResponse(data=data, status=400)
-
-                    database = client.get_main_tab_database(
+                    database = client.get_tab_database(
                         session=session,
-                        conn_tab_id=tab_id,
+                        workspace_id=workspace_id,
+                        tab_id=tab_id,
                         database_index=database_index,
                         database_name=database_name,
                         attempt_to_open_connection=open_connection,
                     )
                 except InvalidPasswordException as exc:
+<<<<<<< HEAD
                     data = {"password_timeout": True, "data": str(exc)}
+=======
+                    error_resp = str(exc)
+                    if session.v_databases.get(database_index, {}).get(
+                        "decryption_failed"
+                    ):
+                        error_resp = f"There was a decryption error with the stored password. Please try re-saving your password in Connection Manager and attempt again.\n{str(exc)}"
+                    data = {"password_timeout": True, "data": error_resp}
+>>>>>>> 1.2
                     return JsonResponse(data=data, status=400)
                 except Exception as exc:
                     data = {"password_timeout": False, "data": str(exc)}
@@ -80,7 +89,6 @@ def superuser_required(function):
 
 def session_required(
     func: Optional[Callable[..., Any]] = None,
-    use_old_error_format: bool = False,
     include_session: bool = True,
 ) -> Callable[..., Any]:
     """
@@ -88,10 +96,6 @@ def session_required(
 
     Args:
         func (callable, optional): The function to be decorated.
-        use_old_error_format (bool, optional): Flag indicating whether to use old error format or not.
-            If True, returns a JsonResponse with old error format when session is invalid.
-            If False, returns a JsonResponse with a "Invalid session" message and status code 401.
-            Defaults to False.
         include_session (bool, optional): Flag indicating whether to include the session parameter
             when calling the decorated function. If True, the session parameter will be included.
             If False, the session parameter will be omitted. Defaults to True.
@@ -106,7 +110,6 @@ def session_required(
     if func is None:
         return partial(
             session_required,
-            use_old_error_format=use_old_error_format,
             include_session=include_session,
         )
 
@@ -114,8 +117,6 @@ def session_required(
     def containing_func(request, *args, **kwargs):
         session = request.session.get("pgmanage_session")
         if not session:
-            if use_old_error_format:
-                return error_response(message="", error_id=1)
             return JsonResponse({"data": "Invalid session"}, status=401)
 
         if include_session:
