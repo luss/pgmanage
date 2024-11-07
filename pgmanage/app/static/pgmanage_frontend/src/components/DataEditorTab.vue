@@ -184,6 +184,7 @@ export default {
       return div
     },
     rowFormatter(row) {
+      row.getElement().classList.remove('row-deleted', 'row-dirty', 'row-new');
       let rowMeta = row.getData()["rowMeta"]
       if (rowMeta) {
         if (rowMeta.is_dirty)
@@ -192,10 +193,6 @@ export default {
           row.getElement().classList.add('row-deleted')
         if (rowMeta.is_new)
           row.getElement().classList.add('row-new')
-
-        if (!rowMeta.is_dirty && !rowMeta.is_deleted && !rowMeta.is_new) {
-          row.getElement().classList.remove('row-deleted', 'row-dirty', 'row-new')
-        }
       }
     },
     getTableColumns() {
