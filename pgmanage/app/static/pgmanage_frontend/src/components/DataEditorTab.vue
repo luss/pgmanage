@@ -45,8 +45,9 @@
 <script>
 import axios from 'axios'
 import Knex from 'knex'
-import isEqual from 'lodash/isEqual';
+import isEqualWith from 'lodash/isEqualWith';
 import zipObject from 'lodash/zipObject';
+import forIn from 'lodash/forIn';
 import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
@@ -94,9 +95,9 @@ export default {
     },
     pendingChanges() {
       if(this.hasPK)
-        return this.tableDataLocal.filter((row) => row[0].is_dirty || row[0].is_new || row[0].is_deleted)
+        return this.tableDataLocal.filter((row) => row["rowMeta"].is_dirty || row["rowMeta"].is_new || row["rowMeta"].is_deleted)
       else
-        return this.tableDataLocal.filter((row) => row[0].is_new)
+        return this.tableDataLocal.filter((row) => row["rowMeta"].is_new)
     },
     hasPK() {
       return this.tableColumns.some(c => c.is_primary)
@@ -183,8 +184,8 @@ export default {
       return div
     },
     rowFormatter(row) {
-      let rowMeta = row.getData()[0]
-
+      row.getElement().classList.remove('row-deleted', 'row-dirty', 'row-new');
+      let rowMeta = row.getData()["rowMeta"]
       if (rowMeta) {
         if (rowMeta.is_dirty)
           row.getElement().classList.add('row-dirty')
@@ -210,7 +211,7 @@ export default {
             title: `<div data-action="add" class="btn p-0" title="Add column">
               <i data-action="add" class="fa-solid fa-circle-plus text-success"></i>
               </div>`,
-            field: '0',
+            field: 'rowMeta',
             frozen: 'true',
             hozAlign: 'center',
             formatter: this.actionsFormatter,
@@ -222,9 +223,8 @@ export default {
             let title = `${prepend}<span>${col.name}</span><div class='fw-light'>${col.data_type}</div>`
 
             return {
-              field: (idx + 1).toString(),
+              field: (idx).toString(),
               title: title,
-              formatter: this.cellFormatter,
               editor: "input",
               editable: false,
               cellDblClick: function (e, cell) {
@@ -277,18 +277,20 @@ export default {
         this.$refs.topToolbar.getBoundingClientRect().bottom
     },
     handleClick(e, cell) {
-      let rowNum = cell.getRow().getPosition() - 1
+      let rowNum = cell.getRow().getIndex()
       let action_type = e.target.dataset.action
       if (action_type) {
         let row = cell.getRow()
         let rowMeta = {}
-        if (row.getCell(0)) {
-          rowMeta = row.getCell(0).getValue()
+        if (row.getCell('rowMeta')) {
+          rowMeta = row.getCell('rowMeta').getValue()
         }
         if (action_type === 'delete')
           this.deleteRow(rowMeta, rowNum)
-        if (action_type === 'revert')
+        if (action_type === 'revert') {
           this.revertRow(rowMeta, rowNum)
+
+        }
       }
     },
     cellEdited(cell) {
@@ -299,11 +301,16 @@ export default {
         cell.setValue(null)
 
       let rowData = cell.getRow().getData()
-      let rowMeta = rowData[0]
-      let originalRow = this.tableData.find((row) => row[0].initial_id == rowMeta.initial_id)
+      let rowMeta = rowData["rowMeta"]
+      let originalRow = this.tableData.find((row) => row["rowMeta"].initial_id == rowMeta.initial_id)
 
       if (originalRow) {
-        rowMeta.is_dirty = !isEqual(rowData.slice(1), originalRow.slice(1)) && !rowMeta.is_new
+        rowMeta.is_dirty = !isEqualWith(rowData, originalRow, (val1, val2, key) => {
+          if (key === 'rowMeta') {
+            return true
+          }
+        }) && !rowMeta.is_new
+        cell.getRow().reformat()
       }
 
     },
@@ -313,15 +320,14 @@ export default {
       } else {
         //store table data into original var, clone it to the working copy
         let pkIndex = this.tableColumns.findIndex((col) => col.is_primary) || 0
-        this.tableData = response.data.rows.map((row) => {
+        this.tableData = response.data.rows.map((row, index) => {
           let rowMeta = {
             is_dirty: false,
             is_new: false,
             is_deleted: false,
             initial_id: row[pkIndex]
           }
-
-          return [rowMeta].concat(row)
+          return {id: index, rowMeta: rowMeta, ...row}
         })
         this.tableDataLocal = JSON.parse(JSON.stringify(this.tableData))
         this.tabulator.replaceData(this.tableDataLocal)
@@ -338,26 +344,42 @@ export default {
       }
     },
     addRow() {
-      let newRow = Array(this.tableColumns.length + 1).fill(null) //+1 adds an extra actions column
+      let newRow = Array(this.tableColumns.length + 1).fill(null); //+1 adds an extra actions column
       let rowMeta = {
         is_dirty: false,
         is_new: true,
         is_deleted: false,
-        initial_id: -1
-      }
+        initial_id: -1,
+      };
 
-      newRow[0] = rowMeta
-      this.tableDataLocal.unshift(newRow)
+      let newRowId = this.tabulator.getRows().length;
+      const newRowObject = { rowMeta: rowMeta, id: newRowId, ...newRow };
+      this.tabulator.addData(newRowObject, true);
+      this.tableDataLocal.unshift(this.tabulator.getRow(newRowId).getData());
     },
-    revertRow(rowMeta,rowNum) {
-      let sourceRow = this.tableData.find((row) => row[0].initial_id == rowMeta.initial_id)
-      this.tableDataLocal[rowNum] = JSON.parse(JSON.stringify(sourceRow))
+    revertRow(rowMeta, rowNum) {
+      let sourceRow = this.tableData.find(
+        (row) => row["rowMeta"].initial_id == rowMeta.initial_id
+      );
+      let copyRow = JSON.parse(JSON.stringify(sourceRow));
+      this.tabulator.updateData([{ id: rowNum, ...copyRow }]).then(() => {
+        this.tabulator.getRow(rowNum).reformat();
+      });
     },
-    deleteRow(rowMeta,rowNum) {
-      if(rowMeta.is_new) {
-        this.tableDataLocal.splice(rowNum, 1)
+    deleteRow(rowMeta, rowNum) {
+      if (rowMeta.is_new) {
+        this.tabulator.deleteRow(rowNum).then(() => {
+          this.tableDataLocal = this.tableDataLocal.filter(
+            (row) => row.id !== rowNum
+          );
+        });
       } else {
-        this.tableDataLocal[rowNum][0].is_deleted = true
+        rowMeta.is_deleted = true;
+        this.tabulator
+          .updateData([{ id: rowNum, rowMeta: rowMeta }])
+          .then(() => {
+            this.tabulator.getRow(rowNum).reformat();
+          });
       }
     },
     generateSQL() {
@@ -372,25 +394,26 @@ export default {
         pkColName = this.tableColumns.find((col) => col.is_primary).name || 'id'
 
       changes.forEach(function(change) {
-        let rowMeta = change[0]
+        let rowMeta = change["rowMeta"]
+        let {rowMeta:_, ...changeWitNoRowmeta} = change
         if(rowMeta.is_new) {
-          inserts.push(zipObject(colNames, change.slice(1)))
+          inserts.push(zipObject(colNames, Object.values(change)))
         }
         if(rowMeta.is_dirty){
-          let originalRow = this.tableData.find((row) => row[0].initial_id == rowMeta.initial_id).slice(1)
+          
+          let originalRow = this.tableData.find((row) => row["rowMeta"].initial_id == rowMeta.initial_id)
           let updateArgs = {}
 
-          change.slice(1).forEach((changedCol, idx) => {
-            if(changedCol!==originalRow[idx]) {
-              updateArgs[colNames[idx]] = changedCol
+          forIn(changeWitNoRowmeta, (value, key) => {
+            if (value !== originalRow[key]) {
+              updateArgs[colNames[key]] = value
             }
           })
 
           updates.push(this.knex(this.talbleUnquoted).where(pkColName, rowMeta.initial_id).update(updateArgs))
         }
       }, this)
-
-      let deletableIds = changes.filter((c) => c[0].is_deleted).map((c) => {return c[0].initial_id})
+      let deletableIds = changes.filter((c) => c["rowMeta"].is_deleted).map((c) => {return c["rowMeta"].initial_id})
       if(deletableIds.length > 0)
         deletes.push(this.knex(this.talbleUnquoted).whereIn(pkColName, deletableIds).del())
 
@@ -427,12 +450,6 @@ export default {
     }
   },
   watch: {
-    tableDataLocal: {
-      handler(newVal, oldVal) {
-        this.tabulator.replaceData(this.tableDataLocal)
-      },
-      deep: true
-    },
     hasChanges() {
       const tab = tabsStore.getSecondaryTabById(this.tabId, this.workspaceId);
       if (tab) {
