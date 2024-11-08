@@ -512,7 +512,7 @@ export default {
     },
     applyChanges() {
       let message_data = {
-				sql_cmd : this.editor.getValue(), //use formatted SQL from the editor instead of single-line returned by generatedSQL
+				sql_cmd : this.generatedSQL,
 				sql_save : false,
 				cmd_type: null,
 				db_index: this.databaseIndex,
@@ -533,7 +533,7 @@ export default {
 				mode: 0,
 				callback: this.handleResponse.bind(this),
 				acked: false,
-				query: this.editor.getValue(),
+				query: this.generatedSQL,
 				log_query: false,
 				save_query: null,
         simple: true //a hacky way to prevent long polling handler from running legacy rentering routines
