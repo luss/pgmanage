@@ -416,7 +416,7 @@ export default {
       }
     },
     queryRunOrExplain(use_raw_query=true) {
-      let query = this.getEditorContent(use_raw_query)
+      let query = this.getEditorContent(use_raw_query, true)
       if (this.dialect === "postgresql") {
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
