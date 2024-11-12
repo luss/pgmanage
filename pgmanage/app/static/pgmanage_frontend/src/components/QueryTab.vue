@@ -251,14 +251,14 @@ export default {
     }
   },
   methods: {
-    getQueryEditorValue(raw_query) {
-      return this.$refs.editor.getQueryEditorValue(raw_query);
+    getEditorContent(getFullContent=false, singleLineQuery=false) {
+      return this.$refs.editor.getEditorContent({getFullContent: getFullContent, singleLineQuery: singleLineQuery})
     },
     querySQL(
       mode,
       cmd_type = null,
       all_data = false,
-      query = this.getQueryEditorValue(true),
+      query = this.getEditorContent(true),
       log_query = true,
       save_query = this.editorContent,
       clear_data = false
@@ -388,7 +388,7 @@ export default {
       }
     },
     runExplain(explainMode) {
-      let command = this.getQueryEditorValue(true);
+      let command = this.getEditorContent();
 
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");
@@ -416,7 +416,7 @@ export default {
       }
     },
     queryRunOrExplain(use_raw_query=true) {
-      let query = this.getQueryEditorValue(use_raw_query)
+      let query = this.getEditorContent(use_raw_query)
       if (this.dialect === "postgresql") {
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
@@ -437,7 +437,7 @@ export default {
     },
     exportData() {
       let cmd_type = `export_${this.exportType}`;
-      let command = this.lastQuery || this.getQueryEditorValue(true);
+      let command = this.lastQuery || this.getEditorContent(true);
       let explainRegex =
           /^(EXPLAIN ANALYZE|EXPLAIN)\s*(\([^\)\(]+\))?\s+(.+)/is;
       let queryMatch = command.match(explainRegex);

@@ -101,7 +101,7 @@ export default {
     },
     setupEditor() {
       const EDITOR_MODEMAP = {
-        'postgresql': 'pgsql',
+        'postgresql': 'pgsql_extended',
         'mysql': 'mysql',
         'mariadb': 'mysql',
         'oracle': 'plsql'
@@ -194,13 +194,16 @@ export default {
 
       this.completer = new SQLAutocomplete(DIALECT_MAP[this.dialect] || SQLDialect.PLpgSQL, filteredMeta);
     },
-    getQueryEditorValue(raw_query) {
-      if (raw_query) return this.editor.getValue();
+    getEditorContent({ getFullContent = false, singleLineQuery = false } = {}) {
+      if (getFullContent) return this.editor.getValue();
+
       let selectedText = this.editor.getSelectedText();
-      let lineAtCursor = this.editor.session.getLine(
-        this.editor.getCursorPosition().row
-      );
-      return !!selectedText ? selectedText : lineAtCursor;
+
+      if (!selectedText && singleLineQuery) {
+        return this.editor.session.getLine(this.editor.getCursorPosition().row);
+      }
+
+      return selectedText || this.editor.getValue();
     },
     getQueryOffset() {
       return this.editor.selection.getRange().start.row
