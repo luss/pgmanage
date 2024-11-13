@@ -185,6 +185,7 @@ export default {
         "csv-no_headers": "CSV(no headers)",
         xlsx: "XLSX",
         "xlsx-no_headers": "XLSX(no headers)",
+        json: "JSON"
       },
       exportType: "csv",
       showFetchButtons: false,

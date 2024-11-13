@@ -153,15 +153,13 @@ def export_data(
     # cleaning temp folder
     clean_temp_folder()
 
-    if len(cmd_type.split("-")) == 2:
-        cmd_type = cmd_type.split("-")[0]
-        skip_headers = True
-
     extension: str
-    if cmd_type == "export_csv":
+    if 'csv' in cmd_type:
         extension = "csv"
-    else:
+    elif 'xlsx' in cmd_type:
         extension = "xlsx"
+    else:
+        extension = "json"
 
     export_dir: str = settings.TEMP_DIR
 
@@ -175,6 +173,7 @@ def export_data(
     data = database.v_connection.QueryBlock(sql_cmd, 1000, False, True)
 
     file_path: str = os.path.join(export_dir, file_name)
+    skip_headers = cmd_type in ['export_xlsx-no_headers', 'export_csv-no_headers']
     file = Utils.DataFileWriter(
         file_path, data.Columns, encoding, delimiter, skip_headers=skip_headers
     )
@@ -1013,6 +1012,7 @@ def thread_query(self, args) -> None:
             "export_xlsx",
             "export_csv-no_headers",
             "export_xlsx-no_headers",
+            "export_json"
         ]:
             file_name, extension = export_data(
                 sql_cmd=sql_cmd,
