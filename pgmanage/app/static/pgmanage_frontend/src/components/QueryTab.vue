@@ -16,15 +16,37 @@
       <!-- ACTION BUTTONS-->
       <div class="py-2 pe-1 d-flex align-items-center">
         <div class="tab-actions d-flex w-100 px-2">
-          <button class="btn btn-square btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
-            <i class="fas fa-play fa-light"></i>
-          </button>
-
-          <button class="btn btn-square btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
-            [
-            <i class="fas fa-play fa-light"></i>
-            ]
-          </button>
+          <div class="btn-group me-2">
+            <button class="btn btn-square btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
+              <i class="fas fa-play fa-light"></i>
+            </button>
+  
+            <button class="btn btn-square btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
+              [
+              <i class="fas fa-play fa-light"></i>
+              ]
+            </button>
+            <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split ps-1" data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item">
+                  <input
+                    :id="`check_autocommit_${tabId}`"
+                    class="form-check-input me-1"
+                    type="checkbox"
+                    v-model="autocommit"
+                  />
+                  <label
+                    class="form-check-label"
+                    :for="`check_autocommit_${tabId}`"
+                  >
+                    Autocommit
+                  </label>
+                </a>
+              </li>
+            </ul>
+          </div>
 
           <button class="btn btn-square btn-secondary" title="Indent SQL" @click="indentSQL()">
             <i class="fas fa-indent fa-light"></i>
@@ -59,13 +81,6 @@
                 @click="runExplain(1)" :disabled="!enableExplainButtons">
                 <i class="fas fa-magnifying-glass-chart fa-light"></i>
               </button>
-            </div>
-
-            <!-- AUTOCOMMIT-->
-            <div class="form-check form-check-inline mb-0">
-              <input :id="`check_autocommit_${tabId}`" class="form-check-input" type="checkbox" v-model="autocommit" />
-              <label class="form-check-label custom-checkbox query_info"
-                :for="`check_autocommit_${tabId}`">Autocommit</label>
             </div>
 
             <TabStatusIndicator :tab-status="tabStatus" />
