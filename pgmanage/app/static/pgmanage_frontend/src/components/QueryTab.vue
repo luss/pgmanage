@@ -9,7 +9,13 @@
         :database-index="databaseIndex"
         :database-name="databaseName"
         tab-mode="query"
-        :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
+        :dialect="dialect" 
+        :autocomplete="autocomplete"
+        @editor-change="updateEditorContent" 
+        @run-selection="queryRunOrExplain(false)" 
+        @run-selection-explain="runExplain(0)"
+        @run-selection-explain-analyze="runExplain(1)"
+        />
     </pane>
 
     <pane size="70" class="border-top">
@@ -267,14 +273,14 @@ export default {
     }
   },
   methods: {
-    getQueryEditorValue(raw_query) {
-      return this.$refs.editor.getQueryEditorValue(raw_query);
+    getEditorContent(fullContent=false, onlySelected=false) {
+      return this.$refs.editor.getEditorContent(fullContent, onlySelected)
     },
     querySQL(
       mode,
       cmd_type = null,
       all_data = false,
-      query = this.getQueryEditorValue(true),
+      query = this.getEditorContent(true),
       log_query = true,
       save_query = this.editorContent,
       clear_data = false
@@ -404,7 +410,7 @@ export default {
       }
     },
     runExplain(explainMode) {
-      let command = this.getQueryEditorValue(true);
+      let command = this.getEditorContent();
 
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");
@@ -432,7 +438,7 @@ export default {
       }
     },
     queryRunOrExplain(use_raw_query=true) {
-      let query = this.getQueryEditorValue(use_raw_query)
+      let query = this.getEditorContent(use_raw_query, true)
       if (this.dialect === "postgresql") {
         let should_explain =
           query.trim().split(" ")[0].toUpperCase() === "EXPLAIN";
@@ -453,7 +459,7 @@ export default {
     },
     exportData() {
       let cmd_type = `export_${this.exportType}`;
-      let command = this.lastQuery || this.getQueryEditorValue(true);
+      let command = this.lastQuery || this.getEditorContent(true);
       let explainRegex =
           /^(EXPLAIN ANALYZE|EXPLAIN)\s*(\([^\)\(]+\))?\s+(.+)/is;
       let queryMatch = command.match(explainRegex);
