@@ -23,7 +23,6 @@ import './assets/scss/omnidb.scss'
 import './assets/scss/pgmanage.scss'
 import omniURL from './ace_themes/theme-omnidb.js?url'
 import omniDarkURL from './ace_themes/theme-omnidb_dark.js?url'
-import extendedPgsqlUrl from  "./ace-mode-pgsql-extended.js?url";
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
 import "tabulator-tables/dist/css/tabulator.min.css"
@@ -36,7 +35,6 @@ import { settingsStore, pinia } from './stores/stores_initializer.js';
 window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
-ace.config.setModuleUrl('ace/mode/pgsql_extended', extendedPgsqlUrl)
 
 axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 

@@ -101,7 +101,7 @@ export default {
     },
     setupEditor() {
       const EDITOR_MODEMAP = {
-        'postgresql': 'pgsql_extended',
+        'postgresql': 'pgsql',
         'mysql': 'mysql',
         'mariadb': 'mysql',
         'oracle': 'plsql'
