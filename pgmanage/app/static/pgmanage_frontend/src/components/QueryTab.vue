@@ -17,11 +17,11 @@
       <div class="py-2 pe-1 d-flex align-items-center">
         <div class="tab-actions d-flex w-100 px-2">
           <div class="btn-group me-2">
-            <button v-if="selectedRunOption == 'All'" class="btn btn-square btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
+            <button class="btn btn-square btn-primary btn-run" title="Run" @click="queryRunOrExplain()" :disabled="executingState">
               <i class="fas fa-play fa-light"></i>
             </button>
   
-            <button v-else class="btn btn-square btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
+            <button class="btn btn-square btn-primary btn-run" title="Run Selection" @click="queryRunOrExplain(false)" :disabled="executingState">
               [
               <i class="fas fa-play fa-light"></i>
               ]
@@ -29,23 +29,6 @@
             <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul class="dropdown-menu">
-              <li>
-                <a 
-                class="dropdown-item"
-                @click="selectRunOption('All')"
-                href="#"
-                >Run All</a>
-                
-              </li>
-              <li>
-                <a 
-                class="dropdown-item"
-                @click="selectRunOption('Selection')"
-                href="#"
-                >Run Selection</a>
-              </li>
-              <li><hr class="dropdown-divider"></li>
-
               <li>
                 <a class="dropdown-item">
                   <input
@@ -227,7 +210,6 @@ export default {
       queryInterval: null,
       resizeResultDiv: false,
       blockSize: 50,
-      selectedRunOption: 'All',
     };
   },
   computed: {
@@ -284,9 +266,6 @@ export default {
     }
   },
   methods: {
-    selectRunOption(option) {
-      this.selectedRunOption = option;
-    },
     getQueryEditorValue(raw_query) {
       return this.$refs.editor.getQueryEditorValue(raw_query);
     },
