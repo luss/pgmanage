@@ -26,7 +26,7 @@
               <i class="fas fa-play fa-light"></i>
               ]
             </button>
-            <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split ps-1" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul class="dropdown-menu">
               <li>
