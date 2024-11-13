@@ -257,8 +257,8 @@ export default {
     }
   },
   methods: {
-    getEditorContent(getFullContent=false, singleLineQuery=false) {
-      return this.$refs.editor.getEditorContent({getFullContent: getFullContent, singleLineQuery: singleLineQuery})
+    getEditorContent(fullContent=false, onlySelected=false) {
+      return this.$refs.editor.getEditorContent(fullContent, onlySelected)
     },
     querySQL(
       mode,
@@ -394,7 +394,7 @@ export default {
       }
     },
     runExplain(explainMode) {
-      let command = this.getEditorContent(false, true);
+      let command = this.getEditorContent();
 
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");

@@ -194,39 +194,40 @@ export default {
 
       this.completer = new SQLAutocomplete(DIALECT_MAP[this.dialect] || SQLDialect.PLpgSQL, filteredMeta);
     },
-    getEditorContent({ getFullContent = false, singleLineQuery = false } = {}) {
-      if (getFullContent) return this.editor.getValue();
+    getEditorContent(fullContent, onlySelected) {
+      if (fullContent) return this.editor.getValue()
+      
+      let selectedText = this.editor.getSelectedText()
 
-      let selectedText = this.editor.getSelectedText();
-
-      if (!selectedText && singleLineQuery) {
-        return this.editor.session.getLine(this.editor.getCursorPosition().row);
-      }
-
-      return selectedText || this.editor.getValue();
+      if (onlySelected) return selectedText
+      return selectedText || this.editor.getValue()
     },
     getQueryOffset() {
       return this.editor.selection.getRange().start.row
     },
     contextMenu(event) {
+      const hasSelectedContent = !!this.editor.getSelectedText()
       let option_list = [
         {
-          label: "Run selection/line at cursor",
-          icon: "fas cm-all fa-play fa-light",
+          label: "Run selection",
+          icon: "fas cm-all fa-play",
+          disabled: !hasSelectedContent,
           onClick: () => {
             this.$emit("run-selection");
           },
         },
         {
-          label: "Explain selection/line at cursor",
-          icon: "fas cm-all fa-chart-simple fa-light",
+          label: "Explain selection",
+          icon: "fas cm-all fa-chart-simple",
+          disabled: !hasSelectedContent,
           onClick: () => {
             this.$emit("run-selection-explain");
           },
         },
         {
-          label: "Explain Analyze selection/line at cursor",
-          icon: "fas cm-all fa-magnifying-glass-chart fa-light",
+          label: "Explain Analyze selection",
+          icon: "fas cm-all fa-magnifying-glass-chart",
+          disabled: !hasSelectedContent,
           onClick: () => {
             this.$emit("run-selection-explain-analyze");
           },
@@ -234,7 +235,7 @@ export default {
         {
           label: "Copy",
           icon: "fas cm-all fa-terminal",
-          disabled: !this.editor.getSelectedText(),
+          disabled: !hasSelectedContent,
           onClick: () => {
             document.execCommand("copy");
           },
