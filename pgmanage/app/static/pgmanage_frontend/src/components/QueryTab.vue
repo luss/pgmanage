@@ -9,7 +9,13 @@
         :database-index="databaseIndex"
         :database-name="databaseName"
         tab-mode="query"
-        :dialect="dialect" @editor-change="updateEditorContent" @run-selection="queryRunOrExplain(false)" :autocomplete="autocomplete"/>
+        :dialect="dialect" 
+        :autocomplete="autocomplete"
+        @editor-change="updateEditorContent" 
+        @run-selection="queryRunOrExplain(false)" 
+        @run-selection-explain="runExplain(0)"
+        @run-selection-explain-analyze="runExplain(1)"
+        />
     </pane>
 
     <pane size="70" class="border-top">
@@ -388,7 +394,7 @@ export default {
       }
     },
     runExplain(explainMode) {
-      let command = this.getEditorContent();
+      let command = this.getEditorContent(false, true);
 
       if (command.trim() === "") {
         showToast("info", "Please provide a string.");

@@ -218,6 +218,20 @@ export default {
           },
         },
         {
+          label: "Explain selection/line at cursor",
+          icon: "fas cm-all fa-chart-simple fa-light",
+          onClick: () => {
+            this.$emit("run-selection-explain");
+          },
+        },
+        {
+          label: "Explain Analyze selection/line at cursor",
+          icon: "fas cm-all fa-magnifying-glass-chart fa-light",
+          onClick: () => {
+            this.$emit("run-selection-explain-analyze");
+          },
+        },
+        {
           label: "Copy",
           icon: "fas cm-all fa-terminal",
           disabled: !this.editor.getSelectedText(),
