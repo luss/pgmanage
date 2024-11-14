@@ -12,8 +12,8 @@ import 'ace-builds/src-noconflict/mode-mysql'
 import 'ace-builds/src-noconflict/mode-plsql'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/src-noconflict/ext-searchbox'
-import './ace_themes/theme-omnidb.js';
-import './ace_themes/theme-omnidb_dark.js';
+import './ace_extras/themes/theme-omnidb.js';
+import './ace_extras/themes/theme-omnidb_dark.js';
 import './workspace'
 import './components/postgresql_modals'
 import 'vue-toast-notification/dist/theme-sugar.css';
@@ -21,9 +21,10 @@ import '@xterm/xterm/css/xterm.css'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 import './assets/scss/omnidb.scss'
 import './assets/scss/pgmanage.scss'
-import omniURL from './ace_themes/theme-omnidb.js?url'
-import omniDarkURL from './ace_themes/theme-omnidb_dark.js?url'
-import extendedPgsqlUrl from "./ace-mode-pgsql-extended.js?url";
+import omniURL from './ace_extras/themes/theme-omnidb.js?url'
+import omniDarkURL from './ace_extras/themes/theme-omnidb_dark.js?url'
+import extendedPgsqlUrl from "./ace_extras/mode-pgsql-extended.js?url";
+import extendedMysqlUrl from "./ace_extras/mode-mysql-extended.js?url"
 import axios from 'axios'
 import { getCookie } from './ajax_control.js';
 import "tabulator-tables/dist/css/tabulator.min.css"
@@ -37,6 +38,7 @@ window.jQuery = window.$ = $;
 ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
 ace.config.setModuleUrl('ace/mode/pgsql_extended', extendedPgsqlUrl)
+ace.config.setModuleUrl('ace/mode/mysql_extended', extendedMysqlUrl)
 
 axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 
