@@ -11,7 +11,7 @@ import {
 import "ace-builds";
 import "ace-builds/esm-resolver";
 import SnippetTab from "../../src/components/SnippetTab.vue";
-import "../../src/ace_themes/theme-omnidb.js";
+import "../../src/ace_extras/themes/theme-omnidb.js";
 import { emitter } from "../../src/emitter.js";
 
 import { useSettingsStore } from "../../src/stores/settings.js";

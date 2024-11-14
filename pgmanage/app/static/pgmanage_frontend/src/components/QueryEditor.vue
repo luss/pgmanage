@@ -8,7 +8,7 @@ import { snippetsStore, settingsStore, dbMetadataStore  } from "../stores/stores
 import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_snippets";
 import { emitter } from "../emitter";
 import { format } from "sql-formatter";
-import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_plugins";
+import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_extras/plugins";
 import { maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
 import { SQLAutocomplete, SQLDialect } from 'sql-autocomplete';
@@ -101,9 +101,9 @@ export default {
     },
     setupEditor() {
       const EDITOR_MODEMAP = {
-        'postgresql': 'pgsql',
-        'mysql': 'mysql',
-        'mariadb': 'mysql',
+        'postgresql': 'pgsql_extended',
+        'mysql': 'mysql_extended',
+        'mariadb': 'mysql_extended',
         'oracle': 'plsql'
       }
 
