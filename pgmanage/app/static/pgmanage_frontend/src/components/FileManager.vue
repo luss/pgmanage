@@ -128,8 +128,8 @@
                 ]"
                 @click="selectFileOrDir(file.file_name)"
                 @dblclick="
-                  file.file_type === 'dir'
-                    ? getDirContent(file.file_path)
+                  file.is_directory
+                    ? getDirContent(file.path)
                     : confirmSelection()
                 "
               >
@@ -140,13 +140,13 @@
                       'fa-2xl',
                       'me-2',
                       {
-                        'fa-folder': file.file_type === 'dir',
-                        'fa-file': file.file_type === 'file',
+                        'fa-folder': file.is_directory,
+                        'fa-file': !file.is_directory,
                       },
                     ]"
                     :style="{
                       color:
-                        file.file_type === 'dir'
+                        file.is_directory
                           ? '#0ea5e9'
                           : 'rgb(105 114 118)',
                     }"
@@ -173,8 +173,8 @@
                     :key="file.file_name"
                     @click="selectFileOrDir(file.file_name)"
                     @dblclick="
-                      file.file_type === 'dir'
-                        ? getDirContent(file.file_path)
+                      file.is_directory
+                        ? getDirContent(file.path)
                         : confirmSelection()
                     "
                   >
@@ -184,23 +184,23 @@
                           'fas',
                           'fa-2xl',
                           {
-                            'fa-folder': file.file_type === 'dir',
-                            'fa-file': file.file_type === 'file',
+                            'fa-folder': file.is_directory,
+                            'fa-file': !file.is_directory,
                           },
                         ]"
                         :style="{
                           color:
-                            file.file_type === 'dir'
+                            file.is_directory
                               ? '#0ea5e9'
                               : 'rgb(105 114 118)',
                         }"
                       ></i>
                       {{ file.file_name }}
                     </div>
-                    <div class="col-2" v-if="file.file_type === 'file'">
+                    <div class="col-2" v-if="!file.is_directory">
                       {{ file.file_size }}
                     </div>
-                    <div class="col-2" v-if="file.file_type === 'dir'">
+                    <div class="col-2" v-if="file.is_directory">
                       {{ file.dir_size }}
                       {{ file.dir_size == 1 ? "item" : "items" }}
                     </div>
@@ -329,7 +329,7 @@ export default {
       Modal.getOrCreateInstance(this.$refs.actionsModal.$el).show();
     },
     confirmSelection() {
-      fileManagerStore.changeFile(this.selectedFile.file_path);
+      fileManagerStore.changeFile(this.selectedFile);
       Modal.getOrCreateInstance(this.$refs.fileManagerModal).hide();
     },
     show(desktopMode, onChange, dialog_type) {
