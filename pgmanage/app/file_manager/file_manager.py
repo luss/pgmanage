@@ -72,7 +72,8 @@ class FileManager:
 
             file_path = os.path.join(path, file)
             file_size = os.path.getsize(file_path)
-            file_type = "dir" if os.path.isdir(file_path) else "file"
+            is_directory = os.path.isdir(file_path)
+            file_type = self._get_file_extension(file)
             created = os.path.getctime(file_path)
             modified = os.path.getmtime(file_path)
             dir_size = None
@@ -82,9 +83,10 @@ class FileManager:
             data["files"].append(
                 {
                     "file_name": file,
-                    "file_path": file_path,
+                    "path": file_path,
                     "file_size": self._format_size(file_size),
-                    "file_type": file_type,
+                    "is_directory": is_directory,
+                    "type": file_type,
                     "created": time.ctime(created),
                     "modified": time.ctime(modified),
                     "dir_size": dir_size,
@@ -135,3 +137,7 @@ class FileManager:
             pathlib.Path(abs_path).relative_to(self.storage)
         except ValueError:
             raise PermissionError(f"Access denied: {abs_path}")
+
+    def _get_file_extension(self, file_name: str) -> str:
+        _, extension = os.path.splitext(file_name)
+        return extension.lstrip(".").lower() if extension else ""

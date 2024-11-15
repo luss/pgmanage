@@ -436,18 +436,55 @@ export default {
       this.getRoleNames()
     })
 
-    fileManagerStore.$onAction(({name, store, after}) => {
-      if (name === "changeFile" && this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id) {
+    fileManagerStore.$onAction(({ name, store, after }) => {
+      if (
+        name === "changeFile" &&
+        this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id
+      ) {
         after(() => {
-          this.changeFilePath(store.filePath)
-        })
+          this.changeFilePath(store.file.path);
+          if (store.file.is_directory) {
+            this.backupOptions.format = "directory";
+            return;
+          }
+
+          switch (store.file?.type) {
+            case "sql":
+              this.backupOptions.format = "plain";
+              break;
+            case "tar":
+              this.backupOptions.format = "tar";
+              break;
+            default:
+              this.backupOptions.format = "custom";
+          }
+        });
       }
-    })
+    });
   },
   watch: {
     'backupOptions.format'(newValue){
       if (['directory', 'tar'].includes(newValue)) {
         this.backupOptions.pigz = false
+      }
+      if (!this.backupOptions.fileName) return;
+
+
+      // Remove the current extension, if any
+      this.backupOptions.fileName = this.backupOptions.fileName.replace(/\.[^/.]+$/, ""); 
+
+      switch (newValue) {
+        case 'directory':
+          break;
+        case 'plain':
+          this.backupOptions.fileName += '.sql';
+          break;
+        case 'custom':
+          this.backupOptions.fileName += '.dump';
+          break;
+        case 'tar':
+          this.backupOptions.fileName += '.tar';
+          break;
       }
     }
   },
@@ -481,6 +518,19 @@ export default {
     onFile(e) {
       const [file] = e.target.files
       this.backupOptions.fileName = file?.path
+
+      if (e.target.hasAttribute('nwdirectory')) return;
+
+      switch (file?.type) {
+        case 'application/sql':
+          this.backupOptions.format = 'plain';
+          break;
+        case 'application/x-tar':
+          this.backupOptions.format = 'tar';
+          break;
+        default:
+          this.backupOptions.format = 'custom';
+      }
     },
     changeFilePath(filePath) {
       this.backupOptions.fileName = filePath;
