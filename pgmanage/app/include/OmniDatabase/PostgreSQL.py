@@ -715,6 +715,7 @@ class PostgreSQL:
         self.v_console_help = "Console tab. Type the commands in the editor below this box. \\? to view command list."
         self.v_version = ''
         self.v_version_num = ''
+        self.major_version = ''
         self.v_use_server_cursor = True
 
     # Decorator to acquire lock before performing action
@@ -751,6 +752,7 @@ class PostgreSQL:
     def GetVersion(self):
         self.v_version = self.v_connection.ExecuteScalar('show server_version')
         self.v_version_num = self.v_connection.ExecuteScalar('show server_version_num')
+        self.major_version = int(self.v_version_num[:2])
         return 'PostgreSQL ' + self.v_version.split(' ')[0]
 
     @lock_required
@@ -5300,29 +5302,31 @@ DROP CONSTRAINT #constraint_name#
 ''')
 
     def TemplateCreateRule(self):
-        return Template('''CREATE RULE name
-AS ON { SELECT | INSERT | UPDATE | DELETE }
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createrule.html
+CREATE RULE name
+AS ON {{ SELECT | INSERT | UPDATE | DELETE }}
 TO #table_name#
 --WHERE condition
---DO ALSO { NOTHING | command | ( command ; command ... ) }
---DO INSTEAD { NOTHING | command | ( command ; command ... ) }
+--DO ALSO {{ NOTHING | command | ( command ; command ... ) }}
+--DO INSTEAD {{ NOTHING | command | ( command ; command ... ) }}
 ''')
 
     def TemplateAlterRule(self):
-        return Template('ALTER RULE #rule_name# ON #table_name# RENAME TO new_name')
+        return Template(f'-- https://www.postgresql.org/docs/{self.major_version}/sql-alterrule.html \nALTER RULE #rule_name# ON #table_name# RENAME TO new_name')
 
     def TemplateDropRule(self):
-        return Template('''DROP RULE #rule_name# ON #table_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-droprule.html \nDROP RULE #rule_name# ON #table_name#
 --CASCADE
 ''')
 
     def TemplateCreateTrigger(self):
-        return Template('''CREATE TRIGGER name
---BEFORE { INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE [ OR ] | TRUNCATE }
---AFTER { INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE [ OR ] | TRUNCATE }
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createtrigger.html
+CREATE TRIGGER name
+--BEFORE {{ INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE [ OR ] | TRUNCATE }}
+--AFTER {{ INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE [ OR ] | TRUNCATE }}
 ON #table_name#
 --FROM referenced_table_name
---NOT DEFERRABLE | [ DEFERRABLE ] { INITIALLY IMMEDIATE | INITIALLY DEFERRED }
+--NOT DEFERRABLE | [ DEFERRABLE ] {{ INITIALLY IMMEDIATE | INITIALLY DEFERRED }}
 --FOR EACH ROW
 --FOR EACH STATEMENT
 --WHEN ( condition )
@@ -5330,13 +5334,14 @@ ON #table_name#
 ''')
 
     def TemplateCreateViewTrigger(self):
-        return Template('''CREATE TRIGGER name
---BEFORE { INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE }
---AFTER { INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE }
---INSTEAD OF { INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE }
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createtrigger.html
+CREATE TRIGGER name
+--BEFORE {{ INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE }}
+--AFTER {{ INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE }}
+--INSTEAD OF {{ INSERT [ OR ] | UPDATE [ OF column_name [, ... ] ] [ OR ] | DELETE }}
 ON #table_name#
 --FROM referenced_table_name
---NOT DEFERRABLE | [ DEFERRABLE ] { INITIALLY IMMEDIATE | INITIALLY DEFERRED }
+--NOT DEFERRABLE | [ DEFERRABLE ] {{ INITIALLY IMMEDIATE | INITIALLY DEFERRED }}
 --FOR EACH ROW
 --FOR EACH STATEMENT
 --WHEN ( condition )
@@ -5345,12 +5350,14 @@ ON #table_name#
 
     def TemplateAlterTrigger(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''ALTER TRIGGER #trigger_name# ON #table_name#
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-altertrigger.html
+ALTER TRIGGER #trigger_name# ON #table_name#
 --RENAME TO new_name
 --DEPENDS ON EXTENSION extension_name
 ''')
         else:
-            return Template('''ALTER TRIGGER #trigger_name# ON #table_name#
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-altertrigger.html
+ALTER TRIGGER #trigger_name# ON #table_name#
 --RENAME TO new_name
 --DEPENDS ON EXTENSION extension_name
 --NO DEPENDS ON EXTENSION extension_name
@@ -5367,12 +5374,13 @@ TRIGGER #trigger_name#
         return Template('ALTER TABLE #table_name# DISABLE TRIGGER #trigger_name#')
 
     def TemplateDropTrigger(self):
-        return Template('''DROP TRIGGER #trigger_name# ON #table_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-droptrigger.html \nDROP TRIGGER #trigger_name# ON #table_name#
 --CASCADE
 ''')
 
     def TemplateCreateEventTrigger(self):
-        return Template('''CREATE EVENT TRIGGER name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createeventtrigger.html
+CREATE EVENT TRIGGER name
 --ON ddl_command_start
 --ON ddl_command_end
 --ON table_rewrite
@@ -5382,7 +5390,8 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateAlterEventTrigger(self):
-        return Template('''ALTER EVENT TRIGGER #trigger_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-altereventtrigger.html
+ALTER EVENT TRIGGER #trigger_name#
 --OWNER TO new_owner
 --OWNER TO CURRENT_USER
 --OWNER TO SESSION_USER
@@ -5399,7 +5408,7 @@ EXECUTE PROCEDURE function_name()
         return Template('ALTER EVENT TRIGGER #trigger_name# DISABLE')
 
     def TemplateDropEventTrigger(self):
-        return Template('''DROP EVENT TRIGGER #trigger_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-dropeventtrigger.html \nDROP EVENT TRIGGER #trigger_name#
 --CASCADE
 ''')
 
@@ -5429,7 +5438,8 @@ EXECUTE PROCEDURE function_name()
         return Template('DROP TABLE #partition_name#')
 
     def TemplateCreateType(self):
-        return Template('''CREATE TYPE #schema_name#.name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createtype.html
+CREATE TYPE #schema_name#.name
 
 -- AS (
 --    attribute_name data_type [ COLLATE collation ] [, ... ]
@@ -5452,7 +5462,7 @@ EXECUTE PROCEDURE function_name()
 --    , TYPMOD_IN = type_modifier_input_function
 --    , TYPMOD_OUT = type_modifier_output_function
 --    , ANALYZE = analyze_function
---    , INTERNALLENGTH = { internallength | VARIABLE }
+--    , INTERNALLENGTH = {{ internallength | VARIABLE }}
 --    , PASSEDBYVALUE
 --    , ALIGNMENT = alignment
 --    , STORAGE = storage
@@ -5469,7 +5479,8 @@ EXECUTE PROCEDURE function_name()
 
     def TemplateAlterType(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''ALTER TYPE #type_name#
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-altertype.html
+ALTER TYPE #type_name#
 --ADD ATTRIBUTE attribute_name data_type [ COLLATE collation ] [ CASCADE | RESTRICT ]
 --DROP ATTRIBUTE [ IF EXISTS ] attribute_name [ CASCADE | RESTRICT ]
 --ALTER ATTRIBUTE attribute_name [ SET DATA ] TYPE data_type [ COLLATE collation ] [ CASCADE | RESTRICT ]
@@ -5477,11 +5488,12 @@ EXECUTE PROCEDURE function_name()
 --OWNER TO new_owner
 --RENAME TO new_name
 --SET SCHEMA new_schema
---ADD VALUE [ IF NOT EXISTS ] new_enum_value [ { BEFORE | AFTER } existing_enum_value ]
+--ADD VALUE [ IF NOT EXISTS ] new_enum_value [ {{ BEFORE | AFTER }} existing_enum_value ]
 --RENAME VALUE existing_enum_value TO new_enum_value
 ''')
         else:
-            return Template('''ALTER TYPE #type_name#
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-altertype.html
+ALTER TYPE #type_name#
 --ADD ATTRIBUTE attribute_name data_type [ COLLATE collation ] [ CASCADE | RESTRICT ]
 --DROP ATTRIBUTE [ IF EXISTS ] attribute_name [ CASCADE | RESTRICT ]
 --ALTER ATTRIBUTE attribute_name [ SET DATA ] TYPE data_type [ COLLATE collation ] [ CASCADE | RESTRICT ]
@@ -5489,7 +5501,7 @@ EXECUTE PROCEDURE function_name()
 --OWNER TO new_owner
 --RENAME TO new_name
 --SET SCHEMA new_schema
---ADD VALUE [ IF NOT EXISTS ] new_enum_value [ { BEFORE | AFTER } existing_enum_value ]
+--ADD VALUE [ IF NOT EXISTS ] new_enum_value [ {{ BEFORE | AFTER }} existing_enum_value ]
 --RENAME VALUE existing_enum_value TO new_enum_value
 --SET ( RECEIVE = value )
 --SET ( SEND = value )
@@ -5500,12 +5512,13 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateDropType(self):
-        return Template('''DROP TYPE #type_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-droptype.html \nDROP TYPE #type_name#
 --CASCADE
 ''')
 
     def TemplateCreateDomain(self):
-        return Template('''CREATE DOMAIN #schema_name#.name AS data_type
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createdomain.html
+CREATE DOMAIN #schema_name#.name AS data_type
 --COLLATE collation
 --DEFAULT expression
 -- [ CONSTRAINT constraint_name ] NOT NULL
@@ -5514,7 +5527,8 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateAlterDomain(self):
-        return Template('''ALTER DOMAIN #domain_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterdomain.html
+ALTER DOMAIN #domain_name#
 --SET DEFAULT expression
 --DROP DEFAULT
 --SET NOT NULL
@@ -5529,13 +5543,14 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateDropDomain(self):
-        return Template('''DROP DOMAIN #domain_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-dropdomain.html \nDROP DOMAIN #domain_name#
 --CASCADE
 ''')
 
     def TemplateVacuum(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''VACUUM
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-vacuum.html
+VACUUM
 --FULL
 --FREEZE
 --ANALYZE
@@ -5545,7 +5560,8 @@ EXECUTE PROCEDURE function_name()
 --TRUNCATE
 ''')
         else:
-            return Template('''VACUUM
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-vacuum.html
+VACUUM
 --FULL
 --FREEZE
 --ANALYZE
@@ -5558,7 +5574,8 @@ EXECUTE PROCEDURE function_name()
 
     def TemplateVacuumTable(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''VACUUM
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-vacuum.html
+VACUUM
 --FULL
 --FREEZE
 --ANALYZE
@@ -5570,7 +5587,8 @@ EXECUTE PROCEDURE function_name()
 --(column_name, [, ...])
 ''')
         else:
-            return Template('''VACUUM
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-vacuum.html
+VACUUM
 --FULL
 --FREEZE
 --ANALYZE
@@ -5584,10 +5602,11 @@ EXECUTE PROCEDURE function_name()
 ''')
 
     def TemplateAnalyze(self):
-        return Template('ANALYZE')
+        return Template(f'-- https://www.postgresql.org/docs/{self.major_version}/sql-analyze.html \nANALYZE')
 
     def TemplateAnalyzeTable(self):
-        return Template('''ANALYZE #table_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-analyze.html
+ANALYZE #table_name#
 --(column_name, [, ...])
 ''')
 
@@ -5724,7 +5743,8 @@ EXECUTE PROCEDURE function_name()
         return Template(v_sql)
 
     def TemplateDelete(self):
-        return Template('''DELETE FROM
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-delete.html
+DELETE FROM
 --ONLY
 #table_name#
 WHERE condition
@@ -5733,7 +5753,8 @@ WHERE condition
 ''')
 
     def TemplateTruncate(self):
-        return Template('''TRUNCATE
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-truncate.html
+TRUNCATE
 --ONLY
 #table_name#
 --RESTART IDENTITY
@@ -5804,29 +5825,31 @@ WHERE condition
         return Template(v_sql)
 
     def TemplateCreatePhysicalReplicationSlot(self):
-        return Template('''SELECT * FROM pg_create_physical_replication_slot('slot_name')''')
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/functions-admin.html#FUNCTIONS-REPLICATION-TABLE \nSELECT * FROM pg_create_physical_replication_slot('slot_name')''')
 
     def TemplateDropPhysicalReplicationSlot(self):
-        return Template('''SELECT pg_drop_replication_slot('#slot_name#')''')
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/functions-admin.html#FUNCTIONS-REPLICATION-TABLE \nSELECT pg_drop_replication_slot('#slot_name#')''')
 
     def TemplateCreateLogicalReplicationSlot(self):
         if int(self.v_version_num) >= 100000:
-            return Template('''SELECT * FROM pg_create_logical_replication_slot('slot_name', 'pgoutput')''')
+            return Template(f''' -- https://www.postgresql.org/docs/{self.major_version}/functions-admin.html#FUNCTIONS-REPLICATION-TABLE \nSELECT * FROM pg_create_logical_replication_slot('slot_name', 'pgoutput')''')
         else:
-            return Template('''SELECT * FROM pg_create_logical_replication_slot('slot_name', 'test_decoding')''')
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/functions-admin.html#FUNCTIONS-REPLICATION-TABLE \nSELECT * FROM pg_create_logical_replication_slot('slot_name', 'test_decoding')''')
 
     def TemplateDropLogicalReplicationSlot(self):
-        return Template('''SELECT pg_drop_replication_slot('#slot_name#')''')
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/functions-admin.html#FUNCTIONS-REPLICATION-TABLE \nSELECT pg_drop_replication_slot('#slot_name#')''')
 
     def TemplateCreatePublication(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''CREATE PUBLICATION name
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createpublication.html
+CREATE PUBLICATION name
 --FOR TABLE [ ONLY ] table_name [ * ] [, ...]
 --FOR ALL TABLES
 --WITH ( publish = 'insert, update, delete, truncate' )
 ''')
         else:
-            return Template('''CREATE PUBLICATION name
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createpublication.html
+CREATE PUBLICATION name
 --FOR TABLE [ ONLY ] table_name [ * ] [, ...]
 --FOR ALL TABLES
 --WITH ( publish = 'insert, update, delete, truncate' )
@@ -5835,72 +5858,77 @@ WHERE condition
 
     def TemplateAlterPublication(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''ALTER PUBLICATION #pub_name#
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterpublication.html
+ALTER PUBLICATION #pub_name#
 --ADD TABLE [ ONLY ] table_name [ * ] [, ...]
 --SET TABLE [ ONLY ] table_name [ * ] [, ...]
 --DROP TABLE [ ONLY ] table_name [ * ] [, ...]
 --SET ( publish = 'insert, update, delete, truncate' )
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
+--OWNER TO {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 ''')
         else:
-            return Template('''ALTER PUBLICATION #pub_name#
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterpublication.html
+ALTER PUBLICATION #pub_name#
 --ADD TABLE [ ONLY ] table_name [ * ] [, ...]
 --SET TABLE [ ONLY ] table_name [ * ] [, ...]
 --DROP TABLE [ ONLY ] table_name [ * ] [, ...]
 --SET ( publish = 'insert, update, delete, truncate' )
 --SET ( publish_via_partition_root = true | false )
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
+--OWNER TO {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 ''')
 
     def TemplateDropPublication(self):
-        return Template('''DROP PUBLICATION #pub_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-droppublication.html \nDROP PUBLICATION #pub_name#
 --CASCADE
 ''')
 
     def TemplateAddPublicationTable(self):
-        return Template('ALTER PUBLICATION #pub_name# ADD TABLE table_name')
+        return Template(f'-- https://www.postgresql.org/docs/{self.major_version}/sql-alterpublication.html \nALTER PUBLICATION #pub_name# ADD TABLE table_name')
 
     def TemplateDropPublicationTable(self):
-        return Template('ALTER PUBLICATION #pub_name# DROP TABLE #table_name#')
+        return Template(f'-- https://www.postgresql.org/docs/{self.major_version}/sql-alterpublication.html \nALTER PUBLICATION #pub_name# DROP TABLE #table_name#')
 
     def TemplateCreateSubscription(self):
-        return Template('''CREATE SUBSCRIPTION name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createsubscription.html
+CREATE SUBSCRIPTION name
 CONNECTION 'conninfo'
 PUBLICATION pub_name [, ...]
 --WITH (
---copy_data = { true | false }
---, create_slot = { true | false }
---, enabled = { true | false }
+--copy_data = {{ true | false }}
+--, create_slot = {{ true | false }}
+--, enabled = {{ true | false }}
 --, slot_name = 'name'
---, synchronous_commit = { on | remote_apply | remote_write | local | off }
---, connect = { true | false }
+--, synchronous_commit = {{ on | remote_apply | remote_write | local | off }}
+--, connect = {{ true | false }}
 --)
 ''')
 
     def TemplateAlterSubscription(self):
-        return Template('''ALTER SUBSCRIPTION #sub_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-altersubscription.html
+ALTER SUBSCRIPTION #sub_name#
 --CONNECTION 'conninfo'
---SET PUBLICATION pub_name [, ...] [ WITH ( refresh = { true | false } ) ]
---REFRESH PUBLICATION [ WITH ( copy_data = { true | false } ) ]
+--SET PUBLICATION pub_name [, ...] [ WITH ( refresh = {{ true | false }} ) ]
+--REFRESH PUBLICATION [ WITH ( copy_data = {{ true | false }} ) ]
 --ENABLE
 --DISABLE
 --SET (
 --slot_name = 'name'
---, synchronous_commit = { on | remote_apply | remote_write | local | off }
+--, synchronous_commit = {{ on | remote_apply | remote_write | local | off }}
 --)
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
+--OWNER TO {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 ''')
 
     def TemplateDropSubscription(self):
-        return Template('''DROP SUBSCRIPTION #sub_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-dropsubscription.html \nDROP SUBSCRIPTION #sub_name#
 --CASCADE
 ''')
 
     def TemplateCreateForeignDataWrapper(self):
-        return Template('''CREATE FOREIGN DATA WRAPPER name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createforeigndatawrapper.html
+CREATE FOREIGN DATA WRAPPER name
 --HANDLER handler_function
 --NO HANDLER
 --VALIDATOR validator_function
@@ -5909,7 +5937,8 @@ PUBLICATION pub_name [, ...]
 ''')
 
     def TemplateAlterForeignDataWrapper(self):
-        return Template('''ALTER FOREIGN DATA WRAPPER #fdwname#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterforeigndatawrapper.html
+ALTER FOREIGN DATA WRAPPER #fdwname#
 --HANDLER handler_function
 --NO HANDLER
 --VALIDATOR validator_function
@@ -5917,17 +5946,18 @@ PUBLICATION pub_name [, ...]
 --OPTIONS ( [ ADD ] option ['value'] [, ... ] )
 --OPTIONS ( SET option ['value'] )
 --OPTIONS ( DROP option )
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
+--OWNER TO {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 ''')
 
     def TemplateDropForeignDataWrapper(self):
-        return Template('''DROP FOREIGN DATA WRAPPER #fdwname#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-dropforeigndatawrapper.html \nDROP FOREIGN DATA WRAPPER #fdwname#
 --CASCADE
 ''')
 
     def TemplateCreateForeignServer(self):
-        return Template('''CREATE SERVER server_name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createserver.html
+CREATE SERVER server_name
 --TYPE 'server_type'
 --VERSION 'server_version'
 FOREIGN DATA WRAPPER #fdwname#
@@ -5935,22 +5965,24 @@ FOREIGN DATA WRAPPER #fdwname#
 ''')
 
     def TemplateAlterForeignServer(self):
-        return Template('''ALTER SERVER #srvname#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterserver.html
+ALTER SERVER #srvname#
 --VERSION 'new_version'
 --OPTIONS ( [ ADD ] option ['value'] [, ... ] )
 --OPTIONS ( SET option ['value'] )
 --OPTIONS ( DROP option )
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
+--OWNER TO {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 ''')
 
     def TemplateDropForeignServer(self):
-        return Template('''DROP SERVER #srvname#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-dropserver.html \nDROP SERVER #srvname#
 --CASCADE
 ''')
 
     def TemplateCreateUserMapping(self):
-        return Template('''CREATE USER MAPPING
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createusermapping.html
+CREATE USER MAPPING
 --FOR user_name
 --FOR CURRENT_USER
 --FOR PUBLIC
@@ -5959,7 +5991,8 @@ SERVER #srvname#
 ''')
 
     def TemplateAlterUserMapping(self):
-        return Template('''ALTER USER MAPPING FOR #user_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterusermapping.html
+ALTER USER MAPPING FOR #user_name#
 SERVER #srvname#
 --OPTIONS ( [ ADD ] option ['value'] [, ... ] )
 --OPTIONS ( SET option ['value'] )
@@ -5967,7 +6000,8 @@ SERVER #srvname#
 ''')
 
     def TemplateImportForeignSchema(self):
-        return Template('''IMPORT FOREIGN SCHEMA remote_schema
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-importforeignschema.html
+IMPORT FOREIGN SCHEMA remote_schema
 --LIMIT TO ( table_name [, ...] )
 --EXCEPT ( table_name [, ...] )
 FROM SERVER #srvname#
@@ -5976,10 +6010,11 @@ INTO local_schema
 ''')
 
     def TemplateDropUserMapping(self):
-        return Template('DROP USER MAPPING FOR #user_name# SERVER #srvname#')
+        return Template(f'-- https://www.postgresql.org/docs/{self.major_version}/sql-dropusermapping.html \nDROP USER MAPPING FOR #user_name# SERVER #srvname#')
 
     def TemplateCreateForeignTable(self):
-        return Template('''CREATE FOREIGN TABLE #schema_name#.table_name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createforeigntable.html
+CREATE FOREIGN TABLE #schema_name#.table_name
 --PARTITION OF parent_table
 (
     column_name data_type
@@ -5999,17 +6034,18 @@ SERVER server_name
 ''')
 
     def TemplateAlterForeignTable(self):
-        return Template('''ALTER FOREIGN TABLE #table_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterforeigntable.html
+ALTER FOREIGN TABLE #table_name#
 --ADD COLUMN column_name data_type [ COLLATE collation ] [ column_constraint [ ... ] ]
 --DROP COLUMN column_name [ CASCADE ]
 --ALTER [ COLUMN column_name [ SET DATA ] TYPE data_type [ COLLATE collation ]
 --ALTER COLUMN column_name SET DEFAULT expression
 --ALTER COLUMN column_name DROP DEFAULT
---ALTER COLUMN column_name { SET | DROP } NOT NULL
+--ALTER COLUMN column_name {{ SET | DROP }} NOT NULL
 --ALTER COLUMN column_name SET STATISTICS integer
 --ALTER COLUMN column_name SET ( attribute_option = value [, ... ] )
 --ALTER COLUMN column_name RESET ( attribute_option [, ... ] )
---ALTER COLUMN column_name SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
+--ALTER COLUMN column_name SET STORAGE {{ PLAIN | EXTERNAL | EXTENDED | MAIN }}
 --ALTER COLUMN column_name OPTIONS ( [ ADD | SET | DROP ] option ['value'] [, ... ] )
 --ADD table_constraint [ NOT VALID ]
 --VALIDATE CONSTRAINT constraint_name
@@ -6022,7 +6058,7 @@ SERVER server_name
 --SET WITHOUT OIDS
 --INHERIT parent_table
 --NO INHERIT parent_table
---OWNER TO { new_owner | CURRENT_USER | SESSION_USER }
+--OWNER TO {{ new_owner | CURRENT_USER | SESSION_USER }}
 --OPTIONS ( [ ADD | SET | DROP ] option ['value'] [, ... ] )
 --RENAME COLUMN column_name TO new_column_name
 --RENAME TO new_name
@@ -6030,7 +6066,7 @@ SERVER server_name
 ''')
 
     def TemplateDropForeignTable(self):
-        return Template('''DROP FOREIGN TABLE #table_name#
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-dropforeigntable.html \nDROP FOREIGN TABLE #table_name#
 --CASCADE
 ''')
 
@@ -6065,7 +6101,8 @@ DROP COLUMN #column_name#
 ''')
 
     def TemplateCreateStatistics(self):
-        return Template('''CREATE STATISTICS #schema_name#.statistics_name
+        return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-createstatistics.html
+CREATE STATISTICS #schema_name#.statistics_name
 --( ndistinct )
 --( dependencies )
 --( mcv )
@@ -6075,21 +6112,23 @@ FROM #table_name#
 
     def TemplateAlterStatistics(self):
         if int(self.v_connection.ExecuteScalar('show server_version_num')) < 130000:
-            return Template('''ALTER STATISTICS #statistics_name#
---OWNER to { new_owner | CURRENT_USER | SESSION_USER }
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterstatistics.html
+ALTER STATISTICS #statistics_name#
+--OWNER to {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 --SET SCHEMA new_schema
 ''')
         else:
-            return Template('''ALTER STATISTICS #statistics_name#
---OWNER to { new_owner | CURRENT_USER | SESSION_USER }
+            return Template(f'''-- https://www.postgresql.org/docs/{self.major_version}/sql-alterstatistics.html
+ALTER STATISTICS #statistics_name#
+--OWNER to {{ new_owner | CURRENT_USER | SESSION_USER }}
 --RENAME TO new_name
 --SET SCHEMA new_schema
 --SET STATISTICS new_target
 ''')
 
     def TemplateDropStatistics(self):
-        return Template('DROP STATISTICS #statistics_name#')
+        return Template(f'-- https://www.postgresql.org/docs/{self.major_version}/sql-dropstatistics.html \nDROP STATISTICS #statistics_name#')
 
     @lock_required
     def GetPropertiesRole(self, p_object):
