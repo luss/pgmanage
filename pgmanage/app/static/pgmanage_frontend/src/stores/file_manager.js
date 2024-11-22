@@ -25,7 +25,7 @@ const useFileManagerStore = defineStore("fileManager", {
     reset() {
       this.onChange = () => {};
       this.dialogType = null;
-      this.filePath = null;
+      this.file = null;
       this.desktopMode = null;
     },
   },
