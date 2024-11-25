@@ -244,11 +244,11 @@
     </div>  
 
     <div class="d-flex justify-content-between mt-3">
-      <a :class="['btn', 'btn-outline-secondary', 'mb-2', { 'disabled': !isOptionsChanged }]" @click="resetToDefault">Revert settings</a>
+      <a data-testid="revert-settings-button" :class="['btn', 'btn-outline-secondary', 'mb-2', { 'disabled': !isOptionsChanged }]" @click="resetToDefault">Revert settings</a>
       <div class="btn-group" role="group">
-        <a :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
+        <a data-testid="preview-button" :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
           @click="previewCommand">Preview</a>
-          <a :class="['btn', 'btn-success', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
+          <a data-testid="restore-button" :class="['btn', 'btn-success', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
           @click.prevent="createRestore">Restore</a>
       </div>
     </div>
@@ -378,7 +378,7 @@ export default {
           resp.data.data.forEach(element => this.roleNames.push(element.name))
         })
         .catch((error) => {
-          console.log(error)
+          showToast("error", error.response?.data?.data)
         })
     },
     createRestore() {
