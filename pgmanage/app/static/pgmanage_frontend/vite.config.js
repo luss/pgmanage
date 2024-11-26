@@ -71,5 +71,12 @@ export default defineConfig(({ command, mode }) => {
         enabled: true
       }
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          silenceDeprecations: ['mixed-decls', 'color-functions', 'legacy-js-api']
+        },
+      }
+    },
   };
 });
