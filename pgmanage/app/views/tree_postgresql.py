@@ -12,8 +12,6 @@ def get_tree_info(request, database):
             "database": database.GetName(),
             "version": database.GetVersion(),
             #'superuser': database.GetUserSuper(),
-            "create_role": database.TemplateCreateRole().v_text,
-            "alter_role": database.TemplateAlterRole().v_text,
             "drop_role": database.TemplateDropRole().v_text,
             "create_tablespace": database.TemplateCreateTablespace().v_text,
             "alter_tablespace": database.TemplateAlterTablespace().v_text,
