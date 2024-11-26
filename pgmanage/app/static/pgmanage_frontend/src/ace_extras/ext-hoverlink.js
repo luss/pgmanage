@@ -1,17 +1,10 @@
 ace.define(
   "ace/ext/hoverlink",
-  [
-    "require",
-    "exports",
-    "module",
-    "ace/editor",
-    "ace/config",
-    "ace/range",
-  ],
+  ["require", "exports", "module", "ace/editor", "ace/config", "ace/range"],
   function (require, exports, module) {
     const Editor = require("ace/editor").Editor;
     const Range = require("ace/range").Range;
-    const linkRegex = /https?:\/\/www\.postgresql\.org\/docs\/[^\s"']+/g;
+    const linkRegex = /(?<=\s)https?:\/\/www\.postgresql\.org\/docs\/[^\s"']+/g;
     let hoverState = {
       activeMarker: null,
       activeLink: null,
@@ -56,6 +49,23 @@ ace.define(
         return;
       }
 
+      // Get pixel position of the token range
+      const screenStart = editor.renderer.textToScreenCoordinates(
+        position.row,
+        token.start
+      );
+      const screenEnd = editor.renderer.textToScreenCoordinates(
+        position.row,
+        token.start + token.value.length
+      );
+
+      const mouseX = e.domEvent.clientX;
+
+      // Check if the mouse is within the link's pixel bounds
+      if (mouseX < screenStart.pageX || mouseX > screenEnd.pageX) {
+        clearHover(editor);
+        return;
+      }
       highlightLink(
         editor,
         position.row,
