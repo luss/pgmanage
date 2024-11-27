@@ -133,6 +133,7 @@ export default {
       table: null,
       heightSubtract: 200,
       colWidthArray: [],
+      columns: []
     };
   },
   computed: {
@@ -206,6 +207,94 @@ export default {
     this.handleResize();
   },
   methods: {
+    copyTableData(format) {
+      const data = this.table.getData();
+      const headers = this.columns;
+
+      if (format === "json") {
+        const jsonOutput = this.generateJson(data, headers);
+        this.copyToClipboard(jsonOutput);
+      } else if (format === "csv") {
+        const csvOutput = this.generateCsv(data, headers);
+        this.copyToClipboard(csvOutput);
+      } else if (format === "markdown") {
+        const markdownOutput = this.generateMarkdown(data, headers);
+        this.copyToClipboard(markdownOutput);
+      }
+    },
+    copyToClipboard(text) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+        })
+        .catch((error) => {
+          showToast("error", error);
+        });
+    },
+    generateJson(data, headers) {
+      const columns = headers.map((col, index) => ({
+        field: index,
+        title: col,
+      }));
+
+      const mappedData = data.map((row) => {
+        const mappedRow = {};
+        columns.forEach((col) => {
+          mappedRow[col.title] = row[col.field];
+        });
+        return mappedRow;
+      });
+
+      return JSON.stringify(mappedData, null, 2);
+    },
+    generateCsv(data, headers) {
+      const csvRows = [];
+
+      // Add header row
+      csvRows.push(headers.join(settingsStore.csvDelimiter));
+
+      data.forEach((row) => {
+        csvRows.push(row.join(settingsStore.csvDelimiter));
+      });
+
+      return csvRows.join("\n");
+    },
+    generateMarkdown(data, headers) {
+      const columnWidths = headers.map((header, index) => {
+        const maxDataLength = data.reduce(
+          (max, row) => Math.max(max, (row[index] || "").toString().length),
+          0
+        );
+        return Math.max(header.length, maxDataLength);
+      });
+
+      // Helper to pad strings to a given length
+      const pad = (str, length) => str.toString().padEnd(length, " ");
+
+      const mdRows = [];
+
+      // Add padded header row
+      mdRows.push(
+        `| ${headers
+          .map((header, index) => pad(header, columnWidths[index]))
+          .join(" | ")} |`
+      );
+
+      // Add separator row
+      mdRows.push(
+        `| ${columnWidths.map((width) => "-".repeat(width)).join(" | ")} |`
+      );
+
+      data.forEach((row) => {
+        mdRows.push(
+          `| ${row
+            .map((cell, index) => pad(cell || "", columnWidths[index]))
+            .join(" | ")} |`
+        );
+      });
+
+      return mdRows.join("\n");
+    },
     cellFormatter(cell, params, onRendered) {
       let cellVal = cell.getValue()
       if (isNil(cellVal)) {
@@ -304,7 +393,26 @@ export default {
       this.updateTableData(data);
     },
     prepareColumns(colNames, colTypes) {
+      this.columns = colNames
       let cellContextMenu = [
+        {
+          label:
+            '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy table data</div>',
+          menu: [
+            {
+              label: "Copy as JSON",
+              action: () => this.copyTableData("json"),
+            },
+            {
+              label: "Copy as CSV",
+              action: () => this.copyTableData("csv"),
+            },
+            {
+              label: "Copy as Markdown",
+              action: () => this.copyTableData("markdown"),
+            },
+          ],
+        },
         {
           label:
             '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
