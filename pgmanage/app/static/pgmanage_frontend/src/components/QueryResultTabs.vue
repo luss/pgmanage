@@ -208,7 +208,8 @@ export default {
   },
   methods: {
     copyTableData(format) {
-      const data = this.table.getData();
+      const selectedData = this.getSelectedDataInDisplayOrder();
+      const data = selectedData.length > 0 ? selectedData : this.table.getData();
       const headers = this.columns;
 
       if (format === "json") {
@@ -221,6 +222,18 @@ export default {
         const markdownOutput = this.generateMarkdown(data, headers);
         this.copyToClipboard(markdownOutput);
       }
+    },
+    getSelectedDataInDisplayOrder() {
+      const rowComponents = this.table.getSelectedRows();
+
+      const rowsWithPosition = rowComponents.map((row) => ({
+        data: row.getData(),
+        position: row.getPosition(),
+      }));
+
+      rowsWithPosition.sort((a, b) => a.position - b.position);
+
+      return rowsWithPosition.map((row) => row.data);
     },
     copyToClipboard(text) {
       navigator.clipboard
@@ -393,42 +406,42 @@ export default {
       this.updateTableData(data);
     },
     prepareColumns(colNames, colTypes) {
-      this.columns = colNames
-      let cellContextMenu = [
-        {
-          label:
-            '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy table data</div>',
-          menu: [
-            {
-              label: "Copy as JSON",
-              action: () => this.copyTableData("json"),
-            },
-            {
-              label: "Copy as CSV",
-              action: () => this.copyTableData("csv"),
-            },
-            {
-              label: "Copy as Markdown",
-              action: () => this.copyTableData("markdown"),
-            },
-          ],
-        },
-        {
-          label:
-            '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
-          action: function (e, cell) {
-            cell.getTable().copyToClipboard("selected");
+      this.columns = colNames.map((colName, idx) => {
+        return colName === '?column?' ? `column-${idx}` : colName
+      })
+      let cellContextMenu = () => {
+        const isAnyRowsSelected = !!this.table.getSelectedData().length;
+        const copyText = `${isAnyRowsSelected ? "selected" : "table data"}`
+        return [
+          {
+            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy ${copyText} as JSON</div>`,
+            action: () => this.copyTableData("json"),
           },
-        },
-        {
-          label:
-            '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
-          action: (e, cell) => {
-            cellDataModalStore.showModal(cell.getValue())
+          {
+            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy ${copyText} as CSV</div>`,
+            action: () => this.copyTableData("csv"),
           },
-        },
-      ];
-      let columns = colNames.map((col, idx) => {
+          {
+            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy ${copyText} as Markdown</div>`,
+            action: () => this.copyTableData("markdown"),
+          },
+          {
+            label:
+              '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
+            action: function (e, cell) {
+              cell.getTable().copyToClipboard("selected");
+            },
+          },
+          {
+            label:
+              '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
+            action: (e, cell) => {
+              cellDataModalStore.showModal(cell.getValue())
+            },
+          },
+        ];
+      } 
+      let columns = this.columns.map((col, idx) => {
         let formatTitle = function(col, idx) {
           if(colTypes?.length === 0 )
             return col
