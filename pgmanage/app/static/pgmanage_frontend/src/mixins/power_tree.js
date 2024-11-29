@@ -202,11 +202,11 @@ export default {
     refreshTreeRecursive(node_type) {
       const rootNode = this.getRootNode();
       const getInnerNode = (node, node_type) => {
+        if (node.data.type === node_type) {
+          this.refreshTree(node, true);
+          this.expandNode(node);
+        }
         if (!!node.children.length) {
-          if (node.data.type === node_type) {
-            this.refreshTree(node, true);
-            this.expandNode(node);
-          }
 
           for (let i = 0; i < node.children.length; i++) {
             let childNode = node.children[i];
