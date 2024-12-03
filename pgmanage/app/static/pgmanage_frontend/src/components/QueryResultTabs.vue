@@ -185,6 +185,7 @@ export default {
     let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
     table.on("tableBuilt", () => {
       this.table = table;
+      document.querySelector(`#${this.tabId}_content .tabulator-range-overlay`).classList.add('invisible'); // hides cell range overlay on table initialization
     });
     settingsStore.$onAction((action) => {
       if (action.name === "setFontSize") {
@@ -535,6 +536,7 @@ export default {
             }
           });
         }
+        this.addHeaderMenuOverlayElement();
       });
 
       table.on(
@@ -622,6 +624,35 @@ export default {
 
       this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },
+    addHeaderMenuOverlayElement() {
+      const targetElement = document.querySelector(`#${this.tabId}_content .tabulator-frozen-left`)
+
+      const overlay = document.createElement("div");
+      overlay.className =  "position-absolute w-100 h-100";
+      overlay.style.zIndex = "1000"; 
+      overlay.style.cursor = "pointer"
+      overlay.style.backgroundColor = "rgba(0, 0, 0, 0)";
+
+      targetElement.appendChild(overlay)
+
+      targetElement.addEventListener("mousedown", (e) => {
+        const { clientX, clientY } = e;
+
+        const clickEvent = new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          clientX: clientX,
+          clientY: clientY,
+        });
+
+        const targetElement = document.querySelector(`#${this.tabId}_content .tabulator-frozen-left .actions-menu`)
+        
+        e.stopPropagation();
+        e.preventDefault();
+
+        targetElement.dispatchEvent(clickEvent);
+      });
+    }
   },
 };
 </script>
