@@ -39,6 +39,10 @@
                     &-content {
                         padding: 0 0.75rem!important;
                     }
+
+                    &.tabulator-range-highlight {
+                        color: $primaryMutedColor;
+                    }
                 }
 
                 &-popup-button {
@@ -121,6 +125,15 @@
 
                         &.tabulator-selected {
                             background-color: rgba($primaryBlue, 0.25) !important;
+                        }
+
+                        &.tabulator-range-highlight {
+                            .tabulator-range-row-header{
+                                @include themify() {
+                                    background-color: themed($surfaceBg);
+                                    color: themed($color);
+                                }
+                            }
                         }
                     }
 
