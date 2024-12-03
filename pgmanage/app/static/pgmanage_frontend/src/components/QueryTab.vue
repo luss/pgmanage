@@ -275,7 +275,7 @@ export default {
           this.showFetchButtons = false;
           this.longQuery = false;
           this.tempData = [];
-          this.lastQuery = query
+          this.lastQuery = query.trim();
 
           let message_data = {
             sql_cmd: query,
