@@ -12,10 +12,20 @@ ace.define(
     const CustomPgsqlHighlightRules = function () {
       PgsqlHighlightRules.call(this);
 
-      this.$rules.start.unshift({
-        token: "url",
-        regex: /--\shttps?:\/\/www\.postgresql\.org\/docs\/[^\s"']+/,
-      });
+      this.$rules.start.unshift(
+        {
+          token: "comment",
+          regex: /--.*(?=https?:\/\/)/,
+        },
+        {
+          token: "url",
+          regex: /https?:\/\/www\.postgresql\.org\/docs\/[^\s"']+/,
+        },
+        {
+          token: "comment",
+          regex: /--.*$/,
+        }
+      );
     };
 
     oop.inherits(CustomPgsqlHighlightRules, PgsqlHighlightRules);
