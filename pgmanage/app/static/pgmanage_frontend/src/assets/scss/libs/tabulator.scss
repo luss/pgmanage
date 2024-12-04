@@ -141,6 +141,9 @@
                         border: 0;
                         padding: 0.45rem 0.75rem;
                         height: 100%;
+                        &.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {
+                            background-color: rgba($primaryBlue, .15);   
+                        }
                     }
                 }
             }
