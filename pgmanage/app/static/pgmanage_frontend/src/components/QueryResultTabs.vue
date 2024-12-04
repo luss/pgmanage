@@ -625,7 +625,7 @@ export default {
       this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },
     addHeaderMenuOverlayElement() {
-      const targetElement = document.querySelector(`#${this.tabId}_content .tabulator-frozen-left`)
+      const targetElement = document.querySelector(`#${this.tabId}_content .tabulator-frozen-left .tabulator-header-popup-button`)
 
       const overlay = document.createElement("div");
       overlay.className =  "position-absolute w-100 h-100";
