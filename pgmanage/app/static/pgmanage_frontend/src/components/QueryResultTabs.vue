@@ -78,6 +78,7 @@ import escape from 'lodash/escape';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import mean from 'lodash/mean';
+import last from 'lodash/last';
 import { Tab } from "bootstrap";
 
 export default {
@@ -114,7 +115,10 @@ export default {
         data: [],
         placeholderHeaderFilter: "No Matching Data",
         autoResize: false,
-        selectableRows: true,
+        selectableRangeAutoFocus:false,
+        selectableRange:1,
+        selectableRangeColumns:true,
+        selectableRangeRows:true,
         height: "100%",
         layout: "fitDataStretch",
         columnDefaults: {
@@ -123,7 +127,7 @@ export default {
           maxInitialWidth: 200,
         },
         clipboard: "copy",
-        clipboardCopyRowRange: "selected",
+        clipboardCopyRowRange: "range",
         clipboardCopyConfig: {
           columnHeaders: false, //do not include column headers in clipboard output
         },
@@ -181,6 +185,7 @@ export default {
     let table = new Tabulator(this.$refs.tabulator, this.tableSettings);
     table.on("tableBuilt", () => {
       this.table = table;
+      document.querySelector(`#${this.tabId}_content .tabulator-range-overlay`).classList.add('invisible'); // hides cell range overlay on table initialization
     });
     settingsStore.$onAction((action) => {
       if (action.name === "setFontSize") {
@@ -208,32 +213,28 @@ export default {
   },
   methods: {
     copyTableData(format) {
-      const selectedData = this.getSelectedDataInDisplayOrder();
-      const data = selectedData.length > 0 ? selectedData : this.table.getData();
-      const headers = this.columns;
+      const data = last(this.table.getRangesData());
+
+      let headers = [];
+      let headerIndexMap = {}; // Map header titles to their original indices
+
+      Object.keys(last(data)).forEach((key) => {
+          const originalIndex = parseInt(key, 10);
+          const header = this.columns[originalIndex];
+          headers.push(header);
+          headerIndexMap[header] = originalIndex;
+      });
 
       if (format === "json") {
-        const jsonOutput = this.generateJson(data, headers);
+        const jsonOutput = this.generateJson(data, headers, headerIndexMap);
         this.copyToClipboard(jsonOutput);
       } else if (format === "csv") {
-        const csvOutput = this.generateCsv(data, headers);
+        const csvOutput = this.generateCsv(data, headers, headerIndexMap);
         this.copyToClipboard(csvOutput);
       } else if (format === "markdown") {
-        const markdownOutput = this.generateMarkdown(data, headers);
+        const markdownOutput = this.generateMarkdown(data, headers, headerIndexMap);
         this.copyToClipboard(markdownOutput);
       }
-    },
-    getSelectedDataInDisplayOrder() {
-      const rowComponents = this.table.getSelectedRows();
-
-      const rowsWithPosition = rowComponents.map((row) => ({
-        data: row.getData(),
-        position: row.getPosition(),
-      }));
-
-      rowsWithPosition.sort((a, b) => a.position - b.position);
-
-      return rowsWithPosition.map((row) => row.data);
     },
     copyToClipboard(text) {
       navigator.clipboard
@@ -244,38 +245,39 @@ export default {
           showToast("error", error);
         });
     },
-    generateJson(data, headers) {
-      const columns = headers.map((col, index) => ({
-        field: index,
-        title: col,
-      }));
-
+    generateJson(data, headers, headerIndexMap) {
       const mappedData = data.map((row) => {
         const mappedRow = {};
-        columns.forEach((col) => {
-          mappedRow[col.title] = row[col.field];
+        headers.forEach((header) => {
+          const originalIndex = headerIndexMap[header];
+          mappedRow[header] = row[originalIndex];
         });
         return mappedRow;
       });
 
       return JSON.stringify(mappedData, null, 2);
     },
-    generateCsv(data, headers) {
+    generateCsv(data, headers, headerIndexMap) {
       const csvRows = [];
 
       // Add header row
       csvRows.push(headers.join(settingsStore.csvDelimiter));
 
       data.forEach((row) => {
-        csvRows.push(row.join(settingsStore.csvDelimiter));
+        const rowValues = headers.map((header) => {
+          const originalIndex = headerIndexMap[header];
+          return row[originalIndex] || ""; 
+        })
+        csvRows.push(rowValues.join(settingsStore.csvDelimiter));
       });
 
       return csvRows.join("\n");
     },
-    generateMarkdown(data, headers) {
-      const columnWidths = headers.map((header, index) => {
+    generateMarkdown(data, headers, headerIndexMap) {
+      const columnWidths = headers.map((header) => {
+        const originalIndex = headerIndexMap[header];
         const maxDataLength = data.reduce(
-          (max, row) => Math.max(max, (row[index] || "").toString().length),
+          (max, row) => Math.max(max, (row[originalIndex] || "").toString().length),
           0
         );
         return Math.max(header.length, maxDataLength);
@@ -299,12 +301,12 @@ export default {
       );
 
       data.forEach((row) => {
-        mdRows.push(
-          `| ${row
-            .map((cell, index) => pad(cell || "", columnWidths[index]))
-            .join(" | ")} |`
-        );
+      const rowValues = headers.map((header, index) => {
+        const originalIndex = headerIndexMap[header];
+        return pad(row[originalIndex] || "", columnWidths[index]);
       });
+      mdRows.push(`| ${rowValues.join(" | ")} |`);
+    });
 
       return mdRows.join("\n");
     },
@@ -410,27 +412,25 @@ export default {
         return colName === '?column?' ? `column-${idx}` : colName
       })
       let cellContextMenu = () => {
-        const isAnyRowsSelected = !!this.table.getSelectedData().length;
-        const copyText = `${isAnyRowsSelected ? "selected" : "table data"}`
         return [
-          {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy ${copyText} as JSON</div>`,
-            action: () => this.copyTableData("json"),
-          },
-          {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy ${copyText} as CSV</div>`,
-            action: () => this.copyTableData("csv"),
-          },
-          {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy ${copyText} as Markdown</div>`,
-            action: () => this.copyTableData("markdown"),
-          },
           {
             label:
               '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
             action: function (e, cell) {
-              cell.getTable().copyToClipboard("selected");
+              cell.getTable().copyToClipboard();
             },
+          },
+          {
+            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as JSON</div>`,
+            action: () => this.copyTableData("json"),
+          },
+          {
+            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as CSV</div>`,
+            action: () => this.copyTableData("csv"),
+          },
+          {
+            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as Markdown</div>`,
+            action: () => this.copyTableData("markdown"),
           },
           {
             label:
@@ -536,6 +536,7 @@ export default {
             }
           });
         }
+        this.addHeaderMenuOverlayElement();
       });
 
       table.on(
@@ -623,6 +624,35 @@ export default {
 
       this.heightSubtract = this.$refs.tabContent.getBoundingClientRect().top;
     },
+    addHeaderMenuOverlayElement() {
+      const targetElement = document.querySelector(`#${this.tabId}_content .tabulator-frozen-left .tabulator-header-popup-button`)
+
+      const overlay = document.createElement("div");
+      overlay.className =  "position-absolute w-100 h-100";
+      overlay.style.zIndex = "1000"; 
+      overlay.style.cursor = "pointer"
+      overlay.style.backgroundColor = "rgba(0, 0, 0, 0)";
+
+      targetElement.appendChild(overlay)
+
+      targetElement.addEventListener("mousedown", (e) => {
+        const { clientX, clientY } = e;
+
+        const clickEvent = new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          clientX: clientX,
+          clientY: clientY,
+        });
+
+        const targetElement = document.querySelector(`#${this.tabId}_content .tabulator-frozen-left .actions-menu`)
+        
+        e.stopPropagation();
+        e.preventDefault();
+
+        targetElement.dispatchEvent(clickEvent);
+      });
+    }
   },
 };
 </script>
