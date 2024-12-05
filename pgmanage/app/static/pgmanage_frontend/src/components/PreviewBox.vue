@@ -77,6 +77,9 @@ export default {
         this.editor.setFontSize(state.fontSize);
       });
 
+      this.editor.setOptions({
+        enableHoverLinking: true
+      });
       this.addCopyToEditorButton();
     },
     addCopyToEditorButton() {

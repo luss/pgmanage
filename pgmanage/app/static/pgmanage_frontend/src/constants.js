@@ -99,9 +99,9 @@ const maxFileSizeInKB = 1024 ** 2 * maxFileSizeInMB;
 const maxLinesForIndentSQL = 7 * 1000;
 
 const editorModeMap = {
-  postgresql: "pgsql",
-  mysql: "mysql",
-  mariadb: "mysql",
+  postgresql: "pgsql_extended",
+  mysql: "mysql_extended",
+  mariadb: "mysql_extended",
   oracle: "plsql",
 };
 

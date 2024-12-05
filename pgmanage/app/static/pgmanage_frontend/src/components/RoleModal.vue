@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="form-group mb-2">
-                  <PreviewBox label="Preview" :editor-text="generatedSQL" style="height: 20vh"/>
+                  <PreviewBox label="Preview" :editor-text="generatedSQL" databaseTechnology="postgresql" style="height: 20vh"/>
                 </div>
               </div>
 
@@ -253,6 +253,7 @@
       treeNode: Object,
       workspaceId: String,
       databaseIndex: Number,
+      version: String
     },
     data() {
       return {
@@ -552,7 +553,8 @@
           if(!this.hasChanges)
             ret = '-- No changes --'
         }
-        this.generatedSQL = ret
+        let roleDocLink = `-- https://www.postgresql.org/docs/${this.version}/user-manag.html`
+        this.generatedSQL =`${roleDocLink}\n${ret}`
       },
       setupDatePicker(){
         $(this.$refs.datepicker).daterangepicker({

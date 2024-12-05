@@ -2565,7 +2565,7 @@ export default {
             label: "Create Role",
             icon: "fas cm-all fa-plus",
             onClick: () => {
-              createRoleModal(this.selectedNode, operationModes.CREATE);
+              createRoleModal(this.selectedNode, operationModes.CREATE, this.getMajorVersion(this.templates.version));
             },
           },
           {
@@ -2585,7 +2585,7 @@ export default {
             label: "Alter Role",
             icon: "fas cm-all fa-edit",
             onClick: () => {
-              createRoleModal(this.selectedNode, operationModes.UPDATE);
+              createRoleModal(this.selectedNode, operationModes.UPDATE, this.getMajorVersion(this.templates.version));
             },
           },
           COMMENT_MENUITEM,
