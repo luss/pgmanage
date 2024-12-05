@@ -331,12 +331,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.ace_link_marker {
-      position: absolute;
-      background:green;
-      opacity:30%;
-    }
-
-</style>
