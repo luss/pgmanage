@@ -419,7 +419,7 @@ def create_request(request: HttpRequest, session: Session) -> JsonResponse:
                     t = StoppableThread(thread_terminal, request_data)
                     workspace_context["thread"] = t
                     workspace_context["type"] = "terminal"
-                    workspace_context["tab_id"] = request_data["tab_id"]
+                    workspace_context["workspace_id"] = request_data["workspace_id"]
                     t.start()
             else:
                 try:
