@@ -42,6 +42,7 @@ ace.config.setModuleUrl('ace/mode/pgsql_extended', extendedPgsqlUrl)
 ace.config.setModuleUrl('ace/mode/mysql_extended', extendedMysqlUrl)
 
 axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
+axios.defaults.baseURL = app_base_path;
 
 document.addEventListener('auxclick', function(event) {
   if (event.button === 1) {
