@@ -9,7 +9,7 @@ import { buildSnippetContextMenuObjects } from "../tree_context_functions/tree_s
 import { emitter } from "../emitter";
 import { format } from "sql-formatter";
 import { setupAceDragDrop, setupAceSelectionHighlight } from "../ace_extras/plugins";
-import { maxLinesForIndentSQL } from "../constants";
+import { editorModeMap, maxLinesForIndentSQL } from "../constants";
 import { showToast } from "../notification_control";
 import { SQLAutocomplete, SQLDialect } from 'sql-autocomplete';
 
@@ -100,14 +100,7 @@ export default {
         dbMetadataStore.fetchDbMeta(this.databaseIndex, this.tabId, this.databaseName)
     },
     setupEditor() {
-      const EDITOR_MODEMAP = {
-        'postgresql': 'pgsql_extended',
-        'mysql': 'mysql_extended',
-        'mariadb': 'mysql_extended',
-        'oracle': 'plsql'
-      }
-
-      let editor_mode = EDITOR_MODEMAP[this.dialect] || 'sql'
+      let editor_mode = editorModeMap[this.dialect] || 'sql'
 
       this.editor = ace.edit(this.$refs.editor);
       this.editor.$blockScrolling = Infinity;
@@ -331,12 +324,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.ace_link_marker {
-      position: absolute;
-      background:green;
-      opacity:30%;
-    }
-
-</style>

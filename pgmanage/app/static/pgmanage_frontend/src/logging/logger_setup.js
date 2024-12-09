@@ -36,7 +36,7 @@ const customJSON = (log) => ({
 });
 
 remote.apply(logger, {
-  url: "/log/",
+  url: `${app_base_path}/log/`,
   method: "POST",
   level: DEFAULT_LOGLEVEL_REMOTE,
   headers: { "X-CSRFToken": getCookie(v_csrf_cookie_name) },

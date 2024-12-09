@@ -10,6 +10,12 @@ import { queryRequestCodes, operationModes } from "../constants";
 import { showMenuNewTabOuter, renameTab } from "../workspace";
 import { h } from "vue";
 
+import postgresqlIcon from '@/assets/images/db_icons/postgresql.svg'
+import mysqlIcon from '@/assets/images/db_icons/mysql.svg'
+import mariadbIcon from '@/assets/images/db_icons/mariadb.svg'
+import oracleIcon from '@/assets/images/db_icons/oracle.svg'
+import sqliteIcon from '@/assets/images/db_icons/sqlite.svg'
+
 const useTabsStore = defineStore("tabs", {
   state: () => ({
     id: new ShortUniqueId({
@@ -313,22 +319,16 @@ const useTabsStore = defineStore("tabs", {
             }
           }
 
-          const imgPath =
-            import.meta.env.MODE === "development"
-              ? `${import.meta.env.BASE_URL}src/assets/images/`
-              : `${import.meta.env.BASE_URL}assets/`;
-
-          let imgName;
-          if (
-            import.meta.env.MODE === "development" ||
-            connection.technology === "sqlite"
-          ) {
-            imgName = connection.technology;
-          } else {
-            imgName = `${connection.technology}2`;
+          const dbIcons = {
+            'postgresql': postgresqlIcon,
+            'mysql': mysqlIcon,
+            'mariadb': mariadbIcon,
+            'oracle': oracleIcon,
+            'sqlite': sqliteIcon,
           }
 
-          let icon = `<img src="${app_base_path}${imgPath}${imgName}.svg"/>`;
+          let imgPath = dbIcons[connection.technology];
+          let icon = `<img src="${imgPath}"/>`;
 
           const connTab = this.addTab({
             name: connName,

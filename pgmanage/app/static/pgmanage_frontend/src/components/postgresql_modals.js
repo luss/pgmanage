@@ -70,10 +70,10 @@ function createPgCronModal(node, mode) {
   app.mount(`#pgcron-modal-wrap`);
 }
 
-function createRoleModal(node, mode) {
+function createRoleModal(node, mode, version) {
   const wrap_div = document.getElementById("role-modal-wrap");
 
-  wrap_div.innerHTML = `<role-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :workspace-id="workspaceId"></role-modal>`;
+  wrap_div.innerHTML = `<role-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :workspace-id="workspaceId" :version="version"></role-modal>`;
 
   const app = createApp({
     components: {
@@ -86,6 +86,7 @@ function createRoleModal(node, mode) {
         databaseIndex:
         tabsStore.selectedPrimaryTab.metaData.selectedDatabaseIndex,
         workspaceId: tabsStore.selectedPrimaryTab.id,
+        version: version
       };
     },
     mounted() {
