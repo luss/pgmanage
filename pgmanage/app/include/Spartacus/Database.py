@@ -34,13 +34,15 @@ import base64
 import app.include.Spartacus as Spartacus
 import app.include.Spartacus.prettytable as prettytable
 from urllib.parse import urlparse
+from pgmanage import settings
 
 v_supported_rdbms = []
 
 try:
-    import sqlite3
-    v_supported_rdbms.append('SQLite')
-    v_supported_rdbms.append('Memory')
+    if getattr(settings, "DESKTOP_MODE") :
+        import sqlite3
+        v_supported_rdbms.append('SQLite')
+        v_supported_rdbms.append('Memory')
 except ImportError:
     pass
 try:
