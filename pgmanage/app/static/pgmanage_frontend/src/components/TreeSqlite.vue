@@ -165,7 +165,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Column",
@@ -187,7 +187,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Index",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Index",
@@ -232,7 +232,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger",
@@ -278,7 +278,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate("Create View", this.templates.create_view);
             },

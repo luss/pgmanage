@@ -90,7 +90,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Database",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate("Create Database", this.templates.create_database);
             },
@@ -163,7 +163,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Schema",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate("Create Schema", this.templates.create_schema);
             },
@@ -416,7 +416,7 @@ export default {
         cm_columns: [
           {
             label: "Create Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Column",
@@ -471,7 +471,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Primary Key",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Primary Key",
@@ -512,7 +512,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Key",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Key",
@@ -553,7 +553,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Unique",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Unique",
@@ -594,7 +594,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Check",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Check",
@@ -634,7 +634,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Exclude",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Exclude",
@@ -674,7 +674,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Index",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Index",
@@ -745,7 +745,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Rule",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Rule",
@@ -817,7 +817,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger",
@@ -960,7 +960,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Inherited",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Inherited",
@@ -1019,7 +1019,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Partition",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Partition",
@@ -1079,7 +1079,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Statistics",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Statistics",
@@ -1169,7 +1169,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Table",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Table",
@@ -1290,7 +1290,7 @@ export default {
         cm_foreign_columns: [
           {
             label: "Create Foreign Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Column",
@@ -1343,7 +1343,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Sequence",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Sequence",
@@ -1399,7 +1399,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create View",
@@ -1474,7 +1474,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger",
@@ -1502,7 +1502,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Mat. View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Materialized View",
@@ -1603,7 +1603,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Function",
@@ -1685,7 +1685,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger Function",
@@ -1748,7 +1748,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Event Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Event Trigger Function",
@@ -1813,7 +1813,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Procedure",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Procedure",
@@ -1888,7 +1888,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Aggregate",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Aggregate",
@@ -1945,7 +1945,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Type",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Type",
@@ -2001,7 +2001,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Domain",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Domain",
@@ -2057,7 +2057,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Extension",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               createExtensionModal(this.selectedNode, operationModes.CREATE);
             },
@@ -2095,7 +2095,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Data Wrapper",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Data Wrapper",
@@ -2148,7 +2148,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Server",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Server",
@@ -2206,7 +2206,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create User Mapping",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create User Mapping",
@@ -2254,7 +2254,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Event Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Event Trigger",
@@ -2371,7 +2371,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Publication",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Publication",
@@ -2457,7 +2457,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Subscription",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Subscription",
@@ -2510,7 +2510,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Tablespace",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Tablespace",
@@ -2607,7 +2607,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Slot",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Physical Replication Slot",
@@ -2646,7 +2646,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Slot",
-            icon: "fas cm-all fa-edit",
+            icon: "fas cm-all fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Logical Replication Slot",
