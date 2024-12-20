@@ -385,7 +385,7 @@ class BatchJob:
 
     @staticmethod
     def list(user):
-        jobs = Job.objects.filter(user=user).select_related("connection")
+        jobs = Job.objects.filter(user=user).select_related("connection").order_by('-start_time')
         changed = False
 
         res = []
