@@ -11,6 +11,22 @@ vi.mock("@/notification_control", () => ({
   showAlert: vi.fn(),
 }));
 
+vi.mock("@/stores/stores_initializer", async (importOriginal) => {
+  const orig = await importOriginal();
+  return {
+    ...orig,
+    tabsStore: {
+      selectedPrimaryTab: {
+        metaData: {
+          selectedTab: {
+            id: "testTab",
+          },
+        },
+      },
+    },
+  };
+});
+
 vi.mock("axios");
 
 describe("RestoreTab.vue", () => {
@@ -252,5 +268,16 @@ describe("RestoreTab.vue", () => {
     await flushPromises();
 
     expect(showToast).toHaveBeenCalledWith("error", "Error previewing command");
+  });
+
+  it("changes restoreOptions.fileName on FileManager store 'changeFile' action", async () => {
+    const previewButton = wrapper.find('[data-testid="preview-button"]');
+    expect(previewButton.classes("disabled")).toBeTruthy();
+    const file = { path: "/new/path/to/file.sql" };
+    fileManagerStore.changeFile(file);
+
+    await flushPromises();
+    expect(wrapper.vm.restoreOptions.fileName).toEqual(file["path"]);
+    expect(previewButton.classes("disabled")).toBeFalsy();
   });
 });

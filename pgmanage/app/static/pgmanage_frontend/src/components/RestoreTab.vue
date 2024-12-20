@@ -363,7 +363,7 @@ export default {
     fileManagerStore.$onAction(({name, store, after}) => {
       if (name === "changeFile" && this.tabId === tabsStore.selectedPrimaryTab.metaData.selectedTab.id) {
         after(() => {
-          this.changeFilePath(store.filePath)
+          this.changeFilePath(store.file.path)
         })
       }
     })
