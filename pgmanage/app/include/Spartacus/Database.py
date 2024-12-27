@@ -39,10 +39,9 @@ from pgmanage import settings
 v_supported_rdbms = []
 
 try:
-    if getattr(settings, "DESKTOP_MODE") or getattr(settings, "DEBUG"):
-        import sqlite3
-        v_supported_rdbms.append('SQLite')
-        v_supported_rdbms.append('Memory')
+    import sqlite3
+    v_supported_rdbms.append('SQLite')
+    v_supported_rdbms.append('Memory')
 except ImportError:
     pass
 try:
