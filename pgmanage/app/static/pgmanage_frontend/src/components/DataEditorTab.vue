@@ -502,6 +502,9 @@ export default {
       return `Apply ${count} ${(count > 1 || count == 0) ? 'changes' : 'change'}`
     },
     handleFilterUpdate({ mode, filters, rawQuery }) {
+      this.$nextTick(() => {
+        this.handleResize();
+      })
       this.mode = mode;
       if (filters) this.filters = filters;
       if (rawQuery !== undefined) {
