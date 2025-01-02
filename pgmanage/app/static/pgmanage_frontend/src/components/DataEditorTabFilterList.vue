@@ -1,0 +1,178 @@
+<template>
+  <div
+    v-if="mode === modes.BUILDER"
+    v-for="(filter, index) in localFilters"
+    :key="index"
+    class="row mb-1"
+  >
+    <div class="col-1">
+      <button
+        v-if="index === 0"
+        class="btn btn-sm btn-warning text-center"
+        type="button"
+        @click="switchToManual"
+        title="Switch to Manual Mode"
+      >
+        <i class="fas fa-code"> </i>
+      </button>
+      <button
+        v-else
+        class="btn btn-sm btn-outline-secondary text-center"
+        type="button"
+        @click.stop="
+          filter.condition = filter.condition === 'AND' ? 'OR' : 'AND'
+        "
+        title="Toggle Filter AND / OR"
+      >
+        {{ filter.condition }}
+      </button>
+    </div>
+    <FilterItem
+      :columns="columns"
+      :comparison-operators="comparisonOperators"
+      :value="filter"
+      @update="updateFilter(index, $event)"
+    />
+    <div class="col-1">
+      <button
+        v-if="localFilters.length === 1"
+        class="btn btn-outline-secondary btn-sm rounded-5 me-1"
+        :class="{ invisible: index === 0 }"
+        @click="removeFilter(index)"
+      >
+        <i class="fas fa-minus"></i>
+      </button>
+      <button
+        v-else
+        class="btn btn-outline-secondary btn-sm rounded-5 me-1"
+        @click="removeFilter(index)"
+      >
+        <i class="fas fa-minus"></i>
+      </button>
+
+      <button
+        v-if="index === 0"
+        class="btn btn-outline-success btn-sm rounded-5"
+        @click="addFilter"
+        title="Add filter"
+      >
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </div>
+  <div v-else class="row mb-1">
+    <div class="col-1">
+      <button
+        class="btn btn-sm btn-warning text-center"
+        type="button"
+        @click="switchToBuilder"
+        title="Switch to Builder Mode"
+      >
+        <i class="fas fa-sliders-h"> </i>
+      </button>
+    </div>
+    <div class="col">
+      <input
+        v-model="rawQuery"
+        class="form-control"
+        type="text"
+        placeholder="Type your filter query here"
+        @input="emitRawQuery"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import DataEditorTabFilterItem from "./DataEditorTabFilterItem.vue";
+import { dataEditorFilterModes } from "../constants";
+
+export default {
+  name: "DataEditorFilter",
+  components: {
+    FilterItem: DataEditorTabFilterItem,
+  },
+  emits: ["update"],
+  props: {
+    columns: {
+      type: Array,
+      default: [],
+    },
+    filters: {
+      type: Array,
+    },
+  },
+  data() {
+    return {
+      localFilters: this.filters,
+      comparisonOperators: ["=", "!=", "<", "<=", ">", ">=", "like", "in"],
+      mode: dataEditorFilterModes.BUILDER,
+      rawQuery: "",
+    };
+  },
+  computed: {
+    modes() {
+      return dataEditorFilterModes;
+    },
+  },
+  watch: {
+    columns(newValue) {
+      if (!!newValue) {
+        this.localFilters[0]["column"] = newValue[0];
+      }
+    },
+    localFilters: {
+      handler(newValue, oldValue) {
+        this.$emit("update", { mode: this.mode, filters: newValue });
+      },
+      deep: true,
+    },
+  },
+  methods: {
+    addFilter() {
+      this.localFilters.push({
+        column: this.columns[0] || "",
+        operator: "=",
+        value: "",
+        condition: "AND",
+      });
+    },
+    removeFilter(index) {
+      this.localFilters.splice(index, 1);
+    },
+    updateFilter(index, updatedFilter) {
+      this.localFilters[index] = updatedFilter;
+    },
+    switchToManual() {
+      if (!this.rawQuery) {
+        this.rawQuery = this.convertFiltersToManual(this.localFilters);
+      }
+      this.mode = this.modes.MANUAL;
+    },
+    switchToBuilder() {
+      this.mode = this.modes.BUILDER;
+    },
+    convertFiltersToManual(filters) {
+      return filters
+        .filter((f) => f.operator && f.column && f.value)
+        .map((filter, index) => {
+          const condition = index === 0 ? "" : filter.condition || "AND";
+          if (filter.operator === "in") {
+            const values = filter.value
+              .split(/\s*,\s*/)
+              .map((v) => `'${v}'`)
+              .join(", ");
+            return `${condition} ${
+              filter.column
+            } ${filter.operator.toUpperCase()} (${values})`.trim();
+          }
+          return `${condition} ${filter.column} ${filter.operator} '${filter.value}'`;
+        })
+        .join("\n");
+    },
+    emitRawQuery() {
+      this.$emit("update", { mode: this.mode, rawQuery: this.rawQuery });
+    },
+  },
+};
+</script>
