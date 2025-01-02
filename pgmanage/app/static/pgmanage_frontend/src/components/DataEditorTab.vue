@@ -124,7 +124,11 @@ export default {
           maxInitialWidth: this.maxInitialWidth,
         },
       selectableRows: false,
-      rowFormatter: this.rowFormatter
+      rowFormatter: this.rowFormatter,
+      sortMode: 'remote',
+      headerSortClickElement:"icon",
+      ajaxURL: "http://fake",
+      ajaxRequestFunc: this.getTableData,
     })
 
     table.on("tableBuilt", () => {
@@ -133,7 +137,7 @@ export default {
     })
 
     this.knex = Knex({ client: this.dialect || 'postgres'})
-    this.getTableColumns().then(this.getTableData)
+    this.getTableColumns().then(() => {this.tabulator.setSort("0", "asc")});
 
     emitter.on(`${this.tabId}_query_edit`, () => {
       this.getTableData()
@@ -232,6 +236,7 @@ export default {
               title: title,
               editor: "input",
               editable: false,
+              headerSort: true,
               cellDblClick: function (e, cell) {
                 cell.edit(true);
               },
@@ -253,7 +258,7 @@ export default {
           showToast("error", error.response.data)
         });
     },
-    getTableData() {
+    getTableData(_url, _config, params) {
       const preprocessFilters = (rawFilters) => {
         return rawFilters
           .filter((f) => f.operator && f.column && f.value)
@@ -280,6 +285,15 @@ export default {
             });
       };
       let queryFilter = "";
+      let orderBy = this.tableColumns[0]?.name ? `ORDER BY ${this.tableColumns[0].name}` : "";
+
+      if (params?.sort) {
+        orderBy = "ORDER BY " + params.sort.map((item) => {
+          const columnName = this.columnNames[item.field]
+          return `${escapeColumnName(columnName)} ${item.dir.toUpperCase()}`
+        }).join(",")
+      }
+
       if (this.mode === dataEditorFilterModes.MANUAL) {
         queryFilter = "WHERE " + this.rawQuery.trim();
       } else {
@@ -302,11 +316,12 @@ export default {
           queryFilter = "WHERE " + combineFilters(filterClauses, filters);
         }
       }
+      const finalFilter = `${queryFilter} ${orderBy}`;
       var message_data = {
         table: this.table,
         schema: this.schema,
         db_index: this.databaseIndex,
-        query_filter: queryFilter,
+        query_filter: finalFilter,
         count: this.rowLimit,
         workspace_id: this.workspaceId,
         tab_id: this.tabId,
@@ -320,6 +335,11 @@ export default {
       };
 
       createRequest(queryRequestCodes.QueryEditData, message_data, context);
+
+      // we need to return promise for tabulator ajaxRequestFunc to work
+      return new Promise((resolve, reject) => {
+        resolve([])
+      })
     },
     handleResize() {
       if(this.$refs === null)
