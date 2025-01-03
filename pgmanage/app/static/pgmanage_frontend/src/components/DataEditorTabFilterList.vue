@@ -17,6 +17,7 @@
       </button>
       <button
         v-else
+        data-testid="toggle-condition-button"
         class="btn btn-sm btn-outline-secondary text-center"
         type="button"
         @click.stop="
@@ -44,6 +45,7 @@
       </button>
       <button
         v-else
+        data-testid="remove-button"
         class="btn btn-outline-secondary btn-sm rounded-5 me-1"
         @click="removeFilter(index)"
       >

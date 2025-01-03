@@ -1,13 +1,13 @@
 <template>
   <div class="col-2">
-    <select class="form-select" v-model="selectedColumn" @change="emitUpdate">
+    <select data-testid="column-select" class="form-select" v-model="selectedColumn" @change="emitUpdate">
       <option v-for="column in columns" :key="column" :value="column">
         {{ column }}
       </option>
     </select>
   </div>
   <div class="col-2">
-    <select class="form-select" v-model="selectedOperator" @change="emitUpdate">
+    <select data-testid="operator-select" class="form-select" v-model="selectedOperator" @change="emitUpdate">
       <option
         v-for="operator in comparisonOperators"
         :key="operator"
@@ -19,6 +19,7 @@
   </div>
   <div class="col-5">
     <input
+      data-testid="value-input"
       class="form-control"
       type="text"
       v-model="filterValue"
