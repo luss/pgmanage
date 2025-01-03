@@ -77,7 +77,7 @@
         class="form-control"
         type="text"
         placeholder="Type your filter query here"
-        @input="emitRawQuery"
+        @change="emitRawQuery"
       />
     </div>
   </div>
@@ -108,6 +108,7 @@ export default {
       comparisonOperators: ["=", "!=", "<", "<=", ">", ">=", "like", "in"],
       mode: dataEditorFilterModes.BUILDER,
       rawQuery: "",
+      rawInputDirty: false,
     };
   },
   computed: {
@@ -144,13 +145,15 @@ export default {
       this.localFilters[index] = updatedFilter;
     },
     switchToManual() {
-      if (!this.rawQuery) {
+      if (!this.rawInputDirty) {
         this.rawQuery = this.convertFiltersToManual(this.localFilters);
       }
       this.mode = this.modes.MANUAL;
+      this.$emit("update", { mode: this.mode });
     },
     switchToBuilder() {
       this.mode = this.modes.BUILDER;
+      this.$emit("update", { mode: this.mode });
     },
     convertFiltersToManual(filters) {
       return filters
@@ -171,6 +174,7 @@ export default {
         .join("\n");
     },
     emitRawQuery() {
+      this.rawInputDirty = true;
       this.$emit("update", { mode: this.mode, rawQuery: this.rawQuery });
     },
   },

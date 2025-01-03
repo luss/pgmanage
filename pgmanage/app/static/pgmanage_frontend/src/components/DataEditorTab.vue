@@ -115,7 +115,8 @@ export default {
   mounted() {
     this.handleResize()
     let table = new Tabulator(this.$refs.tabulator, {
-      layout: 'fitDataStretch',
+      placeholder: "No Data Available",
+      layout: "fitDataFill",
       data: [],
       autoResize: false,
       columnDefaults: {
@@ -529,7 +530,6 @@ export default {
       if (filters) this.filters = filters;
       if (rawQuery !== undefined) {
         this.rawQuery = rawQuery;
-        this.getTableData()
       } 
     }
   },
