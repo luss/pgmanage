@@ -411,7 +411,12 @@ export default {
       this.columns = colNames.map((colName, idx) => {
         return colName === '?column?' ? `column-${idx}` : colName
       })
-      let cellContextMenu = () => {
+      let cellContextMenu = (e, cellComponent) => {
+        const selectedRange = cellComponent.getTable().getRanges()[0]
+        const isOneCellSelected =
+          selectedRange.getBottomEdge() === selectedRange.getTopEdge() &&
+          selectedRange.getRightEdge() === selectedRange.getLeftEdge();
+
         return [
           {
             label:
@@ -438,6 +443,7 @@ export default {
             action: (e, cell) => {
               cellDataModalStore.showModal(cell.getValue())
             },
+            disabled: !isOneCellSelected
           },
         ];
       } 
