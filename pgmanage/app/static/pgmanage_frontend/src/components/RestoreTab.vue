@@ -248,12 +248,12 @@
       <div class="btn-group" role="group">
         <a data-testid="preview-button" :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
           @click="previewCommand">Preview</a>
-          <a data-testid="restore-button" :class="['btn', 'btn-success', 'mb-2', { 'disabled': !restoreOptions.fileName }]"
+          <a data-testid="restore-button" :class="['btn', 'btn-success', 'mb-2', { 'disabled': !restoreOptions.fileName || restoreLocked }]"
           @click.prevent="createRestore">Restore</a>
       </div>
     </div>
   </form>
-  <UtilityJobs ref="jobs" />
+  <UtilityJobs @jobExit="handleJobExit" ref="jobs" />
 </div>
 </template>
 
@@ -312,7 +312,9 @@ export default {
         pigz_number_of_jobs: 'auto',
       },
       restoreOptions: {},
-      restoreTabId: this.tabId
+      restoreTabId: this.tabId,
+      restoreLocked: false,
+      lastJobId: 0
     }
   },
   computed: {
@@ -343,7 +345,13 @@ export default {
       if (newValue === 'directory') {
         this.restoreOptions.pigz = false
       }
-    }
+    },
+    restoreOptions: {
+      handler() {
+        this.restoreLocked = false;
+      },
+      deep: true
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -382,6 +390,7 @@ export default {
         })
     },
     createRestore() {
+      this.restoreLocked = true;
       axios.post("/restore/", {
         database_index: this.databaseIndex,
         workspace_id: this.workspaceId,
@@ -389,9 +398,11 @@ export default {
       })
         .then((resp) => {
           this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
+          this.lastJobId = resp.data.job_id;
         })
         .catch((error) => {
-          showToast("error", error.response.data.data)
+          showToast("error", error.response.data.data);
+          this.restoreLocked = false;
         })
     },
     onFile(e) {
@@ -419,6 +430,10 @@ export default {
         .catch((error) => {
           showToast("error", error.response.data.data)
         })
+    },
+    handleJobExit(jobId) {
+      if(jobId === this.lastJobId)
+        this.restoreLocked = false;
     }
   }
 }

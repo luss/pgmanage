@@ -301,12 +301,12 @@
           <div class="btn-group">
             <a data-testid="preview-button" :class="['btn', 'btn-outline-primary', 'mb-2', { 'disabled': !backupOptions.fileName}]"
                 @click="previewCommand">Preview</a>
-            <a data-testid="backup-button" :class="['btn', 'btn-success', 'mb-2', 'ms-0', { 'disabled': !backupOptions.fileName }]"
+            <a data-testid="backup-button" :class="['btn', 'btn-success', 'mb-2', 'ms-0', { 'disabled': !backupOptions.fileName || backupLocked }]"
                 @click.prevent="saveBackup">Backup</a>
           </div>
       </div>
   </form>
-  <UtilityJobs ref="jobs" />
+  <UtilityJobs @jobExit="handleJobExit" ref="jobs" />
 
 </div>
 </template>
@@ -384,7 +384,9 @@ export default {
         pigz_compression_ratio: "6"
       },
       backupOptions: {},
-      backupTabId: this.tabId
+      backupTabId: this.tabId,
+      backupLocked: false,
+      lastJobId: 0
     }
   },
   computed: {
@@ -486,7 +488,13 @@ export default {
           this.backupOptions.fileName += '.tar';
           break;
       }
-    }
+    },
+    backupOptions: {
+      handler() {
+        this.backupLocked = false;
+      },
+      deep: true
+    },
   },
   methods: {
     getRoleNames() {
@@ -502,6 +510,7 @@ export default {
         })
     },
     saveBackup() {
+      this.backupLocked = true;
       axios.post("/backup/", {
         database_index: this.databaseIndex,
         workspaceId: this.workspaceId,
@@ -509,10 +518,12 @@ export default {
         backup_type: this.type
       })
         .then((resp) => {
-          this.$refs.jobs.startJob(resp.data.job_id, resp.data.description)
+          this.$refs.jobs.startJob(resp.data.job_id, resp.data.description);
+          this.lastJobId = resp.data.job_id;
         })
         .catch((error) => {
-          showToast("error", error.response.data.data)
+          showToast("error", error.response.data.data);
+          this.backupLocked = false;
         })
     },
     onFile(e) {
@@ -554,6 +565,10 @@ export default {
         .catch((error) => {
           showToast("error", error.response.data.data)
         })
+    },
+    handleJobExit(jobId) {
+      if(jobId === this.lastJobId)
+        this.backupLocked = false;
     }
   }
 }
