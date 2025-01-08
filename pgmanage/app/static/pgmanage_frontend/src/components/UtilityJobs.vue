@@ -133,6 +133,7 @@ export default {
       axios
         .post(`/bgprocess/delete/${job_id}/`)
         .then((resp) => {
+          this.$emit('jobExit', job_id)
           this.pendingJobId = this.pendingJobId.filter((id) => id != job_id);
           this.getJobList();
         })
