@@ -78,6 +78,7 @@ export default {
   unmounted() {
     clearInterval(this.workerId);
   },
+  emits: ['jobExit'],
   methods: {
     getJobList() {
       axios
@@ -132,6 +133,7 @@ export default {
       axios
         .post(`/bgprocess/delete/${job_id}/`)
         .then((resp) => {
+          this.$emit('jobExit', job_id)
           this.pendingJobId = this.pendingJobId.filter((id) => id != job_id);
           this.getJobList();
         })
@@ -183,6 +185,7 @@ export default {
       this.pendingJobId = this.pendingJobId.filter((id) => {
         if (completedJobIds.includes(id)) {
           let j = this.jobList.find((j) => j.id == id);
+          this.$emit('jobExit', id)
           if (j.process_state != JobState.PROCESS_TERMINATED)
             this.sendNotifyJobFinished(j.description, j.process_state, () =>
               this.getJobDetails(j.id, event)
