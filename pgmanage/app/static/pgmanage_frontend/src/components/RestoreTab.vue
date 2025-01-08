@@ -11,7 +11,7 @@
                 <div class="input-group">
                     <div class="input-group-text btn btn-secondary" @click="openFileManagerModal">Select
                     </div>
-                  <input :id="`${restoreTabId}_restoreFileName`" type="text" class="form-control" :value="restoreOptions.fileName"
+                  <input :id="`${restoreTabId}_restoreFileName`" type="text" class="form-control" :value="truncateText(restoreOptions.fileName, 20)"
                     placeholder="backup file" disabled>
                 </div>
               </div>
@@ -262,6 +262,7 @@ import UtilityJobs from './UtilityJobs.vue';
 import axios from 'axios'
 import { showAlert, showToast } from '../notification_control';
 import { settingsStore, fileManagerStore, tabsStore } from '../stores/stores_initializer';
+import { truncateText } from "../utils";
 
 export default {
   name: "RestoreTab",
@@ -434,7 +435,8 @@ export default {
     handleJobExit(jobId) {
       if(jobId === this.lastJobId)
         this.restoreLocked = false;
-    }
+    },
+    truncateText
   }
 }
 

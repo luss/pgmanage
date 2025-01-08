@@ -10,7 +10,7 @@
                 <label :for="`${backupTabId}_backupFileName`" class="fw-bold mb-1">File name</label>
                   <div class="input-group">
                       <button class="btn btn-secondary" @click="openFileManagerModal">Select</button>
-                        <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="backupOptions.fileName"
+                        <input :id="`${backupTabId}_backupFileName`" type="text" class="form-control" :value="truncateText(backupOptions.fileName, 20)"
                           placeholder="backup file" disabled>
                     </div>
                   </div>
@@ -315,6 +315,7 @@ import UtilityJobs from "./UtilityJobs.vue";
 import axios from 'axios'
 import { showAlert, showToast } from "../notification_control";
 import { fileManagerStore, tabsStore, settingsStore } from "../stores/stores_initializer";
+import { truncateText } from "../utils";
 
 export default {
   name: "BackupTab",
@@ -569,7 +570,8 @@ export default {
     handleJobExit(jobId) {
       if(jobId === this.lastJobId)
         this.backupLocked = false;
-    }
+    },
+    truncateText
   }
 }
 
