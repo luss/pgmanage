@@ -85,7 +85,6 @@ export default {
       this.editor = ace.edit(this.$refs.editor);
       this.editor.$blockScrolling = Infinity;
       this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
-      this.editor.session.setMode("ace/mode/sql");
       this.editor.setFontSize(settingsStore.fontSize);
       this.editor.setShowPrintMargin(false);
       this.editor.setReadOnly(true);
@@ -96,10 +95,33 @@ export default {
       this.editor.commands.bindKey("Ctrl-Delete", null);
     },
     setEditorContent() {
-      let cellContent = this.store.cellContent;
+      let cellContent = this.store.cellContent || "";
       if (cellContent) cellContent = this.store.cellContent.toString();
+      const cellType = this.store.cellType || "default";
+
+      // Determine the mode based on cellType
+      const mode = this.getAceMode(cellType);
+      this.editor.session.setMode(mode);
       this.editor.setValue(cellContent);
       this.editor.clearSelection();
+    },
+    getAceMode(cellType) {
+      switch (cellType) {
+        case "json":
+        case "jsonb":
+          return "ace/mode/json";
+        case "xml":
+        case "xmltype":
+          return "ace/mode/xml";
+        case "sql":
+        case "enum":
+        case "set":
+        case "cursor":
+        case "object":
+          return "ace/mode/sql";
+        default:
+          return "ace/mode/plain_text";
+      }
     },
   },
 };

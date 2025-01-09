@@ -137,7 +137,8 @@ export default {
       table: null,
       heightSubtract: 200,
       colWidthArray: [],
-      columns: []
+      columns: [],
+      colTypes: [],
     };
   },
   computed: {
@@ -408,6 +409,7 @@ export default {
       this.updateTableData(data);
     },
     prepareColumns(colNames, colTypes) {
+      this.colTypes = colTypes;
       this.columns = colNames.map((colName, idx) => {
         return colName === '?column?' ? `column-${idx}` : colName
       })
@@ -441,7 +443,8 @@ export default {
             label:
               '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
             action: (e, cell) => {
-              cellDataModalStore.showModal(cell.getValue())
+              const colType = this.colTypes[cell.getColumn().getField()]
+              cellDataModalStore.showModal(cell.getValue(), colType)
             },
             disabled: !isOneCellSelected
           },
