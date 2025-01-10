@@ -1,41 +1,43 @@
 <template>
-  <div
-    id="cell_data_modal"
-    ref="cellDataModal"
-    class="modal fade"
-    aria-hidden="true"
-    role="dialog"
-    tabindex="-1"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h2 class="modal-title font-weight-bold">Show Data</h2>
-          <button
-            type="button"
-            class="btn-close"
-            data-dismiss="modal"
-            aria-label="Close"
-            @click="store.hideModal()"
-          >
-          </button>
-        </div>
-        <div class="modal-body">
-          <div ref="editor" class="ace-editor"></div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-dismiss="modal"
-            @click="store.hideModal()"
-          >
-            Close
-          </button>
+  <Teleport to="body">
+    <div
+      id="cell_data_modal"
+      ref="cellDataModal"
+      class="modal fade"
+      aria-hidden="true"
+      role="dialog"
+      tabindex="-1"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Show Data</h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-dismiss="modal"
+              aria-label="Close"
+              @click="store.hideModal()"
+            >
+            </button>
+          </div>
+          <div class="modal-body">
+            <div ref="editor" class="ace-editor"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+              @click="store.hideModal()"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script>
