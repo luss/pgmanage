@@ -266,7 +266,7 @@ export default {
               label:
                 '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
               action: (e, cell) => {
-                cellDataModalStore.showModal(cell.getValue());
+                cellDataModalStore.showModal(cell.getValue(), "sql");
               },
             },
           ],

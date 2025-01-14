@@ -5,12 +5,14 @@ const useCellDataModalStore = defineStore("cellDataModal", {
     visible: false,
     cellContent: null,
     cellType: null,
+    showControls: false,
   }),
   actions: {
-    showModal(cellContent, cellType) {
+    showModal(cellContent, cellType, showControls) {
       this.cellContent = cellContent;
       this.cellType = cellType;
       this.visible = true;
+      this.showControls = showControls ?? false;
     },
     hideModal() {
       this.visible = false;

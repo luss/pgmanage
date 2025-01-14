@@ -444,7 +444,7 @@ export default {
               '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
             action: (e, cell) => {
               const colType = this.colTypes[cell.getColumn().getField()]
-              cellDataModalStore.showModal(cell.getValue(), colType)
+              cellDataModalStore.showModal(cell.getValue(), colType, true)
             },
             disabled: !isOneCellSelected
           },
@@ -550,8 +550,11 @@ export default {
 
       table.on(
         "cellDblClick",
-        function (e, cell) {
-          if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+        (e, cell) => {
+          if (cell.getValue()) {
+            const colType = this.colTypes[cell.getColumn().getField()];
+            cellDataModalStore.showModal(cell.getValue(), colType, true);
+          }
         }
       );
     },
@@ -607,8 +610,11 @@ export default {
 
         table.on(
           "cellDblClick",
-          function (e, cell) {
-            if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+          (e, cell) => {
+            if (cell.getValue()) {
+              const colType = this.colTypes[cell.getColumn().getField()];
+              cellDataModalStore.showModal(cell.getValue(), colType, true);
+            }
           }
         );
       } else {
