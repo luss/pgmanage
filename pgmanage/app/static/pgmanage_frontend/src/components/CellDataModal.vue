@@ -1,89 +1,91 @@
 <template>
-  <div
-    id="cell_data_modal"
-    ref="cellDataModal"
-    class="modal fade"
-    aria-hidden="true"
-    role="dialog"
-    tabindex="-1"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header align-items-center">
-          <h2 class="modal-title font-weight-bold">Show Data</h2>
-          <button
-            type="button"
-            class="btn-close"
-            data-dismiss="modal"
-            aria-label="Close"
-            @click="store.hideModal()"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <Transition :duration="100">
-            <div
-              v-if="showLoading"
-              class="div_loading d-block"
-              style="z-index: 10"
-            >
-              <div class="div_loading_cover"></div>
-              <div class="div_loading_content">
-                <div
-                  class="spinner-border spinner-size text-primary"
-                  role="status"
-                >
-                  <span class="sr-only">Loading...</span>
+  <Teleport to="body">
+    <div
+      id="cell_data_modal"
+      ref="cellDataModal"
+      class="modal fade"
+      aria-hidden="true"
+      role="dialog"
+      tabindex="-1"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header align-items-center">
+            <h2 class="modal-title font-weight-bold">Show Data</h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-dismiss="modal"
+              aria-label="Close"
+              @click="store.hideModal()"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <Transition :duration="100">
+              <div
+                v-if="showLoading"
+                class="div_loading d-block"
+                style="z-index: 10"
+              >
+                <div class="div_loading_cover"></div>
+                <div class="div_loading_content">
+                  <div
+                    class="spinner-border spinner-size text-primary"
+                    role="status"
+                  >
+                    <span class="sr-only">Loading...</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Transition>
-          <div ref="editor" class="ace-editor"></div>
-        </div>
-        <div
-          class="modal-footer"
-          :class="{ 'justify-content-between': store.showControls }"
-        >
-          <div v-if="store.showControls" class="row">
-            <div class="col-auto align-content-center">
-              <span> View as </span>
-            </div>
-            <div class="col-auto">
-              <select class="form-select" v-model="contentMode">
-                <option
-                  v-for="(modePath, modeName, index) in contentModes"
-                  :value="modePath"
-                  :key="index"
-                >
-                  {{ modeName }}
-                </option>
-              </select>
-            </div>
-            <div class="col-auto form-check align-content-center">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                v-model="autoFormat"
-              />
-              <label for="" class="form-check-label">Autoformat</label>
-            </div>
-            <div class="col-auto">
-              <button class="btn btn-sm btn-primary" @click="formatContent">
-                Format
-              </button>
-            </div>
+            </Transition>
+            <div ref="editor" class="ace-editor"></div>
           </div>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-dismiss="modal"
-            @click="store.hideModal()"
+          <div
+            class="modal-footer"
+            :class="{ 'justify-content-between': store.showControls }"
           >
-            Close
-          </button>
+            <div v-if="store.showControls" class="row">
+              <div class="col-auto align-content-center">
+                <span> View as </span>
+              </div>
+              <div class="col-auto">
+                <select class="form-select" v-model="contentMode">
+                  <option
+                    v-for="(modePath, modeName, index) in contentModes"
+                    :value="modePath"
+                    :key="index"
+                  >
+                    {{ modeName }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-auto form-check align-content-center">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  v-model="autoFormat"
+                />
+                <label for="" class="form-check-label">Autoformat</label>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-sm btn-primary" @click="formatContent">
+                  Format
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+              @click="store.hideModal()"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script>
