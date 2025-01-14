@@ -136,6 +136,7 @@ export default {
       }
 
       if (action.name === "hideModal") {
+        this.contentMode = "ace/mode/plain_text";
         this.editor.destroy();
         this.modalInstance.hide();
         // erase leftover css classes left after editor destruction
