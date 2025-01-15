@@ -137,7 +137,8 @@ export default {
       table: null,
       heightSubtract: 200,
       colWidthArray: [],
-      columns: []
+      columns: [],
+      colTypes: [],
     };
   },
   computed: {
@@ -312,6 +313,10 @@ export default {
     },
     cellFormatter(cell, params, onRendered) {
       let cellVal = cell.getValue()
+      if (cellVal.length > 1000) {
+          let filtered = escape(cellVal.slice(0, 1000).toString().replace(/\n/g, ' ↲ '))
+          return `${filtered}...`;
+        }
       if (isNil(cellVal)) {
         return '<span class="text-muted">[null]</span>'
       }
@@ -408,6 +413,7 @@ export default {
       this.updateTableData(data);
     },
     prepareColumns(colNames, colTypes) {
+      this.colTypes = colTypes;
       this.columns = colNames.map((colName, idx) => {
         return colName === '?column?' ? `column-${idx}` : colName
       })
@@ -441,7 +447,8 @@ export default {
             label:
               '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
             action: (e, cell) => {
-              cellDataModalStore.showModal(cell.getValue())
+              const colType = this.colTypes[cell.getColumn().getField()]
+              cellDataModalStore.showModal(cell.getValue(), colType, true)
             },
             disabled: !isOneCellSelected
           },
@@ -547,8 +554,11 @@ export default {
 
       table.on(
         "cellDblClick",
-        function (e, cell) {
-          if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+        (e, cell) => {
+          if (cell.getValue()) {
+            const colType = this.colTypes[cell.getColumn().getField()];
+            cellDataModalStore.showModal(cell.getValue(), colType, true);
+          }
         }
       );
     },
@@ -604,8 +614,11 @@ export default {
 
         table.on(
           "cellDblClick",
-          function (e, cell) {
-            if (cell.getValue()) cellDataModalStore.showModal(cell.getValue())
+          (e, cell) => {
+            if (cell.getValue()) {
+              const colType = this.colTypes[cell.getColumn().getField()];
+              cellDataModalStore.showModal(cell.getValue(), colType, true);
+            }
           }
         );
       } else {

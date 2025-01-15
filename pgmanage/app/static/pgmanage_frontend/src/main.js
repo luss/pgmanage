@@ -10,6 +10,9 @@ import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/mode-pgsql'
 import 'ace-builds/src-noconflict/mode-mysql'
 import 'ace-builds/src-noconflict/mode-plsql'
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-plain_text';
+import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/src-noconflict/ext-searchbox'
 import "./ace_extras/ext-hoverlink.js"
@@ -40,6 +43,7 @@ ace.config.setModuleUrl('ace/theme/omnidb', omniURL)
 ace.config.setModuleUrl('ace/theme/omnidb_dark', omniDarkURL)
 ace.config.setModuleUrl('ace/mode/pgsql_extended', extendedPgsqlUrl)
 ace.config.setModuleUrl('ace/mode/mysql_extended', extendedMysqlUrl)
+ace.config.set("loadWorkerFromBlob", false)
 
 axios.defaults.headers.common['X-CSRFToken'] = getCookie(v_csrf_cookie_name);
 axios.defaults.baseURL = app_base_path;
