@@ -46,7 +46,7 @@
           >
             <div v-if="store.showControls" class="row">
               <div class="col-auto align-content-center">
-                <span> View as </span>
+                <span class="fw-bold"> View as </span>
               </div>
               <div class="col-auto">
                 <select class="form-select" v-model="contentMode">
@@ -119,25 +119,26 @@ export default {
     },
   },
   mounted() {
+    this.modalInstance = Modal.getOrCreateInstance(this.$refs.cellDataModal, {
+      backdrop: "static",
+      keyboard: false,
+    });
+
+    this.$refs.cellDataModal.addEventListener("shown.bs.modal", (event) => {
+      this.setupEdidor();
+      this.setEditorContent();
+    });
     cellDataModalStore.$onAction((action) => {
       if (action.name === "showModal") {
         action.after(() => {
-          this.setupEdidor();
-          this.setEditorContent();
-          this.modalInstance = Modal.getOrCreateInstance(
-            this.$refs.cellDataModal,
-            {
-              backdrop: "static",
-              keyboard: false,
-            }
-          );
+          this.showLoading = true;
           this.modalInstance.show();
         });
       }
 
       if (action.name === "hideModal") {
-        this.contentMode = "ace/mode/plain_text";
-        this.editor.destroy();
+        this.editor.setValue("");
+        this.contentMode = this.contentModes.TEXT;
         this.modalInstance.hide();
         // erase leftover css classes left after editor destruction
         this.$refs.editor.classList.remove("ace-omnidb", "ace-omnidb_dark");
@@ -147,8 +148,9 @@ export default {
   watch: {
     contentMode(newValue) {
       this.editor.session.setMode(newValue);
+      if (!this.store.visible) return;
       if (this.autoFormat) {
-        beautify(this.editor.session);
+        this.formatContent();
       }
     },
   },
@@ -167,14 +169,12 @@ export default {
       this.editor.commands.bindKey("Ctrl-Delete", null);
     },
     setEditorContent() {
-      this.showLoading = true;
       let cellContent = this.store.cellContent || "";
       if (cellContent) cellContent = this.store.cellContent.toString();
       const cellType = this.store.cellType || "default";
 
-      // Determine the mode based on cellType
-      this.contentMode = this.getAceMode(cellType);
       this.editor.setValue(cellContent);
+      this.contentMode = this.getAceMode(cellType);
       this.editor.clearSelection();
       this.showLoading = false;
     },
