@@ -61,11 +61,14 @@
               </div>
               <div class="col-auto form-check align-content-center">
                 <input
+                  id="cell_data_modal_autoformat"
                   type="checkbox"
                   class="form-check-input"
                   v-model="autoFormat"
                 />
-                <label for="" class="form-check-label">Autoformat</label>
+                <label for="cell_data_modal_autoformat" class="form-check-label"
+                  >Autoformat</label
+                >
               </div>
               <div class="col-auto">
                 <button class="btn btn-sm btn-primary" @click="formatContent">
