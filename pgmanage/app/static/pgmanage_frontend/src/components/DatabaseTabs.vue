@@ -120,6 +120,7 @@ import ContextMenu from "@imengyu/vue3-context-menu";
 import SnippetTab from "./SnippetTab.vue";
 import TabsUtils from "../mixins/tabs_utils_mixin";
 import QueryTab from "./QueryTab.vue";
+import SchemaEditorTab from "./SchemaEditorTab.vue";
 
 export default {
   name: "DatabaseTabs",
@@ -134,10 +135,8 @@ export default {
     RestoreTab: defineAsyncComponent(() => import("./RestoreTab.vue")),
     ERDTab: defineAsyncComponent(() => import("./ERDTab.vue")),
     DataEditorTab: defineAsyncComponent(() => import("./DataEditorTab.vue")),
-    SchemaEditorTab: defineAsyncComponent(() =>
-      import("./SchemaEditorTab.vue")
-    ),
     MonitoringTab: defineAsyncComponent(() => import("./MonitoringTab.vue")),
+    SchemaEditorTab,
     QueryTab,
     SnippetTab,
   },
