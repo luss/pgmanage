@@ -5,7 +5,7 @@ from app.utils.decorators import database_required, user_authenticated
 from django.http import HttpResponse, JsonResponse
 
 @user_authenticated
-@database_required(check_timeout=True, open_connection=True)
+@database_required(check_timeout=True, open_connection=False, prefer_database='template1')
 def get_tree_info(request, database):
     try:
         data = {
@@ -808,7 +808,7 @@ def get_schemas(request, database):
 
 
 @user_authenticated
-@database_required(check_timeout=True, open_connection=True)
+@database_required(check_timeout=True, open_connection=False, prefer_database='template1')
 def get_databases(request, database):
     list_databases = []
 
