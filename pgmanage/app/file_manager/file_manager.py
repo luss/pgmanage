@@ -242,6 +242,9 @@ class FileManager:
         Raises:
             FileNotFoundError: If ensure_exists is True and the path does not exist.
         """
+        if DESKTOP_MODE:
+            return path
+
         normalized_path = os.path.normpath(path)
         abs_path = os.path.join(self.storage, normalized_path)
 
