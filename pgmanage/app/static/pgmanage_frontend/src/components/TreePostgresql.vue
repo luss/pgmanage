@@ -112,8 +112,10 @@ export default {
             label: "Query Database",
             icon: "fas cm-all fa-search",
             onClick: () => {
-              let tab_name = `Query: ${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}`
-              tabsStore.createQueryTab(tab_name)
+              this.checkCurrentDatabase(this.selectedNode, true, () => {
+                let tab_name = `Query: ${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}`;
+                tabsStore.createQueryTab(tab_name);
+              });
             }
           },
           {
@@ -2778,15 +2780,13 @@ export default {
       this.$refs.tree.select(node.path);
       e.preventDefault();
       if (!!node.data.contextMenu) {
-        this.checkCurrentDatabase(node, true, () => {
-          ContextMenu.showContextMenu({
+        ContextMenu.showContextMenu({
             theme: "pgmanage",
             x: e.x,
             y: e.y,
             zIndex: 1000,
             minWidth: 230,
             items: this.contextMenu[node.data.contextMenu],
-          });
         });
       }
     },
