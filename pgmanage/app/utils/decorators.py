@@ -17,13 +17,19 @@ def user_authenticated(function):
     return wrap
 
 
-def database_required(check_timeout=True, open_connection=True):
+def database_required(check_timeout=True, open_connection=True, prefer_database=None):
     def decorator(function):
         @session_required
         @wraps(function)
         def wrap(request, session, *args, **kwargs):
             data = request.data
-            database_name = data.get("database_name")
+            # FIXME: prefer_database is a temporary workaround to prevent
+            # issues with DROP DATABASE caused by opening DB backends to
+            # currently selected database when DB tree is loaded
+            if prefer_database is not None:
+                database_name = prefer_database
+            else:
+                database_name = data.get("database_name")
             database_index = data.get("database_index")
             tab_id = data.get("tab_id")
             workspace_id=data.get("workspace_id")
