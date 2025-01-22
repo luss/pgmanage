@@ -1,6 +1,8 @@
+import os
+
 from app.file_manager.file_manager import FileManager
 from app.utils.decorators import user_authenticated
-from django.http import HttpResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, JsonResponse
 
 
 @user_authenticated
@@ -60,4 +62,33 @@ def delete(request):
     except PermissionError as exc:
         return JsonResponse({"data": str(exc)}, status=403)
     except OSError as exc:
+        return JsonResponse({"data": str(exc)}, status=400)
+
+
+@user_authenticated
+def download(request):
+    file_manager = FileManager(request.user)
+
+    data = request.data
+
+    try:
+        rel_path = data.get("path")
+
+        if not rel_path:
+            return JsonResponse({"data": "File path is required."}, status=400)
+
+        abs_path = file_manager.resolve_path(rel_path, ensure_exists=True)
+
+        file_manager.check_access_permission(abs_path)
+
+        return FileResponse(
+            open(abs_path, "rb"),
+            as_attachment=True,
+            filename=os.path.basename(abs_path),
+        )
+    except FileNotFoundError as exc:
+        return JsonResponse({"data": str(exc)}, status=400)
+    except PermissionError as exc:
+        return JsonResponse({"data": str(exc)}, status=403)
+    except Exception as exc:
         return JsonResponse({"data": str(exc)}, status=400)

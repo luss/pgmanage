@@ -74,7 +74,7 @@ class FileManager:
             name: The name of the file or directory to create.
             file_type: The type of entity to create ("file" or "dir").
         """
-        abs_path = self._resolve_path(path)
+        abs_path = self.resolve_path(path)
         full_path = os.path.join(abs_path, name)
 
         self.check_access_permission(full_path)
@@ -164,7 +164,7 @@ class FileManager:
             path: The relative path of the file or directory.
             name: The new name.
         """
-        abs_path = self._resolve_path(path, ensure_exists=True)
+        abs_path = self.resolve_path(path, ensure_exists=True)
 
         self.check_access_permission(abs_path)
 
@@ -185,7 +185,7 @@ class FileManager:
         Args:
             path: The relative path of the file or directory.
         """
-        abs_path = self._resolve_path(path, ensure_exists=True)
+        abs_path = self.resolve_path(path, ensure_exists=True)
 
         self.check_access_permission(abs_path)
 
@@ -228,7 +228,7 @@ class FileManager:
         _, extension = os.path.splitext(file_name)
         return extension.lstrip(".").lower() if extension else ""
 
-    def _resolve_path(self, path: str, ensure_exists: bool = False) -> str:
+    def resolve_path(self, path: str, ensure_exists: bool = False) -> str:
         """
         Normalize and resolve the absolute path.
 

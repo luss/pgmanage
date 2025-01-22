@@ -62,13 +62,13 @@
                   >
                     <i class="fas fa-download fa-light"></i
                   ></a>
-                  <a
+                  <!-- <a
                     class="btn btn-outline-secondary btn-sm"
                     title="Upload"
                     @click="onUpload"
                   >
                     <i class="fas fa-upload fa-light"></i
-                  ></a>
+                  ></a> -->
                 </div>
                 <div class="btn-group">
                   <a
@@ -374,8 +374,32 @@ export default {
 
       inputEl.dispatchEvent(new MouseEvent("click"));
     },
-    async onDownload() {},
-    async onUpload() {},
+    onDownload() {
+      axios
+        .post(
+          "/file_manager/download/",
+          { path: this.selectedFile.path },
+          { responseType: "blob" }
+        )
+        .then((resp) => {
+          const url = window.URL.createObjectURL(new Blob([resp.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute(
+            "download",
+            this.selectedFile.path.split("/").pop()
+          );
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          showToast("error", error.response.data.data);
+        });
+    },
+    //TODO: implement upload functionality
+    onUpload() {},
   },
 };
 </script>
