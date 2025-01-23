@@ -14,10 +14,8 @@ def create(request):
     try:
         file_manager.create(data.get("path"), data.get("name"), data.get("type"))
         return JsonResponse({"data": "created"}, status=201)
-    except FileExistsError as exc:
+    except Exception as exc:
         return JsonResponse({"data": str(exc)}, status=400)
-    except PermissionError as exc:
-        return JsonResponse({"data": str(exc)}, status=403)
 
 
 @user_authenticated
@@ -27,12 +25,12 @@ def get_directory(request):
     data = request.data
     try:
         if data.get("parent_dir"):
-            files = file_manager.get_parent_directory_content(data["current_path"])
+            files = file_manager.get_parent_directory_content(data.get("current_path"))
         else:
             files = file_manager.get_directory_content(data.get("current_path"))
         return JsonResponse(files)
-    except PermissionError as exc:
-        return JsonResponse({"data": str(exc)}, status=403)
+    except Exception as exc:
+        return JsonResponse({"data": str(exc)}, status=400)
 
 
 @user_authenticated
@@ -44,10 +42,8 @@ def rename(request):
     try:
         file_manager.rename(data.get("path"), data.get("name"))
         return JsonResponse({"data": "success"})
-    except (FileExistsError, FileNotFoundError) as exc:
+    except Exception as exc:
         return JsonResponse({"data": str(exc)}, status=400)
-    except PermissionError as exc:
-        return JsonResponse({"data": str(exc)}, status=403)
 
 
 @user_authenticated
@@ -57,11 +53,7 @@ def delete(request):
     try:
         file_manager.delete(request.data.get("path"))
         return HttpResponse(status=204)
-    except FileNotFoundError as exc:
-        return JsonResponse({"data": str(exc)}, status=400)
-    except PermissionError as exc:
-        return JsonResponse({"data": str(exc)}, status=403)
-    except OSError as exc:
+    except Exception as exc:
         return JsonResponse({"data": str(exc)}, status=400)
 
 
@@ -77,18 +69,16 @@ def download(request):
         if not rel_path:
             return JsonResponse({"data": "File path is required."}, status=400)
 
-        abs_path = file_manager.resolve_path(rel_path, ensure_exists=True)
+        abs_path = file_manager.resolve_path(rel_path)
 
         file_manager.check_access_permission(abs_path)
+
+        file_manager.assert_exists(abs_path)
 
         return FileResponse(
             open(abs_path, "rb"),
             as_attachment=True,
             filename=os.path.basename(abs_path),
         )
-    except FileNotFoundError as exc:
-        return JsonResponse({"data": str(exc)}, status=400)
-    except PermissionError as exc:
-        return JsonResponse({"data": str(exc)}, status=403)
     except Exception as exc:
         return JsonResponse({"data": str(exc)}, status=400)

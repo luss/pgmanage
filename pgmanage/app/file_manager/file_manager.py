@@ -42,7 +42,7 @@ class FileManager:
         if os.path.exists(path):
             raise FileExistsError("File or directory with given name already exists.")
 
-    def _assert_exists(self, path: str) -> None:
+    def assert_exists(self, path: str) -> None:
         """Raise an error if the path does not exist."""
         if not os.path.exists(path):
             raise FileNotFoundError("Invalid file or directory path.")
@@ -169,17 +169,17 @@ class FileManager:
             path: The relative path of the file or directory.
             name: The new name.
         """
-        abs_path = self.resolve_path(path, ensure_exists=True)
+        abs_path = self.resolve_path(path)
 
         self.check_access_permission(abs_path)
+        self.assert_exists(abs_path)
 
         dirpath, _ = os.path.split(abs_path)
 
         new_path = os.path.join(dirpath, name)
 
-        self._assert_not_exists(new_path)
-
         self.check_access_permission(new_path)
+        self._assert_not_exists(new_path)
 
         os.rename(abs_path, new_path)
 
@@ -190,9 +190,11 @@ class FileManager:
         Args:
             path: The relative path of the file or directory.
         """
-        abs_path = self.resolve_path(path, ensure_exists=True)
+        abs_path = self.resolve_path(path)
 
         self.check_access_permission(abs_path)
+
+        self.assert_exists(abs_path)
 
         if os.path.isdir(abs_path):
             os.rmdir(abs_path)
@@ -215,10 +217,8 @@ class FileManager:
 
         abs_path = os.path.abspath(path)
 
-        try:
-            pathlib.Path(abs_path).relative_to(self.storage)
-        except ValueError:
-            raise PermissionError(f"Access denied: {abs_path}")
+        if not pathlib.Path(abs_path).is_relative_to(self.storage):
+            raise PermissionError("Access denied")
 
     def _get_file_extension(self, file_name: str) -> str:
         """
@@ -233,27 +233,21 @@ class FileManager:
         _, extension = os.path.splitext(file_name)
         return extension.lstrip(".").lower() if extension else ""
 
-    def resolve_path(self, path: str, ensure_exists: bool = False) -> str:
+    def resolve_path(self, path: str) -> str:
         """
         Normalize and resolve the absolute path.
 
         Args:
             path: The relative path to resolve.
-            ensure_exists: Whether to ensure the path exists.
 
         Returns:
             str: The resolved absolute path.
 
-        Raises:
-            FileNotFoundError: If ensure_exists is True and the path does not exist.
         """
         if DESKTOP_MODE:
             return path
 
         normalized_path = os.path.normpath(path)
         abs_path = os.path.join(self.storage, normalized_path)
-
-        if ensure_exists:
-            self._assert_exists(abs_path)
 
         return abs_path
