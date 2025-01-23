@@ -103,7 +103,7 @@ export default {
   methods: {
     rename(event) {
       axios.post('/file_manager/rename/', {
-        path: this.file?.file_path,
+        path: this.file?.path,
         name: this.name
       })
         .then((resp) => {
@@ -128,7 +128,7 @@ export default {
     },
     deleteFile() {
       axios.post('/file_manager/delete/', {
-        path: this.file?.file_path
+        path: this.file?.path
       })
         .then((resp) => {
           this.$emit('actionDone')

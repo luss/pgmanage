@@ -1,6 +1,12 @@
 <template>
   <Teleport to="body">
-    <div id="file_manager" ref="fileManagerModal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div
+      id="file_manager"
+      ref="fileManagerModal"
+      class="modal fade"
+      tabindex="-1"
+      aria-hidden="true"
+    >
       <div class="modal-dialog modal-xl modal-file-manager">
         <div class="modal-content">
           <div class="modal-header align-items-center">
@@ -10,8 +16,7 @@
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
-            >
-            </button>
+            ></button>
           </div>
           <div class="modal-body p-0" style="height: 60vh">
             <div
@@ -44,17 +49,40 @@
                 ></a>
               </div>
               <div>
-                <a
-                  :class="[
-                    'btn',
-                    'btn-outline-secondary',
-                    'btn-sm',
-                    { disabled: !Object.keys(selectedFile).length },
-                  ]"
-                  title="Delete"
-                  @click="openActionsModal('delete')"
-                  ><i class="fas fa-trash fa-xl"></i
-                ></a>
+                <div class="btn-group me-2">
+                  <a
+                    class="btn btn-outline-secondary btn-sm"
+                    :class="{
+                      disabled:
+                        !Object.keys(selectedFile).length ||
+                        selectedFile.is_directory,
+                    }"
+                    title="Download"
+                    @click="onDownload"
+                  >
+                    <i class="fas fa-download fa-light"></i
+                  ></a>
+                  <!-- <a
+                    class="btn btn-outline-secondary btn-sm"
+                    title="Upload"
+                    @click="onUpload"
+                  >
+                    <i class="fas fa-upload fa-light"></i
+                  ></a> -->
+                </div>
+                <div class="btn-group">
+                  <a
+                    :class="[
+                      'btn',
+                      'btn-outline-secondary',
+                      'btn-sm',
+                      { disabled: !Object.keys(selectedFile).length },
+                    ]"
+                    title="Delete"
+                    @click="openActionsModal('delete')"
+                    ><i class="fas fa-trash fa-xl"></i
+                  ></a>
+                </div>
               </div>
             </div>
 
@@ -145,10 +173,7 @@
                       },
                     ]"
                     :style="{
-                      color:
-                        file.is_directory
-                          ? '#0ea5e9'
-                          : 'rgb(105 114 118)',
+                      color: file.is_directory ? '#0ea5e9' : 'rgb(105 114 118)',
                     }"
                   ></i>
                 </div>
@@ -160,9 +185,7 @@
             <div v-else class="card file-table">
               <div class="card-body p-0">
                 <ul class="list-group list-group-flush form-group rounded-0">
-                  <li
-                    class="list-group-item d-flex row g-0 fw-bold"
-                  >
+                  <li class="list-group-item d-flex row g-0 fw-bold">
                     <div class="col-7">Name</div>
                     <div class="col-2">Size</div>
                     <div class="col-3">Modified</div>
@@ -189,10 +212,9 @@
                           },
                         ]"
                         :style="{
-                          color:
-                            file.is_directory
-                              ? '#0ea5e9'
-                              : 'rgb(105 114 118)',
+                          color: file.is_directory
+                            ? '#0ea5e9'
+                            : 'rgb(105 114 118)',
                         }"
                       ></i>
                       {{ file.file_name }}
@@ -243,7 +265,7 @@ import FileManagerActionsModal from "./FileManagerActionsModal.vue";
 import axios from "axios";
 import { showToast } from "../notification_control";
 import { fileManagerStore } from "../stores/stores_initializer";
-import { Modal } from 'bootstrap';
+import { Modal } from "bootstrap";
 
 export default {
   name: "FileManager",
@@ -352,6 +374,32 @@ export default {
 
       inputEl.dispatchEvent(new MouseEvent("click"));
     },
+    onDownload() {
+      axios
+        .post(
+          "/file_manager/download/",
+          { path: this.selectedFile.path },
+          { responseType: "blob" }
+        )
+        .then((resp) => {
+          const url = window.URL.createObjectURL(new Blob([resp.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute(
+            "download",
+            this.selectedFile.path.split("/").pop()
+          );
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          showToast("error", error.response.data.data);
+        });
+    },
+    //TODO: implement upload functionality
+    onUpload() {},
   },
 };
 </script>
