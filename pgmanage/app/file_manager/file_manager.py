@@ -99,16 +99,21 @@ class FileManager:
         if path is None:
             abs_path = self.storage
         else:
-            normalized_path = os.path.normpath(path)
+            normalized_path = "." if path == "/" else os.path.normpath(path)
             abs_path = os.path.join(self.storage, normalized_path)
 
         rel_path = os.path.relpath(abs_path, self.storage)
 
         self.check_access_permission(abs_path)
 
+        if rel_path == ".":
+            current_path = "/"
+        else:
+            current_path = f"/{rel_path}"
+
         data = {
             "parent": abs_path != self.storage,
-            "current_path": rel_path,
+            "current_path": current_path,
             "files": [],
         }
 
