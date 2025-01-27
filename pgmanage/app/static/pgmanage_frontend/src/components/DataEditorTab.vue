@@ -1,31 +1,29 @@
 <template>
 <div class="data-editor p-2">
   <div ref="topToolbar" class="row">
-    <div class="form-group col-9">
-      <form class="form" @submit.prevent>
-        <label class="mb-2" :for="`${tabId}_queryFilter`">
-          <span class="fw-bold">Filter</span> <span class='text-info'> select</span> * <span class='text-info'>from</span> {{this.schema ? `${this.schema}.${this.table}` : `${this.table}`}}
+    <div class="form-group col-10 align-content-center overflow-auto" style="max-height: 170px;">
+        <label class="mb-2">
+          <span class="fw-bold">Filter</span>
         </label>
-        <input :id="`${tabId}_queryFilter`" v-model.trim="queryFilter" class="form-control" name="filter"
-           placeholder="extra filter criteria" />
-      </form>
+      <DataEditorTabFilter :columns="columnNames" :filters="queryFilters" @update="handleFilterUpdate"/>
     </div>
     <div class="form-group col-2">
-      <form class="form" @submit.prevent>
+      <div class="form" @submit.prevent>
         <label class="fw-bold mb-2" :for="`${tabId}_rowLimit`">Limit</label>
-        <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-select">
+        <div class="d-flex">
+          <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-select">
             <option v-for="(option, index) in [10, 100, 1000]"
               :key=index
               :value="option">
                 {{option}} rows
             </option>
         </select>
-      </form>
-    </div>
-    <div class="form-group col-1 d-flex align-items-end ps-0">
-      <button class="btn btn-primary me-2" title="Load Data" @click="getTableData()">
-        <i class="fa-solid fa-filter"></i>
-      </button>
+
+        <button class="btn btn-primary mx-2" title="Load Data" @click="getTableData()">
+          <i class="fa-solid fa-filter"></i>
+        </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -48,17 +46,23 @@ import Knex from 'knex'
 import isEqualWith from 'lodash/isEqualWith';
 import zipObject from 'lodash/zipObject';
 import forIn from 'lodash/forIn';
+import isArray from 'lodash/isArray'
 import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
 import { emitter } from '../emitter';
 import { settingsStore, tabsStore } from '../stores/stores_initializer';
+import DataEditorTabFilterList from './DataEditorTabFilterList.vue'
+import { dataEditorFilterModes } from '../constants';
 
 // TODO: run query in transaction
 
 export default {
   name: "DataEditorTab",
+  components: {
+    DataEditorTabFilter: DataEditorTabFilterList
+  },
   props: {
     dialect: String,
     schema: String,
@@ -78,7 +82,7 @@ export default {
       tableColumns: [],
       tableData: [],
       tableDataLocal: [],
-      queryFilter: '',
+      queryFilters: [{ column: "", operator: "=", value: "" }],
       rowLimit: 10,
       dataLoaded: false,
       heightSubtract: 200, //default safe value, recalculated in handleResize
@@ -105,11 +109,15 @@ export default {
     gridHeight() {
       return `calc(100vh - ${this.heightSubtract}px)`;
     },
+    columnNames() {
+      return this.tableColumns.map(col => col.name)
+    }
   },
   mounted() {
     this.handleResize()
     let table = new Tabulator(this.$refs.tabulator, {
-      layout: 'fitDataStretch',
+      placeholder: "No Data Available",
+      layout: "fitDataFill",
       data: [],
       autoResize: false,
       columnDefaults: {
@@ -118,7 +126,11 @@ export default {
           maxInitialWidth: this.maxInitialWidth,
         },
       selectableRows: false,
-      rowFormatter: this.rowFormatter
+      rowFormatter: this.rowFormatter,
+      sortMode: 'remote',
+      headerSortClickElement:"icon",
+      ajaxURL: "http://fake",
+      ajaxRequestFunc: this.getTableData,
     })
 
     table.on("tableBuilt", () => {
@@ -127,7 +139,7 @@ export default {
     })
 
     this.knex = Knex({ client: this.dialect || 'postgres'})
-    this.getTableColumns().then(this.getTableData)
+    this.getTableColumns().then(() => {this.tabulator.setSort("0", "asc")});
 
     emitter.on(`${this.tabId}_query_edit`, () => {
       this.getTableData()
@@ -205,7 +217,6 @@ export default {
         })
         .then((response) => {
           this.tableColumns = response.data.columns
-          this.queryFilter = `${this.$props.initial_filter} ${response.data.initial_orderby}`.trim()
 
           let actionsCol = {
             title: `<div data-action="add" class="btn p-0" title="Add column">
@@ -227,6 +238,7 @@ export default {
               title: title,
               editor: "input",
               editable: false,
+              headerSort: true,
               cellDblClick: function (e, cell) {
                 cell.edit(true);
               },
@@ -248,25 +260,88 @@ export default {
           showToast("error", error.response.data)
         });
     },
-    getTableData() {
+    getTableData(_url, _config, params) {
+      const preprocessFilters = (rawFilters) => {
+        return rawFilters
+          .filter((f) => f.operator && f.column && f.value)
+          .map((f) => ({
+            ...f,
+            value:
+              f.operator === "in" ? f.value.split(/\s*,\s*/) : String(f.value),
+          }));
+      };
+      const escapeColumnName = (name) => {
+        if (name === "*") return name;
+        const nestedMatch = name.match(/(.*?)(\[[0-9]\])/);
+        return nestedMatch
+          ? `${escapeColumnName(nestedMatch[1])}${nestedMatch[2]}`
+          : `"${name.replace(/"/g, '""')}"`;
+      };
+
+      const combineFilters = (filterStrings, filterObjects) => {
+        return filterStrings.length === 0
+          ? ""
+          : filterStrings.reduce((acc, filter, idx) => {
+              const logic = filterObjects[idx]?.condition || "AND";
+              return `${acc} ${logic} ${filter}`;
+            });
+      };
+      let queryFilter = "";
+      let orderBy = this.tableColumns[0]?.name ? `ORDER BY ${this.tableColumns[0].name}` : "";
+
+      if (params?.sort) {
+        orderBy = "ORDER BY " + params.sort.map((item) => {
+          const columnName = this.columnNames[item.field]
+          return `${escapeColumnName(columnName)} ${item.dir.toUpperCase()}`
+        }).join(",")
+      }
+
+      if (this.mode === dataEditorFilterModes.MANUAL) {
+        queryFilter = "WHERE " + this.rawQuery.trim();
+      } else {
+        const filters = preprocessFilters(this.queryFilters);
+        if (filters?.length > 0) {
+          const filterClauses = filters.map((filter) => {
+            if (filter.operator === "in" && isArray(filter.value)) {
+              const formattedValues = filter.value.map((val) => {
+                return this.knex.raw("?", [val]).toQuery();
+              });
+              return `${escapeColumnName(
+                filter.column
+              )} ${filter.operator.toUpperCase()} (${formattedValues.join(",")})`;
+            }
+            const formattedValue = this.knex.raw("?", [filter.value]).toQuery();
+            return `${escapeColumnName(
+              filter.column
+            )} ${filter.operator.toUpperCase()} ${formattedValue}`;
+          });
+          queryFilter = "WHERE " + combineFilters(filterClauses, filters);
+        }
+      }
+      const finalFilter = `${queryFilter} ${orderBy}`;
       var message_data = {
         table: this.table,
         schema: this.schema,
         db_index: this.databaseIndex,
-        query_filter : this.queryFilter,
+        query_filter: finalFilter,
         count: this.rowLimit,
         workspace_id: this.workspaceId,
-        tab_id: this.tabId
-      }
+        tab_id: this.tabId,
+      };
 
       var context = {
         tab_tag: null,
         callback: this.handleResponse.bind(this),
         start_time: new Date().getTime(),
-        database_index: this.databaseIndex
-      }
+        database_index: this.databaseIndex,
+      };
 
-      createRequest(queryRequestCodes.QueryEditData, message_data, context)
+      createRequest(queryRequestCodes.QueryEditData, message_data, context);
+
+      // we need to return promise for tabulator ajaxRequestFunc to work
+      return new Promise((resolve, reject) => {
+        resolve([])
+      })
     },
     handleResize() {
       if(this.$refs === null)
@@ -447,6 +522,16 @@ export default {
       if(count === 0)
         return 'No Changes'
       return `Apply ${count} ${(count > 1 || count == 0) ? 'changes' : 'change'}`
+    },
+    handleFilterUpdate({ mode, filters, rawQuery }) {
+      this.$nextTick(() => {
+        this.handleResize();
+      })
+      this.mode = mode;
+      if (filters) this.filters = filters;
+      if (rawQuery !== undefined) {
+        this.rawQuery = rawQuery;
+      } 
     }
   },
   watch: {
