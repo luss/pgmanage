@@ -313,7 +313,7 @@ export default {
     },
     cellFormatter(cell, params, onRendered) {
       let cellVal = cell.getValue()
-      if (cellVal.length > 1000) {
+      if (!!cellVal && cellVal?.length > 1000) {
           let filtered = escape(cellVal.slice(0, 1000).toString().replace(/\n/g, ' ↲ '))
           return `${filtered}...`;
         }
