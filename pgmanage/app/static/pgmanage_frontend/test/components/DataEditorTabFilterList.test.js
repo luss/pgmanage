@@ -27,7 +27,7 @@ describe("DataEditorFilter.vue", () => {
   });
 
   test("adds a new filter row", async () => {
-    const addButton = wrapper.find("button.btn-outline-success");
+    const addButton = wrapper.find('button[data-testid="add-filter-button"]');
     await addButton.trigger("click");
 
     expect(wrapper.vm.localFilters).toHaveLength(2);
@@ -41,7 +41,7 @@ describe("DataEditorFilter.vue", () => {
 
   test("removes a filter row", async () => {
     // first adding new filter row
-    const addButton = wrapper.find("button.btn-outline-success");
+    const addButton = wrapper.find('button[data-testid="add-filter-button"]');
     await addButton.trigger("click");
 
     expect(wrapper.vm.localFilters).toHaveLength(2);
@@ -54,7 +54,7 @@ describe("DataEditorFilter.vue", () => {
 
   test("toggles condition between AND and OR", async () => {
     // first adding new filter row
-    const addButton = wrapper.find("button.btn-outline-success");
+    const addButton = wrapper.find('button[data-testid="add-filter-button"]');
     await addButton.trigger("click");
 
     const conditionButton = wrapper.find(

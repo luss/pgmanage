@@ -54,6 +54,7 @@
 
       <button
         v-if="index === 0"
+        data-testid="add-filter-button"
         class="btn"
         @click="addFilter"
         title="Add filter"
