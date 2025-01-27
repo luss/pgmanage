@@ -60,7 +60,7 @@
                     title="Download"
                     @click="onDownload"
                   >
-                    <i class="fas fa-download fa-light"></i
+                    <i class="fas fa-download"></i
                   ></a>
                   <!-- <a
                     class="btn btn-outline-secondary btn-sm"
@@ -182,16 +182,17 @@
             </div>
 
             <!-- Table format for files and folders-->
-            <div v-else class="card file-table">
-              <div class="card-body p-0">
-                <ul class="list-group list-group-flush form-group rounded-0">
-                  <li class="list-group-item d-flex row g-0 fw-bold">
+            <div v-else class="file-table">
+              <div class="p-0">
+                <ul class="list-group list-group-flush form-group">
+                  <li class="list-group-item d-flex row g-0 fw-bold mb-1 border-0 file-table-header bg-transparent">
                     <div class="col-7">Name</div>
                     <div class="col-2">Size</div>
                     <div class="col-3">Modified</div>
                   </li>
                   <li
-                    class="list-group-item d-flex row g-0"
+                    class="list-group-item d-flex row g-0 mb-1 border-0"
+                    :class="{ active: file === selectedFile }"
                     v-for="file in files"
                     :key="file.file_name"
                     @click="selectFileOrDir(file.file_name)"
