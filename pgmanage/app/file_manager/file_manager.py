@@ -99,7 +99,7 @@ class FileManager:
         if path is None:
             abs_path = self.storage
         else:
-            normalized_path = "." if path == "/" else os.path.normpath(path)
+            normalized_path = "." if path == "/" else os.path.normpath(path.lstrip('/'))
             abs_path = os.path.join(self.storage, normalized_path)
 
         rel_path = os.path.relpath(abs_path, self.storage)
