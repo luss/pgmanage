@@ -245,6 +245,14 @@
         }
 
         .tabulator-menu-item {
+            i {
+                width: 20px;
+                height: 16px;
+                @include themify() {
+                    color: themed($primaryBlueWhiteSwitching);
+                }                    
+            }
+            
             @include themify() {
                 color: themed($color);
             }
