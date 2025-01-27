@@ -1,7 +1,7 @@
 <template>
 <div class="data-editor p-2">
   <div ref="topToolbar" class="row">
-    <div class="form-group col-9 align-content-center overflow-auto" style="max-height: 170px;">
+    <div class="form-group col-10 align-content-center overflow-auto" style="max-height: 170px;">
         <label class="mb-2">
           <span class="fw-bold">Filter</span>
         </label>
@@ -10,19 +10,20 @@
     <div class="form-group col-2">
       <div class="form" @submit.prevent>
         <label class="fw-bold mb-2" :for="`${tabId}_rowLimit`">Limit</label>
-        <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-select">
+        <div class="d-flex">
+          <select :id="`${tabId}_rowLimit`" v-model="rowLimit" class="form-select">
             <option v-for="(option, index) in [10, 100, 1000]"
               :key=index
               :value="option">
                 {{option}} rows
             </option>
         </select>
+
+        <button class="btn btn-primary mx-2" title="Load Data" @click="getTableData()">
+          <i class="fa-solid fa-filter"></i>
+        </button>
+        </div>
       </div>
-    </div>
-    <div class="form-group col-1 d-flex align-items-end ps-0">
-      <button class="btn btn-primary me-2" title="Load Data" @click="getTableData()">
-        <i class="fa-solid fa-filter"></i>
-      </button>
     </div>
   </div>
 

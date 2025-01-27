@@ -3,22 +3,22 @@
     v-if="mode === modes.BUILDER"
     v-for="(filter, index) in localFilters"
     :key="index"
-    class="row mb-1"
+    class="row mb-2 g-0"
   >
-    <div class="col-1">
+    <div class="col-auto ps-0 pe-1 col-w-fixed">
       <button
         v-if="index === 0"
-        class="btn btn-sm btn-warning text-center"
+        class="btn btn-warning btn-w-fixed"
         type="button"
         @click="switchToManual"
         title="Switch to Manual Mode"
       >
-        <i class="fas fa-code"> </i>
+        SQL
       </button>
       <button
         v-else
         data-testid="toggle-condition-button"
-        class="btn btn-sm btn-outline-secondary text-center"
+        class="btn btn-ghost-secondary btn-w-fixed"
         type="button"
         @click.stop="
           filter.condition = filter.condition === 'AND' ? 'OR' : 'AND'
@@ -34,46 +34,46 @@
       :value="filter"
       @update="updateFilter(index, $event)"
     />
-    <div class="col-1">
+    <div class="col-1 d-flex px-1 ps-0">
       <button
         v-if="localFilters.length === 1"
-        class="btn btn-outline-secondary btn-sm rounded-5 me-1"
+        class="btn me-2"
         :class="{ invisible: index === 0 }"
         @click="removeFilter(index)"
       >
-        <i class="fas fa-minus"></i>
+        <i class="fas fa-minus muted-text"></i>
       </button>
       <button
         v-else
         data-testid="remove-button"
-        class="btn btn-outline-secondary btn-sm rounded-5 me-1"
+        class="btn me-2"
         @click="removeFilter(index)"
       >
-        <i class="fas fa-minus"></i>
+        <i class="fas fa-minus muted-text"></i>
       </button>
 
       <button
         v-if="index === 0"
-        class="btn btn-outline-success btn-sm rounded-5"
+        class="btn"
         @click="addFilter"
         title="Add filter"
       >
-        <i class="fas fa-plus"></i>
+        <i class="fas fa-plus text-success"></i>
       </button>
     </div>
   </div>
-  <div v-else class="row mb-1">
-    <div class="col-1">
+  <div v-else class="row mb-2 g-0">
+    <div class="col-auto ps-0 pe-1 col-w-fixed">
       <button
-        class="btn btn-sm btn-warning text-center"
+        class="btn btn-warning btn-w-fixed"
         type="button"
         @click="switchToBuilder"
         title="Switch to Builder Mode"
       >
-        <i class="fas fa-sliders-h"> </i>
+        <i class="fas fa-wand-magic-sparkles"></i>
       </button>
     </div>
-    <div class="col">
+    <div class="col px-1">
       <input
         v-model="rawQuery"
         class="form-control"
@@ -182,3 +182,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .col-w-fixed {
+    min-width: 3.7rem;
+  }
+
+  .btn-w-fixed {
+    min-width: 3.5rem;
+  }
+</style>
