@@ -34,7 +34,7 @@ describe("buildSnippetContextMenuObjects", () => {
     expect(result).toContainEqual(
       expect.objectContaining({
         label: "New Snippet",
-        icon: "fas cm-all fa-save",
+        icon: "fas fa-save",
         onClick: expect.any(Function),
       })
     );
@@ -69,17 +69,17 @@ describe("buildSnippetContextMenuObjects", () => {
     expect(result).toContainEqual(
       expect.objectContaining({
         label: "snippet1",
-        icon: "fas cm-all fa-align-left",
+        icon: "fas fa-align-left",
         onClick: expect.any(Function),
       })
     );
     expect(result).toContainEqual(
       expect.objectContaining({
         label: "folder1",
-        icon: "fas cm-all fa-folder",
+        icon: "fas fa-folder",
         children: expect.arrayContaining([
           {
-            icon: "fas cm-all fa-align-left",
+            icon: "fas fa-align-left",
             label: "snippet3",
             onClick: expect.any(Function),
           },

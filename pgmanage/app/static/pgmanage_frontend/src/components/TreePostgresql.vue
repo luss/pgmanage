@@ -78,7 +78,7 @@ export default {
     contextMenu() {
       const COMMENT_MENUITEM = {
         label: "Edit Comment",
-        icon: "fas cm-all fa-comment",
+        icon: "fas fa-comment",
         onClick: () => {
           this.getObjectDescriptionPostgresql(this.selectedNode);
         },
@@ -90,14 +90,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Database",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate("Create Database", this.templates.create_database);
             },
           },
           {
             label: "Doc: Databases",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -110,7 +110,7 @@ export default {
         cm_database: [
           {
             label: "Query Database",
-            icon: "fas cm-all fa-search",
+            icon: "fas fa-search",
             onClick: () => {
               this.checkCurrentDatabase(this.selectedNode, true, () => {
                 let tab_name = `Query: ${tabsStore.selectedPrimaryTab.metaData.selectedDatabase}`;
@@ -120,7 +120,7 @@ export default {
           },
           {
             label: "Alter Database",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               //FIXME rewrite to use vue instance
               tabSQLTemplate(
@@ -135,7 +135,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Database",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Database",
@@ -148,14 +148,14 @@ export default {
           },
           {
             label: "Backup",
-            icon: "fa-solid fa-download cm-all",
+            icon: "fa-solid fa-download ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Backup')
             },
           },
           {
             label: "Restore",
-            icon: "fa-solid fa-upload cm-all",
+            icon: "fa-solid fa-upload ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
@@ -165,14 +165,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Schema",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate("Create Schema", this.templates.create_schema);
             },
           },
           {
             label: "Doc: Schemas",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -185,28 +185,28 @@ export default {
         cm_schema: [
           {
             label: "ER Diagram",
-            icon: "fab cm-all fa-hubspot",
+            icon: "fab fa-hubspot",
             onClick: () => {
               tabsStore.createERDTab(this.selectedNode.data.schema_raw)
             },
           },
           {
             label: "Backup",
-            icon: "fa-solid fa-download cm-all",
+            icon: "fa-solid fa-download ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Backup')
             },
           },
           {
             label: "Restore",
-            icon: "fa-solid fa-upload cm-all",
+            icon: "fa-solid fa-upload ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
           },
           {
             label: "Alter Schema",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Schema",
@@ -220,7 +220,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Schema",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Schema",
@@ -236,14 +236,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Table",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.CREATE, "postgres")
             },
           },
           {
             label: "Doc: Basics",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -254,7 +254,7 @@ export default {
           },
           {
             label: "Doc: Constraints",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -265,7 +265,7 @@ export default {
           },
           {
             label: "Doc: Modifying",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -279,11 +279,11 @@ export default {
           this.cmRefreshObject,
           {
             label: "Data Actions",
-            icon: "fas cm-all fa-list",
+            icon: "fas fa-list",
             children: [
               {
                 label: "Query Data",
-                icon: "fas cm-all fa-search",
+                icon: "fas fa-search",
                 onClick: () => {
                   TemplateSelectPostgresql(
                     this.selectedNode.data.schema_raw,
@@ -294,14 +294,14 @@ export default {
               },
               {
                 label: "Edit Data",
-                icon: "fas cm-all fa-table",
+                icon: "fas fa-table",
                 onClick: () => {
                   tabsStore.createDataEditorTab(this.selectedNode.data.raw_value, this.selectedNode.data.schema_raw)
                 },
               },
               {
                 label: "Insert Record",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   TemplateInsertPostgresql(
                     this.selectedNode.data.schema_raw,
@@ -311,7 +311,7 @@ export default {
               },
               {
                 label: "Update Records",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   TemplateUpdatePostgresql(
                     this.selectedNode.data.schema_raw,
@@ -321,7 +321,7 @@ export default {
               },
               {
                 label: "Delete Records",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
                 onClick: () => {
                   tabSQLTemplate(
                     "Delete Records",
@@ -334,7 +334,7 @@ export default {
               },
               {
                 label: "Truncate Table",
-                icon: "fas cm-all fa-cut",
+                icon: "fas fa-cut",
                 onClick: () => {
                   tabSQLTemplate(
                     "Truncate Table",
@@ -349,11 +349,11 @@ export default {
           },
           {
             label: "Table Actions",
-            icon: "fas cm-all fa-list",
+            icon: "fas fa-list",
             children: [
               {
                 label: "Vacuum Table",
-                icon: "fas cm-all fa-broom",
+                icon: "fas fa-broom",
                 onClick: () => {
                   tabSQLTemplate(
                     "Vacuum table",
@@ -366,7 +366,7 @@ export default {
               },
               {
                 label: "Analyze Table",
-                icon: "fas cm-all fa-search-plus",
+                icon: "fas fa-search-plus",
                 onClick: () => {
                   tabSQLTemplate(
                     "Analyze Table",
@@ -379,7 +379,7 @@ export default {
               },
               {
                 label: "Alter Table",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   tabsStore.createSchemaEditorTab(this.selectedNode, operationModes.UPDATE, "postgres")
                 },
@@ -387,7 +387,7 @@ export default {
               COMMENT_MENUITEM,
               {
                 label: "Drop Table",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
                 onClick: () => {
                   tabSQLTemplate(
                     "Drop Table",
@@ -400,14 +400,14 @@ export default {
               },
               {
                 label: "Backup",
-                icon: "fa-solid fa-download cm-all",
+                icon: "fa-solid fa-download ",
                 onClick: () => {
                   tabsStore.createUtilityTab(this.selectedNode, 'Backup')
                 },
               },
               {
                 label: "Restore",
-                icon: "fa-solid fa-upload cm-all",
+                icon: "fa-solid fa-upload ",
                 onClick: () => {
                   tabsStore.createUtilityTab(this.selectedNode, 'Restore')
                 },
@@ -418,7 +418,7 @@ export default {
         cm_columns: [
           {
             label: "Create Column",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Column",
@@ -435,7 +435,7 @@ export default {
           {
             // FIXME: do we need alter column templates at all?
             label: "Alter Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Column",
@@ -453,7 +453,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Column",
@@ -473,7 +473,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Primary Key",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Primary Key",
@@ -491,7 +491,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Primary Key",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Primary Key",
@@ -514,7 +514,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Key",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Key",
@@ -532,7 +532,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Foreign Key",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Foreign Key",
@@ -555,7 +555,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Unique",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Unique",
@@ -573,7 +573,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Unique",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Unique",
@@ -596,7 +596,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Check",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Check",
@@ -613,7 +613,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Check",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Check",
@@ -636,7 +636,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Exclude",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Exclude",
@@ -653,7 +653,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Exclude",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Exclude",
@@ -676,7 +676,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Index",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Index",
@@ -690,7 +690,7 @@ export default {
           },
           {
             label: "Doc: Indexes",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -704,7 +704,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Alter Index",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Index",
@@ -717,7 +717,7 @@ export default {
           },
           {
             label: "Reindex",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Reindex",
@@ -731,7 +731,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Index",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Index",
@@ -747,7 +747,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Rule",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Rule",
@@ -761,7 +761,7 @@ export default {
           },
           {
             label: "Doc: Rules",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -774,7 +774,7 @@ export default {
         cm_rule: [
           {
             label: "Alter Rule",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Rule",
@@ -791,7 +791,7 @@ export default {
           },
           {
             label: "Edit Rule",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getRuleDefinitionPostgresql(this.selectedNode);
             },
@@ -799,7 +799,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Rule",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Rule",
@@ -819,7 +819,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger",
@@ -833,7 +833,7 @@ export default {
           },
           {
             label: "Doc: Triggers",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -846,7 +846,7 @@ export default {
         cm_trigger: [
           {
             label: "Alter Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Trigger",
@@ -863,7 +863,7 @@ export default {
           },
           {
             label: "Enable Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Enable Trigger",
@@ -880,7 +880,7 @@ export default {
           },
           {
             label: "Disable Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Disable Trigger",
@@ -898,7 +898,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Trigger",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Trigger",
@@ -915,7 +915,7 @@ export default {
           },
           {
             label: "Restore",
-            icon: "fa-solid fa-upload cm-all",
+            icon: "fa-solid fa-upload ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
@@ -925,14 +925,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Edit Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getTriggerFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
           {
             label: "Alter Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Trigger Function",
@@ -946,7 +946,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Trigger Function",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Trigger Function",
@@ -962,7 +962,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Inherited",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Inherited",
@@ -976,7 +976,7 @@ export default {
           },
           {
             label: "Doc: Partitioning",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -989,7 +989,7 @@ export default {
         cm_inherited: [
           {
             label: "No Inherit Table",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "No Inherit Partition",
@@ -1005,7 +1005,7 @@ export default {
           },
           {
             label: "Drop Inherited",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Partition",
@@ -1021,7 +1021,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Partition",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Partition",
@@ -1035,7 +1035,7 @@ export default {
           },
           {
             label: "Doc: Partitioning",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1048,7 +1048,7 @@ export default {
         cm_partition: [
           {
             label: "Detach Partition",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Detach Partition",
@@ -1065,7 +1065,7 @@ export default {
           },
           {
             label: "Drop Partition",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Partition",
@@ -1081,7 +1081,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Statistics",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Statistics",
@@ -1097,7 +1097,7 @@ export default {
           },
           {
             label: "Doc: Statistics",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1111,7 +1111,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Alter Statistics",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Statistics",
@@ -1125,7 +1125,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Statistics",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Statistics",
@@ -1141,7 +1141,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Doc: Partitioning",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1156,7 +1156,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Doc: Inheritance",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1171,7 +1171,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Table",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Table",
@@ -1187,11 +1187,11 @@ export default {
           this.cmRefreshObject,
           {
             label: "Data Actions",
-            icon: "fas cm-all fa-list",
+            icon: "fas fa-list",
             children: [
               {
                 label: "Query Data",
-                icon: "fas cm-all fa-search",
+                icon: "fas fa-search",
                 onClick: () => {
                   TemplateSelectPostgresql(
                     this.selectedNode.data.schema_raw,
@@ -1202,14 +1202,14 @@ export default {
               },
               {
                 label: "Edit Data",
-                icon: "fas cm-all fa-table",
+                icon: "fas fa-table",
                 onClick: () => {
                   tabsStore.createDataEditorTab(this.selectedNode.data.raw_value, this.selectedNode.data.schema_raw)
                 },
               },
               {
                 label: "Insert Record",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   TemplateInsertPostgresql(
                     this.selectedNode.data.schema_raw,
@@ -1219,7 +1219,7 @@ export default {
               },
               {
                 label: "Update Records",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   TemplateUpdatePostgresql(
                     this.selectedNode.data.schema_raw,
@@ -1229,7 +1229,7 @@ export default {
               },
               {
                 label: "Delete Records",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
                 onClick: () => {
                   tabSQLTemplate(
                     "Delete Records",
@@ -1244,11 +1244,11 @@ export default {
           },
           {
             label: "Table Actions",
-            icon: "fas cm-all fa-list",
+            icon: "fas fa-list",
             children: [
               {
                 label: "Analyze Foreign Table",
-                icon: "fas cm-all fa-table",
+                icon: "fas fa-table",
                 onClick: () => {
                   tabSQLTemplate(
                     "Analyze Foreign Table",
@@ -1261,7 +1261,7 @@ export default {
               },
               {
                 label: "Alter Foreign Table",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   tabSQLTemplate(
                     "Alter Foreign Table",
@@ -1275,7 +1275,7 @@ export default {
               COMMENT_MENUITEM,
               {
                 label: "Drop Foreign Table",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
                 onClick: () => {
                   tabSQLTemplate(
                     "Drop Foreign Table",
@@ -1292,7 +1292,7 @@ export default {
         cm_foreign_columns: [
           {
             label: "Create Foreign Column",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Column",
@@ -1308,7 +1308,7 @@ export default {
         cm_foreign_column: [
           {
             label: "Alter Foreign Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Foreign Column",
@@ -1325,7 +1325,7 @@ export default {
           },
           {
             label: "Drop Foreign Column",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Foreign Column",
@@ -1345,7 +1345,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Sequence",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Sequence",
@@ -1358,7 +1358,7 @@ export default {
           },
           {
             label: "Doc: Sequences",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1371,7 +1371,7 @@ export default {
         cm_sequence: [
           {
             label: "Alter Sequence",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Sequence",
@@ -1385,7 +1385,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Sequence",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Sequence",
@@ -1401,7 +1401,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create View",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create View",
@@ -1414,7 +1414,7 @@ export default {
           },
           {
             label: "Doc: Views",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1428,7 +1428,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Query Data",
-            icon: "fas cm-all fa-search",
+            icon: "fas fa-search",
             onClick: () => {
               TemplateSelectPostgresql(
                 this.selectedNode.data.schema_raw,
@@ -1439,14 +1439,14 @@ export default {
           },
           {
             label: "Edit View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getViewDefinitionPostgresql(this.selectedNode);
             },
           },
           {
             label: "Alter View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter View",
@@ -1460,7 +1460,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop View",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop View",
@@ -1476,7 +1476,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger",
@@ -1490,7 +1490,7 @@ export default {
           },
           {
             label: "Doc: Triggers",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1504,7 +1504,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Mat. View",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Materialized View",
@@ -1517,7 +1517,7 @@ export default {
           },
           {
             label: "Doc: Mat. Views",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1531,7 +1531,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Query Data",
-            icon: "fas cm-all fa-search",
+            icon: "fas fa-search",
             onClick: () => {
               TemplateSelectPostgresql(
                 this.selectedNode.data.schema_raw,
@@ -1542,14 +1542,14 @@ export default {
           },
           {
             label: "Edit Mat. View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getMaterializedViewDefinitionPostgresql(this.selectedNode);
             },
           },
           {
             label: "Alter Mat. View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Materialized View",
@@ -1562,7 +1562,7 @@ export default {
           },
           {
             label: "Refresh Mat. View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Refresh Materialized View",
@@ -1575,7 +1575,7 @@ export default {
           },
           {
             label: "Analyze Mat. View",
-            icon: "fas cm-all fa-search-plus",
+            icon: "fas fa-search-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Analyze Mat. View",
@@ -1589,7 +1589,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Mat. View",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Materialized View",
@@ -1605,7 +1605,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Function",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Function",
@@ -1618,7 +1618,7 @@ export default {
           },
           {
             label: "Doc: Functions",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1632,7 +1632,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Select Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               TemplateSelectFunctionPostgresql(
                 this.selectedNode.data.schema_raw,
@@ -1643,14 +1643,14 @@ export default {
           },
           {
             label: "Edit Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
           {
             label: "Alter Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Function",
@@ -1663,7 +1663,7 @@ export default {
           },
           {
             label: "Restore",
-            icon: "fa-solid fa-upload cm-all",
+            icon: "fa-solid fa-upload ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Restore')
             },
@@ -1671,7 +1671,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Function",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Function",
@@ -1687,7 +1687,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Trigger Function",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Trigger Function",
@@ -1700,7 +1700,7 @@ export default {
           },
           {
             label: "Doc: Trigger Functions",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1713,14 +1713,14 @@ export default {
         cm_trigger_function: [
           {
             label: "Edit Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getTriggerFunctionDefinitionPostgresql(this.selectedNode);
             },
           },
           {
             label: "Alter Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Trigger Function",
@@ -1734,7 +1734,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Trigger Function",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Trigger Function",
@@ -1750,7 +1750,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Event Trigger Function",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Event Trigger Function",
@@ -1763,7 +1763,7 @@ export default {
           },
           {
             label: "Doc: Event Trigger Functions",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1776,7 +1776,7 @@ export default {
         cm_event_trigger_function: [
           {
             label: "Edit Event Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getEventTriggerFunctionDefinitionPostgresql(
                 this.selectedNode
@@ -1785,7 +1785,7 @@ export default {
           },
           {
             label: "Alter Event Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Event Trigger Function",
@@ -1799,7 +1799,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Event Trigger Function",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Event Trigger Function",
@@ -1815,7 +1815,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Procedure",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Procedure",
@@ -1828,7 +1828,7 @@ export default {
           },
           {
             label: "Doc: Procedures",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1842,7 +1842,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Call Procedure",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               TemplateCallProcedurePostgresql(
                 this.selectedNode.data.schema,
@@ -1853,14 +1853,14 @@ export default {
           },
           {
             label: "Edit Procedure",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getProcedureDefinitionPostgresql(this.selectedNode);
             },
           },
           {
             label: "Alter Procedure",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Procedure",
@@ -1874,7 +1874,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Procedure",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Procedure",
@@ -1890,7 +1890,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Aggregate",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Aggregate",
@@ -1903,7 +1903,7 @@ export default {
           },
           {
             label: "Doc: Aggregates",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1917,7 +1917,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Alter Aggregate",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Aggregate",
@@ -1931,7 +1931,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Aggregate",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Aggregate",
@@ -1947,7 +1947,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Type",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Type",
@@ -1960,7 +1960,7 @@ export default {
           },
           {
             label: "Doc: Types",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -1973,7 +1973,7 @@ export default {
         cm_type: [
           {
             label: "Alter Type",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Type",
@@ -1987,7 +1987,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Type",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Type",
@@ -2003,7 +2003,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Domain",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Domain",
@@ -2016,7 +2016,7 @@ export default {
           },
           {
             label: "Doc: Domains",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2029,7 +2029,7 @@ export default {
         cm_domain: [
           {
             label: "Alter Domain",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Domain",
@@ -2043,7 +2043,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Domain",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Domain",
@@ -2059,14 +2059,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Extension",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               createExtensionModal(this.selectedNode, operationModes.CREATE);
             },
           },
           {
             label: "Doc: Extensions",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2079,7 +2079,7 @@ export default {
         cm_extension: [
           {
             label: "Alter Extension",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               createExtensionModal(this.selectedNode, operationModes.UPDATE);
             },
@@ -2087,7 +2087,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Extension",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               createExtensionModal(this.selectedNode, operationModes.DELETE);
             },
@@ -2097,7 +2097,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Data Wrapper",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Data Wrapper",
@@ -2107,7 +2107,7 @@ export default {
           },
           {
             label: "Doc: Foreign Data Wrappers",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2120,7 +2120,7 @@ export default {
         cm_foreign_data_wrapper: [
           {
             label: "Alter Foreign Data Wrapper",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Foreign Data Wrapper",
@@ -2134,7 +2134,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Foreign Data Wrapper",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Foreign Data Wrapper",
@@ -2150,7 +2150,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Server",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Server",
@@ -2165,7 +2165,7 @@ export default {
         cm_foreign_server: [
           {
             label: "Alter Foreign Server",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Foreign Server",
@@ -2178,7 +2178,7 @@ export default {
           },
           {
             label: "Import Foreign Schema",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Import Foreign Schema",
@@ -2192,7 +2192,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Foreign Server",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Foreign Server",
@@ -2208,7 +2208,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create User Mapping",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create User Mapping",
@@ -2223,7 +2223,7 @@ export default {
         cm_user_mapping: [
           {
             label: "Alter User Mapping",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter User Mapping",
@@ -2238,7 +2238,7 @@ export default {
           },
           {
             label: "Drop User Mapping",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop User Mapping",
@@ -2256,7 +2256,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Event Trigger",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Event Trigger",
@@ -2266,7 +2266,7 @@ export default {
           },
           {
             label: "Doc: Event Triggers",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2279,7 +2279,7 @@ export default {
         cm_event_trigger: [
           {
             label: "Alter Event Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Trigger",
@@ -2292,7 +2292,7 @@ export default {
           },
           {
             label: "Enable Event Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Enable Event Trigger",
@@ -2305,7 +2305,7 @@ export default {
           },
           {
             label: "Disable Event Trigger",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Disable Event Trigger",
@@ -2319,7 +2319,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Event Trigger",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Event Trigger",
@@ -2334,7 +2334,7 @@ export default {
         cm_direct_event_trigger_function: [
           {
             label: "Edit Event Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getEventTriggerFunctionDefinitionPostgresql(
                 this.selectedNode
@@ -2343,7 +2343,7 @@ export default {
           },
           {
             label: "Alter Event Trigger Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Event Trigger Function",
@@ -2357,7 +2357,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Event Trigger Function",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Event Trigger Function",
@@ -2373,7 +2373,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Publication",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Publication",
@@ -2383,7 +2383,7 @@ export default {
           },
           {
             label: "Doc: Publications",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2396,7 +2396,7 @@ export default {
         cm_publication: [
           {
             label: "Alter Publication",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Publication",
@@ -2410,7 +2410,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Publication",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Publication",
@@ -2426,7 +2426,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Add Table",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Add Table",
@@ -2441,7 +2441,7 @@ export default {
         cm_pubtable: [
           {
             label: "Drop Table",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Table",
@@ -2459,7 +2459,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Subscription",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Subscription",
@@ -2469,7 +2469,7 @@ export default {
           },
           {
             label: "Doc: Subscriptions",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2482,7 +2482,7 @@ export default {
         cm_subscription: [
           {
             label: "Alter Subscription",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Subscription",
@@ -2496,7 +2496,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Subscription",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Subscription",
@@ -2512,7 +2512,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Tablespace",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Tablespace",
@@ -2522,7 +2522,7 @@ export default {
           },
           {
             label: "Doc: Tablespaces",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2535,7 +2535,7 @@ export default {
         cm_tablespace: [
           {
             label: "Alter Tablespace",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Tablespace",
@@ -2549,7 +2549,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Tablespace",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Tablespace",
@@ -2565,14 +2565,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Role",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               createRoleModal(this.selectedNode, operationModes.CREATE, this.getMajorVersion(this.templates.version));
             },
           },
           {
             label: "Doc: Roles",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2585,7 +2585,7 @@ export default {
         cm_role: [
           {
             label: "Alter Role",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               createRoleModal(this.selectedNode, operationModes.UPDATE, this.getMajorVersion(this.templates.version));
             },
@@ -2593,7 +2593,7 @@ export default {
           COMMENT_MENUITEM,
           {
             label: "Drop Role",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Role",
@@ -2609,7 +2609,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Slot",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Physical Replication Slot",
@@ -2619,7 +2619,7 @@ export default {
           },
           {
             label: "Doc: Replication Slots",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2632,7 +2632,7 @@ export default {
         cm_physical_replication_slot: [
           {
             label: "Drop Slot",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Physical Replication Slot",
@@ -2648,7 +2648,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Slot",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Logical Replication Slot",
@@ -2658,7 +2658,7 @@ export default {
           },
           {
             label: "Doc: Replication Slots",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -2671,7 +2671,7 @@ export default {
         cm_logical_replication_slot: [
           {
             label: "Drop Slot",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Logical Replication Slot",
@@ -2687,7 +2687,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "New Job",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               createPgCronModal(this.selectedNode, operationModes.CREATE);
             },
@@ -2696,14 +2696,14 @@ export default {
         cm_job: [
           {
             label: "View/Edit",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               createPgCronModal(this.selectedNode, operationModes.UPDATE);
             },
           },
           {
             label: "Delete",
-            icon: "fas cm-all fa-xmark",
+            icon: "fas fa-xmark",
             onClick: () => {
               messageModalStore.showModal(
                 `Are you sure you want to delete job "${this.selectedNode.title}"?`,
@@ -3102,39 +3102,39 @@ export default {
         this.contextMenu.cm_server.push(
           {
             label: "Server Configuration",
-            icon: "fas cm-all fa-cog",
+            icon: "fas fa-cog",
             onClick: () => {
               tabsStore.createConfigurationTab()
             },
           },
           {
             label: "Backup Server",
-            icon: "fa-solid fa-download cm-all",
+            icon: "fa-solid fa-download ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Backup', 'server')
             },
           },
           {
             label: "Restore Server",
-            icon: "fa-solid fa-upload cm-all",
+            icon: "fa-solid fa-upload ",
             onClick: () => {
               tabsStore.createUtilityTab(this.selectedNode, 'Restore', 'server')
             },
           },
           {
             label: "Monitoring",
-            icon: "fas cm-all fa-chart-line",
+            icon: "fas fa-chart-line",
             children: [
               {
                 label: "Dashboard",
-                icon: "fas cm-all fa-chart-line",
+                icon: "fas fa-chart-line",
                 onClick: () => {
                   tabsStore.createMonitoringDashboardTab()
                 },
               },
               {
                 label: "Backends",
-                icon: "fas cm-all fa-tasks",
+                icon: "fas fa-tasks",
                 onClick: () => {
                   tabsStore.createMonitoringTab("Backends", "SELECT * FROM pg_stat_activity")
                 },
@@ -3143,7 +3143,7 @@ export default {
           },
           {
             label: "Doc: PostgreSQL",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -3154,7 +3154,7 @@ export default {
           },
           {
             label: "Doc: SQL Language",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(
@@ -3165,7 +3165,7 @@ export default {
           },
           {
             label: "Doc: SQL Commands",
-            icon: "fas cm-all fa-globe-americas",
+            icon: "fas fa-globe-americas",
             onClick: () => {
               this.openWebSite(
                 `https://www.postgresql.org/docs/${this.getMajorVersion(

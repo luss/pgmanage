@@ -248,7 +248,7 @@ export default {
           contextMenu: [
             {
               label:
-                '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
+                '<div style="position: absolute;"><i class="fas fa-copy" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
               action: (e, cell) => {
                 this.table.selectRow(cell.getRow());
                 this.table.copyToClipboard("selected");
@@ -256,7 +256,7 @@ export default {
             },
             {
               label:
-                '<div style="position: absolute;"><i class="fas fa-bolt cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy Content To Console Tab</div>',
+                '<div style="position: absolute;"><i class="fas fa-bolt" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy Content To Console Tab</div>',
               action: (e, cell) => {
                 emitter.emit(`${this.tabId}_copy_to_editor`, cell.getValue());
                 this.modalInstance.hide();
@@ -264,7 +264,7 @@ export default {
             },
             {
               label:
-                '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
+                '<div style="position: absolute;"><i class="fas fa-edit" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
               action: (e, cell) => {
                 cellDataModalStore.showModal(cell.getValue(), "sql");
               },

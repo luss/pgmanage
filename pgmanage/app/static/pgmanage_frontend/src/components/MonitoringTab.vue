@@ -67,14 +67,14 @@ export default {
       let cellContextMenu = [
         {
           label:
-            '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
+            '<div style="position: absolute;"><i class="fas fa-copy" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
           action: function (e, cell) {
             cell.getTable().copyToClipboard("selected");
           },
         },
         {
           label:
-            '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
+            '<div style="position: absolute;"><i class="fas fa-edit" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
           action: (e, cell) => {
             cellDataModalStore.showModal(cell.getValue())
           },

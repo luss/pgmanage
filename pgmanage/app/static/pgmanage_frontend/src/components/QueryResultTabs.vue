@@ -426,26 +426,26 @@ export default {
         return [
           {
             label:
-              '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
+              '<div style="position: absolute;"><i class="fas fa-copy" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
             action: function (e, cell) {
               cell.getTable().copyToClipboard();
             },
           },
           {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as JSON</div>`,
+            label: `<div style="position: absolute;"><i class="fas fa-copy" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as JSON</div>`,
             action: () => this.copyTableData("json"),
           },
           {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as CSV</div>`,
+            label: `<div style="position: absolute;"><i class="fas fa-copy" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as CSV</div>`,
             action: () => this.copyTableData("csv"),
           },
           {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as Markdown</div>`,
+            label: `<div style="position: absolute;"><i class="fas fa-copy" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as Markdown</div>`,
             action: () => this.copyTableData("markdown"),
           },
           {
             label:
-              '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
+              '<div style="position: absolute;"><i class="fas fa-edit" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
             action: (e, cell) => {
               const colType = this.colTypes[cell.getColumn().getField()]
               cellDataModalStore.showModal(cell.getValue(), colType, true)

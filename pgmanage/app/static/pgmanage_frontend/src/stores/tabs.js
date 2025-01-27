@@ -217,14 +217,14 @@ const useTabsStore = defineStore("tabs", {
             items: [
               {
                 label: "Confirm",
-                icon: "fas cm-all fa-check",
+                icon: "fas fa-check",
                 onClick: function () {
                   confirmFunction();
                 },
               },
               {
                 label: "Cancel",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
               },
             ],
           });
@@ -538,7 +538,7 @@ const useTabsStore = defineStore("tabs", {
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
         name: "Configuration",
-        icon: '<i class="fas cm-all fa-cog icon-tab-title"></i>',
+        icon: '<i class="fas fa-cog icon-tab-title"></i>',
         component: "ConfigTab",
         mode: "configuration",
         closeFunction: (e, tab) => {
@@ -563,7 +563,7 @@ const useTabsStore = defineStore("tabs", {
       let mode = utility.toLowerCase();
       let icon = `<i class="fas ${
         mode === "backup" ? "fa-download" : "fa-upload"
-      } cm-all icon-tab-title"></i>`;
+      } icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
@@ -652,7 +652,7 @@ const useTabsStore = defineStore("tabs", {
         mode === operationModes.UPDATE ? `Alter: ${tableName}` : "New Table";
       let icon = `<i class="fas ${
         mode === operationModes.CREATE ? "fa-plus" : "fa-edit"
-      } cm-all icon-tab-title"></i>`;
+      } icon-tab-title"></i>`;
 
       const tab = this.addTab({
         parentId: this.selectedPrimaryTab.id,
@@ -728,7 +728,7 @@ const useTabsStore = defineStore("tabs", {
       let optionList = [
         {
           label: "Adjust Terminal Dimensions",
-          icon: "fas cm-all fa-window-maximize",
+          icon: "fas fa-window-maximize",
           onClick: function () {
             emitter.emit(`${tab.id}_adjust_terminal_dimensions`);
           },
@@ -738,7 +738,7 @@ const useTabsStore = defineStore("tabs", {
             class: "mb-0",
             innerHTML: "Close Terminal",
           }),
-          icon: "fas cm-all fa-plug-circle-xmark",
+          icon: "fas fa-plug-circle-xmark",
           onClick: () => {
             ContextMenu.closeContextMenu();
             this.closeTab(tab);

@@ -17,7 +17,7 @@ export default {
     cmRefreshObject() {
       return {
         label: "Refresh",
-        icon: "fas cm-all fa-sync-alt",
+        icon: "fas fa-sync-alt",
         onClick: this.refreshNode,
       };
     },
