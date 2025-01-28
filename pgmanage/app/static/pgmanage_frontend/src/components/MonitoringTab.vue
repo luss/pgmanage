@@ -74,7 +74,7 @@ export default {
         {
           label: '<i class="fas fa-edit"></i><span>View Content</span>',
           action: (e, cell) => {
-            cellDataModalStore.showModal(cell.getValue())
+            cellDataModalStore.showModal(cell.getValue(), "sql", true)
           },
         },
       ];
@@ -85,7 +85,8 @@ export default {
         autoResize: false,
         columnDefaults: {
           headerHozAlign: "left",
-          headerSort: false,
+          headerSort: true,
+          maxWidth: '500px'
         },
         autoColumnsDefinitions: (definitions) => {
           //definitions - array of column definition objects
@@ -99,18 +100,13 @@ export default {
           );
 
           updatedDefinitions.unshift({
-            title: "actions",
+            title: "Actions",
             field: "actions",
             formatter: this.actionsFormatter,
             hozAlign: "center",
+            headerSort: false,
             frozen: true,
             clipboard: false,
-          });
-          updatedDefinitions.unshift({
-            formatter: "rownum",
-            hozAlign: "center",
-            width: 40,
-            frozen: true,
           });
 
           return updatedDefinitions;
@@ -129,18 +125,11 @@ export default {
       let actionsWrapper = document.createElement("div");
 
       cell.getValue().forEach((actionItem) => {
-        let iconClassName;
-        if (actionItem.icon.includes("fa-times")) {
-          iconClassName = `${actionItem.icon} text-danger`;
-        } else {
-          iconClassName = `${actionItem.icon} omnidb__theme-icon--primary`;
-        }
-
         const actionWrapper = document.createElement("div");
         actionWrapper.className = "text-center";
         const actionIcon = document.createElement("i");
-        actionIcon.className = `actionable_icon ${iconClassName}`;
-
+        actionIcon.className = actionItem.icon;
+        actionIcon.title = 'Terminate';
         actionIcon.onclick = () => {
           actionItem.action(sourceDataRow);
         };
@@ -164,7 +153,7 @@ export default {
           data.forEach((col, idx) => {
             col.actions = [
               {
-                icon: "fas fa-times action-grid action-close",
+                icon: "fas fa-times text-danger",
                 title: "Terminate",
                 action: this.terminateBackend,
               },
@@ -197,7 +186,7 @@ export default {
       let pid;
       switch (this.dialect) {
         case "postgresql":
-          pid = row.pid;
+          pid = row.Pid;
           break;
         case "mysql":
           pid = row.ID;
