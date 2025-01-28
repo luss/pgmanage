@@ -69,7 +69,7 @@ export default {
         cm_database: [
           {
             label: "ER Diagram",
-            icon: "fab cm-all fa-hubspot",
+            icon: "fab fa-hubspot",
             onClick: () => {
               tabsStore.createERDTab(this.templates.username)
             },
@@ -79,7 +79,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Table",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Table",
@@ -95,11 +95,11 @@ export default {
           this.cmRefreshObject,
           {
             label: "Data Actions",
-            icon: "fas cm-all fa-list",
+            icon: "fas fa-list",
             children: [
               {
                 label: "Query Data",
-                icon: "fas cm-all fa-search",
+                icon: "fas fa-search",
                 onClick: () => {
                   TemplateSelectOracle(
                     this.templates.username,
@@ -109,14 +109,14 @@ export default {
               },
               {
                 label: "Edit Data",
-                icon: "fas cm-all fa-table",
+                icon: "fas fa-table",
                 onClick: () => {
                   tabsStore.createDataEditorTab(this.selectedNode.title, this.templates.username)
                 },
               },
               {
                 label: "Insert Record",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   TemplateInsertOracle(
                     this.templates.username,
@@ -126,7 +126,7 @@ export default {
               },
               {
                 label: "Update Records",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   TemplateUpdateOracle(
                     this.templates.username,
@@ -136,7 +136,7 @@ export default {
               },
               {
                 label: "Delete Records",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
                 onClick: () => {
                   tabSQLTemplate(
                     "Delete Records",
@@ -151,11 +151,11 @@ export default {
           },
           {
             label: "Table Actions",
-            icon: "fas cm-all fa-list",
+            icon: "fas fa-list",
             children: [
               {
                 label: "Alter Table (SQL)",
-                icon: "fas cm-all fa-edit",
+                icon: "fas fa-edit",
                 onClick: () => {
                   tabSQLTemplate(
                     "Alter Table",
@@ -168,7 +168,7 @@ export default {
               },
               {
                 label: "Drop Table",
-                icon: "fas cm-all fa-times",
+                icon: "fas fa-times",
                 onClick: () => {
                   tabSQLTemplate(
                     "Drop Table",
@@ -185,7 +185,7 @@ export default {
         cm_columns: [
           {
             label: "Create Column",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Field",
@@ -201,7 +201,7 @@ export default {
         cm_column: [
           {
             label: "Alter Column",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Column",
@@ -217,7 +217,7 @@ export default {
           },
           {
             label: "Drop Column",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Column",
@@ -236,7 +236,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Primary Key",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Primary Key",
@@ -253,7 +253,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Drop Primary Key",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Primary Key",
@@ -272,7 +272,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Foreign Key",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Foreign Key",
@@ -289,7 +289,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Drop Foreign Key",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Foreign Key",
@@ -308,7 +308,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Unique",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Unique",
@@ -325,7 +325,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Drop Unique",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Unique",
@@ -344,7 +344,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Index",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Index",
@@ -361,7 +361,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Alter Index",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Index",
@@ -374,7 +374,7 @@ export default {
           },
           {
             label: "Drop Index",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Index",
@@ -390,7 +390,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Sequence",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Sequence",
@@ -405,7 +405,7 @@ export default {
         cm_sequence: [
           {
             label: "Alter Sequence",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Sequence",
@@ -418,7 +418,7 @@ export default {
           },
           {
             label: "Drop Sequence",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Sequence",
@@ -434,7 +434,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create View",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create View",
@@ -450,7 +450,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Query Data",
-            icon: "fas cm-all fa-search",
+            icon: "fas fa-search",
             onClick: () => {
               // FIX this to use TemplateSelectMariadb
               let table_name = `${this.templates.username}.${this.selectedNode.title}`;
@@ -466,14 +466,14 @@ export default {
           },
           {
             label: "Edit View",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getViewDefinitionOracle(this.selectedNode);
             },
           },
           {
             label: "Drop View",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop View",
@@ -489,7 +489,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Function",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Function",
@@ -505,14 +505,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Edit Function",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getFunctionDefinitionOracle(this.selectedNode);
             },
           },
           {
             label: "Drop Function",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Function",
@@ -528,7 +528,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Procedure",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Procedure",
@@ -544,14 +544,14 @@ export default {
           this.cmRefreshObject,
           {
             label: "Edit Procedure",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               this.getProcedureDefinitionOracle(this.selectedNode);
             },
           },
           {
             label: "Drop Procedure",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Procedure",
@@ -567,7 +567,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Tablespace",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate(
                 "Create Tablespace",
@@ -579,7 +579,7 @@ export default {
         cm_tablespace: [
           {
             label: "Alter Tablespace",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Tablespace",
@@ -592,7 +592,7 @@ export default {
           },
           {
             label: "Drop Tablespace",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Tablespace",
@@ -608,7 +608,7 @@ export default {
           this.cmRefreshObject,
           {
             label: "Create Role",
-            icon: "fas cm-all fa-plus",
+            icon: "fas fa-plus",
             onClick: () => {
               tabSQLTemplate("Create Role", this.templates.create_role);
             },
@@ -617,7 +617,7 @@ export default {
         cm_role: [
           {
             label: "Alter Role",
-            icon: "fas cm-all fa-edit",
+            icon: "fas fa-edit",
             onClick: () => {
               tabSQLTemplate(
                 "Alter Role",
@@ -630,7 +630,7 @@ export default {
           },
           {
             label: "Drop Role",
-            icon: "fas cm-all fa-times",
+            icon: "fas fa-times",
             onClick: () => {
               tabSQLTemplate(
                 "Drop Role",
@@ -759,11 +759,11 @@ export default {
             this.contextMenu.cm_server = [this.cmRefreshObject];
             this.contextMenu.cm_server.push({
               label: "Monitoring",
-              icon: "fas cm-all fa-chart-line",
+              icon: "fas fa-chart-line",
               children: [
                 {
                   label: "Sessions",
-                  icon: "fas cm-all fa-chart-line",
+                  icon: "fas fa-chart-line",
                   onClick: () => {
                     tabsStore.createMonitoringTab("Sessions", "select * from v$session")
                   },

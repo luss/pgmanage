@@ -425,27 +425,25 @@ export default {
 
         return [
           {
-            label:
-              '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
+            label: '<i class="fas fa-copy"></i><span>Copy</span>',
             action: function (e, cell) {
               cell.getTable().copyToClipboard();
             },
           },
           {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as JSON</div>`,
+            label: '<i class="fas fa-copy"></i><span>Copy as JSON</span>',
             action: () => this.copyTableData("json"),
           },
           {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as CSV</div>`,
+            label: '<i class="fas fa-copy"></i><span>Copy as CSV</span>',
             action: () => this.copyTableData("csv"),
           },
           {
-            label: `<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy as Markdown</div>`,
+            label: '<i class="fas fa-copy"></i><span>Copy as Mardown</span>',
             action: () => this.copyTableData("markdown"),
           },
           {
-            label:
-              '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
+            label: '<i class="fas fa-edit"></i><span>View Content</span>',
             action: (e, cell) => {
               const colType = this.colTypes[cell.getColumn().getField()]
               cellDataModalStore.showModal(cell.getValue(), colType, true)

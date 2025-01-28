@@ -233,7 +233,7 @@
     }
 
     &-popup-container {
-        font-size: $fontSize;
+        font-size: $fontSize !important;
         border-radius: $borderRadius;
         border-width: 1px;
         box-shadow: $dropdownBoxShadow !important;
@@ -245,6 +245,18 @@
         }
 
         .tabulator-menu-item {
+            padding:5px 15px !important;
+
+            i {
+                width: 24px;
+                height: 16px;
+                vertical-align: middle;
+                font-size: var(--mx-menu-icon-size);
+                @include themify() {
+                    color: themed($primaryBlueWhiteSwitching);
+                }
+            }
+            
             @include themify() {
                 color: themed($color);
             }

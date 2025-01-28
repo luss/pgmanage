@@ -204,7 +204,7 @@ export default {
       let option_list = [
         {
           label: "Run selection",
-          icon: "fas cm-all fa-play",
+          icon: "fas fa-play",
           disabled: !hasSelectedContent,
           onClick: () => {
             this.$emit("run-selection");
@@ -212,7 +212,7 @@ export default {
         },
         {
           label: "Explain selection",
-          icon: "fas cm-all fa-chart-simple",
+          icon: "fas fa-chart-simple",
           disabled: !hasSelectedContent,
           onClick: () => {
             this.$emit("run-selection-explain");
@@ -220,7 +220,7 @@ export default {
         },
         {
           label: "Explain Analyze selection",
-          icon: "fas cm-all fa-magnifying-glass-chart",
+          icon: "fas fa-magnifying-glass-chart",
           disabled: !hasSelectedContent,
           onClick: () => {
             this.$emit("run-selection-explain-analyze");
@@ -228,7 +228,7 @@ export default {
         },
         {
           label: "Copy",
-          icon: "fas cm-all fa-terminal",
+          icon: "fas fa-terminal",
           disabled: !hasSelectedContent,
           onClick: () => {
             document.execCommand("copy");
@@ -236,7 +236,7 @@ export default {
         },
         {
           label: "Save as snippet",
-          icon: "fas cm-all fa-save",
+          icon: "fas fa-save",
           children: buildSnippetContextMenuObjects(
             "save",
             snippetsStore,
@@ -248,7 +248,7 @@ export default {
       if (snippetsStore.files.length != 0 || snippetsStore.folders.length != 0)
         option_list.push({
           label: "Use snippet",
-          icon: "fas cm-all fa-file-code",
+          icon: "fas fa-file-code",
           children: buildSnippetContextMenuObjects(
             "load",
             snippetsStore,

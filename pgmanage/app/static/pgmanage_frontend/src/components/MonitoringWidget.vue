@@ -237,15 +237,13 @@ export default {
       if (!this.visualizationObject) {
         let cellContextMenu = [
           {
-            label:
-              '<div style="position: absolute;"><i class="fas fa-copy cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">Copy</div>',
+            label: '<i class="fas fa-copy"></i><span>Copy</span>',
             action: function (e, cell) {
               cell.getTable().copyToClipboard("selected");
             },
           },
           {
-            label:
-              '<div style="position: absolute;"><i class="fas fa-edit cm-all" style="vertical-align: middle;"></i></div><div style="padding-left: 30px;">View Content</div>',
+            label: '<i class="fas fa-edit"></i><span>View Content</span>',
             action: (e, cell) => {
               cellDataModalStore.showModal(cell.getValue())
             },

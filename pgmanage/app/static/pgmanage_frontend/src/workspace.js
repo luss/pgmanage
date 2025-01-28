@@ -151,14 +151,14 @@ function showMenuNewTabOuter(e) {
         }
         return {
           label: conn_name,
-          icon: `fas cm-all ${icon}`,
+          icon: `fas ${icon}`,
           onClick: onClick,
         };
       });
 
     return {
       label: group.name,
-      icon: "fas cm-all fa-plug",
+      icon: "fas fa-plug",
       children: group_connections,
     };
   }
@@ -194,7 +194,7 @@ function showMenuNewTabOuter(e) {
 
         items.push({
           label: "Connections",
-          icon: "fas cm-all fa-plug",
+          icon: "fas fa-plug",
           children: group_list,
         });
       }
@@ -210,7 +210,7 @@ function showMenuNewTabOuter(e) {
           }
           return {
             label: term_name,
-            icon: "fas cm-all fa-terminal",
+            icon: "fas fa-terminal",
             onClick: () => {
               tabsStore.createTerminalTab(id, alias, details1)
             },
@@ -220,7 +220,7 @@ function showMenuNewTabOuter(e) {
 
       items.push({
         label: "SSH Consoles",
-        icon: "fas cm-all fa-terminal",
+        icon: "fas fa-terminal",
         children: submenu_terminal_list,
       });
     }
@@ -228,7 +228,7 @@ function showMenuNewTabOuter(e) {
     if (items.length > 0) {
       items.unshift({
         label: "Manage Connections",
-        icon: "fas cm-all fa-gears",
+        icon: "fas fa-gears",
         onClick: () => {
           Modal.getOrCreateInstance("#connections-modal").show()
         },

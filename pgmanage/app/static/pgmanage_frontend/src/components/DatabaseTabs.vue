@@ -300,7 +300,7 @@ export default {
       let optionList = [
         {
           label: "Query Tab",
-          icon: "fas cm-all fa-search",
+          icon: "fas fa-search",
           onClick: () => {
             let name = tabsStore.selectedPrimaryTab.metaData.selectedDatabase
               .replace("\\", "/")
@@ -311,7 +311,7 @@ export default {
         },
         {
           label: "Console Tab",
-          icon: "fas cm-all fa-terminal",
+          icon: "fas fa-terminal",
           onClick: () => {
             tabsStore.createConsoleTab();
           },
@@ -325,7 +325,7 @@ export default {
       ) {
         optionList.push({
           label: "Monitoring Dashboard",
-          icon: "fas cm-all fa-chart-line",
+          icon: "fas fa-chart-line",
           onClick: () => {
             tabsStore.createMonitoringDashboardTab();
           },
@@ -335,7 +335,7 @@ export default {
       if (tabsStore.selectedPrimaryTab.metaData.selectedDBMS === "postgresql") {
         optionList.push({
           label: "Backends",
-          icon: "fas cm-all fa-tasks",
+          icon: "fas fa-tasks",
           onClick: () => {
             tabsStore.createMonitoringTab(
               "Backends",
@@ -350,7 +350,7 @@ export default {
       ) {
         optionList.push({
           label: "Process List",
-          icon: "fas cm-all fa-tasks",
+          icon: "fas fa-tasks",
           onClick: () => {
             tabsStore.createMonitoringTab(
               "Process List",
