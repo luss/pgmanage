@@ -3,6 +3,7 @@ import os
 from app.file_manager.file_manager import FileManager
 from app.utils.decorators import user_authenticated
 from django.http import FileResponse, HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
 
 
 @user_authenticated
@@ -57,6 +58,7 @@ def delete(request):
         return JsonResponse({"data": str(exc)}, status=400)
 
 
+@require_POST
 @user_authenticated
 def download(request):
     file_manager = FileManager(request.user)
@@ -80,5 +82,35 @@ def download(request):
             as_attachment=True,
             filename=os.path.basename(abs_path),
         )
+    except Exception as exc:
+        return JsonResponse({"data": str(exc)}, status=400)
+
+
+@user_authenticated
+def upload(request):
+    file_manager = FileManager(request.user)
+    upload_file = request.FILES.get("file")
+    rel_path = request.POST.get("path", "")
+
+    if not upload_file:
+        return JsonResponse({"data": "No file provided."}, status=400)
+
+    try:
+        normalized_path = (
+            "." if rel_path == "/" else os.path.normpath(rel_path.lstrip("/"))
+        )
+        abs_path = os.path.abspath(file_manager.resolve_path(normalized_path))
+
+        file_name = upload_file.name
+
+        new_file_name = os.path.join(abs_path, file_name)
+
+        file_manager.check_access_permission(new_file_name)
+
+        with open(new_file_name, "wb+") as f:
+            for chunk in upload_file.chunks():
+                f.write(chunk)
+
+        return JsonResponse({"data": "File uploaded successfully."}, status=201)
     except Exception as exc:
         return JsonResponse({"data": str(exc)}, status=400)

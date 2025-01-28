@@ -62,13 +62,13 @@
                   >
                     <i class="fas fa-download"></i
                   ></a>
-                  <!-- <a
+                  <a
                     class="btn btn-outline-secondary btn-sm"
                     title="Upload"
                     @click="onUpload"
                   >
                     <i class="fas fa-upload fa-light"></i
-                  ></a> -->
+                  ></a>
                 </div>
                 <div class="btn-group">
                   <a
@@ -185,7 +185,9 @@
             <div v-else class="file-table">
               <div class="p-0">
                 <ul class="list-group list-group-flush form-group">
-                  <li class="list-group-item d-flex row g-0 fw-bold mb-1 border-0 file-table-header bg-transparent">
+                  <li
+                    class="list-group-item d-flex row g-0 fw-bold mb-1 border-0 file-table-header bg-transparent"
+                  >
                     <div class="col-7">Name</div>
                     <div class="col-2">Size</div>
                     <div class="col-3">Modified</div>
@@ -267,6 +269,7 @@ import axios from "axios";
 import { showToast } from "../notification_control";
 import { fileManagerStore } from "../stores/stores_initializer";
 import { Modal } from "bootstrap";
+import { maxFileSizeInMB,  maxFileSizeInKB } from "../constants";
 
 export default {
   name: "FileManager",
@@ -399,8 +402,39 @@ export default {
           showToast("error", error.response.data.data);
         });
     },
-    //TODO: implement upload functionality
-    onUpload() {},
+    async handleFileUpload(event) {
+      const file = event.target.files[0];
+
+      if (file.size > maxFileSizeInKB) {
+        showToast(
+          "error",
+          `Please select a file that is ${maxFileSizeInMB}MB or less.`
+        );
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("path", this.currentPath);
+
+      try {
+        const response = await axios.post("/file_manager/upload/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        this.getDirContent(this.currentPath, null, file.name);
+      } catch (error) {
+        showToast("error", error.response?.data?.data || "File upload failed.");
+      }
+    },
+    onUpload() {
+      let inputEl = document.createElement("input");
+      inputEl.setAttribute("type", "file");
+      inputEl.onchange = this.handleFileUpload;
+      inputEl.dispatchEvent(new MouseEvent("click"));
+    },
   },
 };
 </script>

@@ -323,6 +323,7 @@ base_urlpatterns = [
     path('file_manager/rename/', views.file_manager.rename, name="rename_file_or_directory"),
     path('file_manager/delete/', views.file_manager.delete, name='delete_file_or_directory'),
     path('file_manager/download/', views.file_manager.download, name='download_file'),
+    path('file_manager/upload/', views.file_manager.upload, name='upload_file'),
 
     path('validate_binary_path/', views.workspace.validate_binary_path, name='validate_binary_path'),
 
