@@ -74,8 +74,9 @@ class FileManager:
             name: The name of the file or directory to create.
             file_type: The type of entity to create ("file" or "dir").
         """
-        abs_path = self.resolve_path(path)
-        full_path = os.path.join(abs_path, name)
+        normalized_path = "." if path == "/" else os.path.normpath(path.lstrip('/'))
+        abs_path = self.resolve_path(normalized_path)
+        full_path = os.path.abspath(os.path.join(abs_path, name))
 
         self.check_access_permission(full_path)
         self._assert_not_exists(full_path)
