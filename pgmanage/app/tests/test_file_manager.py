@@ -1,8 +1,16 @@
 import os
 from unittest.mock import mock_open, patch
 
-from app.views.file_manager import create, delete, download, get_directory, rename
+from app.views.file_manager import (
+    create,
+    delete,
+    download,
+    get_directory,
+    rename,
+    upload,
+)
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import resolve, reverse
 
@@ -193,3 +201,49 @@ class FileManagerViewsTests(TestCase):
         view = resolve("/file_manager/download/")
 
         self.assertEqual(view.func.__name__, download.__name__)
+
+    @patch("app.file_manager.file_manager.FileManager.check_access_permission")
+    @patch("builtins.open", new_callable=mock_open, read_data="file content")
+    @patch("os.path.abspath")
+    def test_upload_file(self, mock_abspath, mock_open_file, mock_check_permission):
+        file_content = b"Test file content"
+        test_file = SimpleUploadedFile(
+            "test.txt", file_content, content_type="text/plain"
+        )
+        mock_abspath.return_value = self.storage_path
+        response = self.client.post(
+            reverse("upload_file"),
+            {"file": test_file, "path": "."},
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["data"], "File uploaded successfully.")
+
+        new_file_name = os.path.join(self.storage_path, test_file.name)
+
+        mock_open_file.assert_called_once_with(new_file_name, "wb+")
+        mock_check_permission.assert_called_once_with(new_file_name)
+
+    def test_upload_no_file(self):
+        response = self.client.post(reverse("upload_file"), {"path": "."})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["data"], "No file provided.")
+
+    @patch("app.file_manager.file_manager.FileManager.resolve_path")
+    @patch("builtins.open", new_callable=mock_open, read_data="file content")
+    @patch("os.path.abspath")
+    def test_upload_to_root(self, mock_abspath, mock_open_file, mock_resolve_path):
+        file_content = b"Root test file"
+        test_file = SimpleUploadedFile(
+            "root_test.txt", file_content, content_type="text/plain"
+        )
+        mock_abspath.return_value = "/"
+        response = self.client.post(
+            reverse("upload_file"), {"file": test_file, "path": "/"}
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_upload_url_resolves_upload_view(self):
+        view = resolve("/file_manager/upload/")
+
+        self.assertEqual(view.func.__name__, upload.__name__)
