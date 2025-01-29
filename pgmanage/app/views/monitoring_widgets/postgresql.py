@@ -1472,10 +1472,17 @@ result = {
 
 from datetime import datetime
 
-if previous_data != None:
-    query = "select (checkpoints_timed+checkpoints_req) - " + str(previous_data["current_checkpoints"]) + " as checkpoints_diff, (checkpoints_timed+checkpoints_req) as current_checkpoints FROM pg_stat_bgwriter"
+version = int(connection.Query('show server_version_num').Rows[0][0])
+if version < 170000:
+    if previous_data != None:
+        query = "select (checkpoints_timed+checkpoints_req) - " + str(previous_data["current_checkpoints"]) + " as checkpoints_diff, (checkpoints_timed+checkpoints_req) as current_checkpoints FROM pg_stat_bgwriter"
+    else:
+        query = 'select 0 as checkpoints_diff, (checkpoints_timed+checkpoints_req) as current_checkpoints FROM pg_stat_bgwriter'
 else:
-    query = 'select 0 as checkpoints_diff, (checkpoints_timed+checkpoints_req) as current_checkpoints FROM pg_stat_bgwriter'
+    if previous_data != None:
+        query = "select (num_timed+num_requested) - " + str(previous_data["current_checkpoints"]) + " as checkpoints_diff, (num_timed+num_requested) as current_checkpoints FROM pg_stat_checkpointer"
+    else:
+        query = 'select 0 as checkpoints_diff, (num_timed+num_requested) as current_checkpoints FROM pg_stat_checkpointer'
 
 query_data = connection.Query(query)
 
