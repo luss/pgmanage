@@ -39,17 +39,17 @@ describe("BackupTab Component", () => {
       data: { type: "table", database: "testDB", schema: "public" },
       title: "testTable",
     },
-  }
+  };
 
   beforeEach(() => {
     axios.post.mockResolvedValueOnce({
       data: { data: [] },
     });
-    axios.get.mockResolvedValueOnce({
+    axios.get.mockResolvedValue({
       data: { data: [] },
     });
     wrapper = mount(BackupTab, {
-      props: props
+      props: props,
     });
   });
 
@@ -76,8 +76,12 @@ describe("BackupTab Component", () => {
     expect(wrapper.find("#backupFormat").exists()).toBeFalsy();
     expect(wrapper.find("#backupCompressionRatio").exists()).toBeFalsy();
     expect(wrapper.find("#backupNumberOfJobs").exists()).toBeFalsy();
-    expect(wrapper.find(`#${props.tabId}_backupOptionsPreData`).exists()).toBeFalsy();
-    expect(wrapper.find(`#${props.tabId}_backupOptionsBlobs`).exists()).toBeFalsy();
+    expect(
+      wrapper.find(`#${props.tabId}_backupOptionsPreData`).exists()
+    ).toBeFalsy();
+    expect(
+      wrapper.find(`#${props.tabId}_backupOptionsBlobs`).exists()
+    ).toBeFalsy();
     expect(
       wrapper.find(`#${props.tabId}_backupOptionsCreateDbStatement`).exists()
     ).toBeFalsy();
@@ -96,8 +100,12 @@ describe("BackupTab Component", () => {
     expect(wrapper.find("#backupFormat").exists()).toBeTruthy();
     expect(wrapper.find("#backupCompressionRatio").exists()).toBeTruthy();
     expect(wrapper.find("#backupNumberOfJobs").exists()).toBeTruthy();
-    expect(wrapper.find(`#${props.tabId}_backupOptionsPreData`).exists()).toBeTruthy();
-    expect(wrapper.find(`#${props.tabId}_backupOptionsBlobs`).exists()).toBeTruthy();
+    expect(
+      wrapper.find(`#${props.tabId}_backupOptionsPreData`).exists()
+    ).toBeTruthy();
+    expect(
+      wrapper.find(`#${props.tabId}_backupOptionsBlobs`).exists()
+    ).toBeTruthy();
     expect(
       wrapper.find(`#${props.tabId}_backupOptionsCreateDbStatement`).exists()
     ).toBeTruthy();
@@ -183,9 +191,6 @@ describe("BackupTab Component", () => {
   it("should set 'plain' format type as default for 'server' backup type", async () => {
     wrapper.unmount();
     axios.post.mockResolvedValueOnce({
-      data: { data: [] },
-    });
-    axios.get.mockResolvedValueOnce({
       data: { data: [] },
     });
     wrapper = mount(BackupTab, {
