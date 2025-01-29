@@ -3136,7 +3136,20 @@ export default {
                 label: "Backends",
                 icon: "fas fa-tasks",
                 onClick: () => {
-                  tabsStore.createMonitoringTab("Backends", "SELECT * FROM pg_stat_activity")
+                  tabsStore.createMonitoringTab(
+                    "Backends",
+                    'select pid as "Pid",\
+                    datname as "Database",\
+                    usename as "User",\
+                    application_name as "Application",\
+                    client_addr as "Client Addr",\
+                    backend_start as "Backend Start",\
+                    xact_start as "Transaction Start",\
+                    state as "State",\
+                    wait_event as "Wait Event",\
+                    backend_type as "Backend Type",\
+                    query as "Query" from pg_stat_activity'
+                  );
                 },
               },
             ],
