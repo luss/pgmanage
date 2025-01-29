@@ -283,7 +283,7 @@ export default {
         });
         this.visualizationObject = tabulator;
       } else {
-        this.visualizationObject.setData(data.data);
+        this.visualizationObject.replaceData(data.data);
       }
     },
     buildChart(data) {
