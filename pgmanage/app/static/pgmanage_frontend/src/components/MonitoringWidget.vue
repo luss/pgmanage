@@ -172,7 +172,10 @@ export default {
   },
   mounted() {
     if (!this.isTestWidget) {
-      this.refreshMonitoringWidget();
+      // add random delay to widet timer start,
+      // prevents that many widgets from bashing back-end with simulteneous requests
+      let randomWait = Math.floor(Math.random() * 150)
+      setTimeout(this.refreshMonitoringWidget, randomWait)
     } else {
       this.testMonitoringWidget();
     }
