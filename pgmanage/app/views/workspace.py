@@ -89,6 +89,7 @@ class SettingsView(View):
             "binary_path": user_details.get_binary_path(),
             "pigz_path": user_details.get_pigz_path(),
             "editor_theme": user_details.get_editor_theme(),
+            "max_upload_size": settings.MAX_UPLOAD_SIZE,
         }
 
         user_shortcuts = {}

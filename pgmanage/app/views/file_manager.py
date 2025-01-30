@@ -4,6 +4,7 @@ from app.file_manager.file_manager import FileManager
 from app.utils.decorators import user_authenticated
 from django.http import FileResponse, HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
+from django.conf import settings
 
 
 @user_authenticated
@@ -95,7 +96,15 @@ def upload(request):
     if not upload_file:
         return JsonResponse({"data": "No file provided."}, status=400)
 
+    if upload_file.size > settings.MAX_UPLOAD_SIZE:
+        return JsonResponse(
+            {
+                "data": f"File size exceeds {int(settings.MAX_UPLOAD_SIZE / (1024 **2))}MB limit."
+            },
+            status=400,
+        )
     try:
+
         normalized_path = (
             "." if rel_path == "/" else os.path.normpath(rel_path.lstrip("/"))
         )

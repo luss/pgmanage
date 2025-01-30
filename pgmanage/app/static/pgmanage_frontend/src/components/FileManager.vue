@@ -267,9 +267,8 @@
 import FileManagerActionsModal from "./FileManagerActionsModal.vue";
 import axios from "axios";
 import { showToast } from "../notification_control";
-import { fileManagerStore } from "../stores/stores_initializer";
+import { fileManagerStore, settingsStore } from "../stores/stores_initializer";
 import { Modal } from "bootstrap";
-import { maxFileSizeInMB,  maxFileSizeInKB } from "../constants";
 
 export default {
   name: "FileManager",
@@ -405,10 +404,12 @@ export default {
     async handleFileUpload(event) {
       const file = event.target.files[0];
 
-      if (file.size > maxFileSizeInKB) {
+      if (file.size > settingsStore.max_upload_size) {
         showToast(
           "error",
-          `Please select a file that is ${maxFileSizeInMB}MB or less.`
+          `Please select a file that is ${
+            settingsStore.max_upload_size / 1024 ** 2
+          }MB or less.`
         );
         return;
       }

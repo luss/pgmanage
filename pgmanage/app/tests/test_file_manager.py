@@ -9,6 +9,7 @@ from app.views.file_manager import (
     rename,
     upload,
 )
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
@@ -247,3 +248,16 @@ class FileManagerViewsTests(TestCase):
         view = resolve("/file_manager/upload/")
 
         self.assertEqual(view.func.__name__, upload.__name__)
+
+    def test_upload_exceeds_size_limit(self):
+        large_file_content = b"A" * (settings.MAX_UPLOAD_SIZE + 1)
+        large_file = SimpleUploadedFile(
+            "large_file.txt", large_file_content, content_type="text/plain"
+        )
+
+        response = self.client.post(
+            reverse("upload_file"), {"file": large_file, "path": "."}
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("File size exceeds", response.json().get("data"))

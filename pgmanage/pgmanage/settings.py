@@ -10,6 +10,7 @@ DEBUG = custom_settings.DEV_MODE
 DESKTOP_MODE = custom_settings.DESKTOP_MODE
 BASE_DIR = custom_settings.BASE_DIR
 HOME_DIR = custom_settings.HOME_DIR
+MAX_UPLOAD_SIZE = custom_settings.MAX_UPLOAD_SIZE
 
 TEMP_DIR = os.path.join(BASE_DIR,'app','static','temp')
 PLUGINS_DIR = os.path.join(BASE_DIR,'app','plugins')

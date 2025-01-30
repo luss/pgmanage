@@ -20,6 +20,7 @@ const useSettingsStore = defineStore("settings", {
     dateFormat: "",
     shortcuts: {},
     currentOS: "Unknown OS",
+    max_upload_size: "",
   }),
   actions: {
     async getSettings() {
@@ -40,6 +41,7 @@ const useSettingsStore = defineStore("settings", {
           dateFormat: !userSettings.date_format
             ? "YYYY-MM-DD, HH:mm:ss"
             : userSettings.date_format,
+          max_upload_size: userSettings.max_upload_size,
         });
 
         this.shortcuts = Object.assign(
