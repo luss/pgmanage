@@ -141,6 +141,27 @@
               ></a>
             </div>
 
+            <Transition :duration="100">
+              <div
+                v-if="showLoading"
+                class="div_loading d-block"
+                style="z-index: 10"
+              >
+                <div class="div_loading_cover"></div>
+                <div class="div_loading_content">
+                  <div
+                    class="spinner-border spinner-size text-primary"
+                    role="status"
+                  >
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <div class="row">
+                    <strong>Uploading...</strong>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+
             <!-- Box format for files and folders -->
             <div v-if="isGrid" class="d-flex p-2 flex-wrap files-grid">
               <div
@@ -283,6 +304,7 @@ export default {
       selectedFile: {},
       action: "",
       currentView: "grid",
+      showLoading: false,
     };
   },
   computed: {
@@ -401,7 +423,7 @@ export default {
           showToast("error", error.response.data.data);
         });
     },
-    async handleFileUpload(event) {
+    async onUploadProgress(event) {
       const file = event.target.files[0];
 
       if (file.size > settingsStore.max_upload_size) {
@@ -419,21 +441,23 @@ export default {
       formData.append("path", this.currentPath);
 
       try {
+        this.showLoading = true;
         const response = await axios.post("/file_manager/upload/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-
+        this.showLoading = false;
         this.getDirContent(this.currentPath, null, file.name);
       } catch (error) {
+        this.showLoading = false;
         showToast("error", error.response?.data?.data || "File upload failed.");
       }
     },
     onUpload() {
       let inputEl = document.createElement("input");
       inputEl.setAttribute("type", "file");
-      inputEl.onchange = this.handleFileUpload;
+      inputEl.onchange = this.onUploadProgress;
       inputEl.dispatchEvent(new MouseEvent("click"));
     },
   },
