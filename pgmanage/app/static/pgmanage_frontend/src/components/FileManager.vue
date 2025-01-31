@@ -62,13 +62,14 @@
                   >
                     <i class="fas fa-download"></i
                   ></a>
-                  <!-- <a
+                  <a
                     class="btn btn-outline-secondary btn-sm"
+                    :class="{ disabled: !!uploadingFile }"
                     title="Upload"
                     @click="onUpload"
                   >
-                    <i class="fas fa-upload fa-light"></i
-                  ></a> -->
+                    <i class="fas fa-upload"></i
+                  ></a>
                 </div>
                 <div class="btn-group">
                   <a
@@ -185,7 +186,9 @@
             <div v-else class="file-table">
               <div class="p-0">
                 <ul class="list-group list-group-flush form-group">
-                  <li class="list-group-item d-flex row g-0 fw-bold mb-1 border-0 file-table-header bg-transparent">
+                  <li
+                    class="list-group-item d-flex row g-0 fw-bold mb-1 border-0 file-table-header bg-transparent"
+                  >
                     <div class="col-7">Name</div>
                     <div class="col-2">Size</div>
                     <div class="col-3">Modified</div>
@@ -233,7 +236,31 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer justify-content-between">
+            <div class="w-75">
+              <div v-if="showLoading" class="d-flex align-items-center">
+                <div class="progress w-25">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    :style="{ width: `${uploadProgress}%` }"
+                    aria-valuenow="25"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+                <button
+                  type="button"
+                  class="btn-close"
+                  aria-label="Close"
+                  title="Cancel Upload"
+                  @click="cancelUpload"
+                ></button>
+                <span class="fw-bold"
+                  >Uploading {{ uploadingFile }}...{{ uploadProgress }}%</span
+                >
+              </div>
+            </div>
             <a
               :class="[
                 'btn',
@@ -265,7 +292,7 @@
 import FileManagerActionsModal from "./FileManagerActionsModal.vue";
 import axios from "axios";
 import { showToast } from "../notification_control";
-import { fileManagerStore } from "../stores/stores_initializer";
+import { fileManagerStore, settingsStore } from "../stores/stores_initializer";
 import { Modal } from "bootstrap";
 
 export default {
@@ -281,6 +308,10 @@ export default {
       selectedFile: {},
       action: "",
       currentView: "grid",
+      showLoading: false,
+      uploadProgress: null,
+      uploadingFile: "",
+      controller: null,
     };
   },
   computed: {
@@ -302,8 +333,21 @@ export default {
     this.$refs.fileManagerModal.addEventListener("hide.bs.modal", () => {
       fileManagerStore.hideModal();
     });
+
+    window.addEventListener("beforeunload", this.preventNavigation);
+  },
+  beforeUnmount() {
+    window.removeEventListener("beforeunload", this.preventNavigation);
   },
   methods: {
+    preventNavigation(event) {
+      if (this.uploadingFile) {
+        event.preventDefault();
+        event.returnValue =
+          "You have an ongoing upload. Are you sure you want to leave?";
+        return event.returnValue;
+      }
+    },
     refreshManager(event, created_file_name = null) {
       if (!!created_file_name) {
         this.getDirContent(this.currentPath, null, created_file_name);
@@ -399,8 +443,84 @@ export default {
           showToast("error", error.response.data.data);
         });
     },
-    //TODO: implement upload functionality
-    onUpload() {},
+    async onUploadProgress(event) {
+      const file = event.target.files[0];
+
+      if (file.size > settingsStore.max_upload_size) {
+        showToast(
+          "error",
+          `Please select a file that is ${
+            settingsStore.max_upload_size / 1024 ** 2
+          }MB or less.`
+        );
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("path", this.currentPath);
+
+      try {
+        this.showLoading = true;
+        this.uploadingFile = file.name;
+        this.controller = new AbortController();
+        const response = await axios.post("/file_manager/upload/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            this.uploadProgress = Math.round(progressEvent.progress * 100);
+          },
+          signal: this.controller.signal,
+        });
+        this.showLoading = false;
+        this.uploadProgress = null;
+        this.uploadingFile = null;
+        this.controller = null;
+        this.sendNotifyUploadFinished(`File ${file.name} is uploaded.`, () => {
+          Modal.getOrCreateInstance(this.$refs.fileManagerModal).show();
+        });
+        this.getDirContent(this.currentPath, null, file.name);
+      } catch (error) {
+        this.showLoading = false;
+        this.uploadProgress = null;
+        this.uploadingFile = null;
+        this.controller = null;
+        if (axios.isCancel(error)) {
+          showToast("info", `Upload of file "${file.name}"" was cancelled.`);
+        } else {
+          showToast(
+            "error",
+            error.response?.data?.data || "File upload failed."
+          );
+        }
+      }
+    },
+    onUpload() {
+      let inputEl = document.createElement("input");
+      inputEl.setAttribute("type", "file");
+      inputEl.onchange = this.onUploadProgress;
+      inputEl.dispatchEvent(new MouseEvent("click"));
+    },
+    cancelUpload() {
+      if (!!this.controller) this.controller.abort();
+    },
+    createNotifyMessage(title, desc) {
+      return `<div class="v-toast__body p-0">
+                  <h3 class="fw-bold">${title}</h3>
+                  <p>${desc}</p>
+                  <div class="text-end">
+                    <button class="btn v-toast__details fw-bold">Open File Manager</button>
+                  </div>
+              </div>`;
+    },
+    sendNotifyUploadFinished(desc, onClickProcess) {
+      let message = this.createNotifyMessage("File Manager", desc);
+
+      this.$toast.success(message, {
+        onClick: onClickProcess,
+      });
+    },
   },
 };
 </script>
