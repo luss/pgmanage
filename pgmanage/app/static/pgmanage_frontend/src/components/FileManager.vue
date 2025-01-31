@@ -64,10 +64,11 @@
                   ></a>
                   <a
                     class="btn btn-outline-secondary btn-sm"
+                    :class="{ disabled: !!uploadingFile }"
                     title="Upload"
                     @click="onUpload"
                   >
-                    <i class="fas fa-upload fa-light"></i
+                    <i class="fas fa-upload"></i
                   ></a>
                 </div>
                 <div class="btn-group">
@@ -236,12 +237,9 @@
             </div>
           </div>
           <div class="modal-footer justify-content-between">
-            <div class="w-25">
-              <div v-if="showLoading">
-                <span class="fw-bold"
-                  >Uploading {{ uploadingFile }}...{{ uploadProgress }}%</span
-                >
-                <div class="progress">
+            <div class="w-75">
+              <div v-if="showLoading" class="d-flex align-items-center">
+                <div class="progress w-25">
                   <div
                     class="progress-bar"
                     role="progressbar"
@@ -251,6 +249,16 @@
                     aria-valuemax="100"
                   ></div>
                 </div>
+                <button
+                  type="button"
+                  class="btn-close"
+                  aria-label="Close"
+                  title="Cancel Upload"
+                  @click="cancelUpload"
+                ></button>
+                <span class="fw-bold"
+                  >Uploading {{ uploadingFile }}...{{ uploadProgress }}%</span
+                >
               </div>
             </div>
             <a
@@ -303,6 +311,7 @@ export default {
       showLoading: false,
       uploadProgress: null,
       uploadingFile: "",
+      controller: null,
     };
   },
   computed: {
@@ -454,6 +463,7 @@ export default {
       try {
         this.showLoading = true;
         this.uploadingFile = file.name;
+        this.controller = new AbortController();
         const response = await axios.post("/file_manager/upload/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -461,10 +471,12 @@ export default {
           onUploadProgress: (progressEvent) => {
             this.uploadProgress = Math.round(progressEvent.progress * 100);
           },
+          signal: this.controller.signal,
         });
         this.showLoading = false;
         this.uploadProgress = null;
         this.uploadingFile = null;
+        this.controller = null;
         this.sendNotifyUploadFinished(`File ${file.name} is uploaded.`, () => {
           Modal.getOrCreateInstance(this.$refs.fileManagerModal).show();
         });
@@ -473,7 +485,15 @@ export default {
         this.showLoading = false;
         this.uploadProgress = null;
         this.uploadingFile = null;
-        showToast("error", error.response?.data?.data || "File upload failed.");
+        this.controller = null;
+        if (axios.isCancel(error)) {
+          showToast("info", `Upload of file "${file.name}"" was cancelled.`);
+        } else {
+          showToast(
+            "error",
+            error.response?.data?.data || "File upload failed."
+          );
+        }
       }
     },
     onUpload() {
@@ -481,6 +501,9 @@ export default {
       inputEl.setAttribute("type", "file");
       inputEl.onchange = this.onUploadProgress;
       inputEl.dispatchEvent(new MouseEvent("click"));
+    },
+    cancelUpload() {
+      if (!!this.controller) this.controller.abort();
     },
     createNotifyMessage(title, desc) {
       return `<div class="v-toast__body p-0">
