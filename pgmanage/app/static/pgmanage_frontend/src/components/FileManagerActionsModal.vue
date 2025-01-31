@@ -7,8 +7,8 @@
         </div>
         <div class="modal-body form-group">
           <p v-if="action === 'rename'">
-            <i :class="['fas', 'fa-2xl', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
-              :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
+            <i :class="['fas', 'fa-2xl', { 'fa-folder': file.is_directory, 'fa-file': !file.is_directory }]"
+              :style="{ 'color': file.is_directory ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
             <span class="ms-1">{{ file.file_name }}</span>
           </p>
           <input v-if="action !== 'delete'" type="text" class="form-control" v-model="name">
@@ -19,8 +19,8 @@
               </div>
               <div class="pt-3 text-break text-center col">
                 <div class="position-relative">
-                  <i :class="['fas', 'fa-2xl', { 'fa-folder': file.file_type === 'dir', 'fa-file': file.file_type === 'file' }]"
-                    :style="{ 'color': file.file_type === 'dir' ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
+                  <i :class="['fas', 'fa-2xl', { 'fa-folder': file.is_directory, 'fa-file': !file.is_directory }]"
+                    :style="{ 'color': file.is_directory ? '#0ea5e9' : 'rgb(105 114 118)', }"></i>
                 </div>
                 <span class="text-dark">{{ file.file_name }}</span>
               </div>
@@ -88,7 +88,7 @@ export default {
       }
     },
     deleteFileType() {
-      if (this.file.file_type === 'dir') {
+      if (this.file.is_directory) {
         return 'Directory'
       } else {
         return 'File'
