@@ -1,7 +1,7 @@
 monitoring_widgets = [{
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 0,
+'id': -1,
 'title': 'Transaction Rate',
 'type': 'timeseries',
 'interval': 10,
@@ -83,7 +83,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 1,
+'id': -2,
 'title': 'Backends',
 'type': 'timeseries',
 'interval': 10,
@@ -164,7 +164,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 2,
+'id': -3,
 'title': 'Autovacuum Workers Usage',
 'type': 'timeseries',
 'interval': 10,
@@ -245,7 +245,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 3,
+'id': -4,
 'title': 'WAL Production Rate',
 'type': 'timeseries',
 'interval': 10,
@@ -368,7 +368,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 4,
+'id': -5,
 'title': 'Temp Files Creation Rate',
 'type': 'timeseries',
 'interval': 10,
@@ -457,7 +457,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 5,
+'id': -6,
 'title': 'Autovacuum Freeze',
 'type': 'timeseries',
 'interval': 10,
@@ -543,7 +543,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 6,
+'id': -7,
 'title': 'Blocked Locks',
 'type': 'timeseries',
 'interval': 10,
@@ -621,7 +621,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 7,
+'id': -8,
 'title': 'Database Size',
 'type': 'timeseries',
 'interval': 10,
@@ -699,7 +699,7 @@ result = {
 }, {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 8,
+'id': -9,
 'title': 'Database Growth Rate',
 'type': 'timeseries',
 'interval': 10,
@@ -796,7 +796,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 9,
+'id': -10,
 'title': 'Heap Cache Miss Ratio',
 'type': 'timeseries',
 'interval': 10,
@@ -899,7 +899,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 10,
+'id': -11,
 'title': 'Index Cache Miss Ratio',
 'type': 'timeseries',
 'interval': 10,
@@ -1002,7 +1002,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 11,
+'id': -12,
 'title': 'Seq Scan Ratio',
 'type': 'timeseries',
 'interval': 10,
@@ -1104,7 +1104,7 @@ result = {
 }, {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 12,
+'id': -13,
 'title': 'Long Transaction',
 'type': 'timeseries',
 'interval': 10,
@@ -1205,7 +1205,7 @@ result = {
 }, {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 13,
+'id': -14,
 'title': 'Long Query',
 'type': 'timeseries',
 'interval': 10,
@@ -1312,7 +1312,7 @@ result = {
 }, {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 14,
+'id': -15,
 'title': 'Long Autovacuum',
 'type': 'timeseries',
 'interval': 10,
@@ -1419,7 +1419,7 @@ result = {
 }, {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 15,
+'id': -16,
 'title': 'Checkpoints',
 'type': 'timeseries',
 'interval': 10,
@@ -1507,7 +1507,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 16,
+'id': -17,
 'title': 'Activity',
 'type': 'grid',
 'interval': 10,
@@ -1530,7 +1530,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 17,
+'id': -18,
 'title': 'Bloat: Top 20 Tables',
 'type': 'grid',
 'interval': 30,
@@ -1604,7 +1604,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 18,
+'id': -19,
 'title': 'In Recovery',
 'type': 'grid',
 'interval': 120,
@@ -1624,7 +1624,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 19,
+'id': -20,
 'title': 'Autovac Freeze: Top 20 Tables',
 'type': 'grid',
 'interval': 60,
@@ -1654,7 +1654,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 20,
+'id': -21,
 'title': 'Database Size',
 'type': 'chart',
 'interval': 60,
@@ -1726,7 +1726,7 @@ result = {
 {
 'dbms': 'postgresql',
 'plugin_name': 'postgresql',
-'id': 21,
+'id': -22,
 'title': 'Backends',
 'type': 'chart',
 'interval': 60,
