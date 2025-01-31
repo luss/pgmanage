@@ -19,7 +19,7 @@
             </option>
         </select>
 
-        <button class="btn btn-primary mx-2" title="Load Data" @click="getTableData()">
+        <button class="btn btn-primary mx-2" title="Load Data" @click="confirmGetTableData()">
           <i class="fa-solid fa-filter"></i>
         </button>
         </div>
@@ -52,7 +52,7 @@ import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
 import { TabulatorFull as Tabulator} from 'tabulator-tables'
 import { emitter } from '../emitter';
-import { settingsStore, tabsStore } from '../stores/stores_initializer';
+import { settingsStore, tabsStore, messageModalStore } from '../stores/stores_initializer';
 import DataEditorTabFilterList from './DataEditorTabFilterList.vue'
 import { dataEditorFilterModes } from '../constants';
 
@@ -130,7 +130,7 @@ export default {
       sortMode: 'remote',
       headerSortClickElement:"icon",
       ajaxURL: "http://fake",
-      ajaxRequestFunc: this.getTableData,
+      ajaxRequestFunc: this.confirmGetTableData,
     })
 
     table.on("tableBuilt", () => {
@@ -142,7 +142,7 @@ export default {
     this.getTableColumns().then(() => {this.tabulator.setSort("0", "asc")});
 
     emitter.on(`${this.tabId}_query_edit`, () => {
-      this.getTableData()
+      this.confirmGetTableData();
     })
 
     settingsStore.$onAction((action) => {
@@ -532,7 +532,24 @@ export default {
       if (rawQuery !== undefined) {
         this.rawQuery = rawQuery;
       } 
-    }
+    },
+    confirmGetTableData(url, config, params) {
+      if (this.hasChanges) {
+        messageModalStore.showModal(
+          "Are you sure you wish to discard the current changes?",
+          () => {
+            this.getTableData(url, config, params);
+          },
+          null
+        );
+      } else {
+        this.getTableData(url, config, params);
+      }
+
+      return new Promise((resolve, reject) => {
+        resolve(this.tableDataLocal);
+      });
+    },
   },
   watch: {
     hasChanges() {
