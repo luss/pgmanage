@@ -141,27 +141,6 @@
               ></a>
             </div>
 
-            <Transition :duration="100">
-              <div
-                v-if="showLoading"
-                class="div_loading d-block"
-                style="z-index: 10"
-              >
-                <div class="div_loading_cover"></div>
-                <div class="div_loading_content">
-                  <div
-                    class="spinner-border spinner-size text-primary"
-                    role="status"
-                  >
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                  <div class="row">
-                    <strong>Uploading...</strong>
-                  </div>
-                </div>
-              </div>
-            </Transition>
-
             <!-- Box format for files and folders -->
             <div v-if="isGrid" class="d-flex p-2 flex-wrap files-grid">
               <div
@@ -256,7 +235,24 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer justify-content-between">
+            <div class="w-25">
+              <div v-if="showLoading">
+                <span class="fw-bold"
+                  >Uploading {{ uploadingFile }}...{{ uploadProgress }}%</span
+                >
+                <div class="progress">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    :style="{ width: `${uploadProgress}%` }"
+                    aria-valuenow="25"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+              </div>
+            </div>
             <a
               :class="[
                 'btn',
@@ -305,6 +301,8 @@ export default {
       action: "",
       currentView: "grid",
       showLoading: false,
+      uploadProgress: null,
+      uploadingFile: "",
     };
   },
   computed: {
@@ -326,8 +324,21 @@ export default {
     this.$refs.fileManagerModal.addEventListener("hide.bs.modal", () => {
       fileManagerStore.hideModal();
     });
+
+    window.addEventListener("beforeunload", this.preventNavigation);
+  },
+  beforeUnmount() {
+    window.removeEventListener("beforeunload", this.preventNavigation);
   },
   methods: {
+    preventNavigation(event) {
+      if (this.uploadingFile) {
+        event.preventDefault();
+        event.returnValue =
+          "You have an ongoing upload. Are you sure you want to leave?";
+        return event.returnValue;
+      }
+    },
     refreshManager(event, created_file_name = null) {
       if (!!created_file_name) {
         this.getDirContent(this.currentPath, null, created_file_name);
@@ -442,15 +453,26 @@ export default {
 
       try {
         this.showLoading = true;
+        this.uploadingFile = file.name;
         const response = await axios.post("/file_manager/upload/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          onUploadProgress: (progressEvent) => {
+            this.uploadProgress = Math.round(progressEvent.progress * 100);
+          },
         });
         this.showLoading = false;
+        this.uploadProgress = null;
+        this.uploadingFile = null;
+        this.sendNotifyUploadFinished(`File ${file.name} is uploaded.`, () => {
+          Modal.getOrCreateInstance(this.$refs.fileManagerModal).show();
+        });
         this.getDirContent(this.currentPath, null, file.name);
       } catch (error) {
         this.showLoading = false;
+        this.uploadProgress = null;
+        this.uploadingFile = null;
         showToast("error", error.response?.data?.data || "File upload failed.");
       }
     },
@@ -459,6 +481,22 @@ export default {
       inputEl.setAttribute("type", "file");
       inputEl.onchange = this.onUploadProgress;
       inputEl.dispatchEvent(new MouseEvent("click"));
+    },
+    createNotifyMessage(title, desc) {
+      return `<div class="v-toast__body p-0">
+                  <h3 class="fw-bold">${title}</h3>
+                  <p>${desc}</p>
+                  <div class="text-end">
+                    <button class="btn v-toast__details fw-bold">Open File Manager</button>
+                  </div>
+              </div>`;
+    },
+    sendNotifyUploadFinished(desc, onClickProcess) {
+      let message = this.createNotifyMessage("File Manager", desc);
+
+      this.$toast.success(message, {
+        onClick: onClickProcess,
+      });
     },
   },
 };
