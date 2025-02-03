@@ -195,6 +195,7 @@ class SQLite:
                 quote(name) as name_raw
 		    from sqlite_master
 			where type = 'table'
+            order by table_name ASC
         ''', True)
 
     @lock_required
@@ -647,6 +648,7 @@ class SQLite:
                    quote(name) as name_raw
 		    from sqlite_master
 			where type = 'view'
+            order by table_name ASC
         ''', True)
 
     @lock_required
