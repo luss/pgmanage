@@ -276,6 +276,7 @@ export default {
           dialect: tab.metaData.dialect,
         },
         MonitoringTab: {
+          tabId: tab.id,
           workspaceId: tab.parentId,
           databaseIndex: tab?.metaData?.databaseIndex,
           dialect: tab?.metaData?.dialect,

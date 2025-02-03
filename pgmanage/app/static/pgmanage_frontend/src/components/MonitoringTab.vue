@@ -8,9 +8,61 @@
       >
         <i class="fas fa-sync-alt me-2"></i>Refresh
       </button>
-      <span class="query_info"> Number of records: {{ dataLength }} </span>
+      <button
+        v-if="!isActive"
+        data-testid="monitoring-play-button"
+        class="btn btn-secondary btn-sm me-1"
+        title="Play"
+        @click="playMonitoring"
+      >
+        <i class="fas fa-play-circle fa-light"></i>
+      </button>
+
+      <button
+        v-else
+        data-testid="monitoring-pause-button"
+        class="btn btn-secondary btn-sm me-1"
+        title="Pause"
+        @click="pauseMonitoring"
+      >
+        <i class="fas fa-pause-circle fa-light"></i>
+      </button>
+      <div class="d-inline-flex align-items-center">
+        <input
+          data-testid="monitoring-interval-input"
+          v-model.number="v$.monitoringInterval.$model"
+          :class="[
+            'form-control',
+            'form-control-sm',
+            'me-2',
+            { 'is-invalid': v$.monitoringInterval.$invalid },
+          ]"
+          style="width: 60px"
+        />
+        <div class="invalid-feedback">
+          <a v-for="error of v$.monitoringInterval.$errors" :key="error.$uid">
+            {{ error.$message }}
+            <br />
+          </a>
+        </div>
+        <span>seconds</span>
+      </div>
+      <span class="float-end"> Total processes: {{ dataLength }} </span>
     </div>
-    <div ref="tabulator" class="tabulator-custom grid-height pb-3"></div>
+    <div class="card border-0">
+      <Transition :duration="100">
+        <div v-if="showLoading" class="div_loading d-block" style="z-index: 10">
+          <div class="div_loading_cover"></div>
+          <div class="div_loading_content">
+            <div class="spinner-border spinner-size text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <div ref="tabulator" class="tabulator-custom grid-height pb-3"></div>
+    </div>
   </div>
 </template>
 
@@ -19,11 +71,23 @@ import { TabulatorFull as Tabulator } from "tabulator-tables";
 import axios from "axios";
 import { showToast } from "../notification_control";
 import { emitter } from "../emitter";
-import { messageModalStore, settingsStore, cellDataModalStore } from "../stores/stores_initializer";
+import {
+  messageModalStore,
+  settingsStore,
+  cellDataModalStore,
+} from "../stores/stores_initializer";
+import { useVuelidate } from "@vuelidate/core";
+import { minValue, required } from "@vuelidate/validators";
 
 export default {
   name: "MonitoringTab",
+  setup() {
+    return {
+      v$: useVuelidate({ $lazy: true }),
+    };
+  },
   props: {
+    tabId: String,
     query: String,
     databaseIndex: Number,
     workspaceId: String,
@@ -34,6 +98,10 @@ export default {
       table: null,
       dataLength: 0,
       heightSubtract: 150,
+      timeoutObject: null,
+      isActive: true,
+      monitoringInterval: 10,
+      showLoading: true,
     };
   },
   computed: {
@@ -41,7 +109,16 @@ export default {
       return `calc(100vh - ${this.heightSubtract}px)`;
     },
   },
+  validations() {
+    return {
+      monitoringInterval: {
+        required,
+        minValue: minValue(5),
+      },
+    };
+  },
   mounted() {
+    console.log(this.tabId);
     this.handleResize();
     this.setupTable();
 
@@ -57,6 +134,19 @@ export default {
         });
       }
     });
+
+    emitter.on(`${this.tabId}_redraw_monitoring_tab`, () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          this.handleResize();
+          this.table.redraw();
+        });
+      });
+    });
+  },
+  unmounted() {
+    clearTimeout(this.timeoutObject);
+    emitter.all.delete(`${this.tabId}_redraw_monitoring_tab`);
   },
   updated() {
     this.handleResize();
@@ -74,7 +164,7 @@ export default {
         {
           label: '<i class="fas fa-edit"></i><span>View Content</span>',
           action: (e, cell) => {
-            cellDataModalStore.showModal(cell.getValue(), "sql", true)
+            cellDataModalStore.showModal(cell.getValue(), "sql", true);
           },
         },
       ];
@@ -86,7 +176,7 @@ export default {
         columnDefaults: {
           headerHozAlign: "left",
           headerSort: true,
-          maxWidth: '500px'
+          maxWidth: "500px",
         },
         autoColumnsDefinitions: (definitions) => {
           //definitions - array of column definition objects
@@ -129,7 +219,7 @@ export default {
         actionWrapper.className = "text-center";
         const actionIcon = document.createElement("i");
         actionIcon.className = actionItem.icon;
-        actionIcon.title = 'Terminate';
+        actionIcon.title = "Terminate";
         actionIcon.onclick = () => {
           actionItem.action(sourceDataRow);
         };
@@ -140,6 +230,8 @@ export default {
       return actionsWrapper;
     },
     refreshMonitoring() {
+      this.showLoading = true;
+      clearTimeout(this.timeoutObject);
       axios
         .post("/refresh_monitoring/", {
           database_index: this.databaseIndex,
@@ -159,14 +251,17 @@ export default {
               },
             ];
           });
-          this.table
-            .setData(data)
-            .then(() => {
-              this.table.redraw(true);
-            })
-            .catch((error) => {
-              showToast("error", error);
-            });
+          if (this.timeoutObject === null) {
+            this.table.setData(data);
+          } else {
+            this.table.replaceData(data);
+          }
+          if (this.isActive) {
+            this.timeoutObject = setTimeout(() => {
+              this.refreshMonitoring();
+            }, this.monitoringInterval * 1000);
+          }
+          this.showLoading = false;
         })
         .catch((error) => {
           if (error.response.data?.password_timeout) {
@@ -180,6 +275,7 @@ export default {
           } else {
             showToast("error", error.response.data.data);
           }
+          this.showLoading = false;
         });
     },
     terminateBackend(row) {
@@ -238,6 +334,14 @@ export default {
 
       this.heightSubtract =
         this.$refs.topToolbar.getBoundingClientRect().bottom;
+    },
+    pauseMonitoring() {
+      clearTimeout(this.timeoutObject);
+      this.isActive = false;
+    },
+    playMonitoring() {
+      this.isActive = true;
+      this.refreshMonitoring();
     },
   },
 };
