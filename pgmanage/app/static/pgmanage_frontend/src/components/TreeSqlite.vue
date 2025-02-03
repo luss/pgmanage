@@ -439,14 +439,14 @@ export default {
             title: `Tables (${resp.data.length})`,
           });
 
-          resp.data.forEach((el) => {
+          resp.data.reduceRight((_, el) => {
             this.insertNode(node, el.name, {
               icon: "fas node-all fa-table node-table",
               type: "table",
               contextMenu: "cm_table",
               raw_value: el.name_raw,
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
@@ -757,14 +757,15 @@ export default {
           this.$refs.tree.updateNode(node.path, {
             title: `Views (${resp.data.length})`,
           });
-          resp.data.forEach((element) => {
-            this.insertNode(node, element.name, {
+
+          resp.data.reduceRight((_, el) => {
+            this.insertNode(node, el.name, {
               icon: "fas node-all fa-eye node-view",
               type: "view",
               contextMenu: "cm_view",
-              raw_value: element.name_raw
+              raw_value: el.name_raw
             });
-          });
+          }, null);
         })
         .catch((error) => {
           this.nodeOpenError(error, node);
