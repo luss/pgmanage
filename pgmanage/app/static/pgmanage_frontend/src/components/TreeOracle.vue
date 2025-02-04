@@ -713,6 +713,7 @@ export default {
       switch (node.data.type) {
         case "trigger":
           table = this.getParentNodeDeep(node, 2).title;
+          break;
         default:
           table = null;
       }

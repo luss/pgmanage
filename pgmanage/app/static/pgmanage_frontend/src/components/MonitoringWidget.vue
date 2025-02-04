@@ -232,10 +232,12 @@ export default {
           this.errorText = error.response.data.data;
           this.showLoading = false;
         });
-
-      this.timeoutObject = setTimeout(() => {
-        this.refreshMonitoringWidget(false);
-      }, this.monitoringWidget.interval * 1000);
+      
+      if (this.isActive) {
+        this.timeoutObject = setTimeout(() => {
+          this.refreshMonitoringWidget(false);
+        }, this.monitoringWidget.interval * 1000);
+      }
     },
     buildGrid(data) {
       this.gridRows = data.data.length;
