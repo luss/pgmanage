@@ -351,6 +351,8 @@ def save_connection(request, session):
             conn.technology = Technology.objects.get(name=conn_object['technology'])
             conn.server = conn_object['server']
             conn.port = conn_object['port']
+            if conn.database != conn_object['service']:
+                conn.last_used_database = conn_object['service']
             conn.database = conn_object['service']
             conn.username = conn_object['user']
 
