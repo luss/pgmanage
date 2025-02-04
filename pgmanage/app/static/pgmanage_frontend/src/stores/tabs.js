@@ -692,8 +692,8 @@ const useTabsStore = defineStore("tabs", {
         component: "MonitoringTab",
         icon: `<i class="fas fa-tasks icon-tab-title"></i>`,
         mode: "monitor_grid",
-        selectFunction: () => {
-          document.title = "PgManage";
+        selectFunction: function() {
+          emitter.emit(`${this.id}_redraw_monitoring_tab`);
         },
         closeFunction: (e, tab) => {
           this.closeTab(tab);
