@@ -11,6 +11,7 @@ vi.mock("tabulator-tables", () => {
   const TabulatorFull = vi.fn();
   TabulatorFull.prototype.redraw = vi.fn();
   TabulatorFull.prototype.setData = vi.fn();
+  TabulatorFull.prototype.replaceData = vi.fn();
   return { TabulatorFull };
 });
 
@@ -30,6 +31,8 @@ describe("MonitoringDashboard", () => {
   let dashboardWrapper;
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.restoreAllMocks();
     axios.delete.mockResolvedValue("Deleted");
     axios.post
       .mockResolvedValue({ data: { data: "1234" } })
