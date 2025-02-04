@@ -229,9 +229,9 @@ export default {
       });
       return actionsWrapper;
     },
-    refreshMonitoring() {
-      this.showLoading = true;
+    refreshMonitoring(showLoading = true) {
       clearTimeout(this.timeoutObject);
+      if (showLoading) this.showLoading = true;
       axios
         .post("/refresh_monitoring/", {
           database_index: this.databaseIndex,
@@ -258,7 +258,7 @@ export default {
           }
           if (this.isActive) {
             this.timeoutObject = setTimeout(() => {
-              this.refreshMonitoring();
+              this.refreshMonitoring(false);
             }, this.monitoringInterval * 1000);
           }
           this.showLoading = false;
