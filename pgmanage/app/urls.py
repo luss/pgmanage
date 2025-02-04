@@ -1,7 +1,9 @@
-from django.urls import include, path
-from . import views
+from django.urls import include, path, register_converter
+from . import views, converters
 from django.conf import settings
 from django.conf.urls.static import static
+
+register_converter(converters.SignedIntConverter, 'signedint')
 
 base_urlpatterns = [
 
@@ -292,8 +294,8 @@ base_urlpatterns = [
     path("monitoring-widgets/list", views.monitoring_dashboard.monitoring_widgets_list, name="monitoring-widgets-list"),
     path("monitoring-widgets/test", views.monitoring_dashboard.test_monitoring_widget, name="test-monitoring-widget"),
     path("monitoring-widgets/create", views.monitoring_dashboard.create_dashboard_monitoring_widget, name="create-dashboard-widget"),
-    path("monitoring-widgets/<int:widget_id>", views.monitoring_dashboard.widget_detail, name="dashboard-widget-detail"),
-    path("monitoring-widgets/<int:widget_id>/template", views.monitoring_dashboard.widget_template, name="widget-template"),
+    path("monitoring-widgets/<signedint:widget_id>", views.monitoring_dashboard.widget_detail, name="dashboard-widget-detail"),
+    path("monitoring-widgets/<signedint:widget_id>/template", views.monitoring_dashboard.widget_template, name="widget-template"),
     path("monitoring-widgets/<int:widget_saved_id>/refresh", views.monitoring_dashboard.refresh_monitoring_widget, name="refresh-monitoring-widget"),
     path("monitoring-widgets/user-created", views.monitoring_dashboard.create_widget, name="create-custom-widget"),
     path("monitoring-widgets/user-created/<int:widget_id>", views.monitoring_dashboard.user_created_widget_detail, name="widget-detail"),
