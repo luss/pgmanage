@@ -47,6 +47,7 @@ import isEqualWith from 'lodash/isEqualWith';
 import zipObject from 'lodash/zipObject';
 import forIn from 'lodash/forIn';
 import isArray from 'lodash/isArray'
+import escape from 'lodash/escape';
 import { showToast } from "../notification_control";
 import { queryRequestCodes } from '../constants'
 import { createRequest } from '../long_polling'
@@ -249,6 +250,7 @@ export default {
                   column.setWidth(true);
                 }
               },
+              formatter: this.cellFormatter,
             }
           })
           columns.unshift(actionsCol)
@@ -550,6 +552,14 @@ export default {
         resolve(this.tableDataLocal);
       });
     },
+    cellFormatter(cell, params, onRendered) {
+      let cellVal = cell.getValue()
+      if (!!cellVal && cellVal?.length > 1000) {
+          let filtered = escape(cellVal.slice(0, 1000).toString().replace(/\n/g, ' ↲ '))
+          return `${filtered}...`;
+        }
+      return cellVal
+    }
   },
   watch: {
     hasChanges() {
