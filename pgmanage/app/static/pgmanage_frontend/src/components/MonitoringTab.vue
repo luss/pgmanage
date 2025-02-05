@@ -118,7 +118,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.tabId);
     this.handleResize();
     this.setupTable();
 
