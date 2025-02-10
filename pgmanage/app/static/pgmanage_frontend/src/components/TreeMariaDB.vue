@@ -31,7 +31,7 @@ import {
   TemplateUpdateMariadb,
 } from "../tree_context_functions/tree_mariadb";
 import { emitter } from "../emitter";
-import { tabsStore, connectionsStore } from "../stores/stores_initializer";
+import { tabsStore, connectionsStore, dbMetadataStore } from "../stores/stores_initializer";
 import { checkBeforeChangeDatabase } from "../workspace";
 import ContextMenu from "@imengyu/vue3-context-menu";
 import { operationModes } from "../constants";
@@ -707,6 +707,7 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
+              dbMetadataStore.fetchDbMeta(this.databaseIndex, this.workspaceId, node.data.database)
               connectionsStore.updateConnection(this.databaseIndex, {"last_used_database" : node.data.database})
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 

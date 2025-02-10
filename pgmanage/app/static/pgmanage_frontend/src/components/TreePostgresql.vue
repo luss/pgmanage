@@ -36,8 +36,7 @@ import {
 } from "../tree_context_functions/tree_postgresql";
 import { createExtensionModal, createPgCronModal, createRoleModal } from "./postgresql_modals";
 import { operationModes } from "../constants";
-import { showConfirm, showToast } from "../notification_control";
-import { connectionsStore, messageModalStore, tabsStore } from "../stores/stores_initializer";
+import { connectionsStore, messageModalStore, tabsStore, dbMetadataStore } from "../stores/stores_initializer";
 import ContextMenu from "@imengyu/vue3-context-menu";
 
 
@@ -2952,6 +2951,7 @@ export default {
               database: node.data.database,
             })
             .then((resp) => {
+              dbMetadataStore.fetchDbMeta(this.databaseIndex, this.workspaceId, node.data.database)
               connectionsStore.updateConnection(this.databaseIndex, {"last_used_database" : node.data.database})
               const database_nodes = this.$refs.tree.getNode([0, 0]).children;
 
