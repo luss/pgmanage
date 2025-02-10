@@ -185,8 +185,6 @@ export default {
               database: this.selectedDatabase,
             });
 
-            // notify queryEditors that we are authenticated and db metadata can be now fetched
-            emitter.emit("refetchMeta", {databaseIndex: this.databaseIndex})
             this.refreshNode()
           },
           message: error_response.response.data.data,
