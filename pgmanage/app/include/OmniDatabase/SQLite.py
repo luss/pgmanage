@@ -181,6 +181,7 @@ class SQLite:
         v_return = ''
         try:
             if os.path.isfile(self.v_service):
+                self.v_connection.Query("PRAGMA schema_version;")
                 v_return = 'Connection successful.'
             else:
                 v_return = 'File does not exist, if you try to manage this connection a database file will be created.'
