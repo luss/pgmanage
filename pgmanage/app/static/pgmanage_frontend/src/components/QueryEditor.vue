@@ -72,8 +72,8 @@ export default {
       this.editor.setTheme(`ace/theme/${state.editorTheme}`);
       this.editor.setFontSize(state.fontSize);
     });
-
     if(this.databaseIndex && this.databaseName) {
+      this.setupCompleter();
       dbMetadataStore.$onAction((action) => {
         if (action.name === "fetchDbMeta" && action.args[0] == this.databaseIndex) {
           action.after((result) => {
@@ -81,8 +81,6 @@ export default {
           });
         }
       });
-
-      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.workspaceId, this.tabId, this.databaseName)
     }
     if(this.autocomplete) {
       this.editor.setOptions({

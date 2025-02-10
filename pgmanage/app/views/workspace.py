@@ -363,7 +363,10 @@ def get_database_meta(request, database):
         else:
             schemas = [{'schema_name': '-noschema-'}]
 
-        for schema in schemas:
+        filtered_schemas = [
+            schema for schema in schemas if schema.get("schema_name") not in {"information_schema", "pg_catalog"}
+        ]
+        for schema in filtered_schemas:
             schema_data = {
                 "name": schema["schema_name"],
                 "tables": [],
