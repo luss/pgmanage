@@ -1,3 +1,32 @@
+# PgManage 1.2.1 Bugfix Release
+
+## Release Date: Feb 13 2024
+
+## Release Notes
+    
+  - Bugs fixed:
+    - fixed error notification link colors, added minior layout tweaks
+    - fixed DB object tree node data refresh in some edge-cases
+    - fixed erroneous "Discard Changes" warning when closing Query tab
+    - fixed connectivity issues in built-in SSH terminal
+    - fixed bug with multiple tabs highlighed as "active" #570
+    - fixed app crash when schema editor is opened immediately after DB workspace is loaded
+    - fixed bug with DROP database unable to complete in some cases #582
+    - fixed bug with DB object tree context menu disappearing when monitoring dashboard refreshes #607
+    - fixed race condition in Backup/Restore job status modal when running multiple jobs simultaneusly
+    - fixed bug that allowed to register duplicate hotkey actions #611
+    - fixed bug that caused old SQLite3 DB file being used when connection properties updated with a new file #598
+    - fixed SQLite3 tables not ordered by name in DB object tree  # #596
+    
+  - Other changes:
+    - bumped happy-dom verision to fix potential security vulnerability in dev environment
+    - silenced SASS deprecation warnings during js bundle build
+    - plus icons are now used for all context menus associated with "create" action #557
+    - improved readability of multiple modal windows shown on-top of each other
+    - improved SQLite3 DB connection "Test"
+    - improved database metadata loading and autocomplete engine initialization
+
+
 # PgManage 1.2 Release
 
 ## Release Date: Nov 07 2024
