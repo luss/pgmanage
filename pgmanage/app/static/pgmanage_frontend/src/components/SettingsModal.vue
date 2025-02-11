@@ -25,8 +25,9 @@
           <div class="tab-content p-3">
             <div class="tab-pane fade show active" id="settings_shortcuts" role="tabpanel"
               aria-labelledby="settings_shortcuts-tab">
-              <div id="div_shortcut_background_dark" ref="shortcutBackground">
-                <div style="position: absolute; top: 50%; width: 100%;">Press key combination... (ESC to cancel)</div>
+              <div id="div_shortcut_background_dark" style="display: block; visibility: hidden;" ref="shortcutBackground">
+                <div style="position: absolute; top: 40%; width: 100%;">Press key combination... (ESC to cancel)</div>
+                <div v-if="hasConflicts" style="position: absolute; top: 50%; width: 100%;">This combination is already used...</div>
               </div>
 
               <div v-for="(shortcut, idx) in shortcuts" :key="idx" class="row">
@@ -255,7 +256,8 @@ export default {
       dateFormats: ['YYYY-MM-DD, HH:mm:ss', 'MM/D/YYYY, h:mm:ss A', 'MMM D YYYY, h:mm:ss A'],
       fallbackFontSize: null,
       fallbackTheme: null,
-      hidden: true
+      hidden: true,
+      hasConflicts: false
     }
   },
   validations() {
@@ -571,7 +573,7 @@ export default {
       return LABEL_MAP[shortcut.shortcut_code] || 'unknown'
     },
     startSetShortcut(event) {
-      this.$refs.shortcutBackground.style.display = 'block'
+      this.$refs.shortcutBackground.style.visibility = 'visible'
       event.target.style['z-index'] = 1002;
       this.shortcutObject.button = event.target;
 
@@ -598,6 +600,22 @@ export default {
       if (event.keyCode == 16 || event.keyCode == 17 || event.keyCode == 18 || event.keyCode == 91)
         return;
 
+      // check for potential hotkey conflicts
+      for(const [name, shortcut] of Object.entries(settingsStore.shortcuts)) {
+        if(name == this.shortcutObject.button.id)
+          continue
+        if (
+          shortcut.ctrl_pressed === event.ctrlKey
+          && shortcut.shift_pressed === event.shiftKey
+          && shortcut.alt_pressed === event.altKey
+          && shortcut.meta_pressed === event.metaKey
+          && shortcut.shortcut_key === event.key.toUpperCase()
+        ) {
+          this.hasConflicts = true;
+          return;
+        }
+      }
+
       let shortcutElement = settingsStore.shortcuts[this.shortcutObject.button.id];
 
       if (shortcutElement) {
@@ -618,8 +636,8 @@ export default {
     finishSetShortcut() {
       this.shortcutObject.button.style['z-index'] = 0;
       this.shortcutObject.button = null;
-      this.$refs.shortcutBackground.style.display = 'none';
-
+      this.$refs.shortcutBackground.style.visibility = 'hidden';
+      this.hasConflicts = false;
       document.body.removeEventListener('keydown', this.setShortcutEvent);
       document.body.addEventListener('keydown', this.keyBoardShortcuts);
     },
