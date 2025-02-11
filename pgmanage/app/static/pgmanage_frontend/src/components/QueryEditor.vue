@@ -72,17 +72,10 @@ export default {
       this.editor.setTheme(`ace/theme/${state.editorTheme}`);
       this.editor.setFontSize(state.fontSize);
     });
-
     if(this.databaseIndex && this.databaseName) {
-      dbMetadataStore.$onAction((action) => {
-        if (action.name === "fetchDbMeta" && action.args[0] == this.databaseIndex) {
-          action.after((result) => {
-            this.setupCompleter();
-          });
-        }
-      });
-
-      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.workspaceId, this.tabId, this.databaseName)
+      dbMetadataStore.fetchDbMeta(this.databaseIndex, this.tabId, this.databaseName).then(() => {
+        this.setupCompleter(); 
+      })
     }
     if(this.autocomplete) {
       this.editor.setOptions({
