@@ -1513,9 +1513,19 @@ def thread_save_edit_data(self, args) -> None:
         database = args["database"]
         client_object: Client = args["client_object"]
         command: str = args["sql_cmd"]
-        # TODO: add transaction support
-        # TODO: run each statement separately
-        database.v_connection.Execute(command)
+
+        if database.v_db_type in ["sqlite","mysql"] and len(command.split(";\n")) >= 2:
+            try:
+                database.v_connection.Open(False)
+                database.v_connection.Execute("BEGIN")
+                for sql in command.split(";\n"):
+                    database.v_connection.Execute(sql)
+                database.v_connection.Commit()
+            except Exception as exc:
+                database.v_connection.v_con.rollback()
+                raise DatabaseError(str(exc)) from exc
+        else:
+            database.v_connection.Execute(command)
 
         if not self.cancel:
             queue_response(client_object, response_data)
