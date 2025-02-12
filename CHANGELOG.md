@@ -5,7 +5,7 @@
 ## Release Notes
     
   - Bugs fixed:
-    - fixed error notification link colors, added minior layout tweaks
+    - fixed error notification link colors, added minor layout tweaks
     - fixed DB object tree node data refresh in some edge-cases
     - fixed erroneous "Discard Changes" warning when closing Query tab
     - fixed connectivity issues in built-in SSH terminal
@@ -19,7 +19,7 @@
     - fixed SQLite3 tables not ordered by name in DB object tree  # #596
     
   - Other changes:
-    - bumped happy-dom verision to fix potential security vulnerability in dev environment
+    - bumped happy-dom version to fix potential security vulnerability in dev environment
     - silenced SASS deprecation warnings during js bundle build
     - plus icons are now used for all context menus associated with "create" action #557
     - improved readability of multiple modal windows shown on-top of each other
