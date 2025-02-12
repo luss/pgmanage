@@ -9,7 +9,7 @@
     - fixed DB object tree node data refresh in some edge-cases
     - fixed erroneous "Discard Changes" warning when closing Query tab
     - fixed connectivity issues in built-in SSH terminal
-    - fixed bug with multiple tabs highlighed as "active" #570
+    - fixed bug with multiple tabs highlighted as "active" #570
     - fixed app crash when schema editor is opened immediately after DB workspace is loaded
     - fixed bug with DROP database unable to complete in some cases #582
     - fixed bug with DB object tree context menu disappearing when monitoring dashboard refreshes #607
