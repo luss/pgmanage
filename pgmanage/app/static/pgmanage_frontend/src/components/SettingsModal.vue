@@ -604,12 +604,15 @@ export default {
       for(const [name, shortcut] of Object.entries(settingsStore.shortcuts)) {
         if(name == this.shortcutObject.button.id)
           continue
+
+        let keyPressed = event.key === ' ' ? 'SPACE' : event.key.toUpperCase()
+
         if (
           shortcut.ctrl_pressed === event.ctrlKey
           && shortcut.shift_pressed === event.shiftKey
           && shortcut.alt_pressed === event.altKey
           && shortcut.meta_pressed === event.metaKey
-          && shortcut.shortcut_key === event.key.toUpperCase()
+          && shortcut.shortcut_key === keyPressed
         ) {
           this.hasConflicts = true;
           return;
