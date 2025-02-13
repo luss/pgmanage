@@ -93,6 +93,10 @@ describe("UtilityJobsJobDetail.vue", () => {
   });
 
   it("adds logs and scrolls to the bottom on receiving job details", async () => {
+    utilityJobStore.setJob({
+      id: 1,
+      type_desc: "Test Job",
+    });
     axios.get.mockResolvedValueOnce(response);
 
     wrapper.vm.getJobDetails(1, 0, 0);

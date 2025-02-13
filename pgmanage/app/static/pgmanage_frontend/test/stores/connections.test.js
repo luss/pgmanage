@@ -7,7 +7,12 @@ import { flushPromises } from "@vue/test-utils";
 
 vi.mock("@/stores/stores_initializer", () => {
   const tabsStore = vi.fn();
-  return { tabsStore };
+  return {
+    tabsStore,
+    dbMetadataStore: {
+      fetchDbMeta: vi.fn().mockResolvedValue([])
+    }
+  };
 });
 
 vi.mock("axios");
