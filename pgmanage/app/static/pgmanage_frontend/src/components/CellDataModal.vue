@@ -71,12 +71,17 @@
                 >
               </div>
               <div class="col-auto">
-                <button class="btn btn-sm btn-primary" @click="formatContent">
+                <button
+                  data-testid="format-button"
+                  class="btn btn-sm btn-primary"
+                  @click="formatContent"
+                >
                   Format
                 </button>
               </div>
             </div>
             <button
+              data-testid="close-modal-button"
               type="button"
               class="btn btn-secondary"
               data-dismiss="modal"
@@ -128,7 +133,7 @@ export default {
     });
 
     this.$refs.cellDataModal.addEventListener("shown.bs.modal", (event) => {
-      this.setupEdidor();
+      this.setupEditor();
       this.setEditorContent();
     });
     cellDataModalStore.$onAction((action) => {
@@ -158,7 +163,7 @@ export default {
     },
   },
   methods: {
-    setupEdidor() {
+    setupEditor() {
       this.editor = ace.edit(this.$refs.editor);
       this.editor.$blockScrolling = Infinity;
       this.editor.setTheme(`ace/theme/${settingsStore.editorTheme}`);
