@@ -1,5 +1,4 @@
 import { createApp, defineAsyncComponent } from "vue";
-import cronLight from "@vue-js-cron/light";
 import { tabsStore } from "../stores/stores_initializer";
 
 
@@ -37,9 +36,6 @@ function createExtensionModal(node, mode) {
 }
 
 function createPgCronModal(node, mode) {
-  // vuejs keep track of installed plugins, but since we reinstantiate app each time
-  // we need to reset this flag in order to make the component work on next modal show
-  cronLight.install.installed = false;
   const wrap_div = document.getElementById("pgcron-modal-wrap");
 
   wrap_div.innerHTML = `<pgcron-modal :mode=mode :tree-node=treeNode :database-index="databaseIndex" :workspace-id="workspaceId"></pgcron-modal>`;
@@ -66,7 +62,6 @@ function createPgCronModal(node, mode) {
       }, 500);
     },
   });
-  app.use(cronLight);
   app.mount(`#pgcron-modal-wrap`);
 }
 
