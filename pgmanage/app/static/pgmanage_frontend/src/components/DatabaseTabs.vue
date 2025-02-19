@@ -165,7 +165,7 @@ export default {
     },
     tabColorLabelClass() {
       let primaryTab = tabsStore.getPrimaryTabById(this.workspaceId);
-      let connection = connectionsStore.getConnection(primaryTab.metaData?.selectedDatabaseIndex);
+      let connection = connectionsStore.getConnection(primaryTab?.metaData?.selectedDatabaseIndex);
       if(connection) {
         return colorLabelMap[connection.color_label].class || ''
       }
