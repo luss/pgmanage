@@ -6,7 +6,9 @@
       :name="name"
       @focus="showOptions()"
       @blur="exit()"
-      @keyup="keyMonitor"
+      @keyup.up="keyMonitor"
+      @keyup.down="keyMonitor"
+      @keyup.enter="onEnter"
       v-model="searchFilter"
       :disabled="disabled"
       :placeholder="placeholder"
@@ -20,9 +22,10 @@
         :data-testid="`dropdown-searchable-item-${index}`"
         class="dropdown-searchable__content_item"
         @mousedown="toggleOption(option)"
+        @mouseover="highlightedIndex = index"
         v-for="(option, index) in filteredOptions"
         :key="index"
-        :class="{ 'selected': isSelected(option) }"
+        :class="{ 'selected': isSelected(option) , 'highlighted': index === highlightedIndex}"
         >
             {{  option }}
       </div>
@@ -78,7 +81,8 @@
       return {
         selected: this.multiSelect ? [] : null,
         optionsShown: false,
-        searchFilter: this.modelValue
+        searchFilter: this.modelValue,
+        highlightedIndex: -1
       }
     },
     computed: {
@@ -118,12 +122,14 @@
           this.optionsShown = false;
           this.searchFilter = this.selected;
         }
+        this.highlightedIndex = -1;
       },
       showOptions(){
         if (!this.disabled) {
           // THIS resets onblur
           this.searchFilter = '';
           this.optionsShown = true;
+          this.highlightedIndex = -1;
         }
       },
       exit() {
@@ -134,19 +140,34 @@
         }
         this.$emit('update:modelValue', this.selected);
         this.optionsShown = false;
+        this.highlightedIndex = -1;
       },
-      // Selecting when pressing Enter
-      // FIXME: use hovered element instead of first one
-      // TODO: add arrow navigation
-      keyMonitor: function(event) {
-        if (event.key === "Enter" && this.filteredOptions[0]) {
+      onEnter() {
+        if (this.highlightedIndex == -1 && this.filteredOptions[0]) {
           this.toggleOption(this.filteredOptions[0]);
-        } else if (event.key === "Enter" && this.filteredOptions.length === 0 && this.multiSelect) {
+        } else if (this.filteredOptions.length === 0 && this.multiSelect) {
           let options = this.searchFilter.split(',');
           options.forEach((option) => {
             this.addOption(option.trim())
           });
           this.$emit('update:modelValue', this.selected);
+        } else if (this.highlightedIndex >= 0) {
+          this.toggleOption(this.filteredOptions[this.highlightedIndex]);
+        } 
+      },
+      keyMonitor: function(event) {
+        if (event.key === "ArrowDown") {
+          if (this.highlightedIndex < this.filteredOptions.length - 1) {
+            this.highlightedIndex++;
+          } else {
+            this.highlightedIndex = 0;
+          }
+        } else if (event.key === "ArrowUp") {
+          if (this.highlightedIndex > 0) {
+            this.highlightedIndex--;
+          } else {
+            this.highlightedIndex = this.filteredOptions.length - 1;
+          }
         }
       },
       isSelected(option) {
