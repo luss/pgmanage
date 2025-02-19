@@ -52,7 +52,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary me-2" :disabled="!selectedExtension || noUpdates"
+          <button data-testid="save-extension-button" type="button" class="btn btn-primary me-2" :disabled="!selectedExtension || noUpdates"
             @click="saveExtension">
             Save
           </button>
