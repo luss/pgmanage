@@ -13,11 +13,16 @@
           <div
             class="d-inline-flex align-items-center refresh-menu ms-1"
             data-bs-toggle="dropdown">
-            <a class="refresh-menu__link" href="">{{ monitoringWidget.interval }} sec.</a>
+            <a class="refresh-menu__link" href="">{{ humanizeDuration(monitoringWidget.interval) }}</a>
             <div class="dropdown-menu dropdown-menu-width-auto">
-              <a class="dropdown-item">15 sec</a>
-              <a class="dropdown-item">15 sec</a>
-              <a class="dropdown-item">15 sec</a>
+              <a
+                v-for="(option, index) in refreshIntervalOptions" :key=index
+                @click="updateInterval(option)"
+                class="dropdown-item"
+                href="#"
+              >
+                {{ humanizeDuration(option) }}
+              </a>
             </div>
           </div>
           <!-- <span v-if="isGrid" class="ms-2"> {{ gridRows }} rows </span>  -->
@@ -111,6 +116,8 @@ import { useVuelidate } from "@vuelidate/core";
 import { minValue, required } from "@vuelidate/validators";
 import { settingsStore, cellDataModalStore } from "../stores/stores_initializer";
 import { markRaw } from "vue";
+import HumanizeDurationMixin from '../mixins/humanize_duration_mixin'
+
 
 export default {
   name: "MonitoringWidget",
@@ -119,6 +126,7 @@ export default {
       v$: useVuelidate({ $lazy: true }),
     };
   },
+  mixins: [HumanizeDurationMixin],
   props: {
     monitoringWidget: {
       type: Object,
